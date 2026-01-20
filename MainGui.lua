@@ -25,6 +25,27 @@ MainFrame.GroupTransparency = 1
 MainFrame.ClipsDescendants = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
+-- [[ FEATURE CONTAINER ]]
+local Container = Instance.new("ScrollingFrame")
+Container.Name = "Container"
+Container.Parent = MainFrame
+Container.BackgroundTransparency = 1
+Container.BorderSizePixel = 0
+Container.Position = UDim2.new(0, 10, 0, 70) -- Starts below the TopBar
+Container.Size = UDim2.new(1, -20, 1, -80)
+Container.ScrollBarThickness = 2
+Container.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+local Layout = Instance.new("UIListLayout", Container)
+Layout.Padding = UDim.new(0, 8)
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Auto-resize scroll area
+Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y)
+end)
+
+
 -- [[ TOP BAR (The Draggable Handle) ]]
 local TopBar = Instance.new("Frame")
 TopBar.Name = "TopBar"
