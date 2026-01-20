@@ -1,114 +1,254 @@
--- [[ XCWARE: ALL-IN-ONE EXECUTOR ]]
+-- [[ XCWARE: MAIN GUI COMPONENT ]]
+-- Themes: Pitch Black, Sleek UI
+-- Features: Split Logic (Minimize vs Close), Black Buttons, Executor Integration
+
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 
+-- Creating the ScreenGui
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "XcWare_System"; ScreenGui.Parent = CoreGui; ScreenGui.ResetOnSpawn = false
+ScreenGui.Name = "XcWare_System"
+ScreenGui.Parent = CoreGui
+ScreenGui.ResetOnSpawn = false 
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- [[ MAIN WINDOW ]]
+-- [[ MAIN CONTAINER (600x400) ]]
 local MainFrame = Instance.new("CanvasGroup")
-MainFrame.Name = "MainFrame"; MainFrame.Parent = ScreenGui; MainFrame.BackgroundColor3 = Color3.new(0,0,0)
-MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0); MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-MainFrame.Size = UDim2.new(0, 0, 0, 0); MainFrame.GroupTransparency = 1; MainFrame.ClipsDescendants = true
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0) 
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.Size = UDim2.new(0, 0, 0, 0) 
+MainFrame.GroupTransparency = 1 
+MainFrame.ClipsDescendants = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
--- [[ TOP BAR ]]
-local TopBar = Instance.new("Frame", MainFrame)
-TopBar.Name = "TopBar"; TopBar.BackgroundTransparency = 1; TopBar.Size = UDim2.new(1, 0, 0, 60)
+-- [[ TOP BAR (The Draggable Handle) ]]
+local TopBar = Instance.new("Frame")
+TopBar.Name = "TopBar"
+TopBar.Parent = MainFrame
+TopBar.BackgroundTransparency = 1 
+TopBar.Size = UDim2.new(1, 0, 0, 60)
 
-local Title = Instance.new("TextLabel", TopBar)
-Title.Text = "XCWARE"; Title.TextColor3 = Color3.new(1,1,1); Title.Font = Enum.Font.GothamBold
-Title.TextSize = 24; Title.BackgroundTransparency = 1; Title.Position = UDim2.new(0, 20, 0, 0); Title.Size = UDim2.new(0, 200, 1, 0); Title.TextXAlignment = Enum.TextXAlignment.Left
+local Title = Instance.new("TextLabel")
+Title.Parent = TopBar
+Title.Text = "XCWARE"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 24
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 20, 0, 0)
+Title.Size = UDim2.new(0, 250, 1, 0)
+Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- [[ THE EXECUTOR BOX ]]
-local EditorFrame = Instance.new("ScrollingFrame", MainFrame)
-EditorFrame.Position = UDim2.new(0, 15, 0, 70); EditorFrame.Size = UDim2.new(1, -30, 0, 230)
-EditorFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5); EditorFrame.CanvasSize = UDim2.new(2, 0, 5, 0)
-EditorFrame.ScrollBarThickness = 3; Instance.new("UICorner", EditorFrame)
+-- [[ EXECUTOR AREA (Top Left with Padding) ]]
+local EditorScrolling = Instance.new("ScrollingFrame", MainFrame)
+EditorScrolling.Name = "EditorScrolling"
+EditorScrolling.Position = UDim2.new(0, 20, 0, 70)
+EditorScrolling.Size = UDim2.new(0, 400, 0, 230) -- Left side focus
+EditorScrolling.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+EditorScrolling.BorderSizePixel = 0
+EditorScrolling.CanvasSize = UDim2.new(2, 0, 5, 0)
+EditorScrolling.ScrollBarThickness = 2
+Instance.new("UICorner", EditorScrolling)
 
-local Editor = Instance.new("TextBox", EditorFrame)
-Editor.Size = UDim2.new(1, 0, 1, 0); Editor.BackgroundTransparency = 1; Editor.MultiLine = true
-Editor.Text = "print('Hello XcWare')"; Editor.TextColor3 = Color3.new(1,1,1); Editor.Font = Enum.Font.Code
-Editor.TextSize = 14; Editor.TextXAlignment = 0; Editor.TextYAlignment = 0; Editor.ClearTextOnFocus = false
+local HighlightLabel = Instance.new("TextLabel", EditorScrolling)
+HighlightLabel.Size = UDim2.new(1, 0, 1, 0)
+HighlightLabel.BackgroundTransparency = 1
+HighlightLabel.Text = ""
+HighlightLabel.RichText = true
+HighlightLabel.Font = Enum.Font.Code
+HighlightLabel.TextSize = 14
+HighlightLabel.TextXAlignment = 0
+HighlightLabel.TextYAlignment = 0
+HighlightLabel.ZIndex = 2
 
--- [[ BUTTONS: EXECUTE / CLEAR / PASTE ]]
-local BtnHolder = Instance.new("Frame", MainFrame)
-BtnHolder.Position = UDim2.new(0, 15, 0, 310); BtnHolder.Size = UDim2.new(1, -30, 0, 40); BtnHolder.BackgroundTransparency = 1
-local Layout = Instance.new("UIListLayout", BtnHolder); Layout.FillDirection = 0; Layout.Padding = UDim.new(0, 10)
+local CodeEditor = Instance.new("TextBox", EditorScrolling)
+CodeEditor.Size = UDim2.new(1, 0, 1, 0)
+CodeEditor.BackgroundTransparency = 1
+CodeEditor.Text = "print('Hello XcWare')"
+CodeEditor.TextColor3 = Color3.new(1,1,1,0.7)
+CodeEditor.Font = Enum.Font.Code
+CodeEditor.TextSize = 14
+CodeEditor.ClearTextOnFocus = false
+CodeEditor.MultiLine = true
+CodeEditor.TextXAlignment = 0
+CodeEditor.TextYAlignment = 0
+CodeEditor.ZIndex = 3
 
-local function MakeBtn(name, color)
-    local b = Instance.new("TextButton", BtnHolder)
-    b.Size = UDim2.new(0, 100, 1, 0); b.BackgroundColor3 = Color3.new(0,0,0); b.Text = name
-    b.TextColor3 = Color3.new(1,1,1); b.Font = Enum.Font.GothamBold; Instance.new("UICorner", b)
-    local s = Instance.new("UIStroke", b); s.Color = color; s.Thickness = 1.5
-    return b
+-- [[ EXECUTOR BUTTONS ]]
+local function CreateActionBtn(text, pos)
+    local btn = Instance.new("TextButton", MainFrame)
+    btn.Text = text
+    btn.Size = UDim2.new(0, 90, 0, 35)
+    btn.Position = pos
+    btn.BackgroundColor3 = Color3.new(0,0,0)
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 12
+    Instance.new("UICorner", btn)
+    local s = Instance.new("UIStroke", btn)
+    s.Color = Color3.new(1,1,1)
+    s.Thickness = 1
+    return btn
 end
 
-local Exec = MakeBtn("EXECUTE", Color3.new(0,1,0))
-local Clear = MakeBtn("CLEAR", Color3.new(1,1,1))
-local Paste = MakeBtn("PASTE", Color3.new(1,1,1))
-
--- [[ LOGIC: EXECUTE ]]
-Exec.MouseButton1Click:Connect(function()
-    local success, err = pcall(function() loadstring(Editor.Text)() end)
-    if not success then warn("Error: "..err) end
-end)
-
-Clear.MouseButton1Click:Connect(function() Editor.Text = "" end)
+local ExecBtn = CreateActionBtn("EXECUTE", UDim2.new(0, 20, 0, 315))
+local PasteBtn = CreateActionBtn("PASTE", UDim2.new(0, 120, 0, 315))
+local ClearBtn = CreateActionBtn("CLEAR", UDim2.new(0, 220, 0, 315))
 
 -- [[ DOCK / TASKBAR ]]
-local MinimizedBar = Instance.new("TextButton", ScreenGui)
-MinimizedBar.Visible = false; MinimizedBar.Size = UDim2.new(0, 220, 0, 45); MinimizedBar.Position = UDim2.new(0.5, 0, 1, -60)
-MinimizedBar.AnchorPoint = Vector2.new(0.5, 0.5); MinimizedBar.BackgroundColor3 = Color3.new(0,0,0)
-MinimizedBar.Text = "XCWARE"; MinimizedBar.TextColor3 = Color3.new(1,1,1); MinimizedBar.Font = Enum.Font.GothamBold
-Instance.new("UICorner", MinimizedBar); Instance.new("UIStroke", MinimizedBar).Color = Color3.new(1,1,1)
+local MinimizedBar = Instance.new("TextButton")
+MinimizedBar.Name = "MinimizedBar"
+MinimizedBar.Parent = ScreenGui
+MinimizedBar.Visible = false
+MinimizedBar.Size = UDim2.new(0, 220, 0, 45)
+MinimizedBar.Position = UDim2.new(0.5, 0, 1, -60)
+MinimizedBar.AnchorPoint = Vector2.new(0.5, 0.5)
+MinimizedBar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MinimizedBar.AutoButtonColor = false
+MinimizedBar.Text = ""
+Instance.new("UICorner", MinimizedBar).CornerRadius = UDim.new(0, 12)
+local BarStroke = Instance.new("UIStroke", MinimizedBar)
+BarStroke.Color = Color3.fromRGB(255, 255, 255)
+BarStroke.Thickness = 1.5
+
+local BarLabel = Instance.new("TextLabel", MinimizedBar)
+BarLabel.Size = UDim2.new(1, 0, 1, 0)
+BarLabel.BackgroundTransparency = 1
+BarLabel.Text = "XCWARE"
+BarLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+BarLabel.Font = Enum.Font.GothamBold
+BarLabel.TextSize = 18
+
+-- [[ MATRIX ANIMATION ]]
+local function MatrixAnim(label, originalText)
+    local chars = "1234567890!@#$%^&*"
+    while true do
+        task.wait(math.random(3, 5))
+        for i = 1, 10 do
+            local randomStr = ""
+            for j = 1, #originalText do
+                local r = math.random(1, #chars)
+                randomStr = randomStr .. string.sub(chars, r, r)
+            end
+            label.Text = randomStr
+            task.wait(0.05)
+        end
+        label.Text = originalText
+    end
+end
+task.spawn(function() MatrixAnim(Title, "XCWARE") end)
+task.spawn(function() MatrixAnim(BarLabel, "XCWARE") end)
 
 -- [[ DRAGGABLE ]]
-local function Drag(f, h)
-    local d, i, s, p; h.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then d = true; s = input.Position; p = f.Position
-            input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then d = false end end)
+local function MakeDraggable(frame, handle)
+    local dragging, dragInput, dragStart, startPos
+    handle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+            end)
         end
     end)
     UIS.InputChanged:Connect(function(input)
-        if d and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position - s
-            f.Position = UDim2.new(p.X.Scale, p.X.Offset + delta.X, p.Y.Scale, p.Y.Offset + delta.Y)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
     end)
 end
-Drag(MainFrame, TopBar)
+MakeDraggable(MainFrame, TopBar)
 
--- [[ MINIMIZE / CLOSE SYSTEM ]]
-local function Toggle(show, isMin)
-    if show then
-        MinimizedBar.Visible = false; MainFrame.Visible = true
-        MainFrame:TweenSize(UDim2.new(0, 600, 0, 400), "Out", "Back", 0.5, true)
-        TweenService:Create(MainFrame, TweenInfo.new(0.4), {GroupTransparency = 0}):Play()
+-- [[ PITCH BLACK BUTTONS (X and -) ]]
+local function StyleButton(btn, text, pos)
+    btn.Parent = TopBar
+    btn.Text = text
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    btn.Size = UDim2.new(0, 32, 0, 32)
+    btn.Position = pos
+    btn.Font = Enum.Font.GothamBold
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    local stroke = Instance.new("UIStroke", btn)
+    stroke.Color = Color3.fromRGB(255, 255, 255)
+    stroke.Thickness = 1
+    return btn
+end
+
+local CloseBtn = Instance.new("TextButton")
+StyleButton(CloseBtn, "X", UDim2.new(1, -45, 0, 14))
+
+local MiniBtn = Instance.new("TextButton")
+StyleButton(MiniBtn, "-", UDim2.new(1, -85, 0, 14))
+
+-- [[ LOGIC: HIGHLIGHTING & EXECUTION ]]
+CodeEditor:GetPropertyChangedSignal("Text"):Connect(function()
+    local text = CodeEditor.Text
+    local keywords = {"print", "local", "function", "if", "then", "end", "else", "elseif", "return", "wait", "task.wait"}
+    for _, word in ipairs(keywords) do
+        text = text:gsub(word, '<font color="rgb(255, 100, 100)">'..word..'</font>')
+    end
+    text = text:gsub('"(.-)"', '<font color="rgb(100, 255, 100)">"%1"</font>')
+    text = text:gsub("'(.-)'", "<font color='rgb(100, 255, 100)'>'%1'</font>")
+    HighlightLabel.Text = text
+end)
+
+ExecBtn.MouseButton1Click:Connect(function()
+    local success, err = pcall(function() loadstring(CodeEditor.Text)() end)
+    if not success then warn("XCWARE ERROR: " .. err) end
+end)
+
+ClearBtn.MouseButton1Click:Connect(function() CodeEditor.Text = "" end)
+
+PasteBtn.MouseButton1Click:Connect(function()
+    local success, clip = pcall(function() return getclipboard() end)
+    if success then CodeEditor.Text = CodeEditor.Text .. clip end
+end)
+
+-- [[ SPLIT TOGGLE LOGIC ]]
+local isMinimized = false
+
+local function OpenFromTaskbar()
+    MinimizedBar:TweenSize(UDim2.new(0, 0, 0, 45), "Out", "Quart", 0.3, true)
+    task.wait(0.2)
+    MinimizedBar.Visible = false
+    MainFrame.Visible = true
+    MainFrame:TweenSize(UDim2.new(0, 600, 0, 400), "Out", "Back", 0.5, true)
+    TweenService:Create(MainFrame, TweenInfo.new(0.4), {GroupTransparency = 0}):Play()
+    isMinimized = false
+end
+
+local function CloseLogic()
+    MainFrame:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.4, true)
+    TweenService:Create(MainFrame, TweenInfo.new(0.4), {GroupTransparency = 1}):Play()
+    task.wait(0.4)
+    MainFrame.Visible = false
+    MinimizedBar.Visible = true
+    MinimizedBar.Size = UDim2.new(0, 0, 0, 45)
+    MinimizedBar:TweenSize(UDim2.new(0, 220, 0, 45), "Out", "Back", 0.5, true)
+end
+
+local function MinimizeLogic()
+    if not isMinimized then
+        MainFrame:TweenSize(UDim2.new(0, 600, 0, 60), "Out", "Quart", 0.4, true)
+        isMinimized = true
     else
-        if isMin then -- Minimize just hides the body
-            MainFrame:TweenSize(UDim2.new(0, 600, 0, 60), "Out", "Quart", 0.4, true)
-        else -- Close goes to bar
-            MainFrame:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.4, true)
-            TweenService:Create(MainFrame, TweenInfo.new(0.4), {GroupTransparency = 1}):Play()
-            task.wait(0.4); MainFrame.Visible = false; MinimizedBar.Visible = true
-        end
+        MainFrame:TweenSize(UDim2.new(0, 600, 0, 400), "Out", "Back", 0.4, true)
+        isMinimized = false
     end
 end
 
--- Close/Min Buttons
-local X = Instance.new("TextButton", TopBar)
-X.Text = "X"; X.Size = UDim2.new(0,30,0,30); X.Position = UDim2.new(1,-40,0,15); X.BackgroundColor3 = Color3.new(0,0,0)
-Instance.new("UIStroke", X).Color = Color3.new(1,0,0); Instance.new("UICorner", X); X.TextColor3 = Color3.new(1,1,1)
+CloseBtn.MouseButton1Click:Connect(CloseLogic)
+MiniBtn.MouseButton1Click:Connect(MinimizeLogic)
+MinimizedBar.MouseButton1Click:Connect(OpenFromTaskbar)
 
-local M = Instance.new("TextButton", TopBar)
-M.Text = "-"; M.Size = UDim2.new(0,30,0,30); M.Position = UDim2.new(1,-80,0,15); M.BackgroundColor3 = Color3.new(0,0,0)
-Instance.new("UIStroke", M).Color = Color3.new(1,1,1); Instance.new("UICorner", M); M.TextColor3 = Color3.new(1,1,1)
-
-X.MouseButton1Click:Connect(function() Toggle(false, false) end)
-M.MouseButton1Click:Connect(function() Toggle(false, true) end)
-MinimizedBar.MouseButton1Click:Connect(function() Toggle(true) end)
-
--- Initial Open
-task.wait(0.1); Toggle(true)
+task.wait(0.1)
+MainFrame.Visible = true
+MainFrame:TweenSize(UDim2.new(0, 600, 0, 400), "Out", "Back", 0.5, true)
+TweenService:Create(MainFrame, TweenInfo.new(0.4), {GroupTransparency = 0}):Play()
