@@ -1,7 +1,5 @@
 -- [[ XCWARE: MAIN GUI COMPONENT ]]
--- Themes: Pitch Black, Sleek UI
--- Features: Ultra-Smooth, No-Lag Executor, Screen-Space Matrix Popups, Script Storage + AutoSave, Chat Commands + Fixed CMDS GUI
--- UPDATED: Server-Side (SS) Support, Game-Sense Dashboard, Server Chatlogs
+-- UPDATED: Draggable Password GUI, New Password, Hidden Main UI on Start
 
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -11,33 +9,6 @@ local TeleportService = game:GetService("TeleportService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
-
--- [[ ADVANCED GLOBALS ]]
-local SSRemote = nil
-local ExecutionMode = "Client" 
-
--- [[ SERVER SIDE DETECTION ]]
-local function GetSS()
-    local Names = {"ExecuteRemote", "ServerSide", "Handshake", "Fire", "Vulnerability", "RunCode", "RemoteEvent", "execute", "Backdoor", "v3rm", "G_Remotes", "DataRemote"}
-    for _, v in pairs(game:GetDescendants()) do
-        if v:IsA("RemoteEvent") then
-            for _, name in pairs(Names) do
-                if v.Name:lower():find(name:lower()) then
-                    return v
-                end
-            end
-        end
-    end
-    return nil
-end
-SSRemote = GetSS()
-
--- Creating the ScreenGui
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "XcWare_System"
-ScreenGui.Parent = CoreGui
-ScreenGui.ResetOnSpawn = false 
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 -- [[ DRAGGABLE FUNCTION ]]
 local function MakeDraggable(frame, handle)
@@ -64,6 +35,116 @@ local function MakeDraggable(frame, handle)
     end)
 end
 
+-- Creating the ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "XcWare_System"
+ScreenGui.Parent = CoreGui
+ScreenGui.ResetOnSpawn = false 
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- [[ KEY SYSTEM OVERLAY ]]
+local LoginFrame = Instance.new("Frame")
+LoginFrame.Name = "LoginFrame"
+LoginFrame.Parent = ScreenGui
+LoginFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+LoginFrame.BorderSizePixel = 0
+LoginFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+LoginFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+LoginFrame.Size = UDim2.new(0, 300, 0, 200)
+LoginFrame.ZIndex = 100
+Instance.new("UICorner", LoginFrame)
+local LoginStroke = Instance.new("UIStroke", LoginFrame)
+LoginStroke.Color = Color3.new(1, 1, 1)
+LoginStroke.Thickness = 1.5
+
+-- Make LoginFrame Draggable
+MakeDraggable(LoginFrame, LoginFrame)
+
+local LoginLabel = Instance.new("TextLabel", LoginFrame)
+LoginLabel.Text = "Join Discord To Get Key"
+LoginLabel.Size = UDim2.new(1, 0, 0, 40)
+LoginLabel.Position = UDim2.new(0, 0, 0, 10)
+LoginLabel.BackgroundTransparency = 1
+LoginLabel.TextColor3 = Color3.new(1, 1, 1)
+LoginLabel.Font = Enum.Font.GothamBold
+LoginLabel.TextSize = 14
+
+local PassBox = Instance.new("TextBox", LoginFrame)
+PassBox.Name = "PasswordBox"
+PassBox.Size = UDim2.new(0, 240, 0, 35)
+PassBox.Position = UDim2.new(0.5, 0, 0.45, 0)
+PassBox.AnchorPoint = Vector2.new(0.5, 0.5)
+PassBox.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+PassBox.TextColor3 = Color3.new(1, 1, 1)
+PassBox.PlaceholderText = "putpassword"
+PassBox.Text = ""
+PassBox.Font = Enum.Font.Code
+PassBox.TextSize = 14
+Instance.new("UICorner", PassBox)
+Instance.new("UIStroke", PassBox).Color = Color3.fromRGB(60, 60, 60)
+
+local CopyDiscord = Instance.new("TextButton", LoginFrame)
+CopyDiscord.Size = UDim2.new(0, 240, 0, 30)
+CopyDiscord.Position = UDim2.new(0.5, 0, 0.7, 0)
+CopyDiscord.AnchorPoint = Vector2.new(0.5, 0.5)
+CopyDiscord.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+CopyDiscord.Text = "https://discord.gg/6hmSdNd3xU"
+CopyDiscord.TextColor3 = Color3.fromRGB(150, 150, 150)
+CopyDiscord.Font = Enum.Font.Code
+CopyDiscord.TextSize = 10
+Instance.new("UICorner", CopyDiscord)
+
+CopyDiscord.Activated:Connect(function()
+    setclipboard("https://discord.gg/6hmSdNd3xU")
+    CopyDiscord.Text = "COPIED TO CLIPBOARD!"
+    task.wait(2)
+    CopyDiscord.Text = "https://discord.gg/6hmSdNd3xU"
+end)
+
+-- Forward Declaration of MainFrame so it can be referenced in logic
+local MainFrame = Instance.new("CanvasGroup")
+
+-- Logic for Password Check
+PassBox.FocusLost:Connect(function(enter)
+    if enter then
+        if PassBox.Text == "XcWareIsBadass" then
+            LoginFrame:TweenPosition(UDim2.new(0.5, 0, -0.5, 0), "In", "Quart", 0.5, true)
+            task.wait(0.5)
+            LoginFrame:Destroy()
+            
+            -- Show the Main Gui
+            MainFrame.Visible = true
+            MainFrame:TweenSize(UDim2.new(0, 800, 0, 500), "Out", "Back", 0.5, true)
+            TweenService:Create(MainFrame, TweenInfo.new(0.4), {GroupTransparency = 0}):Play()
+        else
+            PassBox.Text = ""
+            PassBox.PlaceholderText = "WRONG PASSWORD"
+            task.wait(1.5)
+            PassBox.PlaceholderText = "putpassword"
+        end
+    end
+end)
+
+-- [[ ADVANCED GLOBALS ]]
+local SSRemote = nil
+local ExecutionMode = "Client" 
+
+-- [[ SERVER SIDE DETECTION ]]
+local function GetSS()
+    local Names = {"ExecuteRemote", "ServerSide", "Handshake", "Fire", "Vulnerability", "RunCode", "RemoteEvent", "execute", "Backdoor", "v3rm", "G_Remotes", "DataRemote"}
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("RemoteEvent") then
+            for _, name in pairs(Names) do
+                if v.Name:lower():find(name:lower()) then
+                    return v
+                end
+            end
+        end
+    end
+    return nil
+end
+SSRemote = GetSS()
+
 -- [[ ESP HELPER ]]
 local function ApplyESP(target)
     if target.Character and not target.Character:FindFirstChild("XcHighlight") then
@@ -76,7 +157,6 @@ end
 
 -- [[ COMMANDS LIST GUI ]]
 local CmdsFrame = Instance.new("CanvasGroup")
--- (Existing CmdsFrame logic remains unchanged)
 CmdsFrame.Name = "CmdsList"
 CmdsFrame.Parent = ScreenGui
 CmdsFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -134,7 +214,9 @@ AddClickableCmd("-cmds")
 AddClickableCmd("-openss")
 AddClickableCmd("-scripthub")
 AddClickableCmd("-rst")
+AddClickableCmd("-killscript", "-rstscript")
 AddClickableCmd("-sethealth (Num)", "-sethealth 100")
+AddClickableCmd("-givetool (Tool)", "-givetool tptool")
 
 CmdsScroll.CanvasSize = UDim2.new(0, 0, 0, CmdsListLayout.AbsoluteContentSize.Y)
 
@@ -243,7 +325,7 @@ _G.HandleCommand = function(msg)
             LocalPlayer.Character.Humanoid.Health = 0
             _G.ShowPopupRef("RESETTING")
         end
-    elseif command == "-rstscript" then
+    elseif command == "-rstscript" or command == "-killscript" then
         _G.ShowPopupRef("RESTARTING...")
         task.wait(0.5)
         ScreenGui:Destroy()
@@ -302,6 +384,9 @@ _G.HandleCommand = function(msg)
             end)
             tpTool.Parent = LocalPlayer.Backpack
             _G.ShowPopupRef("GIVEN: TP TOOL")
+        elseif toolName == "f3x" then
+            loadstring(game:GetObjects("rbxassetid://6695644299")[1].Source)()
+            _G.ShowPopupRef("GIVEN: F3X")
         end
     end
 end
@@ -309,7 +394,6 @@ end
 LocalPlayer.Chatted:Connect(_G.HandleCommand)
 
 -- [[ MAIN CONTAINER ]]
-local MainFrame = Instance.new("CanvasGroup")
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -319,32 +403,142 @@ MainFrame.Size = UDim2.new(0, 0, 0, 0)
 MainFrame.GroupTransparency = 1 
 MainFrame.ClipsDescendants = true
 MainFrame.Active = true 
+MainFrame.Visible = false -- Start hidden
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
+
+-- [[ TOP BAR ]]
+local TopBar = Instance.new("Frame", MainFrame)
+TopBar.Name = "TopBar"
+TopBar.BackgroundTransparency = 1 
+TopBar.Size = UDim2.new(1, 0, 0, 60)
+TopBar.ZIndex = 10
+TopBar.Active = true 
+local Title = Instance.new("TextLabel", TopBar)
+Title.Text = "XCWARE"
+Title.TextColor3 = Color3.new(1,1,1)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 24
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 25, 0, 0)
+Title.Size = UDim2.new(0, 130, 1, 0) 
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- [[ INTEGRATED COMMAND BOX ]]
+local CMDBoxFrame = Instance.new("Frame", TopBar)
+CMDBoxFrame.Name = "CommandBoxContainer"
+CMDBoxFrame.Size = UDim2.new(0, 350, 0, 30)
+CMDBoxFrame.Position = UDim2.new(0, 150, 0.5, 0)
+CMDBoxFrame.AnchorPoint = Vector2.new(0, 0.5)
+CMDBoxFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+CMDBoxFrame.ZIndex = 20
+Instance.new("UICorner", CMDBoxFrame)
+local CMDStroke = Instance.new("UIStroke", CMDBoxFrame)
+CMDStroke.Color = Color3.new(1, 1, 1)
+CMDStroke.Thickness = 1
+CMDStroke.Transparency = 0.5
+
+local CMDInput = Instance.new("TextBox", CMDBoxFrame)
+CMDInput.Size = UDim2.new(1, -20, 1, 0)
+CMDInput.Position = UDim2.new(0, 10, 0, 0)
+CMDInput.BackgroundTransparency = 1
+CMDInput.Text = ""
+CMDInput.PlaceholderText = "Run command... (e.g. -speed 50)"
+CMDInput.PlaceholderColor3 = Color3.fromRGB(80, 80, 80)
+CMDInput.TextColor3 = Color3.new(1, 1, 1)
+CMDInput.Font = Enum.Font.Code
+CMDInput.TextSize = 12
+CMDInput.ClearTextOnFocus = true
+CMDInput.ZIndex = 21
+
+CMDInput.FocusLost:Connect(function(enterPressed)
+    if enterPressed and CMDInput.Text ~= "" then
+        _G.HandleCommand(CMDInput.Text)
+        CMDInput.Text = ""
+    end
+end)
 
 -- [[ PAGE SCROLLING SYSTEM ]]
 local PageScroller = Instance.new("ScrollingFrame", MainFrame)
 PageScroller.Name = "PageScroller"
-PageScroller.Size = UDim2.new(1, 0, 1, -60)
+PageScroller.Size = UDim2.new(1, 0, 1, -60) 
 PageScroller.Position = UDim2.new(0, 0, 0, 60)
 PageScroller.BackgroundTransparency = 1
 PageScroller.BorderSizePixel = 0
-PageScroller.CanvasSize = UDim2.new(0, 0, 2, 0) 
+PageScroller.CanvasSize = UDim2.new(0, 0, 3, 0) 
 PageScroller.ScrollBarThickness = 0 
 PageScroller.ScrollingEnabled = true
 PageScroller.ScrollingDirection = Enum.ScrollingDirection.Y
 PageScroller.ElasticBehavior = Enum.ElasticBehavior.Always
 
+-- [[ SIDEBAR DRAGGABLE SLIDER ]]
+local SliderTrack = Instance.new("Frame", MainFrame)
+SliderTrack.Name = "SliderTrack"
+SliderTrack.Size = UDim2.new(0, 4, 1, -80)
+SliderTrack.Position = UDim2.new(1, -10, 0, 70)
+SliderTrack.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+SliderTrack.BorderSizePixel = 0
+Instance.new("UICorner", SliderTrack)
+
+local SliderThumb = Instance.new("Frame", SliderTrack)
+SliderThumb.Name = "SliderThumb"
+SliderThumb.Size = UDim2.new(1, 0, 0.333, 0) 
+SliderThumb.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+SliderThumb.BorderSizePixel = 0
+Instance.new("UICorner", SliderThumb)
+
+local isSliding = false
+SliderThumb.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        isSliding = true
+    end
+end)
+
+UIS.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        isSliding = false
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if isSliding and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local mousePos = input.Position.Y
+        local trackTop = SliderTrack.AbsolutePosition.Y
+        local trackHeight = SliderTrack.AbsoluteSize.Y
+        local thumbHeight = SliderThumb.AbsoluteSize.Y
+        local relativeY = math.clamp(mousePos - trackTop - (thumbHeight / 2), 0, trackHeight - thumbHeight)
+        local percent = relativeY / (trackHeight - thumbHeight)
+        local maxScroll = PageScroller.AbsoluteWindowSize.Y * 2
+        PageScroller.CanvasPosition = Vector2.new(0, percent * maxScroll)
+    end
+end)
+
+PageScroller:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
+    local maxScroll = PageScroller.AbsoluteWindowSize.Y * 2
+    if maxScroll > 0 then
+        local percent = math.clamp(PageScroller.CanvasPosition.Y / maxScroll, 0, 1)
+        local trackHeight = SliderTrack.AbsoluteSize.Y
+        local thumbHeight = SliderThumb.AbsoluteSize.Y
+        SliderThumb.Position = UDim2.new(0, 0, 0, percent * (trackHeight - thumbHeight))
+    end
+end)
+
 local Page1 = Instance.new("Frame", PageScroller)
 Page1.Name = "Page1"
-Page1.Size = UDim2.new(1, 0, 0.5, 0)
+Page1.Size = UDim2.new(1, 0, 0.333, 0)
 Page1.Position = UDim2.new(0, 0, 0, 0)
 Page1.BackgroundTransparency = 1
 
 local Page2 = Instance.new("Frame", PageScroller)
 Page2.Name = "Page2"
-Page2.Size = UDim2.new(1, 0, 0.5, 0)
-Page2.Position = UDim2.new(0, 0, 0.5, 0) 
+Page2.Size = UDim2.new(1, 0, 0.333, 0)
+Page2.Position = UDim2.new(0, 0, 0.333, 0) 
 Page2.BackgroundTransparency = 1
+
+local Page3 = Instance.new("Frame", PageScroller)
+Page3.Name = "Page3"
+Page3.Size = UDim2.new(1, 0, 0.333, 0)
+Page3.Position = UDim2.new(0, 0, 0.666, 0)
+Page3.BackgroundTransparency = 1
 
 -- [[ GAME-SENSE DASHBOARD (PAGE 2) ]]
 local DashFrame = Instance.new("Frame", Page2)
@@ -364,8 +558,8 @@ DashTitle.TextSize = 14
 DashTitle.BackgroundTransparency = 1
 
 local GameInfo = Instance.new("TextLabel", DashFrame)
-GameInfo.Size = UDim2.new(1, -20, 0, 100)
-GameInfo.Position = UDim2.new(0, 10, 0, 50)
+GameInfo.Size = UDim2.new(1, -20, 1, -50)
+GameInfo.Position = UDim2.new(0, 10, 0, 45)
 GameInfo.BackgroundTransparency = 1
 GameInfo.TextColor3 = Color3.fromRGB(200, 200, 200)
 GameInfo.Font = Enum.Font.Code
@@ -383,7 +577,7 @@ task.spawn(function()
     end
 end)
 
--- [[ SERVER CHATLOGS (NEW) ]]
+-- [[ SERVER CHATLOGS ]]
 local LogsFrame = Instance.new("Frame", Page2)
 LogsFrame.Size = UDim2.new(0, 385, 0, 260)
 LogsFrame.Position = UDim2.new(0, 390, 0, 20)
@@ -432,7 +626,7 @@ Players.PlayerAdded:Connect(function(p)
     p.Chatted:Connect(function(msg) AddChatLog(p, msg) end)
 end)
 
--- [[ INFOLOCK BUTTON (MOVED TO BOTTOM) ]]
+-- [[ INFOLOCK BUTTON ]]
 local InfoLockButton = Instance.new("TextButton")
 InfoLockButton.Name = "InfoLockButton"
 InfoLockButton.Parent = Page2
@@ -450,6 +644,76 @@ IL_Stroke.Color = Color3.fromRGB(100, 100, 100)
 InfoLockButton.Activated:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/VsVertex/XcWare/main/InfoLockAim.lua"))()
     _G.ShowPopupRef("INFOLOCK LOADED")
+end)
+
+-- [[ PAGE 3: UTILITY TOOL GUI ]]
+local UtilTitle = Instance.new("TextLabel", Page3)
+UtilTitle.Text = "UTILITY TOOLS"
+UtilTitle.Size = UDim2.new(1, 0, 0, 40)
+UtilTitle.Position = UDim2.new(0, 0, 0, 10)
+UtilTitle.TextColor3 = Color3.new(1,1,1)
+UtilTitle.Font = Enum.Font.GothamBold
+UtilTitle.TextSize = 18
+UtilTitle.BackgroundTransparency = 1
+
+local UtilGrid = Instance.new("Frame", Page3)
+UtilGrid.Size = UDim2.new(1, -50, 1, -80)
+UtilGrid.Position = UDim2.new(0, 25, 0, 60)
+UtilGrid.BackgroundTransparency = 1
+
+local UILayout = Instance.new("UIGridLayout", UtilGrid)
+UILayout.CellPadding = UDim2.new(0, 10, 0, 10)
+UILayout.CellSize = UDim2.new(0, 182, 0, 45)
+
+local function CreateUtilBtn(name, callback)
+    local btn = Instance.new("TextButton", UtilGrid)
+    btn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    btn.Text = name
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Font = Enum.Font.GothamMedium
+    btn.TextSize = 12
+    Instance.new("UICorner", btn)
+    local s = Instance.new("UIStroke", btn)
+    s.Color = Color3.fromRGB(60, 60, 60)
+    
+    btn.Activated:Connect(callback)
+    btn.MouseEnter:Connect(function() s.Color = Color3.new(1,1,1) end)
+    btn.MouseLeave:Connect(function() s.Color = Color3.fromRGB(60, 60, 60) end)
+end
+
+CreateUtilBtn("SET TO AUTO-EXEC", function()
+    if writefile then
+        local rawSource = [[loadstring(game:HttpGet("https://raw.githubusercontent.com/VsVertex/XcWare/main/Main.lua"))()]]
+        writefile("XcWare_Auto.lua", rawSource)
+        _G.ShowPopupRef("SAVED TO AUTOEXEC")
+    else
+        _G.ShowPopupRef("UNSUPPORTED EXECUTOR")
+    end
+end)
+CreateUtilBtn("FPS UNLOCKER", function() if setfpscap then setfpscap(999) _G.ShowPopupRef("FPS UNLOCKED") end end)
+CreateUtilBtn("ANTI-AFK", function()
+    LocalPlayer.Idled:Connect(function() game:GetService("VirtualUser"):CaptureController() game:GetService("VirtualUser"):ClickButton2(Vector2.new()) end)
+    _G.ShowPopupRef("ANTI-AFK ACTIVE")
+end)
+CreateUtilBtn("SERVER HOP", function() 
+    _G.ShowPopupRef("HOPPING...")
+    local Http = game:GetService("HttpService")
+    local Api = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"
+    local function GetServer()
+        local res = Http:JSONDecode(game:HttpGet(Api))
+        for _, v in pairs(res.data) do
+            if v.playing < v.maxPlayers and v.id ~= game.JobId then return v.id end
+        end
+    end
+    TeleportService:TeleportToPlaceInstance(game.PlaceId, GetServer())
+end)
+CreateUtilBtn("REJOIN", function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end)
+CreateUtilBtn("DARK DEX", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))() end)
+CreateUtilBtn("REMOTE SPY", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/exuax/SimpleSpyV3/main/main.lua"))() end)
+CreateUtilBtn("INFINITE YIELD", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))() end)
+CreateUtilBtn("CLEAR ALL ESP", function() 
+    for _, v in pairs(game:GetDescendants()) do if v.Name == "XcHighlight" then v:Destroy() end end
+    _G.ShowPopupRef("ESP CLEARED")
 end)
 
 -- Scroll Hint
@@ -566,23 +830,6 @@ local function ShowPopup(msg)
     end)
 end
 _G.ShowPopupRef = ShowPopup
-
--- [[ TOP BAR ]]
-local TopBar = Instance.new("Frame", MainFrame)
-TopBar.Name = "TopBar"
-TopBar.BackgroundTransparency = 1 
-TopBar.Size = UDim2.new(1, 0, 0, 60)
-TopBar.ZIndex = 10
-TopBar.Active = true 
-local Title = Instance.new("TextLabel", TopBar)
-Title.Text = "XCWARE"
-Title.TextColor3 = Color3.new(1,1,1)
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 24
-Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0, 25, 0, 0)
-Title.Size = UDim2.new(0, 250, 1, 0)
-Title.TextXAlignment = Enum.TextXAlignment.Left
 
 -- [[ EDITOR ]]
 local EditorScrolling = Instance.new("ScrollingFrame", Page1)
@@ -913,32 +1160,29 @@ local PageSwitchBtn = StyleButton(Instance.new("TextButton"), "2", UDim2.new(1, 
 local currentPage = 1
 local function GoToPage(pageNum)
     local tInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-    if pageNum == 2 then
-        currentPage = 2
-        PageSwitchBtn.Text = "1"
-        TweenService:Create(PageScroller, tInfo, {CanvasPosition = Vector2.new(0, PageScroller.AbsoluteSize.Y)}):Play()
-        ShowPopup("ADVANCED TOOLS")
-    else
-        currentPage = 1
+    local targetY = 0
+    local pageHeight = PageScroller.AbsoluteWindowSize.Y
+    if pageNum == 1 then
+        targetY = 0
         PageSwitchBtn.Text = "2"
-        TweenService:Create(PageScroller, tInfo, {CanvasPosition = Vector2.new(0, 0)}):Play()
         ShowPopup("EDITOR")
+    elseif pageNum == 2 then
+        targetY = pageHeight
+        PageSwitchBtn.Text = "3"
+        ShowPopup("ADVANCED TOOLS")
+    elseif pageNum == 3 then
+        targetY = pageHeight * 2
+        PageSwitchBtn.Text = "1"
+        ShowPopup("UTILITIES")
     end
+    currentPage = pageNum
+    TweenService:Create(PageScroller, tInfo, {CanvasPosition = Vector2.new(0, targetY)}):Play()
 end
 
 PageSwitchBtn.Activated:Connect(function()
-    GoToPage(currentPage == 1 and 2 or 1)
-end)
-
-PageScroller:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
-    local midPoint = PageScroller.AbsoluteSize.Y / 2
-    if PageScroller.CanvasPosition.Y > midPoint and currentPage == 1 then
-        currentPage = 2
-        PageSwitchBtn.Text = "1"
-    elseif PageScroller.CanvasPosition.Y < midPoint and currentPage == 2 then
-        currentPage = 1
-        PageSwitchBtn.Text = "2"
-    end
+    local nextP = currentPage + 1
+    if nextP > 3 then nextP = 1 end
+    GoToPage(nextP)
 end)
 
 CloseBtn.Activated:Connect(function()
@@ -971,7 +1215,4 @@ MakeDraggable(MainFrame, TopBar)
 -- Initialize
 LoadData()
 RefreshStorage()
-MainFrame.Visible = true
-MainFrame:TweenSize(UDim2.new(0, 800, 0, 500), "Out", "Back", 0.5, true)
-TweenService:Create(MainFrame, TweenInfo.new(0.4), {GroupTransparency = 0}):Play()
 MatrixAnim(Title, "XCWARE", false)
