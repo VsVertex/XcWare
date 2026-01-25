@@ -1,5 +1,5 @@
 # XcWare
 XcWare Executor
-STILL IN BETA
+STILL IN DEVELOPMENT 
 
 Use it at your own risk 
