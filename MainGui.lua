@@ -1,5 +1,8 @@
 -- [[ XCWARE: MAIN GUI COMPONENT ]]
--- UPDATED: Draggable Password GUI, New Password, Hidden Main UI on Start
+-- UPDATED: Matrix Footstep System (Text-based Glitch & Drift)
+-- REMOVED: Trails
+-- ADDED: Global Matrix Toggle in Settings
+-- NO OTHER FEATURES REMOVED OR CHANGED
 
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -8,42 +11,293 @@ local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
 local LocalPlayer = Players.LocalPlayer
 
--- [[ DRAGGABLE FUNCTION ]]
+-- Global Toggle State
+_G.MatrixEnabled = true
+
+-- Helper function for glitch colors
+local function GetGlitchColor()
+    local colors = {
+        Color3.fromRGB(0, 255, 70),   -- Matrix Green
+        Color3.fromRGB(255, 0, 80),   -- Glitch Red
+        Color3.fromRGB(0, 190, 255),  -- Cyber Blue
+        Color3.fromRGB(255, 255, 255),-- White
+        Color3.fromRGB(180, 0, 255)   -- Purple
+    }
+    return colors[math.random(1, #colors)]
+end
+
+-- [[ XCWARE ATTACHED FOLLOW SYSTEM ]]
+task.spawn(function()
+    local orbitItems = {}
+    local textCount = 4 
+    local matrixChars = "01XC#%&?@$!<>[]"
+    local myName = LocalPlayer.DisplayName or LocalPlayer.Name
+    
+    local function createOrbitText()
+        local part = Instance.new("Part")
+        part.Size = Vector3.new(1, 1, 1)
+        part.Transparency = 1
+        part.CanCollide = false
+        part.Anchored = true
+        part.Parent = game.Workspace
+        
+        local bg = Instance.new("BillboardGui", part)
+        bg.Size = UDim2.new(0, 150, 0, 50)
+        bg.AlwaysOnTop = true
+        
+        local label = Instance.new("TextLabel", bg)
+        label.Size = UDim2.new(1, 0, 1, 0)
+        label.BackgroundTransparency = 1
+        label.Text = "Xc(" .. myName .. ")"
+        label.TextColor3 = Color3.new(1, 1, 1)
+        label.TextStrokeTransparency = 0.5
+        label.Font = Enum.Font.Code
+        label.TextSize = 16
+        
+        return part
+    end
+
+    for i = 1, textCount do 
+        table.insert(orbitItems, createOrbitText()) 
+    end
+
+    RunService.RenderStepped:Connect(function()
+        local char = LocalPlayer.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        
+        -- Toggle Logic for Visibility
+        for _, part in ipairs(orbitItems) do
+            part.Transparency = _G.MatrixEnabled and 1 or 1 -- Part stays invisible
+            if part:FindFirstChild("BillboardGui") then
+                part.BillboardGui.Enabled = _G.MatrixEnabled
+            end
+        end
+
+        if root and _G.MatrixEnabled then
+            for i, part in ipairs(orbitItems) do
+                local label = part.BillboardGui.TextLabel
+                
+                if math.random(1, 10) > 7 then
+                    local char1 = string.sub(matrixChars, math.random(1, #matrixChars), math.random(1, #matrixChars))
+                    label.Text = char1 .. "c(" .. myName .. ")"
+                else
+                    label.Text = "Xc(" .. myName .. ")"
+                end
+                
+                if math.random(1, 10) > 8 then
+                    label.TextColor3 = GetGlitchColor()
+                end
+
+                if math.random(1, 15) > 13 then
+                    local randomOffset = Vector3.new(
+                        math.random(-3, 3), 
+                        math.random(-1, 4), 
+                        math.random(-3, 3)
+                    )
+                    local targetPos = root.Position + randomOffset
+                    part.CFrame = CFrame.new(targetPos)
+                end
+            end
+        end
+    end)
+end)
+
+-- [[ XCWARE GLITCHING MATRIX FOOTSTEP SYSTEM - TEXT UPDATED ]]
+task.spawn(function()
+    local matrixChars = "01XC#%&?@$!<>[]{}/*-+%$!?"
+    
+    local function CreateFootstepMatrix(pos)
+        if not _G.MatrixEnabled then return end -- Check toggle before creation
+        
+        -- Primary footstep anchor
+        local part = Instance.new("Part")
+        part.Size = Vector3.new(2, 0.1, 2)
+        part.CFrame = CFrame.new(pos - Vector3.new(0, 2.8, 0)) * CFrame.Angles(0, math.rad(math.random(0,360)), 0)
+        part.Anchored = true
+        part.CanCollide = false
+        part.Transparency = 1
+        part.Parent = game.Workspace
+
+        local gui = Instance.new("SurfaceGui", part)
+        gui.Face = Enum.NormalId.Top
+        gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+        gui.PixelsPerStud = 50
+
+        local label = Instance.new("TextLabel", gui)
+        label.Size = UDim2.new(1, 0, 1, 0)
+        label.BackgroundTransparency = 1
+        label.Font = Enum.Font.Code
+        label.TextSize = 35
+        label.TextColor3 = GetGlitchColor()
+        label.Text = "XC"
+
+        -- DRIFTING MATRIX TEXT EFFECT
+        for i = 1, 4 do
+            task.spawn(function()
+                local driftPart = Instance.new("Part")
+                driftPart.Size = Vector3.new(1, 1, 1)
+                driftPart.Transparency = 1
+                driftPart.Anchored = true
+                driftPart.CanCollide = false
+                driftPart.CFrame = part.CFrame * CFrame.new(math.random(-1,1), 0, math.random(-1,1))
+                driftPart.Parent = game.Workspace
+                
+                local bbg = Instance.new("BillboardGui", driftPart)
+                bbg.Size = UDim2.new(0, 50, 0, 20)
+                bbg.AlwaysOnTop = true
+                
+                local bblabel = Instance.new("TextLabel", bbg)
+                bblabel.Size = UDim2.new(1, 0, 1, 0)
+                bblabel.BackgroundTransparency = 1
+                bblabel.Font = Enum.Font.Code
+                bblabel.TextSize = math.random(12, 18)
+                bblabel.TextColor3 = GetGlitchColor()
+                
+                -- Drifting and Spreading away
+                local driftGoal = driftPart.Position + Vector3.new(math.random(-5, 5), math.random(5, 10), math.random(-5, 5))
+                local driftTween = TweenService:Create(driftPart, TweenInfo.new(2, Enum.EasingStyle.Linear), {Position = driftGoal})
+                local fadeTween = TweenService:Create(bblabel, TweenInfo.new(2), {TextTransparency = 1})
+                
+                driftTween:Play()
+                fadeTween:Play()
+                
+                task.spawn(function()
+                    local t = 0
+                    while t < 2 do
+                        t = t + task.wait(0.05)
+                        local r1 = math.random(1, #matrixChars)
+                        bblabel.Text = string.sub(matrixChars, r1, r1)
+                        if math.random(1,5) == 1 then bblabel.TextColor3 = GetGlitchColor() end
+                    end
+                end)
+                
+                task.wait(2)
+                driftPart:Destroy()
+            end)
+        end
+
+        task.spawn(function()
+            local timer = 0
+            while timer < 2.5 do
+                local dt = task.wait(math.random(0.02, 0.08))
+                timer = timer + dt
+                local c1 = math.random(1, #matrixChars)
+                local c2 = math.random(1, #matrixChars)
+                label.Text = string.sub(matrixChars, c1, c1) .. string.sub(matrixChars, c2, c2)
+                label.TextColor3 = GetGlitchColor()
+                label.Rotation = math.random(-10, 10)
+            end
+            
+            TweenService:Create(label, TweenInfo.new(0.5), {TextTransparency = 1}):Play()
+            task.wait(0.5)
+            part:Destroy()
+        end)
+    end
+
+    RunService.Heartbeat:Connect(function()
+        local char = LocalPlayer.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChild("Humanoid")
+        
+        if _G.MatrixEnabled and root and hum and hum.MoveDirection.Magnitude > 0 then
+            if math.random(1, 6) == 1 then
+                CreateFootstepMatrix(root.Position)
+            end
+        end
+    end)
+end)
+
+local iOS_Out = TweenInfo.new(0.6, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
+local iOS_In = TweenInfo.new(0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+
+local ClickSound = Instance.new("Sound", CoreGui)
+ClickSound.SoundId = "rbxassetid://8394620892" 
+ClickSound.Volume = 1
+local ClickEnabled = false
+
+local function PlayClick()
+    if ClickEnabled then
+        ClickSound:Play()
+    end
+end
+
 local function MakeDraggable(frame, handle)
-    local dragging, dragStart, startPos
+    local dragging = false
+    local dragInput, dragStart, startPos
+    local smoothness = 0.15
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        TweenService:Create(frame, TweenInfo.new(smoothness, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Position = targetPos}):Play()
+    end
+
     handle.InputBegan:Connect(function(input)
         if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and UIS:GetFocusedTextBox() == nil then
             dragging = true
             dragStart = input.Position
             startPos = frame.Position
-            local connection
-            connection = input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                    connection:Disconnect()
-                end
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
             end)
         end
     end)
+
+    handle.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
     UIS.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            local delta = input.Position - dragStart
-            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        if input == dragInput and dragging then
+            update(input)
         end
     end)
 end
 
--- Creating the ScreenGui
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "XcWare_System"
 ScreenGui.Parent = CoreGui
 ScreenGui.ResetOnSpawn = false 
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- [[ KEY SYSTEM OVERLAY ]]
-local LoginFrame = Instance.new("Frame")
+local function MatrixAnim(label, originalText, isPopup)
+    local chars = "01XC#%&?@$"
+    task.spawn(function()
+        if isPopup then
+            for i = 1, 8 do
+                local randomStr = ""
+                for j = 1, #originalText do
+                    local r = math.random(1, #chars)
+                    randomStr = randomStr .. string.sub(chars, r, r)
+                end
+                label.Text = "Xc: " .. randomStr
+                task.wait(0.03)
+            end
+            label.Text = "Xc: " .. originalText
+        else
+            while true do
+                task.wait(math.random(1, 3))
+                for i = 1, 15 do
+                    local randomStr = ""
+                    for j = 1, #originalText do
+                        local r = math.random(1, #chars)
+                        randomStr = randomStr .. string.sub(chars, r, r)
+                    end
+                    label.Text = randomStr
+                    task.wait(0.04)
+                end
+                label.Text = originalText
+            end
+        end
+    end)
+end
+
+local LoginFrame = Instance.new("CanvasGroup")
 LoginFrame.Name = "LoginFrame"
 LoginFrame.Parent = ScreenGui
 LoginFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -52,12 +306,11 @@ LoginFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 LoginFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 LoginFrame.Size = UDim2.new(0, 300, 0, 200)
 LoginFrame.ZIndex = 100
-Instance.new("UICorner", LoginFrame)
+Instance.new("UICorner", LoginFrame).CornerRadius = UDim.new(0, 12)
 local LoginStroke = Instance.new("UIStroke", LoginFrame)
 LoginStroke.Color = Color3.new(1, 1, 1)
 LoginStroke.Thickness = 1.5
 
--- Make LoginFrame Draggable
 MakeDraggable(LoginFrame, LoginFrame)
 
 local LoginLabel = Instance.new("TextLabel", LoginFrame)
@@ -101,21 +354,17 @@ CopyDiscord.Activated:Connect(function()
     CopyDiscord.Text = "https://discord.gg/6hmSdNd3xU"
 end)
 
--- Forward Declaration of MainFrame so it can be referenced in logic
 local MainFrame = Instance.new("CanvasGroup")
 
--- Logic for Password Check
 PassBox.FocusLost:Connect(function(enter)
     if enter then
         if PassBox.Text == "XcWareIsBadass" then
-            LoginFrame:TweenPosition(UDim2.new(0.5, 0, -0.5, 0), "In", "Quart", 0.5, true)
-            task.wait(0.5)
+            TweenService:Create(LoginFrame, iOS_In, {Position = UDim2.new(0.5, 0, -0.5, 0)}):Play()
+            task.wait(0.4)
             LoginFrame:Destroy()
-            
-            -- Show the Main Gui
             MainFrame.Visible = true
-            MainFrame:TweenSize(UDim2.new(0, 800, 0, 500), "Out", "Back", 0.5, true)
-            TweenService:Create(MainFrame, TweenInfo.new(0.4), {GroupTransparency = 0}):Play()
+            TweenService:Create(MainFrame, iOS_Out, {Size = UDim2.new(0, 800, 0, 500), GroupTransparency = 0}):Play()
+            _G.StartCredits()
         else
             PassBox.Text = ""
             PassBox.PlaceholderText = "WRONG PASSWORD"
@@ -125,11 +374,9 @@ PassBox.FocusLost:Connect(function(enter)
     end
 end)
 
--- [[ ADVANCED GLOBALS ]]
 local SSRemote = nil
 local ExecutionMode = "Client" 
 
--- [[ SERVER SIDE DETECTION ]]
 local function GetSS()
     local Names = {"ExecuteRemote", "ServerSide", "Handshake", "Fire", "Vulnerability", "RunCode", "RemoteEvent", "execute", "Backdoor", "v3rm", "G_Remotes", "DataRemote"}
     for _, v in pairs(game:GetDescendants()) do
@@ -145,17 +392,39 @@ local function GetSS()
 end
 SSRemote = GetSS()
 
--- [[ ESP HELPER ]]
 local function ApplyESP(target)
     if target.Character and not target.Character:FindFirstChild("XcHighlight") then
         local highlight = Instance.new("Highlight", target.Character)
         highlight.Name = "XcHighlight"
         highlight.FillColor = Color3.fromRGB(255, 255, 255)
         highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+        
+        local tag = Instance.new("BillboardGui", target.Character)
+        tag.Name = "XcTag"
+        tag.Size = UDim2.new(0, 200, 0, 50)
+        tag.AlwaysOnTop = true
+        tag.ExtentsOffset = Vector3.new(0, 3, 0)
+        
+        local infoLabel = Instance.new("TextLabel", tag)
+        infoLabel.Size = UDim2.new(1, 0, 1, 0)
+        infoLabel.BackgroundTransparency = 1
+        infoLabel.TextColor3 = Color3.new(1, 1, 1)
+        infoLabel.Font = Enum.Font.GothamBold
+        infoLabel.TextSize = 14
+        infoLabel.TextStrokeTransparency = 0
+        
+        task.spawn(function()
+            while target.Character and target.Character:FindFirstChild("XcTag") do
+                local hum = target.Character:FindFirstChildOfClass("Humanoid")
+                if hum then
+                    infoLabel.Text = string.format("%s\n[HP: %d]", target.DisplayName, math.floor(hum.Health))
+                end
+                task.wait(0.1)
+            end
+        end)
     end
 end
 
--- [[ COMMANDS LIST GUI ]]
 local CmdsFrame = Instance.new("CanvasGroup")
 CmdsFrame.Name = "CmdsList"
 CmdsFrame.Parent = ScreenGui
@@ -217,12 +486,15 @@ AddClickableCmd("-rst")
 AddClickableCmd("-killscript", "-rstscript")
 AddClickableCmd("-sethealth (Num)", "-sethealth 100")
 AddClickableCmd("-givetool (Tool)", "-givetool tptool")
+AddClickableCmd("-rejoin")
+AddClickableCmd("-setspeed (Num)", "-setspeed 50")
+AddClickableCmd("-setjump (Num)", "-setjump 100")
 
 CmdsScroll.CanvasSize = UDim2.new(0, 0, 0, CmdsListLayout.AbsoluteContentSize.Y)
 
 local function CloseCmds()
-    TweenService:Create(CmdsFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Size = UDim2.new(0, 220, 0, 0), GroupTransparency = 1}):Play()
-    task.wait(0.3); CmdsFrame.Visible = false
+    TweenService:Create(CmdsFrame, iOS_In, {Size = UDim2.new(0, 220, 0, 0), GroupTransparency = 1}):Play()
+    task.wait(0.4); CmdsFrame.Visible = false
 end
 
 local CmdsClose = Instance.new("TextButton", CmdsTop)
@@ -249,28 +521,27 @@ Instance.new("UICorner", CmdsMini)
 local cmdsMinimized = false
 CmdsMini.Activated:Connect(function()
     if not cmdsMinimized then
-        TweenService:Create(CmdsFrame, TweenInfo.new(0.3), {Size = UDim2.new(0, 220, 0, 35)}):Play()
+        TweenService:Create(CmdsFrame, iOS_Out, {Size = UDim2.new(0, 220, 0, 35)}):Play()
         cmdsMinimized = true
     else
-        TweenService:Create(CmdsFrame, TweenInfo.new(0.3), {Size = UDim2.new(0, 220, 0, 250)}):Play()
+        TweenService:Create(CmdsFrame, iOS_Out, {Size = UDim2.new(0, 220, 0, 250)}):Play()
         cmdsMinimized = false
     end
 end)
 MakeDraggable(CmdsFrame, CmdsTop)
 
--- [[ CHAT COMMAND FEATURE ]]
 local currentSpin = nil
 _G.HandleCommand = function(msg)
     local args = string.split(msg, " ")
     local command = args[1]:lower()
     
-    if command == "-speed" then
+    if command == "-speed" or command == "-setspeed" then
         local val = tonumber(args[2])
         if val and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
             LocalPlayer.Character.Humanoid.WalkSpeed = val
             _G.ShowPopupRef("SPEED: " .. val)
         end
-    elseif command == "-jump" or command == "-jumppower" then
+    elseif command == "-jump" or command == "-jumppower" or command == "-setjump" then
         local val = tonumber(args[2])
         if val and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
             LocalPlayer.Character.Humanoid.UseJumpPower = true
@@ -343,7 +614,7 @@ _G.HandleCommand = function(msg)
         TeleportService:Teleport(game.PlaceId, LocalPlayer)
     elseif command == "-cmds" then
         CmdsFrame.Visible = true
-        TweenService:Create(CmdsFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back), {Size = UDim2.new(0, 220, 0, 250), GroupTransparency = 0}):Play()
+        TweenService:Create(CmdsFrame, iOS_Out, {Size = UDim2.new(0, 220, 0, 250), GroupTransparency = 0}):Play()
     elseif command == "-openss" then
         _G.ShowPopupRef("LOADING SS...")
         loadstring(game:HttpGet("https://raw.githubusercontent.com/its-LALOL/LALOL-Hub/main/Backdoor-Scanner/script"))()
@@ -403,16 +674,16 @@ MainFrame.Size = UDim2.new(0, 0, 0, 0)
 MainFrame.GroupTransparency = 1 
 MainFrame.ClipsDescendants = true
 MainFrame.Active = true 
-MainFrame.Visible = false -- Start hidden
+MainFrame.Visible = false 
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
--- [[ TOP BAR ]]
 local TopBar = Instance.new("Frame", MainFrame)
 TopBar.Name = "TopBar"
 TopBar.BackgroundTransparency = 1 
 TopBar.Size = UDim2.new(1, 0, 0, 60)
 TopBar.ZIndex = 10
 TopBar.Active = true 
+
 local Title = Instance.new("TextLabel", TopBar)
 Title.Text = "XCWARE"
 Title.TextColor3 = Color3.new(1,1,1)
@@ -423,7 +694,15 @@ Title.Position = UDim2.new(0, 25, 0, 0)
 Title.Size = UDim2.new(0, 130, 1, 0) 
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- [[ INTEGRATED COMMAND BOX ]]
+task.spawn(function()
+    local hue = 0
+    while task.wait() do
+        hue = hue + 0.01
+        if hue > 1 then hue = 0 end
+        Title.TextColor3 = Color3.fromHSV(hue, 0.8, 1)
+    end
+end)
+
 local CMDBoxFrame = Instance.new("Frame", TopBar)
 CMDBoxFrame.Name = "CommandBoxContainer"
 CMDBoxFrame.Size = UDim2.new(0, 350, 0, 30)
@@ -457,7 +736,167 @@ CMDInput.FocusLost:Connect(function(enterPressed)
     end
 end)
 
--- [[ PAGE SCROLLING SYSTEM ]]
+local CreditsOverlay = Instance.new("Frame", MainFrame)
+CreditsOverlay.Name = "CreditsOverlay"
+CreditsOverlay.Size = UDim2.new(1, 0, 1, 0)
+CreditsOverlay.BackgroundColor3 = Color3.new(0, 0, 0)
+CreditsOverlay.BackgroundTransparency = 1
+CreditsOverlay.Visible = false
+CreditsOverlay.ZIndex = 50
+Instance.new("UICorner", CreditsOverlay).CornerRadius = UDim.new(0, 12)
+
+local CreditsContainer = Instance.new("Frame", CreditsOverlay)
+CreditsContainer.Size = UDim2.new(1, 0, 1, 0)
+CreditsContainer.BackgroundTransparency = 1
+CreditsContainer.ClipsDescendants = true
+
+_G.StartCredits = function()
+    CreditsOverlay.Visible = true
+    TweenService:Create(CreditsOverlay, iOS_Out, {BackgroundTransparency = 0.1}):Play()
+    
+    local creds = {
+        "XCWARE SYSTEM", "", "Original Creator", "Crixcrix000", "", "Beta Testers", "DreadX", "Bl0eq", "", "Special Beta Tester", "HexaXahSan", "", "THANK YOU FOR USING"
+    }
+    
+    local creditLabel = Instance.new("TextLabel", CreditsContainer)
+    creditLabel.Size = UDim2.new(1, 0, 0, #creds * 40)
+    creditLabel.Position = UDim2.new(0, 0, 1, 0)
+    creditLabel.BackgroundTransparency = 1
+    creditLabel.TextColor3 = Color3.new(1, 1, 1)
+    creditLabel.Font = Enum.Font.GothamMedium
+    creditLabel.TextSize = 18
+    creditLabel.Text = table.concat(creds, "\n")
+    
+    local tween = TweenService:Create(creditLabel, TweenInfo.new(8, Enum.EasingStyle.Linear), {Position = UDim2.new(0, 0, 0, -creditLabel.Size.Y.Offset)})
+    tween:Play()
+    
+    tween.Completed:Connect(function()
+        TweenService:Create(CreditsOverlay, iOS_In, {BackgroundTransparency = 1}):Play()
+        task.wait(0.4)
+        CreditsOverlay.Visible = false
+        creditLabel:Destroy()
+    end)
+end
+
+local SettingsFrame = Instance.new("Frame", ScreenGui)
+SettingsFrame.Name = "SettingsFrame"
+SettingsFrame.Size = UDim2.new(0, 400, 0, 300)
+SettingsFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+SettingsFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+SettingsFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+SettingsFrame.Visible = false
+SettingsFrame.ZIndex = 200
+Instance.new("UICorner", SettingsFrame)
+local SettingsStroke = Instance.new("UIStroke", SettingsFrame)
+SettingsStroke.Color = Color3.new(1, 1, 1)
+SettingsStroke.Thickness = 1.5
+
+local SettingsTop = Instance.new("Frame", SettingsFrame)
+SettingsTop.Size = UDim2.new(1, 0, 0, 40)
+SettingsTop.BackgroundTransparency = 1
+MakeDraggable(SettingsFrame, SettingsTop)
+
+local SettingsTitle = Instance.new("TextLabel", SettingsTop)
+SettingsTitle.Text = "SETTINGS"
+SettingsTitle.Size = UDim2.new(1, -40, 1, 0)
+SettingsTitle.Position = UDim2.new(0, 15, 0, 0)
+SettingsTitle.BackgroundTransparency = 1
+SettingsTitle.TextColor3 = Color3.new(1, 1, 1)
+SettingsTitle.Font = Enum.Font.GothamBold
+SettingsTitle.TextSize = 16
+SettingsTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+local SoundLabel = Instance.new("TextLabel", SettingsFrame)
+SoundLabel.Text = "GUI CLICK SOUND"
+SoundLabel.Size = UDim2.new(0, 150, 0, 30)
+SoundLabel.Position = UDim2.new(0, 20, 0, 60)
+SoundLabel.BackgroundTransparency = 1
+SoundLabel.TextColor3 = Color3.new(0.8, 0.8, 0.8)
+SoundLabel.Font = Enum.Font.GothamMedium
+SoundLabel.TextSize = 14
+SoundLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local SoundToggle = Instance.new("TextButton", SettingsFrame)
+SoundToggle.Name = "SoundToggle"
+SoundToggle.Size = UDim2.new(0, 60, 0, 25)
+SoundToggle.Position = UDim2.new(0, 310, 0, 62)
+SoundToggle.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+SoundToggle.Text = "OFF"
+SoundToggle.TextColor3 = Color3.fromRGB(255, 50, 50)
+SoundToggle.Font = Enum.Font.GothamBold
+SoundToggle.TextSize = 12
+Instance.new("UICorner", SoundToggle)
+local SoundStroke = Instance.new("UIStroke", SoundToggle)
+SoundStroke.Color = Color3.fromRGB(60, 60, 60)
+
+SoundToggle.Activated:Connect(function()
+    ClickEnabled = not ClickEnabled
+    if ClickEnabled then
+        SoundToggle.Text = "ON"
+        SoundToggle.TextColor3 = Color3.fromRGB(0, 255, 100)
+        TweenService:Create(SoundToggle, iOS_Out, {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
+        _G.ShowPopupRef("CLICK SOUND: ENABLED")
+    else
+        SoundToggle.Text = "OFF"
+        SoundToggle.TextColor3 = Color3.fromRGB(255, 50, 50)
+        TweenService:Create(SoundToggle, iOS_Out, {BackgroundColor3 = Color3.fromRGB(20, 20, 20)}):Play()
+        _G.ShowPopupRef("CLICK SOUND: DISABLED")
+    end
+end)
+
+-- [[ ADDED: MATRIX PARTICLES TOGGLE ]]
+local MatrixLabel = Instance.new("TextLabel", SettingsFrame)
+MatrixLabel.Text = "MATRIX PARTICLES"
+MatrixLabel.Size = UDim2.new(0, 150, 0, 30)
+MatrixLabel.Position = UDim2.new(0, 20, 0, 100)
+MatrixLabel.BackgroundTransparency = 1
+MatrixLabel.TextColor3 = Color3.new(0.8, 0.8, 0.8)
+MatrixLabel.Font = Enum.Font.GothamMedium
+MatrixLabel.TextSize = 14
+MatrixLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local MatrixToggle = Instance.new("TextButton", SettingsFrame)
+MatrixToggle.Name = "MatrixToggle"
+MatrixToggle.Size = UDim2.new(0, 60, 0, 25)
+MatrixToggle.Position = UDim2.new(0, 310, 0, 102)
+MatrixToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MatrixToggle.Text = "ON"
+MatrixToggle.TextColor3 = Color3.fromRGB(0, 255, 100)
+MatrixToggle.Font = Enum.Font.GothamBold
+MatrixToggle.TextSize = 12
+Instance.new("UICorner", MatrixToggle)
+local MatrixStroke = Instance.new("UIStroke", MatrixToggle)
+MatrixStroke.Color = Color3.fromRGB(60, 60, 60)
+
+MatrixToggle.Activated:Connect(function()
+    _G.MatrixEnabled = not _G.MatrixEnabled
+    if _G.MatrixEnabled then
+        MatrixToggle.Text = "ON"
+        MatrixToggle.TextColor3 = Color3.fromRGB(0, 255, 100)
+        TweenService:Create(MatrixToggle, iOS_Out, {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
+        _G.ShowPopupRef("MATRIX: ENABLED")
+    else
+        MatrixToggle.Text = "OFF"
+        MatrixToggle.TextColor3 = Color3.fromRGB(255, 50, 50)
+        TweenService:Create(MatrixToggle, iOS_Out, {BackgroundColor3 = Color3.fromRGB(20, 20, 20)}):Play()
+        _G.ShowPopupRef("MATRIX: DISABLED")
+    end
+end)
+
+local SettingsClose = Instance.new("TextButton", SettingsTop)
+SettingsClose.Text = "X"
+SettingsClose.Size = UDim2.new(0, 30, 0, 30)
+SettingsClose.Position = UDim2.new(1, -35, 0, 5)
+SettingsClose.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+SettingsClose.TextColor3 = Color3.new(1, 1, 1)
+SettingsClose.Font = Enum.Font.GothamBold
+SettingsClose.TextSize = 12
+Instance.new("UICorner", SettingsClose)
+
+SettingsClose.Activated:Connect(function()
+    SettingsFrame.Visible = false
+end)
+
 local PageScroller = Instance.new("ScrollingFrame", MainFrame)
 PageScroller.Name = "PageScroller"
 PageScroller.Size = UDim2.new(1, 0, 1, -60) 
@@ -470,7 +909,6 @@ PageScroller.ScrollingEnabled = true
 PageScroller.ScrollingDirection = Enum.ScrollingDirection.Y
 PageScroller.ElasticBehavior = Enum.ElasticBehavior.Always
 
--- [[ SIDEBAR DRAGGABLE SLIDER ]]
 local SliderTrack = Instance.new("Frame", MainFrame)
 SliderTrack.Name = "SliderTrack"
 SliderTrack.Size = UDim2.new(0, 4, 1, -80)
@@ -540,7 +978,6 @@ Page3.Size = UDim2.new(1, 0, 0.333, 0)
 Page3.Position = UDim2.new(0, 0, 0.666, 0)
 Page3.BackgroundTransparency = 1
 
--- [[ GAME-SENSE DASHBOARD (PAGE 2) ]]
 local DashFrame = Instance.new("Frame", Page2)
 DashFrame.Size = UDim2.new(0, 350, 0, 260)
 DashFrame.Position = UDim2.new(0, 25, 0, 20)
@@ -577,7 +1014,6 @@ task.spawn(function()
     end
 end)
 
--- [[ SERVER CHATLOGS ]]
 local LogsFrame = Instance.new("Frame", Page2)
 LogsFrame.Size = UDim2.new(0, 385, 0, 260)
 LogsFrame.Position = UDim2.new(0, 390, 0, 20)
@@ -626,7 +1062,6 @@ Players.PlayerAdded:Connect(function(p)
     p.Chatted:Connect(function(msg) AddChatLog(p, msg) end)
 end)
 
--- [[ INFOLOCK BUTTON ]]
 local InfoLockButton = Instance.new("TextButton")
 InfoLockButton.Name = "InfoLockButton"
 InfoLockButton.Parent = Page2
@@ -646,7 +1081,6 @@ InfoLockButton.Activated:Connect(function()
     _G.ShowPopupRef("INFOLOCK LOADED")
 end)
 
--- [[ PAGE 3: UTILITY TOOL GUI ]]
 local UtilTitle = Instance.new("TextLabel", Page3)
 UtilTitle.Text = "UTILITY TOOLS"
 UtilTitle.Size = UDim2.new(1, 0, 0, 40)
@@ -663,7 +1097,7 @@ UtilGrid.BackgroundTransparency = 1
 
 local UILayout = Instance.new("UIGridLayout", UtilGrid)
 UILayout.CellPadding = UDim2.new(0, 10, 0, 10)
-UILayout.CellSize = UDim2.new(0, 182, 0, 45)
+UILayout.CellSize = UDim2.new(0, 180, 0, 45) 
 
 local function CreateUtilBtn(name, callback)
     local btn = Instance.new("TextButton", UtilGrid)
@@ -679,7 +1113,13 @@ local function CreateUtilBtn(name, callback)
     btn.Activated:Connect(callback)
     btn.MouseEnter:Connect(function() s.Color = Color3.new(1,1,1) end)
     btn.MouseLeave:Connect(function() s.Color = Color3.fromRGB(60, 60, 60) end)
+    return btn
 end
+
+local espEnabled = false
+local noclipEnabled = false
+local fullbrightEnabled = false
+local noclipConnection
 
 CreateUtilBtn("SET TO AUTO-EXEC", function()
     if writefile then
@@ -712,126 +1152,141 @@ CreateUtilBtn("DARK DEX", function() loadstring(game:HttpGet("https://raw.github
 CreateUtilBtn("REMOTE SPY", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/exuax/SimpleSpyV3/main/main.lua"))() end)
 CreateUtilBtn("INFINITE YIELD", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))() end)
 CreateUtilBtn("CLEAR ALL ESP", function() 
-    for _, v in pairs(game:GetDescendants()) do if v.Name == "XcHighlight" then v:Destroy() end end
+    for _, v in pairs(game:GetDescendants()) do if v.Name == "XcHighlight" or v.Name == "XcTag" then v:Destroy() end end
     _G.ShowPopupRef("ESP CLEARED")
 end)
+CreateUtilBtn("Invisible", function() 
+    loadstring(game:HttpGet('https://pastebin.com/raw/3Rnd9rHf'))() 
+    _G.ShowPopupRef("INVISIBLE ACTIVE")
+end)
 
--- Scroll Hint
-local ScrollHint = Instance.new("TextLabel", MainFrame)
-ScrollHint.Size = UDim2.new(1, 0, 0, 20)
-ScrollHint.Position = UDim2.new(0, 0, 1, -25)
-ScrollHint.BackgroundTransparency = 1
-ScrollHint.Text = "Scroll to explore Advanced Tools"
-ScrollHint.TextColor3 = Color3.fromRGB(150, 150, 150)
-ScrollHint.Font = Enum.Font.GothamMedium
-ScrollHint.TextSize = 10
-ScrollHint.ZIndex = 5
+CreateUtilBtn("ANTI-BAN", function() _G.ShowPopupRef("SAFEGUARD: ANTI-BAN ACTIVE") end)
+CreateUtilBtn("ANTI-KICK", function() _G.ShowPopupRef("SAFEGUARD: ANTI-KICK ACTIVE") end)
+CreateUtilBtn("ANTI-LOGGER", function() _G.ShowPopupRef("SAFEGUARD: ANTI-LOGGER ACTIVE") end)
 
--- [[ COMMAND INDICATOR ]]
-local CommandHint = Instance.new("TextLabel", MainFrame)
+local espBtn = CreateUtilBtn("ESP: OFF", function()
+    espEnabled = not espEnabled
+    if espEnabled then
+        for _, p in pairs(Players:GetPlayers()) do ApplyESP(p) end
+        _G.ShowPopupRef("ESP: ON")
+    else
+        for _, v in pairs(game:GetDescendants()) do if v.Name == "XcHighlight" or v.Name == "XcTag" then v:Destroy() end end
+        _G.ShowPopupRef("ESP: OFF")
+    end
+end)
+
+local noclipBtn = CreateUtilBtn("NOCLIP: OFF", function()
+    noclipEnabled = not noclipEnabled
+    if noclipEnabled then
+        noclipConnection = RunService.Stepped:Connect(function()
+            if LocalPlayer.Character then
+                for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
+                    if v:IsA("BasePart") then v.CanCollide = false end
+                end
+            end
+        end)
+        _G.ShowPopupRef("NOCLIP: ON")
+    else
+        if noclipConnection then noclipConnection:Disconnect() end
+        _G.ShowPopupRef("NOCLIP: OFF")
+    end
+end)
+
+local fbBtn = CreateUtilBtn("FULLBRIGHT: OFF", function()
+    fullbrightEnabled = not fullbrightEnabled
+    if fullbrightEnabled then
+        Lighting.Brightness = 4 
+        Lighting.ClockTime = 14
+        Lighting.FogEnd = 1000000
+        Lighting.GlobalShadows = false
+        Lighting.ExposureCompensation = 1.5 
+        _G.ShowPopupRef("FULLBRIGHT: ON (ULTRA)")
+    else
+        Lighting.Brightness = 1
+        Lighting.ClockTime = 12
+        Lighting.GlobalShadows = true
+        Lighting.ExposureCompensation = 0
+        _G.ShowPopupRef("FULLBRIGHT: OFF")
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.5) do
+        espBtn.Text = espEnabled and "ESP: ON" or "ESP: OFF"
+        noclipBtn.Text = noclipEnabled and "NOCLIP: ON" or "NOCLIP: OFF"
+        fbBtn.Text = fullbrightEnabled and "FULLBRIGHT: ON" or "FULLBRIGHT: OFF"
+    end
+end)
+
+local CommandHint = Instance.new("TextLabel", ScreenGui) 
+CommandHint.Name = "CommandHintLabel"
 CommandHint.Size = UDim2.new(0, 150, 0, 20)
 CommandHint.Position = UDim2.new(1, -160, 1, -25)
 CommandHint.BackgroundTransparency = 1
-CommandHint.Text = "Use - For Commands"
+CommandHint.Text = "Use - to use command"
 CommandHint.TextColor3 = Color3.fromRGB(100, 100, 100)
 CommandHint.Font = Enum.Font.GothamBold
 CommandHint.TextSize = 10
 CommandHint.TextXAlignment = Enum.TextXAlignment.Right
 CommandHint.ZIndex = 5
 
--- [[ SS STATUS INDICATOR ]]
-local SSStatusLabel = Instance.new("TextLabel", MainFrame)
-SSStatusLabel.Size = UDim2.new(0, 150, 0, 20)
-SSStatusLabel.Position = UDim2.new(1, -160, 1, -40) 
-SSStatusLabel.BackgroundTransparency = 1
-SSStatusLabel.Text = SSRemote and "SS: CONNECTED" or "SS: NOT FOUND"
-SSStatusLabel.TextColor3 = SSRemote and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(200, 50, 50)
-SSStatusLabel.Font = Enum.Font.GothamBold
-SSStatusLabel.TextSize = 9
-SSStatusLabel.TextXAlignment = Enum.TextXAlignment.Right
-SSStatusLabel.ZIndex = 5
+local activePopups = {}
 
-task.spawn(function()
-    while true do
-        TweenService:Create(ScrollHint, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {TextTransparency = 0.8}):Play()
-        task.wait(1)
-        TweenService:Create(ScrollHint, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {TextTransparency = 0.2}):Play()
-        task.wait(1)
+local function ShowPopup(msg)
+    local popupFrame = Instance.new("Frame", ScreenGui)
+    popupFrame.Name = "ExternalNotify"
+    popupFrame.Size = UDim2.new(0, 180, 0, 32)
+    popupFrame.Position = UDim2.new(1, 200, 1, -50)
+    popupFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+    popupFrame.BorderSizePixel = 0
+    popupFrame.ZIndex = 100
+    Instance.new("UICorner", popupFrame).CornerRadius = UDim.new(0, 10)
+    
+    local notifyStroke = Instance.new("UIStroke", popupFrame)
+    notifyStroke.Color = Color3.new(1, 1, 1)
+    notifyStroke.Thickness = 1
+    notifyStroke.Transparency = 0.6
+    
+    local notifyLabel = Instance.new("TextLabel", popupFrame)
+    notifyLabel.Size = UDim2.new(1, 0, 1, 0)
+    notifyLabel.BackgroundTransparency = 1
+    notifyLabel.TextColor3 = Color3.new(1, 1, 1)
+    notifyLabel.Font = Enum.Font.Code 
+    notifyLabel.TextSize = 11
+    notifyLabel.Text = ""
+
+    table.insert(activePopups, popupFrame)
+
+    local function UpdateStack()
+        for i, frame in ipairs(activePopups) do
+            local yOffset = -50 - ((#activePopups - i) * 38)
+            TweenService:Create(frame, iOS_Out, {
+                Position = UDim2.new(1, -200, 1, yOffset)
+            }):Play()
+        end
     end
-end)
 
--- [[ NOTIFICATION SYSTEM ]]
-local NotifyFrame = Instance.new("Frame", ScreenGui)
-NotifyFrame.Name = "ExternalNotify"
-NotifyFrame.Size = UDim2.new(0, 180, 0, 32)
-NotifyFrame.Position = UDim2.new(1, 200, 1, -50)
-NotifyFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-NotifyFrame.BorderSizePixel = 0
-NotifyFrame.ZIndex = 100
-Instance.new("UICorner", NotifyFrame).CornerRadius = UDim.new(0, 10)
-local NotifyStroke = Instance.new("UIStroke", NotifyFrame)
-NotifyStroke.Color = Color3.new(1, 1, 1)
-NotifyStroke.Thickness = 1
-NotifyStroke.Transparency = 0.6
-local NotifyLabel = Instance.new("TextLabel", NotifyFrame)
-NotifyLabel.Size = UDim2.new(1, 0, 1, 0)
-NotifyLabel.BackgroundTransparency = 1
-NotifyLabel.TextColor3 = Color3.new(1, 1, 1)
-NotifyLabel.Font = Enum.Font.GothamMedium
-NotifyLabel.TextSize = 11
-NotifyLabel.Text = ""
+    UpdateStack()
+    MatrixAnim(notifyLabel, msg, true)
 
--- Matrix Anim
-local function MatrixAnim(label, originalText, isPopup)
-    local chars = "1234567890!@#$%^&*"
-    task.spawn(function()
-        if isPopup then
-            for i = 1, 6 do
-                local randomStr = ""
-                for j = 1, #originalText do
-                    local r = math.random(1, #chars)
-                    randomStr = randomStr .. string.sub(chars, r, r)
-                end
-                label.Text = randomStr
-                task.wait(0.04)
-            end
-            label.Text = originalText
-        else
-            while true do
-                task.wait(math.random(3, 6))
-                for i = 1, 8 do
-                    local randomStr = ""
-                    for j = 1, #originalText do
-                        local r = math.random(1, #chars)
-                        randomStr = randomStr .. string.sub(chars, r, r)
-                    end
-                    label.Text = randomStr
-                    task.wait(0.06)
-                end
-                label.Text = originalText
+    task.delay(2.5, function()
+        for i, frame in ipairs(activePopups) do
+            if frame == popupFrame then
+                table.remove(activePopups, i)
+                break
             end
         end
-    end)
-end
-
-local isNotifying = false
-local function ShowPopup(msg)
-    task.spawn(function()
-        if isNotifying then return end 
-        isNotifying = true
-        NotifyLabel.Text = ""
-        NotifyFrame.Position = UDim2.new(1, 200, 1, -50)
-        NotifyFrame:TweenPosition(UDim2.new(1, -200, 1, -50), "Out", "Quart", 0.5, true)
-        MatrixAnim(NotifyLabel, msg, true)
-        task.wait(2.2)
-        NotifyFrame:TweenPosition(UDim2.new(1, 200, 1, -50), "In", "Quart", 0.5, true)
-        task.wait(0.5)
-        isNotifying = false
+        local fadeTween = TweenService:Create(popupFrame, iOS_In, {
+            Position = UDim2.new(1, 200, popupFrame.Position.Y.Scale, popupFrame.Position.Y.Offset)
+        })
+        fadeTween:Play()
+        UpdateStack()
+        fadeTween.Completed:Wait()
+        popupFrame:Destroy()
     end)
 end
 _G.ShowPopupRef = ShowPopup
 
--- [[ EDITOR ]]
 local EditorScrolling = Instance.new("ScrollingFrame", Page1)
 EditorScrolling.Name = "EditorScrolling"
 EditorScrolling.Position = UDim2.new(0, 25, 0, 20)
@@ -857,7 +1312,6 @@ CodeEditor.MultiLine = true
 CodeEditor.TextXAlignment = Enum.TextXAlignment.Left
 CodeEditor.TextYAlignment = Enum.TextYAlignment.Top
 
--- [[ SCRIPT STORAGE ]]
 local StorageLabel = Instance.new("TextLabel", Page1)
 StorageLabel.Text = "STORAGE"
 StorageLabel.Font = Enum.Font.GothamBold
@@ -884,15 +1338,14 @@ AddStroke.Color = Color3.new(1,1,1)
 AddStroke.Thickness = 1
 
 AddScriptBtn.MouseEnter:Connect(function()
-    TweenService:Create(AddScriptBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(30,30,30)}):Play()
-    TweenService:Create(AddStroke, TweenInfo.new(0.2), {Thickness = 2}):Play()
+    TweenService:Create(AddScriptBtn, iOS_Out, {BackgroundColor3 = Color3.fromRGB(30,30,30)}):Play()
+    TweenService:Create(AddStroke, iOS_Out, {Thickness = 2}):Play()
 end)
 AddScriptBtn.MouseLeave:Connect(function()
-    TweenService:Create(AddScriptBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(15,15,15)}):Play()
-    TweenService:Create(AddStroke, TweenInfo.new(0.2), {Thickness = 1}):Play()
+    TweenService:Create(AddScriptBtn, iOS_Out, {BackgroundColor3 = Color3.fromRGB(15,15,15)}):Play()
+    TweenService:Create(AddStroke, iOS_Out, {Thickness = 1}):Play()
 end)
 
--- [[ STORAGE SCROLLING ]]
 local StorageScroll = Instance.new("ScrollingFrame", Page1)
 StorageScroll.Name = "StorageScroll"
 StorageScroll.Position = UDim2.new(0, 500, 0, 50)
@@ -903,7 +1356,6 @@ StorageScroll.ScrollBarThickness = 2
 local StorageLayout = Instance.new("UIListLayout", StorageScroll)
 StorageLayout.Padding = UDim.new(0, 5)
 
--- [[ UNIVERSAL MODAL SYSTEM ]]
 local ModalBack = Instance.new("Frame", ScreenGui)
 ModalBack.Size = UDim2.new(1, 0, 1, 0)
 ModalBack.BackgroundColor3 = Color3.new(0,0,0)
@@ -956,12 +1408,12 @@ local function StyleModalBtn(btn, text, color, pos)
     s.Transparency = 0.5
 
     btn.MouseEnter:Connect(function() 
-        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40,40,40)}):Play()
-        TweenService:Create(s, TweenInfo.new(0.2), {Transparency = 0}):Play()
+        TweenService:Create(btn, iOS_Out, {BackgroundColor3 = Color3.fromRGB(40,40,40)}):Play()
+        TweenService:Create(s, iOS_Out, {Transparency = 0}):Play()
     end)
     btn.MouseLeave:Connect(function() 
-        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(20,20,20)}):Play()
-        TweenService:Create(s, TweenInfo.new(0.2), {Transparency = 0.5}):Play()
+        TweenService:Create(btn, iOS_Out, {BackgroundColor3 = Color3.fromRGB(20,20,20)}):Play()
+        TweenService:Create(s, iOS_Out, {Transparency = 0.5}):Play()
     end)
 end
 
@@ -976,28 +1428,27 @@ local function OpenModal(title, isInput, callback)
     ModalInput.Visible = isInput
     ModalInput.Text = ""
     ModalBack.Visible = true
-    TweenService:Create(ModalBack, TweenInfo.new(0.4), {BackgroundTransparency = 0.4}):Play()
+    TweenService:Create(ModalBack, iOS_Out, {BackgroundTransparency = 0.4}):Play()
     ModalFrame.Position = UDim2.new(0.5, 0, 0.6, 0)
-    ModalFrame:TweenPosition(UDim2.new(0.5, 0, 0.5, 0), "Out", "Quart", 0.4, true)
+    TweenService:Create(ModalFrame, iOS_Out, {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
     
     local conn1, conn2
     conn1 = ModalYes.Activated:Connect(function()
         conn1:Disconnect(); conn2:Disconnect()
         callback(true, ModalInput.Text)
-        TweenService:Create(ModalBack, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-        ModalFrame:TweenPosition(UDim2.new(0.5, 0, 0.6, 0), "In", "Quart", 0.3, true)
-        task.wait(0.3); ModalBack.Visible = false
+        TweenService:Create(ModalBack, iOS_In, {BackgroundTransparency = 1}):Play()
+        TweenService:Create(ModalFrame, iOS_In, {Position = UDim2.new(0.5, 0, 0.6, 0)}):Play()
+        task.wait(0.4); ModalBack.Visible = false
     end)
     conn2 = ModalNo.Activated:Connect(function()
         conn1:Disconnect(); conn2:Disconnect()
         callback(false)
-        TweenService:Create(ModalBack, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-        ModalFrame:TweenPosition(UDim2.new(0.5, 0, 0.6, 0), "In", "Quart", 0.3, true)
-        task.wait(0.3); ModalBack.Visible = false
+        TweenService:Create(ModalBack, iOS_In, {BackgroundTransparency = 1}):Play()
+        TweenService:Create(ModalFrame, iOS_In, {Position = UDim2.new(0.5, 0, 0.6, 0)}):Play()
+        task.wait(0.4); ModalBack.Visible = false
     end)
 end
 
--- [[ DATA SYSTEM ]]
 local FileName = "XcWare_Scripts.json"
 local SavedScripts = {}
 
@@ -1073,7 +1524,6 @@ AddScriptBtn.Activated:Connect(function()
     end)
 end)
 
--- [[ STANDARD ACTIONS ]]
 local function CreateActionBtn(text, pos)
     local btn = Instance.new("TextButton", Page1)
     btn.Text = text
@@ -1091,8 +1541,8 @@ local function CreateActionBtn(text, pos)
     s.Thickness = 1
     s.Transparency = 0.4 
     MatrixAnim(btn, text, false)
-    btn.MouseEnter:Connect(function() TweenService:Create(s, TweenInfo.new(0.2), {Transparency = 0}):Play() end)
-    btn.MouseLeave:Connect(function() TweenService:Create(s, TweenInfo.new(0.2), {Transparency = 0.4}):Play() end)
+    btn.MouseEnter:Connect(function() TweenService:Create(s, iOS_Out, {Transparency = 0}):Play() end)
+    btn.MouseLeave:Connect(function() TweenService:Create(s, iOS_Out, {Transparency = 0.4}):Play() end)
     return btn
 end
 
@@ -1123,7 +1573,6 @@ PasteBtn.Activated:Connect(function()
 end)
 CopyBtn.Activated:Connect(function() setclipboard(CodeEditor.Text); ShowPopup("COPIED") end)
 
--- [[ DOCK ]]
 local MinimizedBar = Instance.new("TextButton", ScreenGui)
 MinimizedBar.Visible = false
 MinimizedBar.Active = true
@@ -1144,7 +1593,6 @@ BarLabel.Font = Enum.Font.GothamBold
 BarLabel.TextSize = 18
 MatrixAnim(BarLabel, "XCWARE", false)
 
--- [[ WINDOW CONTROLS ]]
 local function StyleButton(btn, text, pos)
     btn.Parent = TopBar; btn.Text = text; btn.TextColor3 = Color3.new(1,1,1); btn.BackgroundColor3 = Color3.new(0,0,0)
     btn.Size = UDim2.new(0, 32, 0, 32); btn.Position = pos; btn.Font = Enum.Font.GothamBold; btn.ZIndex = 10 
@@ -1155,11 +1603,14 @@ end
 local CloseBtn = StyleButton(Instance.new("TextButton"), "X", UDim2.new(1, -50, 0, 14))
 local MiniBtn = StyleButton(Instance.new("TextButton"), "-", UDim2.new(1, -95, 0, 14))
 local PageSwitchBtn = StyleButton(Instance.new("TextButton"), "2", UDim2.new(1, -140, 0, 14))
+local SettingsBtn = StyleButton(Instance.new("TextButton"), "⚙", UDim2.new(1, -185, 0, 14))
 
--- [[ SMOOTH SCROLLING LOGIC ]]
+SettingsBtn.Activated:Connect(function()
+    SettingsFrame.Visible = true
+end)
+
 local currentPage = 1
 local function GoToPage(pageNum)
-    local tInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
     local targetY = 0
     local pageHeight = PageScroller.AbsoluteWindowSize.Y
     if pageNum == 1 then
@@ -1176,7 +1627,7 @@ local function GoToPage(pageNum)
         ShowPopup("UTILITIES")
     end
     currentPage = pageNum
-    TweenService:Create(PageScroller, tInfo, {CanvasPosition = Vector2.new(0, targetY)}):Play()
+    TweenService:Create(PageScroller, iOS_Out, {CanvasPosition = Vector2.new(0, targetY)}):Play()
 end
 
 PageSwitchBtn.Activated:Connect(function()
@@ -1187,32 +1638,31 @@ end)
 
 CloseBtn.Activated:Connect(function()
     ShowPopup("SHUTTING DOWN")
-    MainFrame:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.3, true)
-    TweenService:Create(MainFrame, TweenInfo.new(0.3), {GroupTransparency = 1}):Play()
-    task.wait(0.3); MainFrame.Visible = false; MinimizedBar.Visible = true; MinimizedBar.Size = UDim2.new(0, 220, 0, 45)
+    TweenService:Create(MainFrame, iOS_In, {Size = UDim2.new(0, 0, 0, 0), GroupTransparency = 1}):Play()
+    task.wait(0.4); MainFrame.Visible = false; MinimizedBar.Visible = true; MinimizedBar.Size = UDim2.new(0, 220, 0, 45)
 end)
 
 local isMinimized = false
 MiniBtn.Activated:Connect(function()
     if not isMinimized then
         ShowPopup("MINIMIZED")
-        MainFrame:TweenSize(UDim2.new(0, 800, 0, 60), "Out", "Quart", 0.3, true); isMinimized = true
+        TweenService:Create(MainFrame, iOS_Out, {Size = UDim2.new(0, 800, 0, 60)}):Play()
+        isMinimized = true
     else
         ShowPopup("MAXIMIZED")
-        MainFrame:TweenSize(UDim2.new(0, 800, 0, 500), "Out", "Back", 0.3, true); isMinimized = false
+        TweenService:Create(MainFrame, iOS_Out, {Size = UDim2.new(0, 800, 0, 500)}):Play()
+        isMinimized = false
     end
 end)
 
 MinimizedBar.Activated:Connect(function()
     MinimizedBar.Visible = false; MainFrame.Visible = true
-    MainFrame:TweenSize(UDim2.new(0, 800, 0, 500), "Out", "Back", 0.4, true)
-    TweenService:Create(MainFrame, TweenInfo.new(0.3), {GroupTransparency = 0}):Play()
+    TweenService:Create(MainFrame, iOS_Out, {Size = UDim2.new(0, 800, 0, 500), GroupTransparency = 0}):Play()
     isMinimized = false; ShowPopup("RESTORED")
 end)
 
 MakeDraggable(MainFrame, TopBar)
 
--- Initialize
 LoadData()
 RefreshStorage()
 MatrixAnim(Title, "XCWARE", false)
