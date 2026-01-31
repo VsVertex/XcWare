@@ -2,6 +2,7 @@
 -- UPDATED: Matrix Footstep System (Text-based Glitch & Drift)
 -- REMOVED: Trails
 -- ADDED: Global Matrix Toggle in Settings
+-- ADDED: Player Rank Label (Developer/Script Tester/Member)
 -- NO OTHER FEATURES REMOVED OR CHANGED
 
 local UIS = game:GetService("UserInputService")
@@ -690,9 +691,35 @@ Title.TextColor3 = Color3.new(1,1,1)
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 24
 Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0, 25, 0, 0)
+Title.Position = UDim2.new(0, 25, 0, -8) -- Adjusted for Rank
 Title.Size = UDim2.new(0, 130, 1, 0) 
 Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- [[ PLAYER RANK LABEL ]]
+local RankLabel = Instance.new("TextLabel", TopBar)
+RankLabel.Name = "PlayerRank"
+RankLabel.Size = UDim2.new(0, 130, 0, 20)
+RankLabel.Position = UDim2.new(0, 25, 0, 32)
+RankLabel.BackgroundTransparency = 1
+RankLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+RankLabel.Font = Enum.Font.Code
+RankLabel.TextSize = 11
+RankLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local function SetRank()
+    local user = LocalPlayer.Name
+    if user == "Crixcrix000" then
+        RankLabel.Text = "[ DEVELOPER ]"
+        RankLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+    elseif user == "bl0eq" or user == "blox22bolu" then
+        RankLabel.Text = "[ SCRIPT TESTER ]"
+        RankLabel.TextColor3 = Color3.fromRGB(0, 190, 255)
+    else
+        RankLabel.Text = "[ MEMBER ]"
+        RankLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+    end
+end
+SetRank()
 
 task.spawn(function()
     local hue = 0
