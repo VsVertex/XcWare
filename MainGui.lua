@@ -778,6 +778,81 @@ _G.StartCredits = function()
     end)
 end
 
+-- [[ ADDED: UPDATED LOGS GUI ]]
+local UpdateLogFrame = Instance.new("CanvasGroup")
+UpdateLogFrame.Name = "UpdateLogs"
+UpdateLogFrame.Parent = ScreenGui
+UpdateLogFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+UpdateLogFrame.Size = UDim2.new(0, 350, 0, 400)
+UpdateLogFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+UpdateLogFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+UpdateLogFrame.Visible = false
+UpdateLogFrame.ZIndex = 300
+Instance.new("UICorner", UpdateLogFrame)
+local LogStroke = Instance.new("UIStroke", UpdateLogFrame)
+LogStroke.Color = Color3.new(1,1,1)
+LogStroke.Thickness = 1.5
+
+local LogTop = Instance.new("Frame", UpdateLogFrame)
+LogTop.Size = UDim2.new(1, 0, 0, 40)
+LogTop.BackgroundTransparency = 1
+MakeDraggable(UpdateLogFrame, LogTop)
+
+local LogTitle = Instance.new("TextLabel", LogTop)
+LogTitle.Text = "SCRIPT UPDATE LOG"
+LogTitle.Size = UDim2.new(1, -40, 1, 0)
+LogTitle.Position = UDim2.new(0, 15, 0, 0)
+LogTitle.BackgroundTransparency = 1
+LogTitle.TextColor3 = Color3.new(1, 1, 1)
+LogTitle.Font = Enum.Font.GothamBold
+LogTitle.TextSize = 16
+LogTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+local LogClose = Instance.new("TextButton", LogTop)
+LogClose.Text = "X"
+LogClose.Size = UDim2.new(0, 25, 0, 25)
+LogClose.Position = UDim2.new(1, -35, 0, 7)
+LogClose.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+LogClose.TextColor3 = Color3.new(1, 1, 1)
+LogClose.Font = Enum.Font.GothamBold
+LogClose.TextSize = 12
+Instance.new("UICorner", LogClose)
+LogClose.Activated:Connect(function() UpdateLogFrame.Visible = false end)
+
+local LogScroll = Instance.new("ScrollingFrame", UpdateLogFrame)
+LogScroll.Size = UDim2.new(1, -20, 1, -50)
+LogScroll.Position = UDim2.new(0, 10, 0, 45)
+LogScroll.BackgroundTransparency = 1
+LogScroll.BorderSizePixel = 0
+LogScroll.ScrollBarThickness = 3
+LogScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+LogScroll.ScrollingDirection = Enum.ScrollingDirection.Y
+local LogLayout = Instance.new("UIListLayout", LogScroll)
+LogLayout.Padding = UDim.new(0, 8)
+
+local function AddLogItem(txt, isHeader)
+    local item = Instance.new("TextLabel", LogScroll)
+    item.Size = UDim2.new(1, -5, 0, 20)
+    item.BackgroundTransparency = 1
+    item.TextColor3 = isHeader and Color3.new(0, 1, 0.5) or Color3.new(0.9, 0.9, 0.9)
+    item.Font = isHeader and Enum.Font.GothamBold or Enum.Font.Code
+    item.TextSize = isHeader and 14 or 12
+    item.Text = txt
+    item.TextXAlignment = Enum.TextXAlignment.Left
+    item.TextWrapped = true
+    item.AutomaticSize = Enum.AutomaticSize.Y
+    LogScroll.CanvasSize = UDim2.new(0, 0, 0, LogLayout.AbsoluteContentSize.Y)
+end
+
+AddLogItem("VERSION 2.1.0 - MATRIX UPDATE", true)
+AddLogItem("- Added Glitching Matrix Footstep System")
+AddLogItem("- Added Matrix Particles Toggle in Settings")
+AddLogItem("- Added This Update Log GUI")
+AddLogItem("- Removed Old Trails (Replaced by Matrix)")
+AddLogItem("- Fixed UI Draggable stuttering")
+AddLogItem("- Added 'XcWare Old' execution button")
+AddLogItem("- Improved Command Execution reliability")
+
 local SettingsFrame = Instance.new("Frame", ScreenGui)
 SettingsFrame.Name = "SettingsFrame"
 SettingsFrame.Size = UDim2.new(0, 400, 0, 300)
@@ -1610,6 +1685,12 @@ local CloseBtn = StyleButton(Instance.new("TextButton"), "X", UDim2.new(1, -50, 
 local MiniBtn = StyleButton(Instance.new("TextButton"), "-", UDim2.new(1, -95, 0, 14))
 local PageSwitchBtn = StyleButton(Instance.new("TextButton"), "2", UDim2.new(1, -140, 0, 14))
 local SettingsBtn = StyleButton(Instance.new("TextButton"), "⚙", UDim2.new(1, -185, 0, 14))
+local LogsBtn = StyleButton(Instance.new("TextButton"), "L", UDim2.new(1, -230, 0, 14)) -- ADDED LOGS TOGGLE
+
+LogsBtn.Activated:Connect(function()
+    UpdateLogFrame.Visible = not UpdateLogFrame.Visible
+    if UpdateLogFrame.Visible then _G.ShowPopupRef("VIEWING LOGS") end
+end)
 
 SettingsBtn.Activated:Connect(function()
     SettingsFrame.Visible = true
