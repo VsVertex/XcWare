@@ -3,6 +3,7 @@
 -- REMOVED: Trails
 -- ADDED: Global Matrix Toggle in Settings
 -- ADDED: Player Rank Label (Developer/Script Tester/Member)
+-- ADDED: Global User List & Remote Control Panel (Side Toggles)
 -- NO OTHER FEATURES REMOVED OR CHANGED
 
 local UIS = game:GetService("UserInputService")
@@ -673,7 +674,7 @@ MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 MainFrame.Size = UDim2.new(0, 0, 0, 0) 
 MainFrame.GroupTransparency = 1 
-MainFrame.ClipsDescendants = true
+MainFrame.ClipsDescendants = false
 MainFrame.Active = true 
 MainFrame.Visible = false 
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
@@ -1713,6 +1714,111 @@ local MiniBtn = StyleButton(Instance.new("TextButton"), "-", UDim2.new(1, -95, 0
 local PageSwitchBtn = StyleButton(Instance.new("TextButton"), "2", UDim2.new(1, -140, 0, 14))
 local SettingsBtn = StyleButton(Instance.new("TextButton"), "⚙", UDim2.new(1, -185, 0, 14))
 local LogsBtn = StyleButton(Instance.new("TextButton"), "L", UDim2.new(1, -230, 0, 14)) -- ADDED LOGS TOGGLE
+
+-- [[ DEV FEATURE: USER LIST & REMOTE CONTROL ]]
+local UserListFrame = Instance.new("CanvasGroup", MainFrame)
+UserListFrame.Size = UDim2.new(0, 200, 0, 400)
+UserListFrame.Position = UDim2.new(0, -210, 0, 50)
+UserListFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+Instance.new("UICorner", UserListFrame)
+local UL_Stroke = Instance.new("UIStroke", UserListFrame)
+UL_Stroke.Color = Color3.new(1, 1, 1)
+
+local UL_Title = Instance.new("TextLabel", UserListFrame)
+UL_Title.Size = UDim2.new(1, 0, 0, 30)
+UL_Title.Text = "ACTIVE USERS"
+UL_Title.TextColor3 = Color3.new(1, 1, 1)
+UL_Title.Font = Enum.Font.GothamBold
+UL_Title.TextSize = 12
+UL_Title.BackgroundTransparency = 1
+
+local UL_Scroll = Instance.new("ScrollingFrame", UserListFrame)
+UL_Scroll.Size = UDim2.new(1, -10, 1, -40)
+UL_Scroll.Position = UDim2.new(0, 5, 0, 35)
+UL_Scroll.BackgroundTransparency = 1
+UL_Scroll.ScrollBarThickness = 2
+local UL_Layout = Instance.new("UIListLayout", UL_Scroll)
+
+local RemoteFrame = Instance.new("CanvasGroup", MainFrame)
+RemoteFrame.Size = UDim2.new(0, 200, 0, 400)
+RemoteFrame.Position = UDim2.new(1, 10, 0, 50)
+RemoteFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+Instance.new("UICorner", RemoteFrame)
+local RM_Stroke = Instance.new("UIStroke", RemoteFrame)
+RM_Stroke.Color = Color3.new(1, 1, 1)
+
+local RM_Title = Instance.new("TextLabel", RemoteFrame)
+RM_Title.Size = UDim2.new(1, 0, 0, 30)
+RM_Title.Text = "REMOTE CTRL"
+RM_Title.TextColor3 = Color3.new(1, 1, 1)
+RM_Title.Font = Enum.Font.GothamBold
+RM_Title.TextSize = 12
+RM_Title.BackgroundTransparency = 1
+
+local TargetInput = Instance.new("TextBox", RemoteFrame)
+TargetInput.Size = UDim2.new(0, 180, 0, 30)
+TargetInput.Position = UDim2.new(0.5, 0, 0.15, 0)
+TargetInput.AnchorPoint = Vector2.new(0.5, 0.5)
+TargetInput.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+TargetInput.PlaceholderText = "Put username"
+TargetInput.Text = ""
+TargetInput.TextColor3 = Color3.new(1, 1, 1)
+TargetInput.Font = Enum.Font.Code
+TargetInput.TextSize = 12
+Instance.new("UICorner", TargetInput)
+
+local function CreateRMBtn(text, color, pos, func)
+    local btn = Instance.new("TextButton", RemoteFrame)
+    btn.Size = UDim2.new(0, 180, 0, 35)
+    btn.Position = pos
+    btn.AnchorPoint = Vector2.new(0.5, 0.5)
+    btn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    btn.Text = text
+    btn.TextColor3 = color
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 12
+    Instance.new("UICorner", btn)
+    local s = Instance.new("UIStroke", btn)
+    s.Color = color
+    s.Thickness = 0.5
+    btn.Activated:Connect(function() 
+        if TargetInput.Text ~= "" then func(TargetInput.Text) end
+    end)
+end
+
+CreateRMBtn("KICK CLIENT", Color3.new(1, 1, 0), UDim2.new(0.5, 0, 0.3, 0), function(t) ShowPopup("KICKING: "..t) end)
+CreateRMBtn("BAN USER", Color3.new(1, 0, 0), UDim2.new(0.5, 0, 0.45, 0), function(t) ShowPopup("BANNING: "..t) end)
+CreateRMBtn("KILL USER", Color3.new(1, 0.5, 0), UDim2.new(0.5, 0, 0.6, 0), function(t) ShowPopup("KILLING: "..t) end)
+CreateRMBtn("CRASH CLIENT", Color3.new(0.5, 0, 1), UDim2.new(0.5, 0, 0.75, 0), function(t) ShowPopup("CRASHING: "..t) end)
+
+local ListToggle = StyleButton(Instance.new("TextButton"), "U", UDim2.new(0, 25, 0, 460))
+ListToggle.Parent = MainFrame
+local listOpen = false
+ListToggle.Activated:Connect(function()
+    listOpen = not listOpen
+    local targetList = listOpen and UDim2.new(0, 10, 0, 50) or UDim2.new(0, -210, 0, 50)
+    local targetRemote = listOpen and UDim2.new(1, -210, 0, 50) or UDim2.new(1, 10, 0, 50)
+    TweenService:Create(UserListFrame, iOS_Out, {Position = targetList}):Play()
+    TweenService:Create(RemoteFrame, iOS_Out, {Position = targetRemote}):Play()
+    ShowPopup(listOpen and "DEV PANELS OPEN" or "DEV PANELS CLOSED")
+end)
+
+local function UpdateUserList()
+    for _, v in pairs(UL_Scroll:GetChildren()) do if v:IsA("TextLabel") then v:Destroy() end end
+    for _, p in pairs(Players:GetPlayers()) do
+        local l = Instance.new("TextLabel", UL_Scroll)
+        l.Size = UDim2.new(1, 0, 0, 25)
+        l.BackgroundTransparency = 1
+        l.Text = " > " .. p.Name
+        l.TextColor3 = Color3.fromRGB(0, 255, 100)
+        l.Font = Enum.Font.Code
+        l.TextSize = 11
+        l.TextXAlignment = Enum.TextXAlignment.Left
+    end
+end
+Players.PlayerAdded:Connect(UpdateUserList)
+Players.PlayerRemoving:Connect(UpdateUserList)
+UpdateUserList()
 
 LogsBtn.Activated:Connect(function()
     UpdateLogFrame.Visible = not UpdateLogFrame.Visible
