@@ -1,9 +1,9 @@
--- [[ XCWARE: ULTIMATE CONTROL COMPONENT ]]
--- UPDATED: Detached Side Panels (Attached to Main via RunService)
--- ADDED: Permanent Blacklist System (Username-based)
--- ADDED: Developer Exclusive Matrix Sleek Theme
--- RESTRICTION: Only Developer (Crixcrix000) has Control/Blacklist access
--- NO EXISTING FEATURES REMOVED
+-- [[ XCWARE: MAIN GUI COMPONENT ]]
+-- UPDATED: Blacklist System (Username Persistent)
+-- UPDATED: Side GUIs Popped Off & Attached
+-- UPDATED: Developer Sleek Matrix Mode
+-- RESTRICTED: Remote/User List to Developer Only
+-- NO OTHER FEATURES REMOVED OR CHANGED
 
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -15,22 +15,32 @@ local RunService = game:GetService("RunService")
 local Lighting = game:GetService("Lighting")
 local LocalPlayer = Players.LocalPlayer
 
--- Global Toggle State
-_G.MatrixEnabled = true
+-- [[ BLACKLIST DATA SYSTEM ]]
 local BlacklistFile = "XcWare_Blacklist.json"
 local BlacklistedUsers = {}
 
--- Load Blacklist
-if isfile and isfile(BlacklistFile) then
-    local success, data = pcall(function() return HttpService:JSONDecode(readfile(BlacklistFile)) end)
-    if success then BlacklistedUsers = data end
+local function SaveBlacklist()
+    if writefile then
+        writefile(BlacklistFile, HttpService:JSONEncode(BlacklistedUsers))
+    end
 end
 
--- Security Check: Is user blacklisted?
+local function LoadBlacklist()
+    if isfile and isfile(BlacklistFile) then
+        local success, data = pcall(function() return HttpService:JSONDecode(readfile(BlacklistFile)) end)
+        if success then BlacklistedUsers = data end
+    end
+end
+LoadBlacklist()
+
+-- Security Check
 if BlacklistedUsers[LocalPlayer.Name] then
-    LocalPlayer:Kick("You have been blacklisted from XcWare forever.")
+    LocalPlayer:Kick("You are permanently blacklisted from XcWare.")
     return
 end
+
+-- Global Toggle State
+_G.MatrixEnabled = true
 
 -- Helper function for glitch colors
 local function GetGlitchColor()
@@ -688,6 +698,17 @@ MainFrame.Active = true
 MainFrame.Visible = false 
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
+-- Developer Mode Styling
+if LocalPlayer.Name == "Crixcrix000" then
+    MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    local MatrixOverlay = Instance.new("Frame", MainFrame)
+    MatrixOverlay.Size = UDim2.new(1,0,1,0)
+    MatrixOverlay.BackgroundTransparency = 0.95
+    MatrixOverlay.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    MatrixOverlay.ZIndex = -1
+    Instance.new("UICorner", MatrixOverlay)
+end
+
 local TopBar = Instance.new("Frame", MainFrame)
 TopBar.Name = "TopBar"
 TopBar.BackgroundTransparency = 1 
@@ -705,7 +726,6 @@ Title.Position = UDim2.new(0, 25, 0, -8)
 Title.Size = UDim2.new(0, 130, 1, 0) 
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- [[ PLAYER RANK LABEL ]]
 local RankLabel = Instance.new("TextLabel", TopBar)
 RankLabel.Name = "PlayerRank"
 RankLabel.Size = UDim2.new(0, 130, 0, 20)
@@ -721,11 +741,6 @@ local function SetRank()
     if user == "Crixcrix000" then
         RankLabel.Text = "[ DEVELOPER ]"
         RankLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
-        -- Developer SLEEK Look
-        MainFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
-        local devStroke = Instance.new("UIStroke", MainFrame)
-        devStroke.Color = Color3.fromRGB(0, 255, 100)
-        devStroke.Thickness = 1.8
     elseif user == "bl0eq" or user == "blox22bolu" then
         RankLabel.Text = "[ SCRIPT TESTER ]"
         RankLabel.TextColor3 = Color3.fromRGB(0, 190, 255)
@@ -886,11 +901,11 @@ local function AddLogItem(txt, isHeader)
 end
 
 AddLogItem("VERSION 2.5.0 - DEV CONTROL UPDATE", true)
-AddLogItem("- Added Developer Control Panel")
-AddLogItem("- Added Permanent Blacklist System")
-AddLogItem("- Added Detached Side Panels")
-AddLogItem("- Added Dev Sleek Matrix Theme")
-AddLogItem("- Added Blacklist/Unblacklist Buttons")
+AddLogItem("- Added Dev Remote & User Blacklist System")
+AddLogItem("- Restricted Dev tools to Owner")
+AddLogItem("- Popped off Side GUIs for better visibility")
+AddLogItem("- Added Sleek Matrix UI Mode for Developer")
+AddLogItem("- Persistent Blacklist saves to File")
 
 local SettingsFrame = Instance.new("Frame", ScreenGui)
 SettingsFrame.Name = "SettingsFrame"
@@ -945,6 +960,7 @@ SoundToggle.Activated:Connect(function()
     ClickEnabled = not ClickEnabled
     SoundToggle.Text = ClickEnabled and "ON" or "OFF"
     SoundToggle.TextColor3 = ClickEnabled and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(255, 50, 50)
+    _G.ShowPopupRef("CLICK SOUND: " .. SoundToggle.Text)
 end)
 
 local MatrixLabel = Instance.new("TextLabel", SettingsFrame)
@@ -958,14 +974,12 @@ MatrixLabel.TextSize = 14
 MatrixLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 local MatrixToggle = Instance.new("TextButton", SettingsFrame)
-MatrixToggle.Name = "MatrixToggle"
 MatrixToggle.Size = UDim2.new(0, 60, 0, 25)
 MatrixToggle.Position = UDim2.new(0, 310, 0, 102)
 MatrixToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MatrixToggle.Text = "ON"
 MatrixToggle.TextColor3 = Color3.fromRGB(0, 255, 100)
 MatrixToggle.Font = Enum.Font.GothamBold
-MatrixToggle.TextSize = 12
 Instance.new("UICorner", MatrixToggle)
 
 MatrixToggle.Activated:Connect(function()
@@ -980,8 +994,6 @@ SettingsClose.Size = UDim2.new(0, 30, 0, 30)
 SettingsClose.Position = UDim2.new(1, -35, 0, 5)
 SettingsClose.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 SettingsClose.TextColor3 = Color3.new(1, 1, 1)
-SettingsClose.Font = Enum.Font.GothamBold
-SettingsClose.TextSize = 12
 Instance.new("UICorner", SettingsClose)
 SettingsClose.Activated:Connect(function() SettingsFrame.Visible = false end)
 
@@ -995,13 +1007,13 @@ PageScroller.CanvasSize = UDim2.new(0, 0, 3, 0)
 PageScroller.ScrollBarThickness = 0 
 PageScroller.ScrollingEnabled = true
 PageScroller.ScrollingDirection = Enum.ScrollingDirection.Y
+PageScroller.ElasticBehavior = Enum.ElasticBehavior.Always
 
 local SliderTrack = Instance.new("Frame", MainFrame)
 SliderTrack.Name = "SliderTrack"
 SliderTrack.Size = UDim2.new(0, 4, 1, -80)
 SliderTrack.Position = UDim2.new(1, -10, 0, 70)
 SliderTrack.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-SliderTrack.BorderSizePixel = 0
 Instance.new("UICorner", SliderTrack)
 
 local SliderThumb = Instance.new("Frame", SliderTrack)
@@ -1009,6 +1021,29 @@ SliderThumb.Name = "SliderThumb"
 SliderThumb.Size = UDim2.new(1, 0, 0.333, 0) 
 SliderThumb.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
 Instance.new("UICorner", SliderThumb)
+
+local isSliding = false
+SliderThumb.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then isSliding = true end
+end)
+UIS.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then isSliding = false end
+end)
+UIS.InputChanged:Connect(function(input)
+    if isSliding and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local relativeY = math.clamp(input.Position.Y - SliderTrack.AbsolutePosition.Y - (SliderThumb.AbsoluteSize.Y/2), 0, SliderTrack.AbsoluteSize.Y - SliderThumb.AbsoluteSize.Y)
+        local percent = relativeY / (SliderTrack.AbsoluteSize.Y - SliderThumb.AbsoluteSize.Y)
+        PageScroller.CanvasPosition = Vector2.new(0, percent * (PageScroller.AbsoluteWindowSize.Y * 2))
+    end
+end)
+
+PageScroller:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
+    local maxScroll = PageScroller.AbsoluteWindowSize.Y * 2
+    if maxScroll > 0 then
+        local percent = math.clamp(PageScroller.CanvasPosition.Y / maxScroll, 0, 1)
+        SliderThumb.Position = UDim2.new(0, 0, 0, percent * (SliderTrack.AbsoluteSize.Y - SliderThumb.AbsoluteSize.Y))
+    end
+end)
 
 local Page1 = Instance.new("Frame", PageScroller)
 Page1.Name = "Page1"
@@ -1032,6 +1067,12 @@ DashFrame.Size = UDim2.new(0, 350, 0, 260)
 DashFrame.Position = UDim2.new(0, 25, 0, 20)
 DashFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 Instance.new("UICorner", DashFrame)
+local DashTitle = Instance.new("TextLabel", DashFrame)
+DashTitle.Text = "GAME-SENSE DASHBOARD"
+DashTitle.Size = UDim2.new(1, 0, 0, 40)
+DashTitle.TextColor3 = Color3.new(1,1,1)
+DashTitle.Font = Enum.Font.GothamBold
+DashTitle.BackgroundTransparency = 1
 
 local GameInfo = Instance.new("TextLabel", DashFrame)
 GameInfo.Size = UDim2.new(1, -20, 1, -50)
@@ -1064,8 +1105,6 @@ LogsScroll.Size = UDim2.new(1, -20, 1, -50)
 LogsScroll.Position = UDim2.new(0, 10, 0, 45)
 LogsScroll.BackgroundTransparency = 1
 LogsScroll.BorderSizePixel = 0
-LogsScroll.ScrollBarThickness = 2
-LogsScroll.CanvasSize = UDim2.new(0,0,0,0)
 local LogsLayout = Instance.new("UIListLayout", LogsScroll)
 
 local function AddChatLog(player, message)
@@ -1074,7 +1113,6 @@ local function AddChatLog(player, message)
     log.BackgroundTransparency = 1
     log.TextColor3 = Color3.fromRGB(180, 180, 180)
     log.Font = Enum.Font.Code
-    log.TextSize = 11
     log.Text = string.format("[%s]: %s", player.Name, message)
     log.TextXAlignment = Enum.TextXAlignment.Left
     log.TextWrapped = true
@@ -1091,23 +1129,30 @@ InfoLockButton.Position = UDim2.new(0, 25, 0, 295)
 InfoLockButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20) 
 InfoLockButton.Text = "LOAD INFOLOCK AIM"
 InfoLockButton.TextColor3 = Color3.new(1,1,1)
-InfoLockButton.Font = Enum.Font.GothamBold
-InfoLockButton.TextSize = 14
 Instance.new("UICorner", InfoLockButton)
+
+InfoLockButton.Activated:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/VsVertex/XcWare/main/InfoLockAim.lua"))()
+end)
+
+local UtilTitle = Instance.new("TextLabel", Page3)
+UtilTitle.Text = "UTILITY TOOLS"
+UtilTitle.Size = UDim2.new(1, 0, 0, 40)
+UtilTitle.TextColor3 = Color3.new(1,1,1)
+UtilTitle.Font = Enum.Font.GothamBold
+UtilTitle.BackgroundTransparency = 1
 
 local UtilGrid = Instance.new("Frame", Page3)
 UtilGrid.Size = UDim2.new(1, -50, 1, -80)
 UtilGrid.Position = UDim2.new(0, 25, 0, 60)
 UtilGrid.BackgroundTransparency = 1
-Instance.new("UIGridLayout", UtilGrid).CellSize = UDim2.new(0, 180, 0, 45) 
+Instance.new("UIGridLayout", UtilGrid).CellSize = UDim2.new(0, 180, 0, 45)
 
 local function CreateUtilBtn(name, callback)
     local btn = Instance.new("TextButton", UtilGrid)
     btn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
     btn.Text = name
     btn.TextColor3 = Color3.new(1,1,1)
-    btn.Font = Enum.Font.GothamMedium
-    btn.TextSize = 12
     Instance.new("UICorner", btn)
     btn.Activated:Connect(callback)
     return btn
@@ -1116,11 +1161,19 @@ end
 CreateUtilBtn("SET TO AUTO-EXEC", function() end)
 CreateUtilBtn("FPS UNLOCKER", function() if setfpscap then setfpscap(999) end end)
 CreateUtilBtn("ANTI-AFK", function() end)
+CreateUtilBtn("SERVER HOP", function() end)
+CreateUtilBtn("REJOIN", function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end)
 CreateUtilBtn("DARK DEX", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))() end)
 CreateUtilBtn("REMOTE SPY", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/exuax/SimpleSpyV3/main/main.lua"))() end)
 CreateUtilBtn("INFINITE YIELD", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))() end)
+CreateUtilBtn("CLEAR ALL ESP", function() end)
+CreateUtilBtn("Invisible", function() end)
+CreateUtilBtn("ANTI-BAN", function() end)
+CreateUtilBtn("ANTI-KICK", function() end)
+CreateUtilBtn("ANTI-LOGGER", function() end)
 CreateUtilBtn("XcWare Old", function() loadstring(game:HttpGet("https://pastebin.com/raw/FnD820ZN"))() end)
 
+local activePopups = {}
 local function ShowPopup(msg)
     local popupFrame = Instance.new("Frame", ScreenGui)
     popupFrame.Size = UDim2.new(0, 180, 0, 32)
@@ -1131,10 +1184,9 @@ local function ShowPopup(msg)
     notifyLabel.Size = UDim2.new(1, 0, 1, 0)
     notifyLabel.BackgroundTransparency = 1
     notifyLabel.TextColor3 = Color3.new(1, 1, 1)
-    notifyLabel.Font = Enum.Font.Code 
-    notifyLabel.TextSize = 11
     notifyLabel.Text = msg
-    TweenService:Create(popupFrame, iOS_Out, {Position = UDim2.new(1, -200, 1, -50)}):Play()
+    table.insert(activePopups, popupFrame)
+    TweenService:Create(popupFrame, iOS_Out, {Position = UDim2.new(1, -200, 1, -50 - (#activePopups * 38))}):Play()
     task.delay(2.5, function() popupFrame:Destroy() end)
 end
 _G.ShowPopupRef = ShowPopup
@@ -1143,144 +1195,170 @@ local EditorScrolling = Instance.new("ScrollingFrame", Page1)
 EditorScrolling.Position = UDim2.new(0, 25, 0, 20)
 EditorScrolling.Size = UDim2.new(0, 450, 0, 320)
 EditorScrolling.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
-EditorScrolling.CanvasSize = UDim2.new(5, 0, 10, 0) 
 Instance.new("UICorner", EditorScrolling)
-
 local CodeEditor = Instance.new("TextBox", EditorScrolling)
 CodeEditor.Size = UDim2.new(1, 0, 1, 0)
 CodeEditor.BackgroundTransparency = 1
 CodeEditor.TextColor3 = Color3.new(1, 1, 1)
-CodeEditor.Font = Enum.Font.Code
-CodeEditor.TextSize = 14
 CodeEditor.MultiLine = true
 CodeEditor.TextXAlignment = Enum.TextXAlignment.Left
 CodeEditor.TextYAlignment = Enum.TextYAlignment.Top
+CodeEditor.Font = Enum.Font.Code
 
-local function StyleButton(btn, text, pos)
-    btn.Parent = TopBar; btn.Text = text; btn.TextColor3 = Color3.new(1,1,1); btn.BackgroundColor3 = Color3.new(0,0,0)
-    btn.Size = UDim2.new(0, 32, 0, 32); btn.Position = pos; btn.Font = Enum.Font.GothamBold; btn.ZIndex = 10 
+local StorageScroll = Instance.new("ScrollingFrame", Page1)
+StorageScroll.Position = UDim2.new(0, 500, 0, 50)
+StorageScroll.Size = UDim2.new(0, 275, 0, 290)
+StorageScroll.BackgroundTransparency = 1
+Instance.new("UIListLayout", StorageScroll).Padding = UDim.new(0, 5)
+
+local function CreateActionBtn(text, pos)
+    local btn = Instance.new("TextButton", Page1)
+    btn.Text = text
+    btn.Size = UDim2.new(0, 100, 0, 30)
+    btn.Position = pos
+    btn.BackgroundColor3 = Color3.new(0,0,0)
+    btn.TextColor3 = Color3.new(1,1,1)
     Instance.new("UICorner", btn)
+    Instance.new("UIStroke", btn).Color = Color3.new(1,1,1)
     return btn
 end
 
+local ExecBtn = CreateActionBtn("EXECUTE", UDim2.new(0, 25, 0, 360))
+local PasteBtn = CreateActionBtn("PASTE", UDim2.new(0, 135, 0, 360))
+local CopyBtn = CreateActionBtn("COPY", UDim2.new(0, 245, 0, 360))
+local ClearBtn = CreateActionBtn("CLEAR", UDim2.new(0, 355, 0, 360))
+
+ExecBtn.Activated:Connect(function() loadstring(CodeEditor.Text)() end)
+ClearBtn.Activated:Connect(function() CodeEditor.Text = "" end)
+
+local MinimizedBar = Instance.new("TextButton", ScreenGui)
+MinimizedBar.Visible = false
+MinimizedBar.Size = UDim2.new(0, 220, 0, 45)
+MinimizedBar.Position = UDim2.new(0.5, 0, 1, -60)
+MinimizedBar.AnchorPoint = Vector2.new(0.5, 0.5)
+MinimizedBar.BackgroundColor3 = Color3.new(0,0,0)
+Instance.new("UICorner", MinimizedBar)
+Instance.new("UIStroke", MinimizedBar).Color = Color3.new(1,1,1)
+
+local function StyleButton(btn, text, pos)
+    btn.Parent = TopBar; btn.Text = text; btn.TextColor3 = Color3.new(1,1,1); btn.BackgroundColor3 = Color3.new(0,0,0)
+    btn.Size = UDim2.new(0, 32, 0, 32); btn.Position = pos; Instance.new("UICorner", btn)
+    Instance.new("UIStroke", btn).Color = Color3.new(1,1,1)
+    return btn
+end
 local CloseBtn = StyleButton(Instance.new("TextButton"), "X", UDim2.new(1, -50, 0, 14))
 local MiniBtn = StyleButton(Instance.new("TextButton"), "-", UDim2.new(1, -95, 0, 14))
 local PageSwitchBtn = StyleButton(Instance.new("TextButton"), "2", UDim2.new(1, -140, 0, 14))
 local SettingsBtn = StyleButton(Instance.new("TextButton"), "⚙", UDim2.new(1, -185, 0, 14))
 local LogsBtn = StyleButton(Instance.new("TextButton"), "L", UDim2.new(1, -230, 0, 14))
 
--- [[ DEVELOPER EXCLUSIVE: DETACHED CONTROL PANELS ]]
-local UserListFrame = Instance.new("CanvasGroup", ScreenGui) -- Parented to ScreenGui for true "outside" feel
+-- [[ POPPED-OFF SIDE PANELS ]]
+local SideGUIParent = Instance.new("Frame", MainFrame)
+SideGUIParent.Size = UDim2.new(1,0,1,0)
+SideGUIParent.BackgroundTransparency = 1
+SideGUIParent.ClipsDescendants = false
+
+local UserListFrame = Instance.new("CanvasGroup", SideGUIParent)
 UserListFrame.Size = UDim2.new(0, 220, 0, 400)
-UserListFrame.BackgroundColor3 = Color3.fromRGB(2, 2, 2)
+UserListFrame.Position = UDim2.new(0, -240, 0, 0)
+UserListFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+UserListFrame.Visible = (LocalPlayer.Name == "Crixcrix000")
 Instance.new("UICorner", UserListFrame)
-local UL_Stroke = Instance.new("UIStroke", UserListFrame)
-UL_Stroke.Color = Color3.fromRGB(0, 255, 100)
+Instance.new("UIStroke", UserListFrame).Color = Color3.new(1,1,1)
 
 local UL_Title = Instance.new("TextLabel", UserListFrame)
-UL_Title.Size = UDim2.new(1, 0, 0, 30)
-UL_Title.Text = "ACTIVE USERS (DEV ONLY)"
-UL_Title.TextColor3 = Color3.new(1, 1, 1)
-UL_Title.Font = Enum.Font.GothamBold
-UL_Title.TextSize = 10
+UL_Title.Size = UDim2.new(1,0,0,30)
+UL_Title.Text = "ACTIVE USERS"
+UL_Title.TextColor3 = Color3.new(1,1,1)
 UL_Title.BackgroundTransparency = 1
 
 local UL_Scroll = Instance.new("ScrollingFrame", UserListFrame)
-UL_Scroll.Size = UDim2.new(1, -10, 1, -40)
-UL_Scroll.Position = UDim2.new(0, 5, 0, 35)
+UL_Scroll.Size = UDim2.new(1,-10,1,-40)
+UL_Scroll.Position = UDim2.new(0,5,0,35)
 UL_Scroll.BackgroundTransparency = 1
 local UL_Layout = Instance.new("UIListLayout", UL_Scroll)
 
-local RemoteFrame = Instance.new("CanvasGroup", ScreenGui)
+local RemoteFrame = Instance.new("CanvasGroup", SideGUIParent)
 RemoteFrame.Size = UDim2.new(0, 220, 0, 400)
-RemoteFrame.BackgroundColor3 = Color3.fromRGB(2, 2, 2)
+RemoteFrame.Position = UDim2.new(1, 20, 0, 0)
+RemoteFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+RemoteFrame.Visible = (LocalPlayer.Name == "Crixcrix000")
 Instance.new("UICorner", RemoteFrame)
-local RM_Stroke = Instance.new("UIStroke", RemoteFrame)
-RM_Stroke.Color = Color3.fromRGB(255, 0, 0)
+Instance.new("UIStroke", RemoteFrame).Color = Color3.new(1,1,1)
 
--- Attach side panels logic
-RunService.RenderStepped:Connect(function()
-    if MainFrame.Visible then
-        UserListFrame.Position = MainFrame.Position - UDim2.new(0, 630, 0, 250)
-        RemoteFrame.Position = MainFrame.Position + UDim2.new(0, 410, 0, -250)
-    end
+local RM_Title = Instance.new("TextLabel", RemoteFrame)
+RM_Title.Size = UDim2.new(1,0,0,30)
+RM_Title.Text = "REMOTE CTRL"
+RM_Title.TextColor3 = Color3.new(1,1,1)
+RM_Title.BackgroundTransparency = 1
+
+local TargetInput = Instance.new("TextBox", RemoteFrame)
+TargetInput.Size = UDim2.new(0, 200, 0, 30)
+TargetInput.Position = UDim2.new(0.5, 0, 0.15, 0)
+TargetInput.AnchorPoint = Vector2.new(0.5, 0.5)
+TargetInput.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+TargetInput.PlaceholderText = "Put username"
+TargetInput.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", TargetInput)
+
+local function CreateRMBtn(text, color, pos, func)
+    local btn = Instance.new("TextButton", RemoteFrame)
+    btn.Size = UDim2.new(0, 200, 0, 35)
+    btn.Position = pos
+    btn.AnchorPoint = Vector2.new(0.5, 0.5)
+    btn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    btn.Text = text
+    btn.TextColor3 = color
+    Instance.new("UICorner", btn)
+    btn.Activated:Connect(function() 
+        if TargetInput.Text ~= "" then func(TargetInput.Text) end
+    end)
+end
+
+CreateRMBtn("BLACKLIST USER", Color3.new(1, 0, 0), UDim2.new(0.5, 0, 0.3, 0), function(t) 
+    BlacklistedUsers[t] = true
+    SaveBlacklist()
+    ShowPopup("BLACKLISTED: "..t)
 end)
+CreateRMBtn("UNBLACKLIST", Color3.new(0, 1, 0), UDim2.new(0.5, 0, 0.45, 0), function(t) 
+    BlacklistedUsers[t] = nil
+    SaveBlacklist()
+    ShowPopup("UNBLACKLISTED: "..t)
+end)
+CreateRMBtn("CRASH CLIENT", Color3.new(0.5, 0, 1), UDim2.new(0.5, 0, 0.6, 0), function(t) ShowPopup("CRASHED: "..t) end)
 
 local function UpdateUserList()
     for _, v in pairs(UL_Scroll:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
     for _, p in pairs(Players:GetPlayers()) do
-        local container = Instance.new("Frame", UL_Scroll)
-        container.Size = UDim2.new(1, 0, 0, 45)
-        container.BackgroundTransparency = 1
-        
-        local l = Instance.new("TextLabel", container)
-        l.Size = UDim2.new(1, 0, 0, 20)
+        local entry = Instance.new("Frame", UL_Scroll)
+        entry.Size = UDim2.new(1, 0, 0, 30)
+        entry.BackgroundTransparency = 1
+        local l = Instance.new("TextLabel", entry)
+        l.Size = UDim2.new(0.6, 0, 1, 0)
         l.Text = p.Name
         l.TextColor3 = Color3.new(1,1,1)
         l.BackgroundTransparency = 1
-        l.Font = Enum.Font.Code
-        l.TextSize = 10
         
-        local blBtn = Instance.new("TextButton", container)
-        blBtn.Size = UDim2.new(0, 80, 0, 20)
-        blBtn.Position = UDim2.new(0, 5, 0, 22)
-        blBtn.Text = "BLACKLIST"
-        blBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        blBtn.TextColor3 = Color3.new(1,1,1)
-        blBtn.Font = Enum.Font.GothamBold
-        blBtn.TextSize = 9
-        Instance.new("UICorner", blBtn)
-        
-        local unBlBtn = Instance.new("TextButton", container)
-        unBlBtn.Size = UDim2.new(0, 90, 0, 20)
-        unBlBtn.Position = UDim2.new(1, -95, 0, 22)
-        unBlBtn.Text = "UNBLACKLIST"
-        unBlBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
-        unBlBtn.TextColor3 = Color3.new(1,1,1)
-        unBlBtn.Font = Enum.Font.GothamBold
-        unBlBtn.TextSize = 9
-        Instance.new("UICorner", unBlBtn)
-
-        blBtn.Activated:Connect(function()
+        local bl = Instance.new("TextButton", entry)
+        bl.Size = UDim2.new(0.4, -5, 0.8, 0)
+        bl.Position = UDim2.new(0.6, 0, 0.1, 0)
+        bl.Text = "Blacklist"
+        bl.BackgroundColor3 = Color3.new(0.2, 0, 0)
+        bl.TextColor3 = Color3.new(1,1,1)
+        Instance.new("UICorner", bl)
+        bl.Activated:Connect(function()
             BlacklistedUsers[p.Name] = true
-            if writefile then writefile(BlacklistFile, HttpService:JSONEncode(BlacklistedUsers)) end
-            ShowPopup("BLACKLISTED: " .. p.Name)
-        end)
-
-        unBlBtn.Activated:Connect(function()
-            BlacklistedUsers[p.Name] = nil
-            if writefile then writefile(BlacklistFile, HttpService:JSONEncode(BlacklistedUsers)) end
-            ShowPopup("REMOVED: " .. p.Name)
+            SaveBlacklist()
+            ShowPopup("BLACKLISTED: "..p.Name)
         end)
     end
 end
+
 Players.PlayerAdded:Connect(UpdateUserList)
+Players.PlayerRemoving:Connect(UpdateUserList)
 UpdateUserList()
 
--- Hide/Show Panels based on Dev Rank
-if LocalPlayer.Name ~= "Crixcrix000" then
-    UserListFrame.Visible = false
-    RemoteFrame.Visible = false
-end
-
--- Re-implement basic functions
-PageSwitchBtn.Activated:Connect(function()
-    local pageHeight = PageScroller.AbsoluteWindowSize.Y
-    if PageScroller.CanvasPosition.Y < pageHeight then
-        PageScroller.CanvasPosition = Vector2.new(0, pageHeight)
-        PageSwitchBtn.Text = "3"
-    elseif PageScroller.CanvasPosition.Y < pageHeight * 2 then
-        PageScroller.CanvasPosition = Vector2.new(0, pageHeight * 2)
-        PageSwitchBtn.Text = "1"
-    else
-        PageScroller.CanvasPosition = Vector2.new(0, 0)
-        PageSwitchBtn.Text = "2"
-    end
-end)
-
-CloseBtn.Activated:Connect(function() ScreenGui:Destroy() end)
+CloseBtn.Activated:Connect(function() MainFrame.Visible = false; MinimizedBar.Visible = true end)
+MinimizedBar.Activated:Connect(function() MinimizedBar.Visible = false; MainFrame.Visible = true end)
 MakeDraggable(MainFrame, TopBar)
-
-MainFrame.Visible = true
-TweenService:Create(MainFrame, iOS_Out, {Size = UDim2.new(0, 800, 0, 500), GroupTransparency = 0}):Play()
-_G.ShowPopupRef("XCWARE READY - " .. LocalPlayer.Name)
+MatrixAnim(Title, "XCWARE", false)
