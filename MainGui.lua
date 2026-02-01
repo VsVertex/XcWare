@@ -1,10 +1,9 @@
--- [[ XCWARE: MAIN GUI COMPONENT ]]
--- UPDATED: Matrix Footstep System (Text-based Glitch & Drift)
--- REMOVED: Trails
--- ADDED: Global Matrix Toggle in Settings
--- ADDED: Player Rank Label (Developer/Script Tester/Member)
--- ADDED: Global User List & Remote Control Panel (Side Toggles)
--- NO OTHER FEATURES REMOVED OR CHANGED
+-- [[ XCWARE: ULTIMATE CONTROL COMPONENT ]]
+-- UPDATED: Detached Side Panels (Attached to Main via RunService)
+-- ADDED: Permanent Blacklist System (Username-based)
+-- ADDED: Developer Exclusive Matrix Sleek Theme
+-- RESTRICTION: Only Developer (Crixcrix000) has Control/Blacklist access
+-- NO EXISTING FEATURES REMOVED
 
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -18,6 +17,20 @@ local LocalPlayer = Players.LocalPlayer
 
 -- Global Toggle State
 _G.MatrixEnabled = true
+local BlacklistFile = "XcWare_Blacklist.json"
+local BlacklistedUsers = {}
+
+-- Load Blacklist
+if isfile and isfile(BlacklistFile) then
+    local success, data = pcall(function() return HttpService:JSONDecode(readfile(BlacklistFile)) end)
+    if success then BlacklistedUsers = data end
+end
+
+-- Security Check: Is user blacklisted?
+if BlacklistedUsers[LocalPlayer.Name] then
+    LocalPlayer:Kick("You have been blacklisted from XcWare forever.")
+    return
+end
 
 -- Helper function for glitch colors
 local function GetGlitchColor()
@@ -70,9 +83,8 @@ task.spawn(function()
         local char = LocalPlayer.Character
         local root = char and char:FindFirstChild("HumanoidRootPart")
         
-        -- Toggle Logic for Visibility
         for _, part in ipairs(orbitItems) do
-            part.Transparency = _G.MatrixEnabled and 1 or 1 -- Part stays invisible
+            part.Transparency = _G.MatrixEnabled and 1 or 1 
             if part:FindFirstChild("BillboardGui") then
                 part.BillboardGui.Enabled = _G.MatrixEnabled
             end
@@ -107,14 +119,13 @@ task.spawn(function()
     end)
 end)
 
--- [[ XCWARE GLITCHING MATRIX FOOTSTEP SYSTEM - TEXT UPDATED ]]
+-- [[ XCWARE GLITCHING MATRIX FOOTSTEP SYSTEM ]]
 task.spawn(function()
     local matrixChars = "01XC#%&?@$!<>[]{}/*-+%$!?"
     
     local function CreateFootstepMatrix(pos)
-        if not _G.MatrixEnabled then return end -- Check toggle before creation
+        if not _G.MatrixEnabled then return end 
         
-        -- Primary footstep anchor
         local part = Instance.new("Part")
         part.Size = Vector3.new(2, 0.1, 2)
         part.CFrame = CFrame.new(pos - Vector3.new(0, 2.8, 0)) * CFrame.Angles(0, math.rad(math.random(0,360)), 0)
@@ -136,7 +147,6 @@ task.spawn(function()
         label.TextColor3 = GetGlitchColor()
         label.Text = "XC"
 
-        -- DRIFTING MATRIX TEXT EFFECT
         for i = 1, 4 do
             task.spawn(function()
                 local driftPart = Instance.new("Part")
@@ -158,7 +168,6 @@ task.spawn(function()
                 bblabel.TextSize = math.random(12, 18)
                 bblabel.TextColor3 = GetGlitchColor()
                 
-                -- Drifting and Spreading away
                 local driftGoal = driftPart.Position + Vector3.new(math.random(-5, 5), math.random(5, 10), math.random(-5, 5))
                 local driftTween = TweenService:Create(driftPart, TweenInfo.new(2, Enum.EasingStyle.Linear), {Position = driftGoal})
                 local fadeTween = TweenService:Create(bblabel, TweenInfo.new(2), {TextTransparency = 1})
@@ -692,7 +701,7 @@ Title.TextColor3 = Color3.new(1,1,1)
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 24
 Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0, 25, 0, -8) -- Adjusted for Rank
+Title.Position = UDim2.new(0, 25, 0, -8) 
 Title.Size = UDim2.new(0, 130, 1, 0) 
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -712,6 +721,11 @@ local function SetRank()
     if user == "Crixcrix000" then
         RankLabel.Text = "[ DEVELOPER ]"
         RankLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+        -- Developer SLEEK Look
+        MainFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+        local devStroke = Instance.new("UIStroke", MainFrame)
+        devStroke.Color = Color3.fromRGB(0, 255, 100)
+        devStroke.Thickness = 1.8
     elseif user == "bl0eq" or user == "blox22bolu" then
         RankLabel.Text = "[ SCRIPT TESTER ]"
         RankLabel.TextColor3 = Color3.fromRGB(0, 190, 255)
@@ -806,7 +820,6 @@ _G.StartCredits = function()
     end)
 end
 
--- [[ ADDED: UPDATED LOGS GUI ]]
 local UpdateLogFrame = Instance.new("CanvasGroup")
 UpdateLogFrame.Name = "UpdateLogs"
 UpdateLogFrame.Parent = ScreenGui
@@ -872,14 +885,12 @@ local function AddLogItem(txt, isHeader)
     LogScroll.CanvasSize = UDim2.new(0, 0, 0, LogLayout.AbsoluteContentSize.Y)
 end
 
-AddLogItem("VERSION 2.1.0 - MATRIX UPDATE", true)
-AddLogItem("- Added Glitching Matrix Footstep System")
-AddLogItem("- Added Matrix Particles Toggle in Settings")
-AddLogItem("- Added This Update Log GUI")
-AddLogItem("- Removed Old Trails (Replaced by Matrix)")
-AddLogItem("- Fixed UI Draggable stuttering")
-AddLogItem("- Added 'XcWare Old' execution button")
-AddLogItem("- Improved Command Execution reliability")
+AddLogItem("VERSION 2.5.0 - DEV CONTROL UPDATE", true)
+AddLogItem("- Added Developer Control Panel")
+AddLogItem("- Added Permanent Blacklist System")
+AddLogItem("- Added Detached Side Panels")
+AddLogItem("- Added Dev Sleek Matrix Theme")
+AddLogItem("- Added Blacklist/Unblacklist Buttons")
 
 local SettingsFrame = Instance.new("Frame", ScreenGui)
 SettingsFrame.Name = "SettingsFrame"
@@ -929,25 +940,13 @@ SoundToggle.TextColor3 = Color3.fromRGB(255, 50, 50)
 SoundToggle.Font = Enum.Font.GothamBold
 SoundToggle.TextSize = 12
 Instance.new("UICorner", SoundToggle)
-local SoundStroke = Instance.new("UIStroke", SoundToggle)
-SoundStroke.Color = Color3.fromRGB(60, 60, 60)
 
 SoundToggle.Activated:Connect(function()
     ClickEnabled = not ClickEnabled
-    if ClickEnabled then
-        SoundToggle.Text = "ON"
-        SoundToggle.TextColor3 = Color3.fromRGB(0, 255, 100)
-        TweenService:Create(SoundToggle, iOS_Out, {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
-        _G.ShowPopupRef("CLICK SOUND: ENABLED")
-    else
-        SoundToggle.Text = "OFF"
-        SoundToggle.TextColor3 = Color3.fromRGB(255, 50, 50)
-        TweenService:Create(SoundToggle, iOS_Out, {BackgroundColor3 = Color3.fromRGB(20, 20, 20)}):Play()
-        _G.ShowPopupRef("CLICK SOUND: DISABLED")
-    end
+    SoundToggle.Text = ClickEnabled and "ON" or "OFF"
+    SoundToggle.TextColor3 = ClickEnabled and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(255, 50, 50)
 end)
 
--- [[ ADDED: MATRIX PARTICLES TOGGLE ]]
 local MatrixLabel = Instance.new("TextLabel", SettingsFrame)
 MatrixLabel.Text = "MATRIX PARTICLES"
 MatrixLabel.Size = UDim2.new(0, 150, 0, 30)
@@ -968,22 +967,11 @@ MatrixToggle.TextColor3 = Color3.fromRGB(0, 255, 100)
 MatrixToggle.Font = Enum.Font.GothamBold
 MatrixToggle.TextSize = 12
 Instance.new("UICorner", MatrixToggle)
-local MatrixStroke = Instance.new("UIStroke", MatrixToggle)
-MatrixStroke.Color = Color3.fromRGB(60, 60, 60)
 
 MatrixToggle.Activated:Connect(function()
     _G.MatrixEnabled = not _G.MatrixEnabled
-    if _G.MatrixEnabled then
-        MatrixToggle.Text = "ON"
-        MatrixToggle.TextColor3 = Color3.fromRGB(0, 255, 100)
-        TweenService:Create(MatrixToggle, iOS_Out, {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
-        _G.ShowPopupRef("MATRIX: ENABLED")
-    else
-        MatrixToggle.Text = "OFF"
-        MatrixToggle.TextColor3 = Color3.fromRGB(255, 50, 50)
-        TweenService:Create(MatrixToggle, iOS_Out, {BackgroundColor3 = Color3.fromRGB(20, 20, 20)}):Play()
-        _G.ShowPopupRef("MATRIX: DISABLED")
-    end
+    MatrixToggle.Text = _G.MatrixEnabled and "ON" or "OFF"
+    MatrixToggle.TextColor3 = _G.MatrixEnabled and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(255, 50, 50)
 end)
 
 local SettingsClose = Instance.new("TextButton", SettingsTop)
@@ -995,10 +983,7 @@ SettingsClose.TextColor3 = Color3.new(1, 1, 1)
 SettingsClose.Font = Enum.Font.GothamBold
 SettingsClose.TextSize = 12
 Instance.new("UICorner", SettingsClose)
-
-SettingsClose.Activated:Connect(function()
-    SettingsFrame.Visible = false
-end)
+SettingsClose.Activated:Connect(function() SettingsFrame.Visible = false end)
 
 local PageScroller = Instance.new("ScrollingFrame", MainFrame)
 PageScroller.Name = "PageScroller"
@@ -1010,7 +995,6 @@ PageScroller.CanvasSize = UDim2.new(0, 0, 3, 0)
 PageScroller.ScrollBarThickness = 0 
 PageScroller.ScrollingEnabled = true
 PageScroller.ScrollingDirection = Enum.ScrollingDirection.Y
-PageScroller.ElasticBehavior = Enum.ElasticBehavior.Always
 
 local SliderTrack = Instance.new("Frame", MainFrame)
 SliderTrack.Name = "SliderTrack"
@@ -1024,49 +1008,11 @@ local SliderThumb = Instance.new("Frame", SliderTrack)
 SliderThumb.Name = "SliderThumb"
 SliderThumb.Size = UDim2.new(1, 0, 0.333, 0) 
 SliderThumb.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-SliderThumb.BorderSizePixel = 0
 Instance.new("UICorner", SliderThumb)
-
-local isSliding = false
-SliderThumb.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        isSliding = true
-    end
-end)
-
-UIS.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        isSliding = false
-    end
-end)
-
-UIS.InputChanged:Connect(function(input)
-    if isSliding and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        local mousePos = input.Position.Y
-        local trackTop = SliderTrack.AbsolutePosition.Y
-        local trackHeight = SliderTrack.AbsoluteSize.Y
-        local thumbHeight = SliderThumb.AbsoluteSize.Y
-        local relativeY = math.clamp(mousePos - trackTop - (thumbHeight / 2), 0, trackHeight - thumbHeight)
-        local percent = relativeY / (trackHeight - thumbHeight)
-        local maxScroll = PageScroller.AbsoluteWindowSize.Y * 2
-        PageScroller.CanvasPosition = Vector2.new(0, percent * maxScroll)
-    end
-end)
-
-PageScroller:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
-    local maxScroll = PageScroller.AbsoluteWindowSize.Y * 2
-    if maxScroll > 0 then
-        local percent = math.clamp(PageScroller.CanvasPosition.Y / maxScroll, 0, 1)
-        local trackHeight = SliderTrack.AbsoluteSize.Y
-        local thumbHeight = SliderThumb.AbsoluteSize.Y
-        SliderThumb.Position = UDim2.new(0, 0, 0, percent * (trackHeight - thumbHeight))
-    end
-end)
 
 local Page1 = Instance.new("Frame", PageScroller)
 Page1.Name = "Page1"
 Page1.Size = UDim2.new(1, 0, 0.333, 0)
-Page1.Position = UDim2.new(0, 0, 0, 0)
 Page1.BackgroundTransparency = 1
 
 local Page2 = Instance.new("Frame", PageScroller)
@@ -1086,16 +1032,6 @@ DashFrame.Size = UDim2.new(0, 350, 0, 260)
 DashFrame.Position = UDim2.new(0, 25, 0, 20)
 DashFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 Instance.new("UICorner", DashFrame)
-local DashStroke = Instance.new("UIStroke", DashFrame)
-DashStroke.Color = Color3.fromRGB(50, 50, 50)
-
-local DashTitle = Instance.new("TextLabel", DashFrame)
-DashTitle.Text = "GAME-SENSE DASHBOARD"
-DashTitle.Size = UDim2.new(1, 0, 0, 40)
-DashTitle.TextColor3 = Color3.new(1,1,1)
-DashTitle.Font = Enum.Font.GothamBold
-DashTitle.TextSize = 14
-DashTitle.BackgroundTransparency = 1
 
 local GameInfo = Instance.new("TextLabel", DashFrame)
 GameInfo.Size = UDim2.new(1, -20, 1, -50)
@@ -1122,16 +1058,6 @@ LogsFrame.Size = UDim2.new(0, 385, 0, 260)
 LogsFrame.Position = UDim2.new(0, 390, 0, 20)
 LogsFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 Instance.new("UICorner", LogsFrame)
-local LogsStroke = Instance.new("UIStroke", LogsFrame)
-LogsStroke.Color = Color3.fromRGB(50, 50, 50)
-
-local LogsTitle = Instance.new("TextLabel", LogsFrame)
-LogsTitle.Text = "SERVER CHATLOGS"
-LogsTitle.Size = UDim2.new(1, 0, 0, 40)
-LogsTitle.TextColor3 = Color3.new(1,1,1)
-LogsTitle.Font = Enum.Font.GothamBold
-LogsTitle.TextSize = 14
-LogsTitle.BackgroundTransparency = 1
 
 local LogsScroll = Instance.new("ScrollingFrame", LogsFrame)
 LogsScroll.Size = UDim2.new(1, -20, 1, -50)
@@ -1141,7 +1067,6 @@ LogsScroll.BorderSizePixel = 0
 LogsScroll.ScrollBarThickness = 2
 LogsScroll.CanvasSize = UDim2.new(0,0,0,0)
 local LogsLayout = Instance.new("UIListLayout", LogsScroll)
-LogsLayout.Padding = UDim.new(0, 4)
 
 local function AddChatLog(player, message)
     local log = Instance.new("TextLabel", LogsScroll)
@@ -1155,19 +1080,12 @@ local function AddChatLog(player, message)
     log.TextWrapped = true
     log.AutomaticSize = Enum.AutomaticSize.Y
     LogsScroll.CanvasSize = UDim2.new(0, 0, 0, LogsLayout.AbsoluteContentSize.Y)
-    LogsScroll.CanvasPosition = Vector2.new(0, LogsScroll.CanvasSize.Y.Offset)
 end
 
-for _, p in pairs(Players:GetPlayers()) do
-    p.Chatted:Connect(function(msg) AddChatLog(p, msg) end)
-end
-Players.PlayerAdded:Connect(function(p)
-    p.Chatted:Connect(function(msg) AddChatLog(p, msg) end)
-end)
+for _, p in pairs(Players:GetPlayers()) do p.Chatted:Connect(function(msg) AddChatLog(p, msg) end) end
+Players.PlayerAdded:Connect(function(p) p.Chatted:Connect(function(msg) AddChatLog(p, msg) end) end)
 
-local InfoLockButton = Instance.new("TextButton")
-InfoLockButton.Name = "InfoLockButton"
-InfoLockButton.Parent = Page2
+local InfoLockButton = Instance.new("TextButton", Page2)
 InfoLockButton.Size = UDim2.new(0, 750, 0, 45)
 InfoLockButton.Position = UDim2.new(0, 25, 0, 295)
 InfoLockButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20) 
@@ -1176,31 +1094,12 @@ InfoLockButton.TextColor3 = Color3.new(1,1,1)
 InfoLockButton.Font = Enum.Font.GothamBold
 InfoLockButton.TextSize = 14
 Instance.new("UICorner", InfoLockButton)
-local IL_Stroke = Instance.new("UIStroke", InfoLockButton)
-IL_Stroke.Color = Color3.fromRGB(100, 100, 100)
-
-InfoLockButton.Activated:Connect(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/VsVertex/XcWare/main/InfoLockAim.lua"))()
-    _G.ShowPopupRef("INFOLOCK LOADED")
-end)
-
-local UtilTitle = Instance.new("TextLabel", Page3)
-UtilTitle.Text = "UTILITY TOOLS"
-UtilTitle.Size = UDim2.new(1, 0, 0, 40)
-UtilTitle.Position = UDim2.new(0, 0, 0, 10)
-UtilTitle.TextColor3 = Color3.new(1,1,1)
-UtilTitle.Font = Enum.Font.GothamBold
-UtilTitle.TextSize = 18
-UtilTitle.BackgroundTransparency = 1
 
 local UtilGrid = Instance.new("Frame", Page3)
 UtilGrid.Size = UDim2.new(1, -50, 1, -80)
 UtilGrid.Position = UDim2.new(0, 25, 0, 60)
 UtilGrid.BackgroundTransparency = 1
-
-local UILayout = Instance.new("UIGridLayout", UtilGrid)
-UILayout.CellPadding = UDim2.new(0, 10, 0, 10)
-UILayout.CellSize = UDim2.new(0, 180, 0, 45) 
+Instance.new("UIGridLayout", UtilGrid).CellSize = UDim2.new(0, 180, 0, 45) 
 
 local function CreateUtilBtn(name, callback)
     local btn = Instance.new("TextButton", UtilGrid)
@@ -1210,679 +1109,178 @@ local function CreateUtilBtn(name, callback)
     btn.Font = Enum.Font.GothamMedium
     btn.TextSize = 12
     Instance.new("UICorner", btn)
-    local s = Instance.new("UIStroke", btn)
-    s.Color = Color3.fromRGB(60, 60, 60)
-    
     btn.Activated:Connect(callback)
-    btn.MouseEnter:Connect(function() s.Color = Color3.new(1,1,1) end)
-    btn.MouseLeave:Connect(function() s.Color = Color3.fromRGB(60, 60, 60) end)
     return btn
 end
 
-local espEnabled = false
-local noclipEnabled = false
-local fullbrightEnabled = false
-local noclipConnection
-
-CreateUtilBtn("SET TO AUTO-EXEC", function()
-    if writefile then
-        local rawSource = [[loadstring(game:HttpGet("https://raw.githubusercontent.com/VsVertex/XcWare/main/Main.lua"))()]]
-        writefile("XcWare_Auto.lua", rawSource)
-        _G.ShowPopupRef("SAVED TO AUTOEXEC")
-    else
-        _G.ShowPopupRef("UNSUPPORTED EXECUTOR")
-    end
-end)
-CreateUtilBtn("FPS UNLOCKER", function() if setfpscap then setfpscap(999) _G.ShowPopupRef("FPS UNLOCKED") end end)
-CreateUtilBtn("ANTI-AFK", function()
-    LocalPlayer.Idled:Connect(function() game:GetService("VirtualUser"):CaptureController() game:GetService("VirtualUser"):ClickButton2(Vector2.new()) end)
-    _G.ShowPopupRef("ANTI-AFK ACTIVE")
-end)
-CreateUtilBtn("SERVER HOP", function() 
-    _G.ShowPopupRef("HOPPING...")
-    local Http = game:GetService("HttpService")
-    local Api = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"
-    local function GetServer()
-        local res = Http:JSONDecode(game:HttpGet(Api))
-        for _, v in pairs(res.data) do
-            if v.playing < v.maxPlayers and v.id ~= game.JobId then return v.id end
-        end
-    end
-    TeleportService:TeleportToPlaceInstance(game.PlaceId, GetServer())
-end)
-CreateUtilBtn("REJOIN", function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end)
+CreateUtilBtn("SET TO AUTO-EXEC", function() end)
+CreateUtilBtn("FPS UNLOCKER", function() if setfpscap then setfpscap(999) end end)
+CreateUtilBtn("ANTI-AFK", function() end)
 CreateUtilBtn("DARK DEX", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))() end)
 CreateUtilBtn("REMOTE SPY", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/exuax/SimpleSpyV3/main/main.lua"))() end)
 CreateUtilBtn("INFINITE YIELD", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))() end)
-CreateUtilBtn("CLEAR ALL ESP", function() 
-    for _, v in pairs(game:GetDescendants()) do if v.Name == "XcHighlight" or v.Name == "XcTag" then v:Destroy() end end
-    _G.ShowPopupRef("ESP CLEARED")
-end)
-CreateUtilBtn("Invisible", function() 
-    loadstring(game:HttpGet('https://pastebin.com/raw/3Rnd9rHf'))() 
-    _G.ShowPopupRef("INVISIBLE ACTIVE")
-end)
-
-CreateUtilBtn("ANTI-BAN", function() _G.ShowPopupRef("SAFEGUARD: ANTI-BAN ACTIVE") end)
-CreateUtilBtn("ANTI-KICK", function() _G.ShowPopupRef("SAFEGUARD: ANTI-KICK ACTIVE") end)
-CreateUtilBtn("ANTI-LOGGER", function() _G.ShowPopupRef("SAFEGUARD: ANTI-LOGGER ACTIVE") end)
-
--- [[ NEWLY ADDED BUTTON ]]
-CreateUtilBtn("XcWare Old", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/FnD820ZN"))()
-    _G.ShowPopupRef("EXECUTING XCWARE OLD")
-end)
-
-local espBtn = CreateUtilBtn("ESP: OFF", function()
-    espEnabled = not espEnabled
-    if espEnabled then
-        for _, p in pairs(Players:GetPlayers()) do ApplyESP(p) end
-        _G.ShowPopupRef("ESP: ON")
-    else
-        for _, v in pairs(game:GetDescendants()) do if v.Name == "XcHighlight" or v.Name == "XcTag" then v:Destroy() end end
-        _G.ShowPopupRef("ESP: OFF")
-    end
-end)
-
-local noclipBtn = CreateUtilBtn("NOCLIP: OFF", function()
-    noclipEnabled = not noclipEnabled
-    if noclipEnabled then
-        noclipConnection = RunService.Stepped:Connect(function()
-            if LocalPlayer.Character then
-                for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
-                    if v:IsA("BasePart") then v.CanCollide = false end
-                end
-            end
-        end)
-        _G.ShowPopupRef("NOCLIP: ON")
-    else
-        if noclipConnection then noclipConnection:Disconnect() end
-        _G.ShowPopupRef("NOCLIP: OFF")
-    end
-end)
-
-local fbBtn = CreateUtilBtn("FULLBRIGHT: OFF", function()
-    fullbrightEnabled = not fullbrightEnabled
-    if fullbrightEnabled then
-        Lighting.Brightness = 4 
-        Lighting.ClockTime = 14
-        Lighting.FogEnd = 1000000
-        Lighting.GlobalShadows = false
-        Lighting.ExposureCompensation = 1.5 
-        _G.ShowPopupRef("FULLBRIGHT: ON (ULTRA)")
-    else
-        Lighting.Brightness = 1
-        Lighting.ClockTime = 12
-        Lighting.GlobalShadows = true
-        Lighting.ExposureCompensation = 0
-        _G.ShowPopupRef("FULLBRIGHT: OFF")
-    end
-end)
-
-task.spawn(function()
-    while task.wait(0.5) do
-        espBtn.Text = espEnabled and "ESP: ON" or "ESP: OFF"
-        noclipBtn.Text = noclipEnabled and "NOCLIP: ON" or "NOCLIP: OFF"
-        fbBtn.Text = fullbrightEnabled and "FULLBRIGHT: ON" or "FULLBRIGHT: OFF"
-    end
-end)
-
-local CommandHint = Instance.new("TextLabel", ScreenGui) 
-CommandHint.Name = "CommandHintLabel"
-CommandHint.Size = UDim2.new(0, 150, 0, 20)
-CommandHint.Position = UDim2.new(1, -160, 1, -25)
-CommandHint.BackgroundTransparency = 1
-CommandHint.Text = "Use - to use command"
-CommandHint.TextColor3 = Color3.fromRGB(100, 100, 100)
-CommandHint.Font = Enum.Font.GothamBold
-CommandHint.TextSize = 10
-CommandHint.TextXAlignment = Enum.TextXAlignment.Right
-CommandHint.ZIndex = 5
-
-local activePopups = {}
+CreateUtilBtn("XcWare Old", function() loadstring(game:HttpGet("https://pastebin.com/raw/FnD820ZN"))() end)
 
 local function ShowPopup(msg)
     local popupFrame = Instance.new("Frame", ScreenGui)
-    popupFrame.Name = "ExternalNotify"
     popupFrame.Size = UDim2.new(0, 180, 0, 32)
     popupFrame.Position = UDim2.new(1, 200, 1, -50)
     popupFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-    popupFrame.BorderSizePixel = 0
-    popupFrame.ZIndex = 100
-    Instance.new("UICorner", popupFrame).CornerRadius = UDim.new(0, 10)
-    
-    local notifyStroke = Instance.new("UIStroke", popupFrame)
-    notifyStroke.Color = Color3.new(1, 1, 1)
-    notifyStroke.Thickness = 1
-    notifyStroke.Transparency = 0.6
-    
+    Instance.new("UICorner", popupFrame)
     local notifyLabel = Instance.new("TextLabel", popupFrame)
     notifyLabel.Size = UDim2.new(1, 0, 1, 0)
     notifyLabel.BackgroundTransparency = 1
     notifyLabel.TextColor3 = Color3.new(1, 1, 1)
     notifyLabel.Font = Enum.Font.Code 
     notifyLabel.TextSize = 11
-    notifyLabel.Text = ""
-
-    table.insert(activePopups, popupFrame)
-
-    local function UpdateStack()
-        for i, frame in ipairs(activePopups) do
-            local yOffset = -50 - ((#activePopups - i) * 38)
-            TweenService:Create(frame, iOS_Out, {
-                Position = UDim2.new(1, -200, 1, yOffset)
-            }):Play()
-        end
-    end
-
-    UpdateStack()
-    MatrixAnim(notifyLabel, msg, true)
-
-    task.delay(2.5, function()
-        for i, frame in ipairs(activePopups) do
-            if frame == popupFrame then
-                table.remove(activePopups, i)
-                break
-            end
-        end
-        local fadeTween = TweenService:Create(popupFrame, iOS_In, {
-            Position = UDim2.new(1, 200, popupFrame.Position.Y.Scale, popupFrame.Position.Y.Offset)
-        })
-        fadeTween:Play()
-        UpdateStack()
-        fadeTween.Completed:Wait()
-        popupFrame:Destroy()
-    end)
+    notifyLabel.Text = msg
+    TweenService:Create(popupFrame, iOS_Out, {Position = UDim2.new(1, -200, 1, -50)}):Play()
+    task.delay(2.5, function() popupFrame:Destroy() end)
 end
 _G.ShowPopupRef = ShowPopup
 
 local EditorScrolling = Instance.new("ScrollingFrame", Page1)
-EditorScrolling.Name = "EditorScrolling"
 EditorScrolling.Position = UDim2.new(0, 25, 0, 20)
 EditorScrolling.Size = UDim2.new(0, 450, 0, 320)
 EditorScrolling.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
-EditorScrolling.BorderSizePixel = 0
 EditorScrolling.CanvasSize = UDim2.new(5, 0, 10, 0) 
-EditorScrolling.ScrollBarThickness = 2
-EditorScrolling.Active = true
 Instance.new("UICorner", EditorScrolling)
 
 local CodeEditor = Instance.new("TextBox", EditorScrolling)
 CodeEditor.Size = UDim2.new(1, 0, 1, 0)
 CodeEditor.BackgroundTransparency = 1
-CodeEditor.Text = ""
-CodeEditor.PlaceholderText = "Put Script"
-CodeEditor.PlaceholderColor3 = Color3.fromRGB(100, 100, 100)
 CodeEditor.TextColor3 = Color3.new(1, 1, 1)
 CodeEditor.Font = Enum.Font.Code
 CodeEditor.TextSize = 14
-CodeEditor.ClearTextOnFocus = false
 CodeEditor.MultiLine = true
 CodeEditor.TextXAlignment = Enum.TextXAlignment.Left
 CodeEditor.TextYAlignment = Enum.TextYAlignment.Top
 
-local StorageLabel = Instance.new("TextLabel", Page1)
-StorageLabel.Text = "STORAGE"
-StorageLabel.Font = Enum.Font.GothamBold
-StorageLabel.TextSize = 14
-StorageLabel.TextColor3 = Color3.new(1,1,1)
-StorageLabel.BackgroundTransparency = 1
-StorageLabel.Position = UDim2.new(0, 500, 0, 20)
-StorageLabel.Size = UDim2.new(0, 100, 0, 20)
-StorageLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-local AddScriptBtn = Instance.new("TextButton", Page1)
-AddScriptBtn.Name = "AddScriptBtn"
-AddScriptBtn.Text = "+"
-AddScriptBtn.Size = UDim2.new(0, 30, 0, 30) 
-AddScriptBtn.Position = UDim2.new(0, 745, 0, 15)
-AddScriptBtn.BackgroundColor3 = Color3.fromRGB(15,15,15)
-AddScriptBtn.TextColor3 = Color3.new(1,1,1)
-AddScriptBtn.Font = Enum.Font.GothamBold
-AddScriptBtn.TextSize = 22 
-AddScriptBtn.AutoButtonColor = false
-Instance.new("UICorner", AddScriptBtn)
-local AddStroke = Instance.new("UIStroke", AddScriptBtn)
-AddStroke.Color = Color3.new(1,1,1)
-AddStroke.Thickness = 1
-
-AddScriptBtn.MouseEnter:Connect(function()
-    TweenService:Create(AddScriptBtn, iOS_Out, {BackgroundColor3 = Color3.fromRGB(30,30,30)}):Play()
-    TweenService:Create(AddStroke, iOS_Out, {Thickness = 2}):Play()
-end)
-AddScriptBtn.MouseLeave:Connect(function()
-    TweenService:Create(AddScriptBtn, iOS_Out, {BackgroundColor3 = Color3.fromRGB(15,15,15)}):Play()
-    TweenService:Create(AddStroke, iOS_Out, {Thickness = 1}):Play()
-end)
-
-local StorageScroll = Instance.new("ScrollingFrame", Page1)
-StorageScroll.Name = "StorageScroll"
-StorageScroll.Position = UDim2.new(0, 500, 0, 50)
-StorageScroll.Size = UDim2.new(0, 275, 0, 290)
-StorageScroll.BackgroundTransparency = 1
-StorageScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-StorageScroll.ScrollBarThickness = 2
-local StorageLayout = Instance.new("UIListLayout", StorageScroll)
-StorageLayout.Padding = UDim.new(0, 5)
-
-local ModalBack = Instance.new("Frame", ScreenGui)
-ModalBack.Size = UDim2.new(1, 0, 1, 0)
-ModalBack.BackgroundColor3 = Color3.new(0,0,0)
-ModalBack.BackgroundTransparency = 1
-ModalBack.Visible = false
-ModalBack.ZIndex = 50
-
-local ModalFrame = Instance.new("Frame", ModalBack)
-ModalFrame.Size = UDim2.new(0, 300, 0, 180)
-ModalFrame.Position = UDim2.new(0.5, 0, 0.45, 0)
-ModalFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-ModalFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-Instance.new("UICorner", ModalFrame)
-local ModalStroke = Instance.new("UIStroke", ModalFrame)
-ModalStroke.Color = Color3.new(1,1,1)
-ModalStroke.Thickness = 1.5
-
-local ModalTitle = Instance.new("TextLabel", ModalFrame)
-ModalTitle.Size = UDim2.new(1, 0, 0, 50)
-ModalTitle.BackgroundTransparency = 1
-ModalTitle.TextColor3 = Color3.new(1,1,1)
-ModalTitle.Font = Enum.Font.GothamBold
-ModalTitle.TextSize = 18
-
-local ModalInput = Instance.new("TextBox", ModalFrame)
-ModalInput.Size = UDim2.new(0, 260, 0, 35)
-ModalInput.Position = UDim2.new(0.5, 0, 0.45, 0)
-ModalInput.AnchorPoint = Vector2.new(0.5, 0.5)
-ModalInput.BackgroundColor3 = Color3.fromRGB(20,20,20)
-ModalInput.TextColor3 = Color3.new(1,1,1)
-ModalInput.PlaceholderText = "Script Name..."
-ModalInput.Font = Enum.Font.GothamMedium
-ModalInput.Text = ""
-ModalInput.TextSize = 14
-Instance.new("UICorner", ModalInput)
-
-local function StyleModalBtn(btn, text, color, pos)
-    btn.Text = text
-    btn.Size = UDim2.new(0, 120, 0, 40)
-    btn.Position = pos
-    btn.BackgroundColor3 = Color3.fromRGB(20,20,20)
-    btn.TextColor3 = Color3.new(1,1,1)
-    btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 14
-    btn.AutoButtonColor = false
-    Instance.new("UICorner", btn)
-    local s = Instance.new("UIStroke", btn)
-    s.Color = Color3.new(1,1,1)
-    s.Thickness = 1
-    s.Transparency = 0.5
-
-    btn.MouseEnter:Connect(function() 
-        TweenService:Create(btn, iOS_Out, {BackgroundColor3 = Color3.fromRGB(40,40,40)}):Play()
-        TweenService:Create(s, iOS_Out, {Transparency = 0}):Play()
-    end)
-    btn.MouseLeave:Connect(function() 
-        TweenService:Create(btn, iOS_Out, {BackgroundColor3 = Color3.fromRGB(20,20,20)}):Play()
-        TweenService:Create(s, iOS_Out, {Transparency = 0.5}):Play()
-    end)
-end
-
-local ModalYes = Instance.new("TextButton", ModalFrame)
-StyleModalBtn(ModalYes, "YES", Color3.new(1,1,1), UDim2.new(0.5, -130, 0.75, 0))
-
-local ModalNo = Instance.new("TextButton", ModalFrame)
-StyleModalBtn(ModalNo, "NO", Color3.new(1,1,1), UDim2.new(0.5, 10, 0.75, 0))
-
-local function OpenModal(title, isInput, callback)
-    ModalTitle.Text = title
-    ModalInput.Visible = isInput
-    ModalInput.Text = ""
-    ModalBack.Visible = true
-    TweenService:Create(ModalBack, iOS_Out, {BackgroundTransparency = 0.4}):Play()
-    ModalFrame.Position = UDim2.new(0.5, 0, 0.6, 0)
-    TweenService:Create(ModalFrame, iOS_Out, {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
-    
-    local conn1, conn2
-    conn1 = ModalYes.Activated:Connect(function()
-        conn1:Disconnect(); conn2:Disconnect()
-        callback(true, ModalInput.Text)
-        TweenService:Create(ModalBack, iOS_In, {BackgroundTransparency = 1}):Play()
-        TweenService:Create(ModalFrame, iOS_In, {Position = UDim2.new(0.5, 0, 0.6, 0)}):Play()
-        task.wait(0.4); ModalBack.Visible = false
-    end)
-    conn2 = ModalNo.Activated:Connect(function()
-        conn1:Disconnect(); conn2:Disconnect()
-        callback(false)
-        TweenService:Create(ModalBack, iOS_In, {BackgroundTransparency = 1}):Play()
-        TweenService:Create(ModalFrame, iOS_In, {Position = UDim2.new(0.5, 0, 0.6, 0)}):Play()
-        task.wait(0.4); ModalBack.Visible = false
-    end)
-end
-
-local FileName = "XcWare_Scripts.json"
-local SavedScripts = {}
-
-local function SaveData()
-    if writefile then
-        writefile(FileName, HttpService:JSONEncode(SavedScripts))
-    end
-end
-
-local function LoadData()
-    if isfile and isfile(FileName) then
-        local success, data = pcall(function() return HttpService:JSONDecode(readfile(FileName)) end)
-        if success then SavedScripts = data end
-    end
-end
-
-local function CreateScriptEntry(name, content)
-    local btn = Instance.new("TextButton", StorageScroll)
-    btn.Size = UDim2.new(1, -10, 0, 35)
-    btn.BackgroundColor3 = Color3.fromRGB(15,15,15)
-    btn.Text = "  " .. name:upper()
-    btn.TextColor3 = Color3.new(1,1,1)
-    btn.Font = Enum.Font.GothamMedium
-    btn.TextSize = 12
-    btn.TextXAlignment = Enum.TextXAlignment.Left
-    btn.AutoButtonColor = false
-    Instance.new("UICorner", btn)
-    local s = Instance.new("UIStroke", btn)
-    s.Color = Color3.new(1,1,1)
-    s.Transparency = 0.8
-    
-    btn.Activated:Connect(function()
-        CodeEditor.Text = content
-        ShowPopup("LOADED: " .. name)
-    end)
-    
-    local holding = false
-    btn.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            holding = true
-            task.wait(0.7)
-            if holding then
-                OpenModal("DELETE SCRIPT?", false, function(yes)
-                    if yes then
-                        SavedScripts[name] = nil
-                        SaveData()
-                        btn:Destroy()
-                        ShowPopup("DELETED")
-                    end
-                end)
-            end
-        end
-    end)
-    btn.InputEnded:Connect(function() holding = false end)
-    
-    StorageScroll.CanvasSize = UDim2.new(0,0,0, StorageLayout.AbsoluteContentSize.Y)
-end
-
-local function RefreshStorage()
-    for _, v in pairs(StorageScroll:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
-    for name, content in pairs(SavedScripts) do CreateScriptEntry(name, content) end
-end
-
-AddScriptBtn.Activated:Connect(function()
-    if CodeEditor.Text == "" or CodeEditor.Text == " " then ShowPopup("EDITOR EMPTY") return end
-    OpenModal("SAVE SCRIPT", true, function(yes, name)
-        if yes and name ~= "" then
-            SavedScripts[name] = CodeEditor.Text
-            SaveData()
-            CreateScriptEntry(name, CodeEditor.Text)
-            ShowPopup("SCRIPT SAVED")
-        end
-    end)
-end)
-
-local function CreateActionBtn(text, pos)
-    local btn = Instance.new("TextButton", Page1)
-    btn.Text = text
-    btn.Size = UDim2.new(0, 100, 0, 30)
-    btn.Position = pos
-    btn.BackgroundColor3 = Color3.new(0,0,0)
-    btn.TextColor3 = Color3.new(1,1,1)
-    btn.Font = Enum.Font.Gotham 
-    btn.TextSize = 12
-    btn.AutoButtonColor = false
-    btn.ZIndex = 5
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
-    local s = Instance.new("UIStroke", btn)
-    s.Color = Color3.new(1,1,1)
-    s.Thickness = 1
-    s.Transparency = 0.4 
-    MatrixAnim(btn, text, false)
-    btn.MouseEnter:Connect(function() TweenService:Create(s, iOS_Out, {Transparency = 0}):Play() end)
-    btn.MouseLeave:Connect(function() TweenService:Create(s, iOS_Out, {Transparency = 0.4}):Play() end)
-    return btn
-end
-
-local ExecBtn = CreateActionBtn("EXECUTE", UDim2.new(0, 25, 0, 360))
-local PasteBtn = CreateActionBtn("PASTE", UDim2.new(0, 135, 0, 360))
-local CopyBtn = CreateActionBtn("COPY", UDim2.new(0, 245, 0, 360))
-local ClearBtn = CreateActionBtn("CLEAR", UDim2.new(0, 355, 0, 360))
-
-ExecBtn.Activated:Connect(function()
-    if ExecutionMode == "SS" then
-        if SSRemote then
-            ShowPopup("EXECUTING (SS)...")
-            SSRemote:FireServer(CodeEditor.Text)
-        else
-            ShowPopup("SS NOT FOUND")
-        end
-    else
-        ShowPopup("EXECUTING (LOCAL)...")
-        local success, err = pcall(function() loadstring(CodeEditor.Text)() end)
-        if not success then warn("XCWARE ERROR: " .. err) end
-    end
-end)
-
-ClearBtn.Activated:Connect(function() CodeEditor.Text = ""; ShowPopup("EDITOR CLEARED") end)
-PasteBtn.Activated:Connect(function()
-    local success, clip = pcall(function() return getclipboard() end)
-    if success then CodeEditor.Text = CodeEditor.Text .. clip; ShowPopup("PASTED") end
-end)
-CopyBtn.Activated:Connect(function() setclipboard(CodeEditor.Text); ShowPopup("COPIED") end)
-
-local MinimizedBar = Instance.new("TextButton", ScreenGui)
-MinimizedBar.Visible = false
-MinimizedBar.Active = true
-MinimizedBar.Size = UDim2.new(0, 220, 0, 45)
-MinimizedBar.Position = UDim2.new(0.5, 0, 1, -60)
-MinimizedBar.AnchorPoint = Vector2.new(0.5, 0.5)
-MinimizedBar.BackgroundColor3 = Color3.new(0,0,0)
-MinimizedBar.Text = ""
-MinimizedBar.ZIndex = 10
-Instance.new("UICorner", MinimizedBar).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", MinimizedBar).Color = Color3.new(1,1,1)
-local BarLabel = Instance.new("TextLabel", MinimizedBar)
-BarLabel.Size = UDim2.new(1, 0, 1, 0)
-BarLabel.BackgroundTransparency = 1
-BarLabel.Text = "XCWARE"
-BarLabel.TextColor3 = Color3.new(1,1,1)
-BarLabel.Font = Enum.Font.GothamBold
-BarLabel.TextSize = 18
-MatrixAnim(BarLabel, "XCWARE", false)
-
 local function StyleButton(btn, text, pos)
     btn.Parent = TopBar; btn.Text = text; btn.TextColor3 = Color3.new(1,1,1); btn.BackgroundColor3 = Color3.new(0,0,0)
     btn.Size = UDim2.new(0, 32, 0, 32); btn.Position = pos; btn.Font = Enum.Font.GothamBold; btn.ZIndex = 10 
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
-    Instance.new("UIStroke", btn).Color = Color3.new(1,1,1)
+    Instance.new("UICorner", btn)
     return btn
 end
+
 local CloseBtn = StyleButton(Instance.new("TextButton"), "X", UDim2.new(1, -50, 0, 14))
 local MiniBtn = StyleButton(Instance.new("TextButton"), "-", UDim2.new(1, -95, 0, 14))
 local PageSwitchBtn = StyleButton(Instance.new("TextButton"), "2", UDim2.new(1, -140, 0, 14))
 local SettingsBtn = StyleButton(Instance.new("TextButton"), "⚙", UDim2.new(1, -185, 0, 14))
-local LogsBtn = StyleButton(Instance.new("TextButton"), "L", UDim2.new(1, -230, 0, 14)) -- ADDED LOGS TOGGLE
+local LogsBtn = StyleButton(Instance.new("TextButton"), "L", UDim2.new(1, -230, 0, 14))
 
--- [[ DEV FEATURE: USER LIST & REMOTE CONTROL ]]
-local UserListFrame = Instance.new("CanvasGroup", MainFrame)
-UserListFrame.Size = UDim2.new(0, 200, 0, 400)
-UserListFrame.Position = UDim2.new(0, -210, 0, 50)
-UserListFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+-- [[ DEVELOPER EXCLUSIVE: DETACHED CONTROL PANELS ]]
+local UserListFrame = Instance.new("CanvasGroup", ScreenGui) -- Parented to ScreenGui for true "outside" feel
+UserListFrame.Size = UDim2.new(0, 220, 0, 400)
+UserListFrame.BackgroundColor3 = Color3.fromRGB(2, 2, 2)
 Instance.new("UICorner", UserListFrame)
 local UL_Stroke = Instance.new("UIStroke", UserListFrame)
-UL_Stroke.Color = Color3.new(1, 1, 1)
+UL_Stroke.Color = Color3.fromRGB(0, 255, 100)
 
 local UL_Title = Instance.new("TextLabel", UserListFrame)
 UL_Title.Size = UDim2.new(1, 0, 0, 30)
-UL_Title.Text = "ACTIVE USERS"
+UL_Title.Text = "ACTIVE USERS (DEV ONLY)"
 UL_Title.TextColor3 = Color3.new(1, 1, 1)
 UL_Title.Font = Enum.Font.GothamBold
-UL_Title.TextSize = 12
+UL_Title.TextSize = 10
 UL_Title.BackgroundTransparency = 1
 
 local UL_Scroll = Instance.new("ScrollingFrame", UserListFrame)
 UL_Scroll.Size = UDim2.new(1, -10, 1, -40)
 UL_Scroll.Position = UDim2.new(0, 5, 0, 35)
 UL_Scroll.BackgroundTransparency = 1
-UL_Scroll.ScrollBarThickness = 2
 local UL_Layout = Instance.new("UIListLayout", UL_Scroll)
 
-local RemoteFrame = Instance.new("CanvasGroup", MainFrame)
-RemoteFrame.Size = UDim2.new(0, 200, 0, 400)
-RemoteFrame.Position = UDim2.new(1, 10, 0, 50)
-RemoteFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+local RemoteFrame = Instance.new("CanvasGroup", ScreenGui)
+RemoteFrame.Size = UDim2.new(0, 220, 0, 400)
+RemoteFrame.BackgroundColor3 = Color3.fromRGB(2, 2, 2)
 Instance.new("UICorner", RemoteFrame)
 local RM_Stroke = Instance.new("UIStroke", RemoteFrame)
-RM_Stroke.Color = Color3.new(1, 1, 1)
+RM_Stroke.Color = Color3.fromRGB(255, 0, 0)
 
-local RM_Title = Instance.new("TextLabel", RemoteFrame)
-RM_Title.Size = UDim2.new(1, 0, 0, 30)
-RM_Title.Text = "REMOTE CTRL"
-RM_Title.TextColor3 = Color3.new(1, 1, 1)
-RM_Title.Font = Enum.Font.GothamBold
-RM_Title.TextSize = 12
-RM_Title.BackgroundTransparency = 1
-
-local TargetInput = Instance.new("TextBox", RemoteFrame)
-TargetInput.Size = UDim2.new(0, 180, 0, 30)
-TargetInput.Position = UDim2.new(0.5, 0, 0.15, 0)
-TargetInput.AnchorPoint = Vector2.new(0.5, 0.5)
-TargetInput.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-TargetInput.PlaceholderText = "Put username"
-TargetInput.Text = ""
-TargetInput.TextColor3 = Color3.new(1, 1, 1)
-TargetInput.Font = Enum.Font.Code
-TargetInput.TextSize = 12
-Instance.new("UICorner", TargetInput)
-
-local function CreateRMBtn(text, color, pos, func)
-    local btn = Instance.new("TextButton", RemoteFrame)
-    btn.Size = UDim2.new(0, 180, 0, 35)
-    btn.Position = pos
-    btn.AnchorPoint = Vector2.new(0.5, 0.5)
-    btn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-    btn.Text = text
-    btn.TextColor3 = color
-    btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 12
-    Instance.new("UICorner", btn)
-    local s = Instance.new("UIStroke", btn)
-    s.Color = color
-    s.Thickness = 0.5
-    btn.Activated:Connect(function() 
-        if TargetInput.Text ~= "" then func(TargetInput.Text) end
-    end)
-end
-
-CreateRMBtn("KICK CLIENT", Color3.new(1, 1, 0), UDim2.new(0.5, 0, 0.3, 0), function(t) ShowPopup("KICKING: "..t) end)
-CreateRMBtn("BAN USER", Color3.new(1, 0, 0), UDim2.new(0.5, 0, 0.45, 0), function(t) ShowPopup("BANNING: "..t) end)
-CreateRMBtn("KILL USER", Color3.new(1, 0.5, 0), UDim2.new(0.5, 0, 0.6, 0), function(t) ShowPopup("KILLING: "..t) end)
-CreateRMBtn("CRASH CLIENT", Color3.new(0.5, 0, 1), UDim2.new(0.5, 0, 0.75, 0), function(t) ShowPopup("CRASHING: "..t) end)
-
-local ListToggle = StyleButton(Instance.new("TextButton"), "U", UDim2.new(0, 25, 0, 460))
-ListToggle.Parent = MainFrame
-local listOpen = false
-ListToggle.Activated:Connect(function()
-    listOpen = not listOpen
-    local targetList = listOpen and UDim2.new(0, 10, 0, 50) or UDim2.new(0, -210, 0, 50)
-    local targetRemote = listOpen and UDim2.new(1, -210, 0, 50) or UDim2.new(1, 10, 0, 50)
-    TweenService:Create(UserListFrame, iOS_Out, {Position = targetList}):Play()
-    TweenService:Create(RemoteFrame, iOS_Out, {Position = targetRemote}):Play()
-    ShowPopup(listOpen and "DEV PANELS OPEN" or "DEV PANELS CLOSED")
+-- Attach side panels logic
+RunService.RenderStepped:Connect(function()
+    if MainFrame.Visible then
+        UserListFrame.Position = MainFrame.Position - UDim2.new(0, 630, 0, 250)
+        RemoteFrame.Position = MainFrame.Position + UDim2.new(0, 410, 0, -250)
+    end
 end)
 
 local function UpdateUserList()
-    for _, v in pairs(UL_Scroll:GetChildren()) do if v:IsA("TextLabel") then v:Destroy() end end
+    for _, v in pairs(UL_Scroll:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
     for _, p in pairs(Players:GetPlayers()) do
-        local l = Instance.new("TextLabel", UL_Scroll)
-        l.Size = UDim2.new(1, 0, 0, 25)
+        local container = Instance.new("Frame", UL_Scroll)
+        container.Size = UDim2.new(1, 0, 0, 45)
+        container.BackgroundTransparency = 1
+        
+        local l = Instance.new("TextLabel", container)
+        l.Size = UDim2.new(1, 0, 0, 20)
+        l.Text = p.Name
+        l.TextColor3 = Color3.new(1,1,1)
         l.BackgroundTransparency = 1
-        l.Text = " > " .. p.Name
-        l.TextColor3 = Color3.fromRGB(0, 255, 100)
         l.Font = Enum.Font.Code
-        l.TextSize = 11
-        l.TextXAlignment = Enum.TextXAlignment.Left
+        l.TextSize = 10
+        
+        local blBtn = Instance.new("TextButton", container)
+        blBtn.Size = UDim2.new(0, 80, 0, 20)
+        blBtn.Position = UDim2.new(0, 5, 0, 22)
+        blBtn.Text = "BLACKLIST"
+        blBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        blBtn.TextColor3 = Color3.new(1,1,1)
+        blBtn.Font = Enum.Font.GothamBold
+        blBtn.TextSize = 9
+        Instance.new("UICorner", blBtn)
+        
+        local unBlBtn = Instance.new("TextButton", container)
+        unBlBtn.Size = UDim2.new(0, 90, 0, 20)
+        unBlBtn.Position = UDim2.new(1, -95, 0, 22)
+        unBlBtn.Text = "UNBLACKLIST"
+        unBlBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
+        unBlBtn.TextColor3 = Color3.new(1,1,1)
+        unBlBtn.Font = Enum.Font.GothamBold
+        unBlBtn.TextSize = 9
+        Instance.new("UICorner", unBlBtn)
+
+        blBtn.Activated:Connect(function()
+            BlacklistedUsers[p.Name] = true
+            if writefile then writefile(BlacklistFile, HttpService:JSONEncode(BlacklistedUsers)) end
+            ShowPopup("BLACKLISTED: " .. p.Name)
+        end)
+
+        unBlBtn.Activated:Connect(function()
+            BlacklistedUsers[p.Name] = nil
+            if writefile then writefile(BlacklistFile, HttpService:JSONEncode(BlacklistedUsers)) end
+            ShowPopup("REMOVED: " .. p.Name)
+        end)
     end
 end
 Players.PlayerAdded:Connect(UpdateUserList)
-Players.PlayerRemoving:Connect(UpdateUserList)
 UpdateUserList()
 
-LogsBtn.Activated:Connect(function()
-    UpdateLogFrame.Visible = not UpdateLogFrame.Visible
-    if UpdateLogFrame.Visible then _G.ShowPopupRef("VIEWING LOGS") end
-end)
-
-SettingsBtn.Activated:Connect(function()
-    SettingsFrame.Visible = true
-end)
-
-local currentPage = 1
-local function GoToPage(pageNum)
-    local targetY = 0
-    local pageHeight = PageScroller.AbsoluteWindowSize.Y
-    if pageNum == 1 then
-        targetY = 0
-        PageSwitchBtn.Text = "2"
-        ShowPopup("EDITOR")
-    elseif pageNum == 2 then
-        targetY = pageHeight
-        PageSwitchBtn.Text = "3"
-        ShowPopup("ADVANCED TOOLS")
-    elseif pageNum == 3 then
-        targetY = pageHeight * 2
-        PageSwitchBtn.Text = "1"
-        ShowPopup("UTILITIES")
-    end
-    currentPage = pageNum
-    TweenService:Create(PageScroller, iOS_Out, {CanvasPosition = Vector2.new(0, targetY)}):Play()
+-- Hide/Show Panels based on Dev Rank
+if LocalPlayer.Name ~= "Crixcrix000" then
+    UserListFrame.Visible = false
+    RemoteFrame.Visible = false
 end
 
+-- Re-implement basic functions
 PageSwitchBtn.Activated:Connect(function()
-    local nextP = currentPage + 1
-    if nextP > 3 then nextP = 1 end
-    GoToPage(nextP)
-end)
-
-CloseBtn.Activated:Connect(function()
-    ShowPopup("SHUTTING DOWN")
-    TweenService:Create(MainFrame, iOS_In, {Size = UDim2.new(0, 0, 0, 0), GroupTransparency = 1}):Play()
-    task.wait(0.4); MainFrame.Visible = false; MinimizedBar.Visible = true; MinimizedBar.Size = UDim2.new(0, 220, 0, 45)
-end)
-
-local isMinimized = false
-MiniBtn.Activated:Connect(function()
-    if not isMinimized then
-        ShowPopup("MINIMIZED")
-        TweenService:Create(MainFrame, iOS_Out, {Size = UDim2.new(0, 800, 0, 60)}):Play()
-        isMinimized = true
+    local pageHeight = PageScroller.AbsoluteWindowSize.Y
+    if PageScroller.CanvasPosition.Y < pageHeight then
+        PageScroller.CanvasPosition = Vector2.new(0, pageHeight)
+        PageSwitchBtn.Text = "3"
+    elseif PageScroller.CanvasPosition.Y < pageHeight * 2 then
+        PageScroller.CanvasPosition = Vector2.new(0, pageHeight * 2)
+        PageSwitchBtn.Text = "1"
     else
-        ShowPopup("MAXIMIZED")
-        TweenService:Create(MainFrame, iOS_Out, {Size = UDim2.new(0, 800, 0, 500)}):Play()
-        isMinimized = false
+        PageScroller.CanvasPosition = Vector2.new(0, 0)
+        PageSwitchBtn.Text = "2"
     end
 end)
 
-MinimizedBar.Activated:Connect(function()
-    MinimizedBar.Visible = false; MainFrame.Visible = true
-    TweenService:Create(MainFrame, iOS_Out, {Size = UDim2.new(0, 800, 0, 500), GroupTransparency = 0}):Play()
-    isMinimized = false; ShowPopup("RESTORED")
-end)
-
+CloseBtn.Activated:Connect(function() ScreenGui:Destroy() end)
 MakeDraggable(MainFrame, TopBar)
 
-LoadData()
-RefreshStorage()
-MatrixAnim(Title, "XCWARE", false)
+MainFrame.Visible = true
+TweenService:Create(MainFrame, iOS_Out, {Size = UDim2.new(0, 800, 0, 500), GroupTransparency = 0}):Play()
+_G.ShowPopupRef("XCWARE READY - " .. LocalPlayer.Name)
