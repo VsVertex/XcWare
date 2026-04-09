@@ -1,4 +1,4 @@
--- Heavily Obfuscated AnkleBreaker Script
+-- Hard Obfuscated AnkleBreaker by XC
 local a=game:GetService("Players")local b=a.LocalPlayer;local c=game:GetService("RunService")
 local d=(gethui and gethui())or game:GetService("CoreGui")
 if d:FindFirstChild("\84\101\108\101\112\111\114\116\71\117\105")then d.TeleportGui:Destroy()end
@@ -47,4 +47,4 @@ Players.PlayerAdded:Connect(x)
 Players.PlayerRemoving:Connect(function(K)if h:FindFirstChild(K.Name)then h[K.Name]:Destroy()end end)
 H()
 
-c.Heartbeat:Connect(function()if b.Character and b.Character:FindFirstChild("\72\117\109\97\110\111\105\100\82\111\111\116\80\97\114\116")then if j and not u then q=b.Character.HumanoidRootPart.CFrame end if s and b.Character:FindFirstChild("\72\117\109\97\110\111\105\100")then b.Character.Humanoid.WalkSpeed=t end if u and u.Character and u.Character:FindFirstChild("\72\117\109\97\110\111\105\100\82\111\111\116\80\97\114\116")then v=not v b.Character.HumanoidRootPart.CFrame=u.Character.HumanoidRootPart.CFrame*(v and CFrame.new(0,0,3)or CFrame.new(0,0,-3))end end end) 
+c.Heartbeat:Connect(function()if b.Character and b.Character:FindFirstChild("\72\117\109\97\110\111\105\100\82\111\111\116\80\97\114\116")then if j and not u then q=b.Character.HumanoidRootPart.CFrame end if s and b.Character:FindFirstChild("\72\117\109\97\110\111\105\100")then b.Character.Humanoid.WalkSpeed=t end if u and u.Character and u.Character:FindFirstChild("\72\117\109\97\110\111\105\100\82\111\111\116\80\97\114\116")then v=not v b.Character.HumanoidRootPart.CFrame=u.Character.HumanoidRootPart.CFrame*(v and CFrame.new(0,0,3)or CFrame.new(0,0,-3))end end end)
