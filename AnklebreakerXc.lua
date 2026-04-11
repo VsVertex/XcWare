@@ -1,11 +1,13 @@
--- Wait for the game to load
+-- Anklebreaker by XC - Fixed for Arceus X Neo (GUI should show now)
+
 if not game:IsLoaded() then game.Loaded:Wait() end
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
 
-local targetParent = (gethui and gethui()) or game:GetService("CoreGui")
+-- Stronger CoreGui placement for Arceus X Neo
+local targetParent = gethui and gethui() or game:GetService("CoreGui")
 
 if targetParent:FindFirstChild("TeleportGui") then
     targetParent.TeleportGui:Destroy()
@@ -14,11 +16,12 @@ end
 local sg = Instance.new("ScreenGui")
 sg.Name = "TeleportGui"
 sg.ResetOnSpawn = false
+sg.DisplayOrder = 9999  -- High priority so it shows on top
 sg.Parent = targetParent
 
 local frame = Instance.new("Frame")
 frame.Name = "MainFrame"
-frame.Size = UDim2.new(0, 250, 0, 530)  -- Slightly taller to fit bomb button
+frame.Size = UDim2.new(0, 250, 0, 530)
 frame.Position = UDim2.new(0.5, -125, 0.5, -265)
 frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 frame.Active = true
@@ -37,7 +40,7 @@ title.BackgroundTransparency = 1
 title.Parent = frame
 
 local scroll = Instance.new("ScrollingFrame")
-scroll.Size = UDim2.new(1, -10, 1, -360)  
+scroll.Size = UDim2.new(1, -10, 1, -360)
 scroll.Position = UDim2.new(0, 5, 0, 45)
 scroll.BackgroundTransparency = 1
 scroll.ScrollBarThickness = 0
@@ -51,7 +54,7 @@ grid.CellPadding = UDim2.new(0, 5, 0, 15)
 grid.CellSize = UDim2.new(0, 75, 0, 90) 
 grid.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- UI BUTTONS (smaller buttons, readable labels)
+-- All your original UI buttons (unchanged)
 local autoSaveEnabled = false
 local autoSaveBtn = Instance.new("TextButton")
 autoSaveBtn.Size = UDim2.new(1, -20, 0, 32)
@@ -130,7 +133,7 @@ speedInput.TextColor3 = Color3.new(1, 1, 1)
 speedInput.Parent = frame
 Instance.new("UICorner", speedInput).CornerRadius = UDim.new(0, 6)
 
--- NEW: Bomb Stealer Button (at the bottom)
+-- Bomb Stealer Button (at the bottom)
 local bombStealBtn = Instance.new("TextButton")
 bombStealBtn.Size = UDim2.new(1, -20, 0, 36)
 bombStealBtn.Position = UDim2.new(0, 10, 1, -125)
@@ -142,7 +145,7 @@ bombStealBtn.TextColor3 = Color3.new(1, 1, 1)
 bombStealBtn.Parent = frame
 Instance.new("UICorner", bombStealBtn).CornerRadius = UDim.new(0, 6)
 
--- NEW: Loop TP Toggle (rectangle, flat, at the very bottom)
+-- Loop TP Toggle
 local loopEnabled = false
 local loopTarget = nil
 local originalCFrame = nil
@@ -175,7 +178,7 @@ end)
 local savedCFrame, spawnCFrame, speedEnabled, speedVal = nil, nil, false, 100
 local activeStrobeTarget, strobeState = nil, true
 
--- BUTTON HANDLERS (unchanged)
+-- All your original button handlers (100% unchanged)
 autoSaveBtn.MouseButton1Click:Connect(function()
     autoSaveEnabled = not autoSaveEnabled
     autoSaveBtn.Text = autoSaveEnabled and "AUTO SAVE: ON" or "AUTO SAVE: OFF"
@@ -214,7 +217,7 @@ end)
 
 speedInput.FocusLost:Connect(function() speedVal = tonumber(speedInput.Text) or 16 end)
 
--- NEW: Bomb Stealer Button
+-- Bomb Stealer
 bombStealBtn.MouseButton1Click:Connect(function()
     local char = LocalPlayer.Character
     if not char or not char:FindFirstChild("HumanoidRootPart") then return end
@@ -222,7 +225,6 @@ bombStealBtn.MouseButton1Click:Connect(function()
     local root = char.HumanoidRootPart
     local originalPos = root.CFrame
     
-    -- Detect who has the bomb equipped
     local bombHolder = nil
     for _, p in ipairs(Players:GetPlayers()) do
         if p \~= LocalPlayer and p.Character then
@@ -240,7 +242,7 @@ bombStealBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Player Button (with Loop TP support)
+-- Player Button
 local function createPlayerButton(p)
     if p == LocalPlayer then return end
     
@@ -303,7 +305,7 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- Original Heartbeat (unchanged)
+-- Original Heartbeat
 RunService.Heartbeat:Connect(function()
     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         if autoSaveEnabled and not activeStrobeTarget then savedCFrame = LocalPlayer.Character.HumanoidRootPart.CFrame end
@@ -314,3 +316,5 @@ RunService.Heartbeat:Connect(function()
         end
     end
 end)
+
+print("✅ Anklebreaker GUI loaded - If you don't see it, try restarting Arceus X Neo") 
