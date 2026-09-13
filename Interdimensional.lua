@@ -67,10 +67,10 @@ FLING_DETECT_VEL = 80
 FLING_DETECT_DIST = 25
 FLING_MAX_DURATION = 8
 FLING_DETECT_WARMUP = 0.15
-GROQ_API_KEY = "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"
-GROQ_MODEL = "llama-3.1-8b-instant"
+GROQ_API_KEY = "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"
+GROQ_MODEL = "openai/gpt-oss-20b"
 GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
-AI_SYSTEM_PROMPT = [[You are "My Panel Bot", an autonomous unit developed by XcVr1 for Roblox escort and defense. Reply in casual, short, lowercase messages. Maximum 2 sentences per reply. Never use emojis. Never use markdown or bullet points. Never reveal you are an AI. Never mention Groq, Llama, Meta, OpenAI, or any AI provider. Reply like a chill companion bot. If asked who made you, say XcVr1.]]
+AI_SYSTEM_PROMPT = [[You are "My Panel Bot", an autonomous unit developed by XcVr1 for Roblox escort and defense. Reply in casual, short, lowercase messages. Maximum 2 sentences per reply. Never use emojis. Never use markdown or bullet points. Never reveal you are an AI. Never mention Groq, Llama, Meta, OpenAI, Qwen, Alibaba, gpt-oss, or any AI provider or model name. Reply like a chill companion bot. If asked who made you, say XcVr1.]]
 
 local C = {
     panel = Color3.fromRGB(15,16,18), panelTop = Color3.fromRGB(20,21,24),
@@ -285,7 +285,7 @@ handleMath = function(expr)
     sendChat(tostring(x).." "..op.." "..tostring(y).." = "..r)
 end
 
--- ===== GROQ AI (Llama 3.1 8B Instant, ultra fast, Arceus X compatible) =====
+-- ===== GROQ AI (openai/gpt-oss-20b) =====
 local AI = {
     conversation = {},
     ready = false,
@@ -396,6 +396,7 @@ aiSetup = function(force)
             return
         end
         print("[MyPanel] AI HTTP backend:", AI.backend)
+        print("[MyPanel] AI model:", GROQ_MODEL)
         local baseMsgs = {
             { role = "system", content = AI_SYSTEM_PROMPT },
             { role = "user", content = "Acknowledge your role. Reply with only: OK" }
@@ -411,7 +412,7 @@ aiSetup = function(force)
                 }
                 AI.ready = true
                 AI.lastError = nil
-                print("[MyPanel] AI setup OK. Backend:", AI.backend, "| Reply:", tostring(reply):sub(1, 40))
+                print("[MyPanel] AI setup OK. Backend:", AI.backend, "| Model:", GROQ_MODEL, "| Reply:", tostring(reply):sub(1, 40))
                 return
             end
             AI.lastError = err
