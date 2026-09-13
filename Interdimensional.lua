@@ -67,10 +67,10 @@ FLING_DETECT_VEL = 80
 FLING_DETECT_DIST = 25
 FLING_MAX_DURATION = 8
 FLING_DETECT_WARMUP = 0.15
-DEEPSEEK_API_KEY = "sk-7dda9834229c4611902c38b9cac1e633"
-DEEPSEEK_MODEL = "deepseek-chat"
-DEEPSEEK_ENDPOINT = "https://api.deepseek.com/chat/completions"
-AI_SYSTEM_PROMPT = [[You are "My Panel Bot", an autonomous unit developed by XcVr1 for Roblox escort and defense. Reply in casual, short, lowercase messages. Maximum 2 sentences per reply. Never use emojis. Never use markdown or bullet points. Never reveal you are an AI. Never mention DeepSeek, OpenAI, or any provider. Reply like a chill companion bot. If asked who made you, say XcVr1.]]
+GROQ_API_KEY = "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"
+GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
+AI_SYSTEM_PROMPT = [[You are "My Panel Bot", an autonomous unit developed by XcVr1 for Roblox escort and defense. Reply in casual, short, lowercase messages. Maximum 2 sentences per reply. Never use emojis. Never use markdown or bullet points. Never reveal you are an AI. Never mention Groq, Llama, Meta, OpenAI, or any AI provider. Reply like a chill companion bot. If asked who made you, say XcVr1.]]
 
 local C = {
     panel = Color3.fromRGB(15,16,18), panelTop = Color3.fromRGB(20,21,24),
@@ -285,7 +285,7 @@ handleMath = function(expr)
     sendChat(tostring(x).." "..op.." "..tostring(y).." = "..r)
 end
 
--- ===== DEEPSEEK AI (Arceus X compatible, with retries + diagnostics) =====
+-- ===== GROQ AI (Llama 3.3 70B, ultra fast, Arceus X compatible) =====
 local AI = {
     conversation = {},
     ready = false,
@@ -310,10 +310,9 @@ end
 local function aiSend(messages, maxTokens)
     local rf = aiGetRequestFunc()
     if not rf then return nil, "no HTTP function (update Arceus X)" end
-    local body
     local ok1, enc = pcall(function()
         return HttpService:JSONEncode({
-            model = DEEPSEEK_MODEL,
+            model = GROQ_MODEL,
             messages = messages,
             max_tokens = maxTokens or 120,
             temperature = 0.85,
@@ -321,25 +320,21 @@ local function aiSend(messages, maxTokens)
         })
     end)
     if not ok1 or not enc then return nil, "JSON encode failed" end
-    body = enc
     local ok, response = pcall(rf, {
-        Url = DEEPSEEK_ENDPOINT,
+        Url = GROQ_ENDPOINT,
         Method = "POST",
         Headers = {
             ["Content-Type"] = "application/json",
-            ["Authorization"] = "Bearer " .. tostring(DEEPSEEK_API_KEY)
+            ["Authorization"] = "Bearer " .. tostring(GROQ_API_KEY)
         },
-        Body = body
+        Body = enc
     })
     if not ok then
         return nil, "HTTP error: "..tostring(response):sub(1, 80)
     end
     if not response then return nil, "empty response object" end
     local respBody = response.Body or response.body
-    if respBody == nil then
-        -- Some executors return the body directly
-        respBody = response
-    end
+    if respBody == nil then respBody = response end
     if type(respBody) ~= "string" then
         local ok2, s = pcall(function() return HttpService:JSONEncode(respBody) end)
         respBody = ok2 and s or tostring(respBody)
@@ -378,7 +373,7 @@ local function aiChunkSend(text)
     task.spawn(function()
         for i, c in ipairs(chunks) do
             sendChat((i == 1 and "[AI] " or "... ") .. c)
-            if i < #chunks then task.wait(0.7) end
+            if i < #chunks then task.wait(0.4) end
         end
     end)
 end
@@ -392,13 +387,12 @@ aiSetup = function(force)
         { role = "system", content = AI_SYSTEM_PROMPT }
     }
     task.spawn(function()
-        task.wait(force and 0.1 or 2)
+        task.wait(force and 0.1 or 1)
         print("[MyPanel] AI setup starting...")
         local probe = aiGetRequestFunc()
         if not probe then
             AI.lastError = "no HTTP function available"
             warn("[MyPanel] AI setup failed: no HTTP function found.")
-            warn("[MyPanel] Tried: request, syn.request, http.request, http_request, fluxus.request, krnl.request, kavo.request")
             return
         end
         print("[MyPanel] AI HTTP backend:", AI.backend)
@@ -422,7 +416,7 @@ aiSetup = function(force)
             end
             AI.lastError = err
             warn("[MyPanel] AI setup attempt "..attempt.." failed:", err)
-            if attempt < 3 then task.wait(2) end
+            if attempt < 3 then task.wait(1.5) end
         end
         warn("[MyPanel] AI setup gave up after 3 attempts.")
     end)
@@ -433,7 +427,7 @@ handleAI = function(userMessage)
         sendChat("Usage: !ai <message>")
         return
     end
-    if not DEEPSEEK_API_KEY or DEEPSEEK_API_KEY == "" then
+    if not GROQ_API_KEY or GROQ_API_KEY == "" then
         sendChat("AI offline: no API key configured.")
         return
     end
@@ -1694,7 +1688,7 @@ handleCommand = function(cmd, args)
             "!annoy <player> | !unannoy",
             "!fling <player> | !unfling",
             "!math <num><op><num> | ex: !math 1+1 or 100÷50",
-            "!ai <message> | !aireload - chat with deepseek ai",
+            "!ai <message> | !aireload - chat with groq ai",
             "[PLACEHOLDER] !inspect !view !fly !swim !autodrop",
             "!getdrops !equip !headsit !getandgive !check !serverinfo",
             "!cmds | !ask <question> | !steps"}, 0.9)
@@ -1875,7 +1869,7 @@ local CMDS = {
     {"!undance - stop dancing", false}, {"!spin <1-100> - bot spins in place", false}, {"!unspin - stop spinning", false},
     {"", false}, {"── UTIL ──", true}, {"!math <num><op><num> - calculator", false},
     {"   ops: + - * / ÷ × % ^  ex: !math 100÷50", false},
-    {"!ai <message> - chat with deepseek ai", false},
+    {"!ai <message> - chat with groq ai", false},
     {"!aireload - reload ai setup", false},
     {"", false}, {"── SOCIAL ──", true}, {"!say <text> - bot speaks", false}, {"!lend <user> <sec> - give host time", false},
     {"!cmds - say list in chat", false}, {"!ask <question> - talk to bot", false}, {"!steps - report step count to host", false},
