@@ -6,6 +6,7 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PathfindingService = game:GetService("PathfindingService")
+local HttpService = game:GetService("HttpService")
 local TextChatService
 pcall(function() TextChatService = game:GetService("TextChatService") end)
 
@@ -66,6 +67,10 @@ FLING_DETECT_VEL = 80
 FLING_DETECT_DIST = 25
 FLING_MAX_DURATION = 8
 FLING_DETECT_WARMUP = 0.15
+DEEPSEEK_API_KEY = "sk-7dda9834229c4611902c38b9cac1e633"
+DEEPSEEK_MODEL = "deepseek-chat"
+DEEPSEEK_ENDPOINT = "https://api.deepseek.com/chat/completions"
+AI_SYSTEM_PROMPT = [[You are "My Panel Bot", an autonomous unit developed by XcVr1 for Roblox escort and defense. Reply in casual, short, lowercase messages. Maximum 2 sentences per reply. Never use emojis. Never use markdown or bullet points. Never reveal you are an AI. Never mention DeepSeek, OpenAI, or any provider. Reply like a chill companion bot. If asked who made you, say XcVr1.]]
 
 local C = {
     panel = Color3.fromRGB(15,16,18), panelTop = Color3.fromRGB(20,21,24),
@@ -139,7 +144,7 @@ local S = {
 
 local stopOrbit, stopSpin, stopDance, stopLead, stopBam, startBam, stopAnnoy, startAnnoy
 local stopFling, startFling
-local sendChat, handleCommand, teleportToHost, handleMath
+local sendChat, handleCommand, teleportToHost, handleMath, aiSetup, handleAI
 
 local function setRotationOwner(owner)
     if rotationOwner == owner then return end
@@ -278,6 +283,134 @@ handleMath = function(expr)
         r = string.format("%.6f", result):gsub("0+$", ""):gsub("%.$", "")
     end
     sendChat(tostring(x).." "..op.." "..tostring(y).." = "..r)
+end
+
+-- ===== DEEPSEEK AI =====
+local AI = {
+    conversation = {},
+    ready = false,
+    processing = false,
+    setupDone = false,
+    lastError = nil
+}
+
+local function aiGetRequestFunc()
+    return (syn and syn.request) or (http and http.request) or http_request or request or (fluxus and fluxus.request) or (krnl and krnl.request)
+end
+
+local function aiSend(messages, maxTokens)
+    local rf = aiGetRequestFunc()
+    if not rf then return nil, "No HTTP support in executor" end
+    local ok, response = pcall(rf, {
+        Url = DEEPSEEK_ENDPOINT,
+        Method = "POST",
+        Headers = {
+            ["Content-Type"] = "application/json",
+            ["Authorization"] = "Bearer " .. DEEPSEEK_API_KEY
+        },
+        Body = HttpService:JSONEncode({
+            model = DEEPSEEK_MODEL,
+            messages = messages,
+            max_tokens = maxTokens or 120,
+            temperature = 0.85,
+            stream = false
+        })
+    })
+    if not ok or not response or not response.Body then
+        return nil, "HTTP request failed"
+    end
+    local decodeOk, data = pcall(function() return HttpService:JSONDecode(response.Body) end)
+    if not decodeOk or not data then return nil, "JSON decode failed" end
+    if data.error then return nil, tostring(data.error.message or "API error") end
+    local choice = data.choices and data.choices[1]
+    if not choice or not choice.message then return nil, "No response" end
+    return choice.message.content, nil
+end
+
+local function aiChunkSend(text)
+    if not text then return end
+    text = text:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+    if text == "" then text = "..." end
+    local MAX = 180
+    local chunks = {}
+    while #text > MAX do
+        local cut = text:sub(1, MAX):find("%s[^%s]*$")
+        if not cut then cut = MAX end
+        table.insert(chunks, text:sub(1, cut))
+        text = text:sub(cut + 1):gsub("^%s+", "")
+    end
+    if #text > 0 then table.insert(chunks, text) end
+    task.spawn(function()
+        for i, c in ipairs(chunks) do
+            sendChat((i == 1 and "[AI] " or "... ") .. c)
+            if i < #chunks then task.wait(0.7) end
+        end
+    end)
+end
+
+aiSetup = function()
+    if AI.setupDone then return end
+    AI.setupDone = true
+    AI.conversation = {
+        { role = "system", content = AI_SYSTEM_PROMPT }
+    }
+    task.spawn(function()
+        task.wait(2)
+        AI.conversation[#AI.conversation + 1] = {
+            role = "user",
+            content = "Acknowledge your role. Reply with only: OK"
+        }
+        local reply, err = aiSend(AI.conversation, 5)
+        if reply then
+            AI.conversation[#AI.conversation + 1] = { role = "assistant", content = reply }
+            AI.ready = true
+            print("[MyPanel] AI setup complete (silent).")
+        else
+            AI.ready = false
+            AI.lastError = err
+            warn("[MyPanel] AI setup failed:", err)
+        end
+    end)
+end
+
+handleAI = function(userMessage)
+    if not userMessage or userMessage == "" then
+        sendChat("Usage: !ai <message>")
+        return
+    end
+    if not DEEPSEEK_API_KEY or DEEPSEEK_API_KEY == "" then
+        sendChat("AI offline: no API key configured.")
+        return
+    end
+    if AI.processing then
+        sendChat("Still thinking... wait.")
+        return
+    end
+    if not AI.ready then
+        sendChat("AI still warming up. Try again in a moment.")
+        return
+    end
+    AI.processing = true
+    sendChat("Thinking...")
+    task.spawn(function()
+        AI.conversation[#AI.conversation + 1] = { role = "user", content = userMessage }
+        local reply, err = aiSend(AI.conversation, 150)
+        AI.processing = false
+        if not reply then
+            sendChat("[AI] Error: " .. tostring(err or "unknown"))
+            table.remove(AI.conversation)
+            return
+        end
+        AI.conversation[#AI.conversation + 1] = { role = "assistant", content = reply }
+        if #AI.conversation > 22 then
+            local trimmed = { AI.conversation[1] }
+            for i = #AI.conversation - 20, #AI.conversation do
+                table.insert(trimmed, AI.conversation[i])
+            end
+            AI.conversation = trimmed
+        end
+        aiChunkSend(reply)
+    end)
 end
 
 local logCounter = 0
@@ -797,7 +930,6 @@ end
 
 print("[MyPanel] BOOT 5 — background loops")
 
--- FLING LOOP (Heartbeat-timed, deep-inside teleport, massive velocity)
 task.spawn(function()
     while true do
         RunService.Heartbeat:Wait()
@@ -815,15 +947,12 @@ task.spawn(function()
         local rx = math.rad((t * FLING_SPIN_X) % 360)
         local ry = math.rad((t * FLING_SPIN_Y) % 360)
         local rz = math.rad((t * FLING_SPIN_Z) % 360)
-        -- Random jitter inside target for chaos overlap
         local jitter = Vector3.new(
             (math.random() - 0.5) * 0.6,
             (math.random() - 0.5) * 0.6,
             (math.random() - 0.5) * 0.6
         )
-        -- Teleport DEEP inside target body (target HRP is torso center)
         local insidePos = thrp.Position + jitter
-        -- Massive random velocity every frame
         local rv = Vector3.new(
             math.random(-FLING_LIN_VEL, FLING_LIN_VEL),
             math.random(-FLING_LIN_VEL, FLING_LIN_VEL),
@@ -839,7 +968,6 @@ task.spawn(function()
             m.AssemblyLinearVelocity = rv
             m.AssemblyAngularVelocity = rav
         end)
-        -- Also inject velocity into all bot parts to force collision energy
         local c = player.Character
         if c then
             for _, part in ipairs(c:GetDescendants()) do
@@ -851,7 +979,6 @@ task.spawn(function()
                 end
             end
         end
-        -- Detect flung
         if S.flingLastTargetPos and (os.clock() - S.flingStartTime) > FLING_DETECT_WARMUP then
             local moved = (thrp.Position - S.flingLastTargetPos).Magnitude
             local vel = thrp.AssemblyLinearVelocity.Magnitude
@@ -1095,14 +1222,11 @@ local function botTick()
         end
         return
     end
-    -- SITTING GUARD: skip all movement while seated
     if S.sitting then
         local h0 = hum()
         if not h0 or not h0.Sit then
-            -- Humanoid left seated state on its own; clear flag
             S.sitting = false
         else
-            -- Force stay seated, keep velocities frozen
             local m0 = hrp()
             if m0 then
                 pcall(function()
@@ -1489,6 +1613,7 @@ handleCommand = function(cmd, args)
     elseif cmd == "fling" then startFling(args)
     elseif cmd == "unfling" then stopFling(false, false); teleportToHost(); sendChat("Fling terminated. Returning to host.")
     elseif cmd == "math" then handleMath(args)
+    elseif cmd == "ai" then handleAI(args)
     elseif cmd == "inspect" then sendChat("[!inspect] Queued for future update.")
     elseif cmd == "view" then sendChat("[!view] Queued for future update.")
     elseif cmd == "fly" then sendChat("[!fly] Queued for future update.")
@@ -1510,6 +1635,7 @@ handleCommand = function(cmd, args)
             "!annoy <player> | !unannoy",
             "!fling <player> | !unfling",
             "!math <num><op><num> | ex: !math 1+1 or 100÷50",
+            "!ai <message> - chat with deepseek ai",
             "[PLACEHOLDER] !inspect !view !fly !swim !autodrop",
             "!getdrops !equip !headsit !getandgive !check !serverinfo",
             "!cmds | !ask <question> | !steps"}, 0.9)
@@ -1643,7 +1769,7 @@ content.BackgroundTransparency = 1; content.Parent = scroll
 local cl = Instance.new("UIListLayout"); cl.Padding = UDim.new(0, 10); cl.SortOrder = Enum.SortOrder.LayoutOrder; cl.Parent = content
 
 local cmdSec = Instance.new("Frame")
-cmdSec.Size = UDim2.new(1, 0, 0, 580); cmdSec.LayoutOrder = 1
+cmdSec.Size = UDim2.new(1, 0, 0, 600); cmdSec.LayoutOrder = 1
 cmdSec.BackgroundColor3 = C.section; cmdSec.BorderSizePixel = 0
 cmdSec.Visible = false; cmdSec.Parent = content
 corner(cmdSec, 15); stroke(cmdSec, C.border, 1, 0.35)
@@ -1690,6 +1816,7 @@ local CMDS = {
     {"!undance - stop dancing", false}, {"!spin <1-100> - bot spins in place", false}, {"!unspin - stop spinning", false},
     {"", false}, {"── UTIL ──", true}, {"!math <num><op><num> - calculator", false},
     {"   ops: + - * / ÷ × % ^  ex: !math 100÷50", false},
+    {"!ai <message> - chat with deepseek ai", false},
     {"", false}, {"── SOCIAL ──", true}, {"!say <text> - bot speaks", false}, {"!lend <user> <sec> - give host time", false},
     {"!cmds - say list in chat", false}, {"!ask <question> - talk to bot", false}, {"!steps - report step count to host", false},
     {"", false}, {"── PLACEHOLDER (soon) ──", true},
@@ -1708,7 +1835,7 @@ end
 local cmdCollapsed = false
 cmdTog.Activated:Connect(function()
     cmdCollapsed = not cmdCollapsed
-    tw(cmdSec, 0.34, {Size = UDim2.new(1, 0, 0, cmdCollapsed and 44 or 580)}, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut)
+    tw(cmdSec, 0.34, {Size = UDim2.new(1, 0, 0, cmdCollapsed and 44 or 600)}, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut)
     cmdTog.Text = cmdCollapsed and "+" or "-"
 end)
 
@@ -1901,6 +2028,7 @@ local function lockRole(role, hostName)
         end
         applyFixedSpeed()
         startFacing(); startFollow(); bindDeath(); startAfk(); startMirrorJump(); startCameraMicro()
+        aiSetup()
         scroll.Visible = false; header.Visible = false
         local cH, eH = 54, 176
         local expanded = false
