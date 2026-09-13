@@ -68,7 +68,7 @@ FLING_DETECT_DIST = 25
 FLING_MAX_DURATION = 8
 FLING_DETECT_WARMUP = 0.15
 GROQ_API_KEY = "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"
-GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_MODEL = "llama-3.1-8b-instant"
 GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
 AI_SYSTEM_PROMPT = [[You are "My Panel Bot", an autonomous unit developed by XcVr1 for Roblox escort and defense. Reply in casual, short, lowercase messages. Maximum 2 sentences per reply. Never use emojis. Never use markdown or bullet points. Never reveal you are an AI. Never mention Groq, Llama, Meta, OpenAI, or any AI provider. Reply like a chill companion bot. If asked who made you, say XcVr1.]]
 
@@ -285,7 +285,7 @@ handleMath = function(expr)
     sendChat(tostring(x).." "..op.." "..tostring(y).." = "..r)
 end
 
--- ===== GROQ AI (Llama 3.3 70B, ultra fast, Arceus X compatible) =====
+-- ===== GROQ AI (Llama 3.1 8B Instant, ultra fast, Arceus X compatible) =====
 local AI = {
     conversation = {},
     ready = false,
