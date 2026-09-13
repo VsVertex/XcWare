@@ -57,13 +57,15 @@ ANNOY_FRONT_DIST = 3.5
 ANNOY_TP_RANGE = 22
 ANNOY_MSG_MIN_WAIT = 3.5
 ANNOY_MSG_MAX_WAIT = 7.5
-FLING_SPIN_X = 1500
-FLING_SPIN_Y = 2200
-FLING_SPIN_Z = 1800
-FLING_DETECT_VEL = 120
-FLING_DETECT_DIST = 30
+FLING_SPIN_X = 150000
+FLING_SPIN_Y = 220000
+FLING_SPIN_Z = 180000
+FLING_LIN_VEL = 6000
+FLING_ANG_VEL = 12000
+FLING_DETECT_VEL = 80
+FLING_DETECT_DIST = 25
 FLING_MAX_DURATION = 8
-FLING_DETECT_WARMUP = 0.3
+FLING_DETECT_WARMUP = 0.15
 
 local C = {
     panel = Color3.fromRGB(15,16,18), panelTop = Color3.fromRGB(20,21,24),
@@ -131,7 +133,8 @@ local S = {
     lastPathSig = nil, bamActive = false, bamTarget = nil,
     annoyActive = false, annoyTarget = nil, trollTpCD = 0,
     flingActive = false, flingTarget = nil, flingStartTime = 0,
-    flingLastTargetPos = nil, flingOriginalState = nil
+    flingLastTargetPos = nil, flingOriginalState = nil,
+    sitting = false
 }
 
 local stopOrbit, stopSpin, stopDance, stopLead, stopBam, startBam, stopAnnoy, startAnnoy
@@ -333,7 +336,7 @@ end
 task.spawn(function()
     while true do
         task.wait(1)
-        if ROLE == "BOT" and not S.hidden and not antiBan.detected then
+        if ROLE == "BOT" and not S.hidden and not antiBan.detected and not S.sitting then
             local h = hum()
             if h and h.WalkSpeed ~= BASE_SPEED and not S.flingActive then pcall(function() h.WalkSpeed = BASE_SPEED end) end
         end
@@ -735,12 +738,30 @@ local function setBotCollide(state)
     end
 end
 
+local function setBotMassive(enable)
+    local c = player.Character; if not c then return end
+    for _, p in ipairs(c:GetDescendants()) do
+        if p:IsA("BasePart") then
+            pcall(function()
+                if enable then
+                    p.Massless = false
+                    p.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0, 1, 1)
+                else
+                    p.CustomPhysicalProperties = nil
+                    p.Massless = false
+                end
+            end)
+        end
+    end
+end
+
 stopFling = function(announce, silentReturn)
     if not S.flingActive then return end
     S.flingActive = false
     S.flingTarget = nil
     S.flingLastTargetPos = nil
     S.flingStartTime = 0
+    setBotMassive(false)
     local h = hum()
     if h then
         pcall(function() h:ChangeState(Enum.HumanoidStateType.GettingUp) end)
@@ -770,14 +791,16 @@ startFling = function(name)
     local h = hum()
     if h then pcall(function() h:ChangeState(Enum.HumanoidStateType.Physics) end) end
     setBotCollide(true)
+    setBotMassive(true)
     sendChat("Flinging "..t.Name.."...")
 end
 
 print("[MyPanel] BOOT 5 — background loops")
 
+-- FLING LOOP (Heartbeat-timed, deep-inside teleport, massive velocity)
 task.spawn(function()
     while true do
-        task.wait(0.01)
+        RunService.Heartbeat:Wait()
         if not S.flingActive or ROLE ~= "BOT" or antiBan.detected then continue end
         if S.hidden then continue end
         local target = S.flingTarget
@@ -787,22 +810,48 @@ task.spawn(function()
         end
         local thrp = getPlayerHRP(target)
         local m = hrp()
-        if not thrp or not m then task.wait(0.1); continue end
-        if isInVoid(m.Position) then
-            pcall(function()
-                m.CFrame = CFrame.new(thrp.Position)
-                m.AssemblyLinearVelocity = Vector3.zero
-            end)
-        end
+        if not thrp or not m then continue end
         local t = os.clock()
         local rx = math.rad((t * FLING_SPIN_X) % 360)
         local ry = math.rad((t * FLING_SPIN_Y) % 360)
         local rz = math.rad((t * FLING_SPIN_Z) % 360)
-        local targetCenter = thrp.Position + Vector3.new(0, 1, 0)
+        -- Random jitter inside target for chaos overlap
+        local jitter = Vector3.new(
+            (math.random() - 0.5) * 0.6,
+            (math.random() - 0.5) * 0.6,
+            (math.random() - 0.5) * 0.6
+        )
+        -- Teleport DEEP inside target body (target HRP is torso center)
+        local insidePos = thrp.Position + jitter
+        -- Massive random velocity every frame
+        local rv = Vector3.new(
+            math.random(-FLING_LIN_VEL, FLING_LIN_VEL),
+            math.random(-FLING_LIN_VEL, FLING_LIN_VEL),
+            math.random(-FLING_LIN_VEL, FLING_LIN_VEL)
+        )
+        local rav = Vector3.new(
+            math.random(-FLING_ANG_VEL, FLING_ANG_VEL),
+            math.random(-FLING_ANG_VEL, FLING_ANG_VEL),
+            math.random(-FLING_ANG_VEL, FLING_ANG_VEL)
+        )
         pcall(function()
-            m.CFrame = CFrame.new(targetCenter) * CFrame.Angles(rx, ry, rz)
-            m.AssemblyLinearVelocity = Vector3.zero
+            m.CFrame = CFrame.new(insidePos) * CFrame.Angles(rx, ry, rz)
+            m.AssemblyLinearVelocity = rv
+            m.AssemblyAngularVelocity = rav
         end)
+        -- Also inject velocity into all bot parts to force collision energy
+        local c = player.Character
+        if c then
+            for _, part in ipairs(c:GetDescendants()) do
+                if part:IsA("BasePart") and part ~= m then
+                    pcall(function()
+                        part.AssemblyLinearVelocity = rv
+                        part.AssemblyAngularVelocity = rav
+                    end)
+                end
+            end
+        end
+        -- Detect flung
         if S.flingLastTargetPos and (os.clock() - S.flingStartTime) > FLING_DETECT_WARMUP then
             local moved = (thrp.Position - S.flingLastTargetPos).Magnitude
             local vel = thrp.AssemblyLinearVelocity.Magnitude
@@ -919,7 +968,7 @@ local function clearHide()
 end
 
 local function doHide(silent)
-    S.hidden = true; S.frozen = true
+    S.hidden = true; S.frozen = true; S.sitting = false
     stopOrbit(); stopSpin(); stopDance(); stopLead(false); stopBam(false); stopAnnoy(false); stopFling(false)
     S.mode = "Hidden"; setRotationOwner("Hidden")
     local m = hrp()
@@ -948,7 +997,7 @@ local function doHide(silent)
 end
 
 local function doSpawn()
-    S.hidden = false; S.frozen = false; S.mode = "Follow"; clearHide()
+    S.hidden = false; S.frozen = false; S.sitting = false; S.mode = "Follow"; clearHide()
     local h = hum()
     if h then h.PlatformStand = false; h.WalkSpeed = BASE_SPEED; h.JumpPower = BASE_JUMP end
     rotationOwner = "Humanoid"
@@ -996,7 +1045,7 @@ local function startMirrorJump()
         local lastState = false
         while ROLE == "BOT" do
             task.wait(0.07)
-            if S.hidden or antiBan.detected then continue end
+            if S.hidden or antiBan.detected or S.sitting then continue end
             if S.mode == "Bam" or S.mode == "Annoy" or S.mode == "Fling" then continue end
             local host = getHost()
             if not host or not host.Character then continue end
@@ -1021,7 +1070,7 @@ local function startCameraMicro()
     S.microCamThread = task.spawn(function()
         while ROLE == "BOT" and S.microCamActive do
             task.wait(MICRO_CAM_MIN_WAIT + math.random() * (MICRO_CAM_MAX_WAIT - MICRO_CAM_MIN_WAIT))
-            if S.hidden or antiBan.detected then continue end
+            if S.hidden or antiBan.detected or S.sitting then continue end
             if rotationOwner == "Spin" or rotationOwner == "Orbit" or rotationOwner == "Fling" then continue end
             local cam = Workspace.CurrentCamera; if not cam then continue end
             local sign = math.random() < 0.5 and -1 or 1
@@ -1045,6 +1094,23 @@ local function botTick()
             if m and (m.Position - S.hidePos).Magnitude > 10 then pcall(function() m.CFrame = CFrame.new(S.hidePos) end) end
         end
         return
+    end
+    -- SITTING GUARD: skip all movement while seated
+    if S.sitting then
+        local h0 = hum()
+        if not h0 or not h0.Sit then
+            -- Humanoid left seated state on its own; clear flag
+            S.sitting = false
+        else
+            -- Force stay seated, keep velocities frozen
+            local m0 = hrp()
+            if m0 then
+                pcall(function()
+                    m0.AssemblyLinearVelocity = Vector3.new(m0.AssemblyLinearVelocity.X * 0.3, m0.AssemblyLinearVelocity.Y, m0.AssemblyLinearVelocity.Z * 0.3)
+                end)
+            end
+            return
+        end
     end
     if S.mirrorJumpTime > 0 and os.clock() >= S.mirrorJumpTime then
         if S.mode ~= "Bam" and S.mode ~= "Annoy" and S.mode ~= "Fling" then
@@ -1368,6 +1434,7 @@ local function bindDeath()
     local h = c:FindFirstChildOfClass("Humanoid"); if not h then return end
     S.deathConn = h.Died:Connect(function()
         stopSpin(); stopDance(); stopLead(false); stopFling(false)
+        S.sitting = false
         S.waypoints = nil; S.cachedPath = nil; S.lastMovePos = nil; S.committedTarget = nil
         S.hostInVoid = false; S.mirrorJumpTime = 0
     end)
@@ -1387,8 +1454,20 @@ handleCommand = function(cmd, args)
     elseif cmd == "unorbit" then stopOrbit(); sendChat("Orbital maneuver terminated.")
     elseif cmd == "sit" then
         stopSpin(); stopDance(); stopLead(false); stopBam(false); stopAnnoy(false); stopFling(false)
-        local h = hum(); if h then h.Sit = true; pcall(function() h:ChangeState(Enum.HumanoidStateType.Seated) end) end
+        S.sitting = true
+        S.waypoints = nil; S.cachedPath = nil; S.lastMovePos = nil; S.committedTarget = nil
+        local h = hum()
+        if h then
+            pcall(function() h.WalkSpeed = 0; h.JumpPower = 0; h.Sit = true; h:ChangeState(Enum.HumanoidStateType.Seated) end)
+        end
         sendChat("Assuming seated position.")
+    elseif cmd == "stand" then
+        S.sitting = false
+        local h = hum()
+        if h then
+            pcall(function() h.Sit = false; h:ChangeState(Enum.HumanoidStateType.GettingUp); h.WalkSpeed = BASE_SPEED; h.JumpPower = BASE_JUMP end)
+        end
+        sendChat("Standing up.")
     elseif cmd == "jump" then local h = hum(); if h then h.Jump = true end; sendChat("Executing jump.")
     elseif cmd == "hide" then doHide(false)
     elseif cmd == "spawn" then doSpawn()
@@ -1424,7 +1503,7 @@ handleCommand = function(cmd, args)
     elseif cmd == "cmds" then
         sendSeq({"[OPERATIONS MANUAL]",
             "!say <text> | !orbit <1-1000> | !unorbit",
-            "!sit | !jump | !dance <1-4> | !undance",
+            "!sit | !stand | !jump | !dance <1-4> | !undance",
             "!spin <1-100> | !unspin | !lead <player> | !unlead",
             "!hide | !spawn | !lend <user> <sec>",
             "!bam <player> | !unbam",
@@ -1494,7 +1573,7 @@ local function activateAntiBan()
     antiBan.detected = true
     sendChat("[SYSTEM] Anti-ban triggered. Going dormant.")
     stopOrbit(); stopSpin(); stopDance(); stopLead(false); stopBam(false); stopAnnoy(false); stopFling(false)
-    S.hidden = true; S.mode = "Hidden"
+    S.hidden = true; S.mode = "Hidden"; S.sitting = false
     local h = hum(); if h then h.WalkSpeed = 0; h.JumpPower = 0 end
 end
 
@@ -1564,7 +1643,7 @@ content.BackgroundTransparency = 1; content.Parent = scroll
 local cl = Instance.new("UIListLayout"); cl.Padding = UDim.new(0, 10); cl.SortOrder = Enum.SortOrder.LayoutOrder; cl.Parent = content
 
 local cmdSec = Instance.new("Frame")
-cmdSec.Size = UDim2.new(1, 0, 0, 570); cmdSec.LayoutOrder = 1
+cmdSec.Size = UDim2.new(1, 0, 0, 580); cmdSec.LayoutOrder = 1
 cmdSec.BackgroundColor3 = C.section; cmdSec.BorderSizePixel = 0
 cmdSec.Visible = false; cmdSec.Parent = content
 corner(cmdSec, 15); stroke(cmdSec, C.border, 1, 0.35)
@@ -1600,6 +1679,7 @@ local cml = Instance.new("UIListLayout"); cml.Padding = UDim.new(0, 3); cml.Sort
 local CMDS = {
     {"── MOVEMENT ──", true}, {"!orbit <1-1000> - circle around you", false}, {"!unorbit - stop circling", false},
     {"!lead <player> - lead you to player", false}, {"!unlead - cancel leading", false}, {"!sit - sit down", false},
+    {"!stand - stand back up", false},
     {"!jump - jump once", false}, {"!hide - go safe void-adjacent, freeze", false}, {"!spawn - teleport in front of you", false},
     {"", false}, {"── TROLL ──", true}, {"!bam <player> - continuous thrust on back", false},
     {"!unbam - stop + tp to me", false}, {"!annoy <player> - front follow + spam chat", false},
@@ -1628,7 +1708,7 @@ end
 local cmdCollapsed = false
 cmdTog.Activated:Connect(function()
     cmdCollapsed = not cmdCollapsed
-    tw(cmdSec, 0.34, {Size = UDim2.new(1, 0, 0, cmdCollapsed and 44 or 570)}, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut)
+    tw(cmdSec, 0.34, {Size = UDim2.new(1, 0, 0, cmdCollapsed and 44 or 580)}, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut)
     cmdTog.Text = cmdCollapsed and "+" or "-"
 end)
 
@@ -1954,6 +2034,7 @@ player.CharacterAdded:Connect(function(char)
     h.UseJumpPower = true; h.WalkSpeed = BASE_SPEED; h.JumpPower = BASE_JUMP
     rotationOwner = "Humanoid"; h.AutoRotate = true
     stopDance(); stopSpin(); stopLead(false); stopFling(false)
+    S.sitting = false
     S.waypoints = nil; S.cachedPath = nil; S.lastMovePos = nil; S.committedTarget = nil
     S.hostInVoid = false; S.mirrorJumpTime = 0; S.lastPathSig = nil
     if ROLE == "BOT" then bindDeath(); if not S.facing then startFacing() end end
