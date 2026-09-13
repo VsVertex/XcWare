@@ -285,45 +285,80 @@ handleMath = function(expr)
     sendChat(tostring(x).." "..op.." "..tostring(y).." = "..r)
 end
 
--- ===== DEEPSEEK AI =====
+-- ===== DEEPSEEK AI (Arceus X compatible, with retries + diagnostics) =====
 local AI = {
     conversation = {},
     ready = false,
     processing = false,
     setupDone = false,
-    lastError = nil
+    lastError = nil,
+    backend = nil
 }
 
 local function aiGetRequestFunc()
-    return (syn and syn.request) or (http and http.request) or http_request or request or (fluxus and fluxus.request) or (krnl and krnl.request)
+    local r = nil
+    if type(request) == "function" then r = request; AI.backend = "request" end
+    if not r and syn and type(syn.request) == "function" then r = syn.request; AI.backend = "syn.request" end
+    if not r and http and type(http.request) == "function" then r = http.request; AI.backend = "http.request" end
+    if not r and type(http_request) == "function" then r = http_request; AI.backend = "http_request" end
+    if not r and fluxus and type(fluxus.request) == "function" then r = fluxus.request; AI.backend = "fluxus.request" end
+    if not r and krnl and type(krnl.request) == "function" then r = krnl.request; AI.backend = "krnl.request" end
+    if not r and kavo and type(kavo.request) == "function" then r = kavo.request; AI.backend = "kavo.request" end
+    return r
 end
 
 local function aiSend(messages, maxTokens)
     local rf = aiGetRequestFunc()
-    if not rf then return nil, "No HTTP support in executor" end
-    local ok, response = pcall(rf, {
-        Url = DEEPSEEK_ENDPOINT,
-        Method = "POST",
-        Headers = {
-            ["Content-Type"] = "application/json",
-            ["Authorization"] = "Bearer " .. DEEPSEEK_API_KEY
-        },
-        Body = HttpService:JSONEncode({
+    if not rf then return nil, "no HTTP function (update Arceus X)" end
+    local body
+    local ok1, enc = pcall(function()
+        return HttpService:JSONEncode({
             model = DEEPSEEK_MODEL,
             messages = messages,
             max_tokens = maxTokens or 120,
             temperature = 0.85,
             stream = false
         })
+    end)
+    if not ok1 or not enc then return nil, "JSON encode failed" end
+    body = enc
+    local ok, response = pcall(rf, {
+        Url = DEEPSEEK_ENDPOINT,
+        Method = "POST",
+        Headers = {
+            ["Content-Type"] = "application/json",
+            ["Authorization"] = "Bearer " .. tostring(DEEPSEEK_API_KEY)
+        },
+        Body = body
     })
-    if not ok or not response or not response.Body then
-        return nil, "HTTP request failed"
+    if not ok then
+        return nil, "HTTP error: "..tostring(response):sub(1, 80)
     end
-    local decodeOk, data = pcall(function() return HttpService:JSONDecode(response.Body) end)
-    if not decodeOk or not data then return nil, "JSON decode failed" end
-    if data.error then return nil, tostring(data.error.message or "API error") end
+    if not response then return nil, "empty response object" end
+    local respBody = response.Body or response.body
+    if respBody == nil then
+        -- Some executors return the body directly
+        respBody = response
+    end
+    if type(respBody) ~= "string" then
+        local ok2, s = pcall(function() return HttpService:JSONEncode(respBody) end)
+        respBody = ok2 and s or tostring(respBody)
+    end
+    if respBody == "" then
+        local code = response.StatusCode or response.Status or "?"
+        return nil, "empty body (HTTP "..tostring(code)..")"
+    end
+    local decodeOk, data = pcall(function() return HttpService:JSONDecode(respBody) end)
+    if not decodeOk or not data then
+        return nil, "bad JSON: "..respBody:sub(1, 80)
+    end
+    if data.error then
+        local em = data.error.message or data.error
+        if type(em) ~= "string" then em = HttpService:JSONEncode(em) end
+        return nil, "api: "..em:sub(1, 100)
+    end
     local choice = data.choices and data.choices[1]
-    if not choice or not choice.message then return nil, "No response" end
+    if not choice or not choice.message then return nil, "no choices" end
     return choice.message.content, nil
 end
 
@@ -348,28 +383,48 @@ local function aiChunkSend(text)
     end)
 end
 
-aiSetup = function()
-    if AI.setupDone then return end
+aiSetup = function(force)
+    if AI.setupDone and not force then return end
     AI.setupDone = true
+    AI.ready = false
+    AI.lastError = nil
     AI.conversation = {
         { role = "system", content = AI_SYSTEM_PROMPT }
     }
     task.spawn(function()
-        task.wait(2)
-        AI.conversation[#AI.conversation + 1] = {
-            role = "user",
-            content = "Acknowledge your role. Reply with only: OK"
-        }
-        local reply, err = aiSend(AI.conversation, 5)
-        if reply then
-            AI.conversation[#AI.conversation + 1] = { role = "assistant", content = reply }
-            AI.ready = true
-            print("[MyPanel] AI setup complete (silent).")
-        else
-            AI.ready = false
-            AI.lastError = err
-            warn("[MyPanel] AI setup failed:", err)
+        task.wait(force and 0.1 or 2)
+        print("[MyPanel] AI setup starting...")
+        local probe = aiGetRequestFunc()
+        if not probe then
+            AI.lastError = "no HTTP function available"
+            warn("[MyPanel] AI setup failed: no HTTP function found.")
+            warn("[MyPanel] Tried: request, syn.request, http.request, http_request, fluxus.request, krnl.request, kavo.request")
+            return
         end
+        print("[MyPanel] AI HTTP backend:", AI.backend)
+        local baseMsgs = {
+            { role = "system", content = AI_SYSTEM_PROMPT },
+            { role = "user", content = "Acknowledge your role. Reply with only: OK" }
+        }
+        for attempt = 1, 3 do
+            print("[MyPanel] AI setup attempt "..attempt.."/3...")
+            local reply, err = aiSend(baseMsgs, 5)
+            if reply and reply ~= "" then
+                AI.conversation = {
+                    { role = "system", content = AI_SYSTEM_PROMPT },
+                    { role = "user", content = "Acknowledge your role. Reply with only: OK" },
+                    { role = "assistant", content = reply }
+                }
+                AI.ready = true
+                AI.lastError = nil
+                print("[MyPanel] AI setup OK. Backend:", AI.backend, "| Reply:", tostring(reply):sub(1, 40))
+                return
+            end
+            AI.lastError = err
+            warn("[MyPanel] AI setup attempt "..attempt.." failed:", err)
+            if attempt < 3 then task.wait(2) end
+        end
+        warn("[MyPanel] AI setup gave up after 3 attempts.")
     end)
 end
 
@@ -387,7 +442,8 @@ handleAI = function(userMessage)
         return
     end
     if not AI.ready then
-        sendChat("AI still warming up. Try again in a moment.")
+        local reason = tostring(AI.lastError or "setup not complete")
+        sendChat("[AI] Offline: "..reason:sub(1, 120))
         return
     end
     AI.processing = true
@@ -397,7 +453,7 @@ handleAI = function(userMessage)
         local reply, err = aiSend(AI.conversation, 150)
         AI.processing = false
         if not reply then
-            sendChat("[AI] Error: " .. tostring(err or "unknown"))
+            sendChat("[AI] Error: " .. tostring(err or "unknown"):sub(1, 120))
             table.remove(AI.conversation)
             return
         end
@@ -1614,6 +1670,9 @@ handleCommand = function(cmd, args)
     elseif cmd == "unfling" then stopFling(false, false); teleportToHost(); sendChat("Fling terminated. Returning to host.")
     elseif cmd == "math" then handleMath(args)
     elseif cmd == "ai" then handleAI(args)
+    elseif cmd == "aireload" then
+        sendChat("Reloading AI...")
+        aiSetup(true)
     elseif cmd == "inspect" then sendChat("[!inspect] Queued for future update.")
     elseif cmd == "view" then sendChat("[!view] Queued for future update.")
     elseif cmd == "fly" then sendChat("[!fly] Queued for future update.")
@@ -1635,7 +1694,7 @@ handleCommand = function(cmd, args)
             "!annoy <player> | !unannoy",
             "!fling <player> | !unfling",
             "!math <num><op><num> | ex: !math 1+1 or 100÷50",
-            "!ai <message> - chat with deepseek ai",
+            "!ai <message> | !aireload - chat with deepseek ai",
             "[PLACEHOLDER] !inspect !view !fly !swim !autodrop",
             "!getdrops !equip !headsit !getandgive !check !serverinfo",
             "!cmds | !ask <question> | !steps"}, 0.9)
@@ -1769,7 +1828,7 @@ content.BackgroundTransparency = 1; content.Parent = scroll
 local cl = Instance.new("UIListLayout"); cl.Padding = UDim.new(0, 10); cl.SortOrder = Enum.SortOrder.LayoutOrder; cl.Parent = content
 
 local cmdSec = Instance.new("Frame")
-cmdSec.Size = UDim2.new(1, 0, 0, 600); cmdSec.LayoutOrder = 1
+cmdSec.Size = UDim2.new(1, 0, 0, 620); cmdSec.LayoutOrder = 1
 cmdSec.BackgroundColor3 = C.section; cmdSec.BorderSizePixel = 0
 cmdSec.Visible = false; cmdSec.Parent = content
 corner(cmdSec, 15); stroke(cmdSec, C.border, 1, 0.35)
@@ -1817,6 +1876,7 @@ local CMDS = {
     {"", false}, {"── UTIL ──", true}, {"!math <num><op><num> - calculator", false},
     {"   ops: + - * / ÷ × % ^  ex: !math 100÷50", false},
     {"!ai <message> - chat with deepseek ai", false},
+    {"!aireload - reload ai setup", false},
     {"", false}, {"── SOCIAL ──", true}, {"!say <text> - bot speaks", false}, {"!lend <user> <sec> - give host time", false},
     {"!cmds - say list in chat", false}, {"!ask <question> - talk to bot", false}, {"!steps - report step count to host", false},
     {"", false}, {"── PLACEHOLDER (soon) ──", true},
@@ -1835,7 +1895,7 @@ end
 local cmdCollapsed = false
 cmdTog.Activated:Connect(function()
     cmdCollapsed = not cmdCollapsed
-    tw(cmdSec, 0.34, {Size = UDim2.new(1, 0, 0, cmdCollapsed and 44 or 600)}, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut)
+    tw(cmdSec, 0.34, {Size = UDim2.new(1, 0, 0, cmdCollapsed and 44 or 620)}, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut)
     cmdTog.Text = cmdCollapsed and "+" or "-"
 end)
 
