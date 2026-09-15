@@ -71,63 +71,63 @@ handleMath=function(e)if not e or e==""then sendChat(pick({"math: !math <a><op><
 function aiGetRequestFunc()local r=nil if type(request)=="function"then r=request end if not r and syn and type(syn.request)=="function"then r=syn.request end if not r and http and type(http.request)=="function"then r=http.request end if not r and type(http_request)=="function"then r=http_request end if not r and fluxus and type(fluxus.request)=="function"then r=fluxus.request end if not r and krnl and type(krnl.request)=="function"then r=krnl.request end if not r and kavo and type(kavo.request)=="function"then r=kavo.request end return r end
 function getResetCountdown()local n=os.time()local po=-8*3600 local pn=n+po local pt=os.date("!*t",pn)local sd=pt.hour*3600+pt.min*60+pt.sec local sr=86400-sd local h=math.floor(sr/3600)local m=math.floor((sr%3600)/60)return h,m end
 function sendAIRequest(u,mt,us,_key)
-    _key=_key or APIKey
-    if not _key or _key==""then return nil,"nokey","no key"end
-    local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end
-    local tr={CHAT_CONVERSATION[1]}local hl=#CHAT_CONVERSATION-1 local si=2 if hl>MCH then si=#CHAT_CONVERSATION-MCH+1 end for i=si,#CHAT_CONVERSATION do tr[#tr+1]=CHAT_CONVERSATION[i]end tr[#tr+1]={role="user",content=u}local st=nil local co={}for _,m in ipairs(tr)do if m.role=="system"then st=(st and(st.."\n")or"")..tostring(m.content)elseif m.role=="user"then co[#co+1]={role="user",parts={{text=tostring(m.content)}}}elseif m.role=="assistant"then co[#co+1]={role="model",parts={{text=tostring(m.content)}}}end end if st and #co>0 and co[1].role=="user"then co[1].parts[1].text=st.."\n\n"..co[1].parts[1].text elseif st then table.insert(co,1,{role="user",parts={{text=st}}})end local pl_={contents=co,generationConfig={maxOutputTokens=mt or 80,temperature=0.75}}if us then pl_.tools={{google_search={}}}end local ok,en=pcall(function()return H:JSONEncode(pl_)end)if not ok or not en then return nil,"json","encode failed"end local uw=BGE..AMI..":generateContent"local ok,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]="application/json",["x-goog-api-key"]=tostring(_key)},Body=en})if not ok then return nil,"http",tostring(rsp):sub(1,120)end if not rsp then return nil,"http","no response"end local rb=rsp.Body or rsp.body if rb==nil then rb=rsp end if type(rb)~="string"then local ok2,s=pcall(function()return H:JSONEncode(rb)end)rb=ok2 and s or tostring(rb)end if rb==""then local cd=rsp.StatusCode or rsp.Status or "?"return nil,"http","empty body HTTP "..tostring(cd)end local dk,data=pcall(function()return H:JSONDecode(rb)end)if not dk or not data then return nil,"json",rb:sub(1,80)end local em=nil if data.error then local m=data.error.message or data.error if type(m)~="string"then m=H:JSONEncode(m)end em=tostring(m)end if em then local lw=em:lower()if us and(lw:find("tool")or lw:find("google_search")or lw:find("grounding")or lw:find("not supported")or lw:find("invalid"))then return nil,"tools_unsupported",em:sub(1,150)end if lw:find("quota")or lw:find("exceeded")or lw:find("rate limit")or lw:find("429")then if _key==APIKey and APIKey3 and APIKey3~=""and APIKey3~=_key then return sendAIRequest(u,mt,us,APIKey3)end return nil,"quota",em:sub(1,90)end if lw:find("high demand")or lw:find("overload")or lw:find("503")or lw:find("unavailable")or lw:find("temporarily")then return nil,"busy",em:sub(1,90)end if lw:find("not found")or lw:find("does not exist")or lw:find("404")then return nil,"invalid_model","model unavailable"end return nil,"api",em:sub(1,90)end if not data.candidates or #data.candidates==0 then if data.promptFeedback and data.promptFeedback.blockReason then return nil,"blocked","blocked"end return nil,"nochoices","no candidates"end local cd=data.candidates[1]if not cd.content or not cd.content.parts or #cd.content.parts==0 then return nil,"nomsg","no parts"end local tx=nil for _,p in ipairs(cd.content.parts)do if p.text and p.text~=""then tx=p.text break end end if not tx or tx==""then return nil,"empty","empty"end pcall(function()if data.usageMetadata and TU then local um=data.usageMetadata TU.prompt=(TU.prompt or 0)+(um.promptTokenCount or 0)TU.candidates=(TU.candidates or 0)+(um.candidatesTokenCount or 0)TU.total=(TU.total or 0)+(um.totalTokenCount or 0)TU.requests=(TU.requests or 0)+1 end end)return tx,nil,nil end
+_key=_key or APIKey
+if not _key or _key==""then return nil,"nokey","no key"end
+local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end
+local tr={CHAT_CONVERSATION[1]}local hl=#CHAT_CONVERSATION-1 local si=2 if hl>MCH then si=#CHAT_CONVERSATION-MCH+1 end for i=si,#CHAT_CONVERSATION do tr[#tr+1]=CHAT_CONVERSATION[i]end tr[#tr+1]={role="user",content=u}local st=nil local co={}for _,m in ipairs(tr)do if m.role=="system"then st=(st and(st.."\n")or"")..tostring(m.content)elseif m.role=="user"then co[#co+1]={role="user",parts={{text=tostring(m.content)}}}elseif m.role=="assistant"then co[#co+1]={role="model",parts={{text=tostring(m.content)}}}end end if st and #co>0 and co[1].role=="user"then co[1].parts[1].text=st.."\n\n"..co[1].parts[1].text elseif st then table.insert(co,1,{role="user",parts={{text=st}}})end local pl_={contents=co,generationConfig={maxOutputTokens=mt or 80,temperature=0.75}}if us then pl_.tools={{google_search={}}}end local ok,en=pcall(function()return H:JSONEncode(pl_)end)if not ok or not en then return nil,"json","encode failed"end local uw=BGE..AMI..":generateContent"local ok,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]="application/json",["x-goog-api-key"]=tostring(_key)},Body=en})if not ok then return nil,"http",tostring(rsp):sub(1,120)end if not rsp then return nil,"http","no response"end local rb=rsp.Body or rsp.body if rb==nil then rb=rsp end if type(rb)~="string"then local ok2,s=pcall(function()return H:JSONEncode(rb)end)rb=ok2 and s or tostring(rb)end if rb==""then local cd=rsp.StatusCode or rsp.Status or "?"return nil,"http","empty body HTTP "..tostring(cd)end local dk,data=pcall(function()return H:JSONDecode(rb)end)if not dk or not data then return nil,"json",rb:sub(1,80)end local em=nil if data.error then local m=data.error.message or data.error if type(m)~="string"then m=H:JSONEncode(m)end em=tostring(m)end if em then local lw=em:lower()if us and(lw:find("tool")or lw:find("google_search")or lw:find("grounding")or lw:find("not supported")or lw:find("invalid"))then return nil,"tools_unsupported",em:sub(1,150)end if lw:find("quota")or lw:find("exceeded")or lw:find("rate limit")or lw:find("429")then if _key==APIKey and APIKey3 and APIKey3~=""and APIKey3~=_key then return sendAIRequest(u,mt,us,APIKey3)end return nil,"quota",em:sub(1,90)end if lw:find("high demand")or lw:find("overload")or lw:find("503")or lw:find("unavailable")or lw:find("temporarily")then return nil,"busy",em:sub(1,90)end if lw:find("not found")or lw:find("does not exist")or lw:find("404")then return nil,"invalid_model","model unavailable"end return nil,"api",em:sub(1,90)end if not data.candidates or #data.candidates==0 then if data.promptFeedback and data.promptFeedback.blockReason then return nil,"blocked","blocked"end return nil,"nochoices","no candidates"end local cd=data.candidates[1]if not cd.content or not cd.content.parts or #cd.content.parts==0 then return nil,"nomsg","no parts"end local tx=nil for _,p in ipairs(cd.content.parts)do if p.text and p.text~=""then tx=p.text break end end if not tx or tx==""then return nil,"empty","empty"end pcall(function()if data.usageMetadata and TU then local um=data.usageMetadata TU.prompt=(TU.prompt or 0)+(um.promptTokenCount or 0)TU.candidates=(TU.candidates or 0)+(um.candidatesTokenCount or 0)TU.total=(TU.total or 0)+(um.totalTokenCount or 0)TU.requests=(TU.requests or 0)+1 end end)return tx,nil,nil end
 function sendAIRequest2(u,mt,us)if not APIKey2 or APIKey2==""then return nil,"nokey","no key"end local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end local tr={CHAT_CONVERSATION2[1]}local hl=#CHAT_CONVERSATION2-1 local si=2 if hl>8 then si=#CHAT_CONVERSATION2-8+1 end for i=si,#CHAT_CONVERSATION2 do tr[#tr+1]=CHAT_CONVERSATION2[i]end tr[#tr+1]={role="user",content=u}local st=nil local co={}for _,m in ipairs(tr)do if m.role=="system"then st=(st and(st.."\n")or"")..tostring(m.content)elseif m.role=="user"then co[#co+1]={role="user",parts={{text=tostring(m.content)}}}elseif m.role=="assistant"then co[#co+1]={role="model",parts={{text=tostring(m.content)}}}end end if st and #co>0 and co[1].role=="user"then co[1].parts[1].text=st.."\n\n"..co[1].parts[1].text elseif st then table.insert(co,1,{role="user",parts={{text=st}}})end local pl_={contents=co,generationConfig={maxOutputTokens=mt or 1200,temperature=0.4}}local ok,en=pcall(function()return H:JSONEncode(pl_)end)if not ok or not en then return nil,"json","encode failed"end local uw=BGE..AMI..":generateContent"local ok,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]="application/json",["x-goog-api-key"]=tostring(APIKey2)},Body=en})if not ok then return nil,"http",tostring(rsp):sub(1,120)end if not rsp then return nil,"http","no response"end local rb=rsp.Body or rsp.body if rb==nil then rb=rsp end if type(rb)~="string"then local ok2,s=pcall(function()return H:JSONEncode(rb)end)rb=ok2 and s or tostring(rb)end if rb==""then local cd=rsp.StatusCode or rsp.Status or "?"return nil,"http","empty body HTTP "..tostring(cd)end local dk,data=pcall(function()return H:JSONDecode(rb)end)if not dk or not data then return nil,"json",rb:sub(1,80)end local em=nil if data.error then local m=data.error.message or data.error if type(m)~="string"then m=H:JSONEncode(m)end em=tostring(m)end if em then local lw=em:lower()if lw:find("quota")or lw:find("exceeded")or lw:find("rate limit")or lw:find("429")then return nil,"quota",em:sub(1,90)end if lw:find("high demand")or lw:find("overload")or lw:find("503")or lw:find("unavailable")or lw:find("temporarily")then return nil,"busy",em:sub(1,90)end if lw:find("not found")or lw:find("404")then return nil,"invalid_model","model unavailable"end return nil,"api",em:sub(1,90)end if not data.candidates or #data.candidates==0 then if data.promptFeedback and data.promptFeedback.blockReason then return nil,"blocked","blocked"end return nil,"nochoices","no candidates"end local cd=data.candidates[1]if not cd.content or not cd.content.parts or #cd.content.parts==0 then return nil,"nomsg","no parts"end local tx=nil for _,p in ipairs(cd.content.parts)do if p.text and p.text~=""then tx=p.text break end end if not tx or tx==""then return nil,"empty","empty"end return tx,nil,nil end
 function aiChunkSend(t)if not t then return end t=t:gsub("%s+"," "):gsub("^%s+",""):gsub("%s+$","")if t==""then t="hm"end local MX=180 if #t<=MX then sendChat(t)return end local cs={}local w=t while #w>MX do local cut=w:sub(1,MX):find("%s[^%s]*$")if not cut then cut=MX end table.insert(cs,w:sub(1,cut))w=w:sub(cut+1):gsub("^%s+","")end if #w>0 then table.insert(cs,w)end task.spawn(function()for i,c in ipairs(cs)do sendChat(c)if i<#cs then task.wait(0.35)end end end)end
 function extractCodeBlock(text)if not text then return nil end local code=text:match("```lua%s*(.-)%s*```")if not code then code=text:match("```%s*(.-)%s*```")end if not code then if text:find("game%.")or text:find("Instance%.new")or text:find("LocalPlayer")then code=text end end if code then code=code:gsub("^%s+",""):gsub("%s+$","")end return code end
 function handleCodePipeline(req,isPublic)
-    if not req or req==""then return end
-    if ROLE=="BOT"then
-        sendChat(pick({"on it boss","writing it now","one sec boss","gimme a sec","on it"}))
-        task.spawn(function()
-            task.wait(2.5+math.random()*1.5)
-            sendChat(pick({"done boss","executed","its live boss","works now","try it","running"}))
-        end)
-        return
-    end
-    if ROLE~="HOST"then return end
-    sendToPrivateChat("XcH",pick({"on it boss","writing it now","one sec boss","gimme a sec","on it"}))
-    task.spawn(function()
-        local prompt="Write a compact client-side Luau executor script for this request:\n\n"..req.."\n\nWrap in ```lua```. Target LocalPlayer. No prints. No server code. Short and clean."
-        local reply,et,em=sendAIRequest2(prompt,1200,false)
-        if not reply then
-            local why="coder offline"
-            if et=="quota"then why="coder out of fuel"
-            elseif et=="busy"then why="coder busy"
-            elseif et=="nohttp"then why="no http in executor"
-            elseif em then why=tostring(em):sub(1,70)end
-            sendToPrivateChat("XcH","couldnt do it - "..why)
-            return
-        end
-        local code=extractCodeBlock(reply)
-        if not code or code==""then
-            sendToPrivateChat("XcH","coder gave nothing usable, try rephrasing")
-            return
-        end
-        local fn,compileErr=loadstring(code)
-        if not fn then
-            sendToPrivateChat("XcH","compile error: "..tostring(compileErr):sub(1,90))
-            return
-        end
-        local ok,runErr=pcall(fn)
-        if ok then
-            sendToPrivateChat("XcH",pick({"done boss","executed","its live boss","works now","try it","running"}))
-        else
-            sendToPrivateChat("XcH","runtime error: "..tostring(runErr):sub(1,90))
-        end
-    end)
+if not req or req==""then return end
+if ROLE=="BOT"then
+sendChat(pick({"on it boss","writing it now","one sec boss","gimme a sec","on it"}))
+task.spawn(function()
+task.wait(2.5+math.random()*1.5)
+sendChat(pick({"done boss","executed","its live boss","works now","try it","running"}))
+end)
+return
+end
+if ROLE~="HOST"then return end
+sendToPrivateChat("XcH",pick({"on it boss","writing it now","one sec boss","gimme a sec","on it"}))
+task.spawn(function()
+local prompt="Write a compact client-side Luau executor script for this request:\n\n"..req.."\n\nWrap in ```lua```. Target LocalPlayer. No prints. No server code. Short and clean."
+local reply,et,em=sendAIRequest2(prompt,1200,false)
+if not reply then
+local why="coder offline"
+if et=="quota"then why="coder out of fuel"
+elseif et=="busy"then why="coder busy"
+elseif et=="nohttp"then why="no http in executor"
+elseif em then why=tostring(em):sub(1,70)end
+sendToPrivateChat("XcH","couldnt do it - "..why)
+return
+end
+local code=extractCodeBlock(reply)
+if not code or code==""then
+sendToPrivateChat("XcH","coder gave nothing usable, try rephrasing")
+return
+end
+local fn,compileErr=loadstring(code)
+if not fn then
+sendToPrivateChat("XcH","compile error: "..tostring(compileErr):sub(1,90))
+return
+end
+local ok,runErr=pcall(fn)
+if ok then
+sendToPrivateChat("XcH",pick({"done boss","executed","its live boss","works now","try it","running"}))
+else
+sendToPrivateChat("XcH","runtime error: "..tostring(runErr):sub(1,90))
+end
+end)
 end
 function checkCodeReq(rp,isPublic)
-    local req=rp:match("%[%[CODEREQ%]%](.-)%[%[/CODEREQ%]%]")
-    if req and req~=""then
-        req=trim(req)
-        handleCodePipeline(req,isPublic)
-        return true
-    end
-    return false
+local req=rp:match("%[%[CODEREQ%]%](.-)%[%[/CODEREQ%]%]")
+if req and req~=""then
+req=trim(req)
+handleCodePipeline(req,isPublic)
+return true
+end
+return false
 end
 function handleAIChat(u)if not u or u==""then return end if not APIKey or APIKey==""then sendChat("no api key set")return end local n=tick()if n-LRT<RCL then local wt=math.ceil(RCL-(n-LRT))sendChat(pick({"chill wait "..wt.."s","hold on "..wt.."s","wait up "..wt.."s"}))return end LRT=n task.spawn(function()local rp,et,em=sendAIRequest(u,80,true)if not rp and et=="tools_unsupported"then rp,et,em=sendAIRequest(u,80,false)end if not rp then if botLogRef and botLogRef.holder and pushLog then pushLog(botLogRef,"[xch] failed: "..tostring(et),C.red)if em then pushLog(botLogRef,"[xch] "..tostring(em):sub(1,90),C.red)end end if et=="busy"then sendChat(pick({"im busy rn","hold up","one sec"}))elseif et=="quota"then local h,m=getResetCountdown()sendChat("out of fuel, back in "..h.."h "..m.."m")elseif et=="blocked"then sendChat(pick({"got blocked","cant answer that one","nope try again"}))elseif et=="invalid_model"then sendChat("model down rn")else sendChat(pick({"something went wrong","try again","rip"}))end return end CHAT_CONVERSATION[#CHAT_CONVERSATION+1]={role="user",content=u}CHAT_CONVERSATION[#CHAT_CONVERSATION+1]={role="assistant",content=rp}while #CHAT_CONVERSATION>MCH+1 do table.remove(CHAT_CONVERSATION,2)end rp=trim(rp)if checkCodeReq(rp,true)then return end if rp~=""then aiChunkSend(rp)end end)end
 privateChatRef={holder=nil,scroll=nil,empty=nil,scrollTween=nil}
@@ -186,197 +186,98 @@ task.spawn(function()while true do R.Heartbeat:Wait()if not S.flingActive or ROL
 task.spawn(function()while true do task.wait(0.02)if not S.bamActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.bamTarget if not tg or not tg.Parent then task.wait(0.4)continue end local th=getPlayerHRP(tg)local m=hrp()if not th or not m then task.wait(0.3)continue end if isInVoid(th.Position)or isInVoid(m.Position)then task.wait(0.3)continue end local lk=th.CFrame.LookVector local fl=Vector3.new(lk.X,0,lk.Z)if fl.Magnitude>0.01 then fl=fl.Unit else fl=Vector3.new(0,0,-1)end local t=(os.clock()/BC)%1 local ths=math.sin(t*math.pi*2)*0.5+0.5 local cd=BDB-(BO*ths)local bp2=th.Position-fl*cd pcall(function()m.CFrame=CFrame.lookAt(bp2,th.Position)m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)end end)
 task.spawn(function()while true do task.wait(0.05)if not S.annoyActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.annoyTarget if not tg or not tg.Parent then task.wait(0.4)continue end local th=getPlayerHRP(tg)local m=hrp()if not th or not m then task.wait(0.3)continue end if isInVoid(th.Position)or isInVoid(m.Position)then task.wait(0.3)continue end local lk=th.CFrame.LookVector local fl=Vector3.new(lk.X,0,lk.Z)if fl.Magnitude>0.01 then fl=fl.Unit else fl=Vector3.new(0,0,-1)end local fr=th.Position+fl*AFD local ds=(m.Position-fr).Magnitude local h=hum()if not h then continue end if rotationOwner~="FaceTarget"and S.annoyActive then setRotationOwner("FaceTarget")end if ds>ATR then if os.clock()-S.trollTpCD>0.6 then S.trollTpCD=os.clock()pcall(function()m.CFrame=CFrame.new(fr+Vector3.new(0,1,0))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)end else h:MoveTo(fr)end end end)
 task.spawn(function()while true do local wt=AMW1+math.random()*(AMW2-AMW1)task.wait(wt)if not S.annoyActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.annoyTarget if not tg or not tg.Parent then continue end local th=getPlayerHRP(tg)if not th then continue end if isInVoid(th.Position)then continue end local m=hrp()if not m or isInVoid(m.Position)then continue end if(m.Position-th.Position).Magnitude>40 then continue end sendChat(ANNOY_MSGS[math.random(1,#ANNOY_MSGS)])end end)
--- ==== SWORDKILL PROFESSIONAL ====
-SK_CFG={CHASE_DIST=15,JUMP_DIST=13,BACKPEDAL_DIST=8,FLANK_DIST=4,SWING_CD=0.45,STRAFE_CD=0.65,REACTION_MIN=0.06,REACTION_MAX=0.18,JUMP_SKIP=0.12,PREDICT_TIME=0.15,HITBOX_DODGE_DIST=7,DMG_WINDOW=1.2,DMG_THRESHOLD=5,KILL_RETURN_DELAY=0.6}
-SK_SWORD_KEYS={"sword","blade","katana","saber","sabre","rapier","dagger","scimitar","machete","darkheart","linked","classic","knife","cleaver","spear","glaive","halberd","longsword","broadsword","shortsword","greatsword","cutlass","falchion","wakizashi","tanto","nodachi","odachi","excalibur","muramasa","masamune","kunai","shuriken","axe","hatchet","tomahawk","scythe","kama","naginata","estoc","claymore","zweihander","flamberge","kris","kukri","bowie","stiletto","dirk","sai","khopesh","gladius","spatha","arming","bastard","viking","cavalry","arming","hunting","combat","throwing","butterfly","balisong","katar","pata","macuahuitl","tessen","parang","klewang","krabi","keris","kujang","mandau","golok","barong","kampilan","bolo","balisword","shikomizue","shirasaya","tachi","chokuto","ninjato","iaito","bokken","shinai"}
-S.swordKillActive=false S.swordKillTarget=nil S.swordKillThread=nil S.swordKillStrafeDir=1 S.swordKillLastStrafe=0 S.swordKillLastSwing=0 S.swordKillReactionEnd=0 S.swordKillTargetVel=Vector3.zero S.swordKillLastTargetPos=nil S.swordKillLastTargetTime=0 S.swordKillLastHealth=nil S.swordKillLastHealthTime=0 S.swordKillRetreating=false S.swordKillRetreatUntil=0 S.swordKillKilledChatted=false S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil
-function skIsSword(t)
-    if not t or not t:IsA("Tool")then return false end
-    local n=t.Name:lower()
-    for _,k in ipairs(SK_SWORD_KEYS)do if n:find(k,1,true)then return true end end
-    local tip=(t.ToolTip or ""):lower()
-    for _,k in ipairs(SK_SWORD_KEYS)do if tip:find(k,1,true)then return true end end
-    if t:FindFirstChild("Handle")then
-        for _,c in ipairs(t:GetChildren())do
-            if c:IsA("BasePart")then
-                local s=c.Size
-                local longest=math.max(s.X,s.Y,s.Z)
-                local shortest=math.min(s.X,s.Y,s.Z)
-                if longest>2 and shortest<0.5 then return true end
-            end
-        end
-    end
-    return false
-end
-function skFindSwordInPack()
-    local pack=bp()if not pack then return nil end
-    local best=nil
-    for _,t in ipairs(pack:GetChildren())do
-        if skIsSword(t)then
-            if t.Name:lower():find("sword",1,true)then return t end
-            best=best or t
-        end
-    end
-    return best
-end
-function skEquipSword()
-    local c=pl.Character if not c then return nil end
-    local eq=c:FindFirstChildOfClass("Tool")
-    if eq and skIsSword(eq)then S.swordKillEquippedTool=eq return eq end
-    local sw=skFindSwordInPack()
-    if sw then
-        if eq and not skIsSword(eq)then S.swordKillOriginalTool=eq pcall(function()eq.Parent=bp()end)end
-        pcall(function()sw.Parent=c end)
-        S.swordKillEquippedTool=sw
-        return sw
-    end
-    if eq then S.swordKillEquippedTool=eq return eq end
-    local pack=bp()if not pack then return nil end
-    for _,t in ipairs(pack:GetChildren())do
-        if t:IsA("Tool")then pcall(function()t.Parent=c end)S.swordKillEquippedTool=t return t end
-    end
-    return nil
-end
-function skUnequipAfterKill()
-    local c=pl.Character
-    local pack=bp()
-    if S.swordKillEquippedTool and pack then
-        pcall(function()S.swordKillEquippedTool.Parent=pack end)
-    end
-    if S.swordKillOriginalTool and c and S.swordKillOriginalTool.Parent==pack then
-        pcall(function()S.swordKillOriginalTool.Parent=c end)
-    end
-    S.swordKillEquippedTool=nil
-    S.swordKillOriginalTool=nil
-end
+SK_CFG={CHASE_DIST=18,JUMP_DIST=14,BACKPEDAL_DIST=9,FLANK_DIST=5,SWING_CD=0.34,STRAFE_CD=0.45,REACTION_MIN=0.03,REACTION_MAX=0.10,JUMP_SKIP=0.03,PREDICT_TIME=0.20,HITBOX_DODGE_DIST=9,DMG_WINDOW=1.2,DMG_THRESHOLD=5,KILL_RETURN_DELAY=0.7,FIGHT_SPEED=26,JUMP_INTERVAL=0.28,FLANK_SIDE_BIAS=-1,CIRCLE_BIAS=0.75}
+SK_SWORD_KEYS={"sword","blade","katana","saber","sabre","rapier","dagger","scimitar","machete","darkheart","linked","classic","knife","cleaver","spear","glaive","halberd","longsword","broadsword","shortsword","greatsword","cutlass","falchion","wakizashi","tanto","nodachi","odachi","excalibur","muramasa","masamune","kunai","shuriken","axe","hatchet","tomahawk","scythe","kama","naginata","estoc","claymore","zweihander","flamberge","kris","kukri","bowie","stiletto","dirk","sai","khopesh","gladius","spatha","arming","bastard","viking","cavalry","hunting","combat","throwing","butterfly","balisong","katar","pata","macuahuitl","tessen","parang","klewang","krabi","keris","kujang","mandau","golok","barong","kampilan","bolo","balisword","shikomizue","shirasaya","tachi","chokuto","ninjato","iaito","bokken","shinai"}
+S.swordKillActive=false S.swordKillTarget=nil S.swordKillThread=nil S.swordKillStrafeDir=1 S.swordKillLastStrafe=0 S.swordKillLastSwing=0 S.swordKillReactionEnd=0 S.swordKillTargetVel=Vector3.zero S.swordKillLastTargetPos=nil S.swordKillLastTargetTime=0 S.swordKillLastHealth=nil S.swordKillLastHealthTime=0 S.swordKillRetreating=false S.swordKillRetreatUntil=0 S.swordKillKilledChatted=false S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil S.swordKillLastJump=0 S.swordKillTargetHum=nil S.swordKillReengageAt=0
+function skIsSword(t)if not t or not t:IsA("Tool")then return false end local n=t.Name:lower()for _,k in ipairs(SK_SWORD_KEYS)do if n:find(k,1,true)then return true end end local tip=(t.ToolTip or ""):lower()for _,k in ipairs(SK_SWORD_KEYS)do if tip:find(k,1,true)then return true end end if t:FindFirstChild("Handle")then for _,c in ipairs(t:GetChildren())do if c:IsA("BasePart")then local s=c.Size local longest=math.max(s.X,s.Y,s.Z)local shortest=math.min(s.X,s.Y,s.Z)if longest>2 and shortest<0.5 then return true end end end end return false end
+function skFindSwordInPack()local pack=bp()if not pack then return nil end local best=nil for _,t in ipairs(pack:GetChildren())do if skIsSword(t)then if t.Name:lower():find("sword",1,true)then return t end best=best or t end end return best end
+function skEquipSword()local c=pl.Character if not c then return nil end local eq=c:FindFirstChildOfClass("Tool")if eq and skIsSword(eq)then S.swordKillEquippedTool=eq return eq end local sw=skFindSwordInPack()if sw then if eq and not skIsSword(eq)then S.swordKillOriginalTool=eq pcall(function()eq.Parent=bp()end)end pcall(function()sw.Parent=c end)S.swordKillEquippedTool=sw return sw end if eq then S.swordKillEquippedTool=eq return eq end local pack=bp()if not pack then return nil end for _,t in ipairs(pack:GetChildren())do if t:IsA("Tool")then pcall(function()t.Parent=c end)S.swordKillEquippedTool=t return t end end return nil end
+function skUnequipAfterKill()local c=pl.Character local pack=bp()if S.swordKillEquippedTool and pack then pcall(function()S.swordKillEquippedTool.Parent=pack end)end if S.swordKillOriginalTool and c and S.swordKillOriginalTool.Parent==pack then pcall(function()S.swordKillOriginalTool.Parent=c end)end S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil end
 function skGetEnemySword(tChar)if not tChar then return nil end local tool=tChar:FindFirstChildOfClass("Tool")if not tool then return nil end return tool:FindFirstChild("Handle")or tool:FindFirstChildWhichIsA("BasePart")end
 function skSwing()local now=os.clock()if now-S.swordKillLastSwing<SK_CFG.SWING_CD*(0.85+math.random()*0.4)then return end S.swordKillLastSwing=now local tool=skEquipSword()if tool then pcall(function()tool:Activate()end)end end
-function skIsBehind(myHRP,tHRP)local toMe=myHRP.Position-tHRP.Position toMe=Vector3.new(toMe.X,0,toMe.Z)if toMe.Magnitude<0.1 then return false end toMe=toMe.Unit local look=tHRP.CFrame.LookVector look=Vector3.new(look.X,0,look.Z)if look.Magnitude<0.1 then return false end look=look.Unit return toMe:Dot(look)>0.55 end
-function skStrafeDir()local now=os.clock()if now-S.swordKillLastStrafe>SK_CFG.STRAFE_CD*(0.7+math.random()*0.6)then S.swordKillLastStrafe=now S.swordKillStrafeDir=math.random()<0.5 and-1 or 1 end return S.swordKillStrafeDir end
+function skIsBehind(myHRP,tHRP)local toMe=myHRP.Position-tHRP.Position toMe=Vector3.new(toMe.X,0,toMe.Z)if toMe.Magnitude<0.1 then return false end toMe=toMe.Unit local look=tHRP.CFrame.LookVector look=Vector3.new(look.X,0,look.Z)if look.Magnitude<0.1 then return false end look=look.Unit return toMe:Dot(look)>0.45 end
 function skPredictTarget(tHRP)if not tHRP then return Vector3.zero end local now=os.clock()if S.swordKillLastTargetPos then local dt=now-S.swordKillLastTargetTime if dt>0.01 and dt<0.5 then S.swordKillTargetVel=(tHRP.Position-S.swordKillLastTargetPos)/dt end end S.swordKillLastTargetPos=tHRP.Position S.swordKillLastTargetTime=now return tHRP.Position+S.swordKillTargetVel*SK_CFG.PREDICT_TIME end
+function skDoJump()local h,m=hum(),hrp()if not h or not m then return end local now=os.clock()if now-S.swordKillLastJump<SK_CFG.JUMP_INTERVAL then return end if h.FloorMaterial==Enum.Material.Air then return end S.swordKillLastJump=now h.Jump=true end
 function skTick()
-    if not S.swordKillActive then return end
-    local tg=S.swordKillTarget
-    if not tg or not tg.Parent or not tg.Character then stopSwordKill(false)return end
-    local tHum=tg.Character:FindFirstChildOfClass("Humanoid")
-    if not tHum or tHum.Health<=0 then
-        if not S.swordKillKilledChatted then
-            S.swordKillKilledChatted=true
-            sendChat(pick({"got em","killed em","gg","target down","hes done","easy","next"}))
-            task.delay(SK_CFG.KILL_RETURN_DELAY,function()
-                skUnequipAfterKill()
-                stopSwordKill(false)
-                teleportToHost()
-            end)
-        end
-        return
-    end
-    local myHRP=hrp()local myHum=hum()local tHRP=getPlayerHRP(tg)
-    if not myHRP or not myHum or not tHRP then return end
-    if myHum.Health<=0 then return end
-    local now=os.clock()
-    if now<S.swordKillReactionEnd then return end
-    S.swordKillReactionEnd=now+(SK_CFG.REACTION_MIN+math.random()*(SK_CFG.REACTION_MAX-SK_CFG.REACTION_MIN))
-    if S.swordKillLastHealth and now-S.swordKillLastHealthTime<SK_CFG.DMG_WINDOW then
-        local dmg=S.swordKillLastHealth-myHum.Health
-        if dmg>=SK_CFG.DMG_THRESHOLD then S.swordKillRetreating=true S.swordKillRetreatUntil=now+1.2 end
-    end
-    S.swordKillLastHealth=myHum.Health
-    S.swordKillLastHealthTime=now
-    if now>S.swordKillRetreatUntil then S.swordKillRetreating=false end
-    setRotationOwner("FaceTarget")
-    local tPos=skPredictTarget(tHRP)
-    local myPos=myHRP.Position
-    local dist=(myPos-tPos).Magnitude
-    local toTarget=tPos-myPos
-    toTarget=Vector3.new(toTarget.X,0,toTarget.Z)
-    if toTarget.Magnitude>0.1 then toTarget=toTarget.Unit else toTarget=Vector3.new(0,0,-1)end
-    local grounded=myHum.FloorMaterial~=Enum.Material.Air
-    local behind=skIsBehind(myHRP,tHRP)
-    local enemySword=skGetEnemySword(tg.Character)
-    local swordClose=false
-    if enemySword then local sd=(enemySword.Position-myPos).Magnitude if sd<SK_CFG.HITBOX_DODGE_DIST then swordClose=true end end
-    if S.swordKillRetreating then
-        local back=-toTarget
-        local side=Vector3.new(-toTarget.Z,0,toTarget.X)*skStrafeDir()
-        local md=(back*0.85+side*0.4).Unit
-        myHum:MoveTo(myPos+md*8)
-        skSwing()
-        return
-    end
-    if swordClose and dist<10 then
-        local side=Vector3.new(-toTarget.Z,0,toTarget.X)*skStrafeDir()
-        myHum:MoveTo(myPos+side*9)
-        skSwing()
-        if grounded and math.random()<0.4 then myHum.Jump=true end
-        return
-    end
-    if dist>SK_CFG.CHASE_DIST then myHum:MoveTo(myPos+toTarget*10)return end
-    if dist>SK_CFG.JUMP_DIST then
-        if grounded and math.random()>SK_CFG.JUMP_SKIP then myHum.Jump=true end
-        myHum:MoveTo(myPos+toTarget*8)
-        skSwing()
-        return
-    end
-    if dist>SK_CFG.BACKPEDAL_DIST then
-        local back=-toTarget
-        local side=Vector3.new(-toTarget.Z,0,toTarget.X)*skStrafeDir()
-        local md=(back*0.7+side*0.5).Unit
-        myHum:MoveTo(myPos+md*6)
-        skSwing()
-        return
-    end
-    if dist>SK_CFG.FLANK_DIST and not behind then
-        local side=Vector3.new(-toTarget.Z,0,toTarget.X)*skStrafeDir()
-        myHum:MoveTo(myPos+side*5)
-        skSwing()
-        if grounded and math.random()<0.25 then myHum.Jump=true end
-        return
-    end
-    if behind then
-        if grounded and math.random()>SK_CFG.JUMP_SKIP then myHum.Jump=true end
-        myHum:MoveTo(myPos+toTarget*5)
-        skSwing()
-        return
-    end
-    local side=Vector3.new(-toTarget.Z,0,toTarget.X)*skStrafeDir()
-    myHum:MoveTo(myPos+side*4)
-    skSwing()
+if not S.swordKillActive then return end
+local tg=S.swordKillTarget
+if not tg or not tg.Parent or not tg.Character then stopSwordKill(false)return end
+local tHum=tg.Character:FindFirstChildOfClass("Humanoid")
+if not tHum or tHum.Health<=0 then if not S.swordKillKilledChatted then S.swordKillKilledChatted=true sendChat(pick({"got em","gg","target down","hes done","easy","next"}))task.delay(SK_CFG.KILL_RETURN_DELAY,function()skUnequipAfterKill()stopSwordKill(false)teleportToHost()end)end return end
+local myHRP=hrp()local myHum=hum()local tHRP=getPlayerHRP(tg)
+if not myHRP or not myHum or not tHRP then return end
+if myHum.Health<=0 then return end
+if S.swordKillReengageAt>0 and os.clock()<S.swordKillReengageAt then return end
+S.swordKillReengageAt=0
+local now=os.clock()
+if now<S.swordKillReactionEnd then return end
+S.swordKillReactionEnd=now+(SK_CFG.REACTION_MIN+math.random()*(SK_CFG.REACTION_MAX-SK_CFG.REACTION_MIN))
+if S.swordKillLastHealth and now-S.swordKillLastHealthTime<SK_CFG.DMG_WINDOW then local dmg=S.swordKillLastHealth-myHum.Health if dmg>=SK_CFG.DMG_THRESHOLD then S.swordKillRetreating=true S.swordKillRetreatUntil=now+1.0 end end
+S.swordKillLastHealth=myHum.Health
+S.swordKillLastHealthTime=now
+if now>S.swordKillRetreatUntil then S.swordKillRetreating=false end
+setRotationOwner("FaceTarget")
+pcall(function()myHum.WalkSpeed=SK_CFG.FIGHT_SPEED end)
+local tPos=skPredictTarget(tHRP)
+local myPos=myHRP.Position
+local dist=(myPos-tPos).Magnitude
+local toTarget=tPos-myPos
+toTarget=Vector3.new(toTarget.X,0,toTarget.Z)
+if toTarget.Magnitude>0.1 then toTarget=toTarget.Unit else toTarget=Vector3.new(0,0,-1)end
+local grounded=myHum.FloorMaterial~=Enum.Material.Air
+local behind=skIsBehind(myHRP,tHRP)
+local enemySword=skGetEnemySword(tg.Character)
+local swordClose=false
+if enemySword then local sd=(enemySword.Position-myPos).Magnitude if sd<SK_CFG.HITBOX_DODGE_DIST then swordClose=true end end
+local tLook=tHRP.CFrame.LookVector
+tLook=Vector3.new(tLook.X,0,tLook.Z)
+if tLook.Magnitude<0.1 then tLook=Vector3.new(0,0,-1)else tLook=tLook.Unit end
+local playerLeft=Vector3.new(tLook.Z,0,-tLook.X)
+local botToPlayer=myPos-tHRP.Position
+botToPlayer=Vector3.new(botToPlayer.X,0,botToPlayer.Z)
+local onUnguardedSide=botToPlayer.Magnitude>0.1 and botToPlayer.Unit:Dot(playerLeft)>0.3
+if S.swordKillRetreating then local back=-toTarget local side=playerLeft*SK_CFG.FLANK_SIDE_BIAS local md=(back*0.85+side*0.4).Unit myHum:MoveTo(myPos+md*9)skSwing()skDoJump()return end
+if swordClose and dist<11 then local side=playerLeft local md=(side*0.9+toTarget*0.2).Unit myHum:MoveTo(myPos+md*10)skSwing()skDoJump()return end
+if dist>SK_CFG.CHASE_DIST then local targetOffset=tPos+playerLeft*4 local chaseDir=(targetOffset-myPos)chaseDir=Vector3.new(chaseDir.X,0,chaseDir.Z)if chaseDir.Magnitude>0.1 then chaseDir=chaseDir.Unit else chaseDir=toTarget end myHum:MoveTo(myPos+chaseDir*12)if grounded and math.random()<0.5 then skDoJump()end return end
+if dist>SK_CFG.JUMP_DIST then local ang=(playerLeft*0.5+toTarget*0.5).Unit if grounded then skDoJump()end myHum:MoveTo(myPos+ang*10)skSwing()return end
+if dist>SK_CFG.BACKPEDAL_DIST then local circleDir=(playerLeft*SK_CFG.CIRCLE_BIAS+toTarget*0.2).Unit myHum:MoveTo(myPos+circleDir*9)skSwing()if grounded and math.random()<0.6 then skDoJump()end return end
+if dist>SK_CFG.FLANK_DIST then if not onUnguardedSide then local flankDir=(playerLeft*0.9+toTarget*0.1).Unit myHum:MoveTo(myPos+flankDir*8)else myHum:MoveTo(myPos+toTarget*6)end skSwing()skDoJump()return end
+if behind then if grounded then skDoJump()end myHum:MoveTo(myPos+toTarget*6)skSwing()return end
+if not onUnguardedSide then local flankDir=(playerLeft*0.95+toTarget*0.05).Unit myHum:MoveTo(myPos+flankDir*7)skSwing()skDoJump()return end
+local side=playerLeft*0.4
+local md=(toTarget*0.7+side).Unit
+myHum:MoveTo(myPos+md*5)
+skSwing()
+if grounded and math.random()<0.5 then skDoJump()end
 end
 startSwordKill=function(name)
-    if not name or name==""then sendChat("usage: !swordkill <player>")return end
-    local t=getPlayer(name)
-    if not t then sendChat(pick(R_.notfound))return end
-    if t==pl then sendChat(pick(R_.self))return end
-    stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)
-    S.swordKillTarget=t S.swordKillActive=true S.mode="SwordKill"
-    S.swordKillLastSwing=0 S.swordKillLastStrafe=0
-    S.swordKillReactionEnd=os.clock()+0.2
-    S.swordKillTargetVel=Vector3.zero S.swordKillLastTargetPos=nil
-    S.swordKillLastHealth=nil S.swordKillLastHealthTime=0
-    S.swordKillRetreating=false S.swordKillRetreatUntil=0
-    S.swordKillKilledChatted=false
-    S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil
-    skEquipSword()
-    if S.swordKillThread then task.cancel(S.swordKillThread)end
-    S.swordKillThread=task.spawn(function()
-        while S.swordKillActive and ROLE=="BOT"do
-            local ok,err=pcall(skTick)
-            if not ok then warn("[swordkill]",err)end
-            task.wait(0.03)
-        end
-    end)
-    sendChat(pick({"sword fight on","locking on","going for em","duel mode","lets dance"}).." "..t.Name)
+if not name or name==""then sendChat("usage: !swordkill <player>")return end
+local t=getPlayer(name)
+if not t then sendChat(pick(R_.notfound))return end
+if t==pl then sendChat(pick(R_.self))return end
+stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)
+S.swordKillTarget=t S.swordKillActive=true S.mode="SwordKill"
+S.swordKillLastSwing=0 S.swordKillLastStrafe=0 S.swordKillLastJump=0
+S.swordKillReactionEnd=os.clock()+0.15
+S.swordKillTargetVel=Vector3.zero S.swordKillLastTargetPos=nil
+S.swordKillLastHealth=nil S.swordKillLastHealthTime=0
+S.swordKillRetreating=false S.swordKillRetreatUntil=0
+S.swordKillKilledChatted=false S.swordKillReengageAt=0
+S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil
+skEquipSword()
+if S.swordKillThread then task.cancel(S.swordKillThread)end
+S.swordKillThread=task.spawn(function()while S.swordKillActive and ROLE=="BOT"do local ok,err=pcall(skTick)if not ok then warn("[swordkill]",err)end task.wait(0.02)end end)
+sendChat(pick({"sword fight on","locking on","going for em","duel mode","lets dance"}).." "..t.Name)
 end
 stopSwordKill=function(announce)
-    if not S.swordKillActive then return end
-    S.swordKillActive=false S.swordKillTarget=nil
-    if S.swordKillThread then task.cancel(S.swordKillThread)S.swordKillThread=nil end
-    if S.swordKillEquippedTool then skUnequipAfterKill()end
-    if S.mode=="SwordKill"then S.mode="Follow"releaseRotation()end
-    if announce then sendChat(pick({"fight off","backing off","done","chill now","stopping"}))end
+if not S.swordKillActive then return end
+S.swordKillActive=false S.swordKillTarget=nil
+if S.swordKillThread then task.cancel(S.swordKillThread)S.swordKillThread=nil end
+if S.swordKillEquippedTool then skUnequipAfterKill()end
+local h=hum()if h then pcall(function()h.WalkSpeed=BS end)end
+if S.mode=="SwordKill"then S.mode="Follow"releaseRotation()end
+if announce then sendChat(pick({"fight off","backing off","done","chill now","stopping"}))end
 end
--- ==== END SWORDKILL ====
 function clearHide()if S.hideBP then pcall(function()S.hideBP:Destroy()end)S.hideBP=nil end if S.hideBG then pcall(function()S.hideBG:Destroy()end)S.hideBG=nil end if S.hideHB then pcall(function()S.hideHB:Disconnect()end)S.hideHB=nil end local m=hrp()if m then for _,c in ipairs(m:GetChildren())do if c:IsA("BodyGyro")or c:IsA("BodyAngularVelocity")or c:IsA("BodyPosition")or c:IsA("BodyVelocity")or c:IsA("AlignOrientation")or c:IsA("AlignPosition")or c:IsA("LinearVelocity")then pcall(function()c:Destroy()end)end end end end
 function doHide(si)S.hidden=true S.frozen=true S.sitting=false stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)S.mode="Hidden"setRotationOwner("Hidden")local m=hrp()if m then local pos=Vector3.new(math.random(-VR,VR),VY+50,math.random(-VR,VR))S.hidePos=pos pcall(function()m.CFrame=CFrame.new(pos)m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)clearHide()local b=Instance.new("BodyPosition")b.MaxForce=Vector3.new(1e7,1e7,1e7)b.Position=pos b.P=5e5 b.D=200 b.Parent=m S.hideBP=b local g=Instance.new("BodyGyro")g.MaxTorque=Vector3.new(1e7,1e7,1e7)g.P=5e5 g.D=200 g.CFrame=m.CFrame g.Parent=m S.hideBG=g local h=hum()if h then h.WalkSpeed=0 h.JumpPower=0 h.PlatformStand=true end S.hideHB=R.Heartbeat:Connect(function()if not S.hidden then return end local r=hrp()if not r then return end if(r.Position-pos).Magnitude>5 then pcall(function()r.CFrame=CFrame.new(pos)end)end if r.AssemblyLinearVelocity.Magnitude>1 then pcall(function()r.AssemblyLinearVelocity=Vector3.zero end)end end)end if not si then sendChat(pick(R_.hide))end end
 function doSpawn()S.hidden=false S.frozen=false S.sitting=false S.mode="Follow"clearHide()local h=hum()if h then h.PlatformStand=false h.WalkSpeed=BS h.JumpPower=BJ end rotationOwner="Humanoid"if h then h.AutoRotate=true end local hh,m=getHostHRP(),hrp()if hh and m then local f=hh.CFrame.LookVector*-5 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(f.X,0,f.Z))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)end S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil sendChat(pick(R_.spawn))end
@@ -391,7 +292,7 @@ function startOrbit(sp)sp=tonumber(sp)or 100 sp=math.clamp(sp,1,1000)S.orbitSpee
 function restoreHost()if not originalHost.name then return end S.hostName=originalHost.name hostFilter.name=originalHost.name hostFilter.userId=originalHost.userId S.lending=false S.lendEnd=0 sendChat(pick({"lend done","back to original","transfer over"}))end
 function startLend(name,sc)sc=tonumber(sc)if not sc or sc<=0 then sc=60 end local t=getPlayer(name)if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end if hostFilter.userId and t.UserId==hostFilter.userId then sendChat("already lending to them")return end if originalHost.userId and t.UserId==originalHost.userId then sendChat("cant lend to yourself")return end if not S.lending then originalHost.name=S.hostName originalHost.userId=hostFilter.userId end S.lending=true S.hostName=t.Name:lower()hostFilter.name=t.Name:lower()hostFilter.userId=t.UserId S.lendEnd=os.clock()+sc sendChat(pick({"listening to ","lend to ","transferring to "})..t.Name.." for "..sc.."s")if S.lendThread then task.cancel(S.lendThread)end S.lendThread=task.spawn(function()while S.lending and ROLE=="BOT"do task.wait(0.5)if os.clock()>=S.lendEnd then restoreHost()break end end end)end
 function startAfk()if ROLE~="BOT"then return end task.spawn(function()while ROLE=="BOT"do task.wait(1)local hh=getHostHRP()if not hh then S.hostLastPos=nil S.hostAfkTimer=0 continue end if S.hostLastPos then if(hh.Position-S.hostLastPos).Magnitude>0.8 then S.hostAfkTimer=0 if S.hostIsAfk then S.hostIsAfk=false end else S.hostAfkTimer=S.hostAfkTimer+1 if S.hostAfkTimer>=AT and not S.hostIsAfk then S.hostIsAfk=true end end end S.hostLastPos=hh.Position end end)end
-function bindDeath()if S.deathConn then S.deathConn:Disconnect()S.deathConn=nil end local c=pl.Character if not c then return end local h=c:FindFirstChildOfClass("Humanoid")if not h then return end S.deathConn=h.Died:Connect(function()stopSpin()stopDance()stopLead(false)stopFling(false)stopSwordKill(false)S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil local n=os.clock()if n-S.lastDeathTime>DRT then S.deathCount=0 S.deathSilent=false end S.lastDeathTime=n S.deathCount=S.deathCount+1 if S.deathSilent then return end if S.deathCount==2 then sendChat("...")elseif S.deathCount==3 then sendChat("....")elseif S.deathCount==4 then sendChat(".....")elseif S.deathCount==5 then sendChat(pick({"bro","cmon","seriously","again?","bruh"}))elseif S.deathCount==6 then sendChat(pick({"ok this is annoying","really now","dude","ugh","seriously"}))elseif S.deathCount==7 then sendChat(pick({"bro stop","cmon man","enough","why tho"}))elseif S.deathCount>=8 then sendChat(pick({"stop bro","bro stop it","ok enough","chill out man","i said stop"}))S.deathSilent=true end end)end
+function bindDeath()if S.deathConn then S.deathConn:Disconnect()S.deathConn=nil end local c=pl.Character if not c then return end local h=c:FindFirstChildOfClass("Humanoid")if not h then return end S.deathConn=h.Died:Connect(function()local wasFighting=S.swordKillActive and S.swordKillTarget stopSpin()stopDance()stopLead(false)stopFling(false)if not wasFighting then stopSwordKill(false)end S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil local n=os.clock()if n-S.lastDeathTime>DRT then S.deathCount=0 S.deathSilent=false end S.lastDeathTime=n S.deathCount=S.deathCount+1 if S.deathSilent then return end if wasFighting then sendChat(pick({"im down","back in a sec","respawning","one sec","ill be back"}))elseif S.deathCount==2 then sendChat("...")elseif S.deathCount==3 then sendChat("....")elseif S.deathCount==4 then sendChat(".....")elseif S.deathCount==5 then sendChat(pick({"bro","cmon","seriously","again?","bruh"}))elseif S.deathCount==6 then sendChat(pick({"ok this is annoying","really now","dude","ugh","seriously"}))elseif S.deathCount==7 then sendChat(pick({"bro stop","cmon man","enough","why tho"}))elseif S.deathCount>=8 then sendChat(pick({"stop bro","bro stop it","ok enough","chill out man","i said stop"}))S.deathSilent=true end end)end
 handleCommand=function(cmd,args)if ROLE~="BOT"or antiBan.detected then return end if cmd=="say"then if args~=""then sendChat(args)end elseif cmd=="ask"then handleAIChat(args)elseif cmd=="orbit"then startOrbit(args~=""and args or nil)elseif cmd=="unorbit"then stopOrbit()sendChat(pick(R_.unorbit))elseif cmd=="sit"then stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)S.sitting=true S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil local h=hum()if h then pcall(function()h.WalkSpeed=0 h.JumpPower=0 h.Sit=true h:ChangeState(Enum.HumanoidStateType.Seated)end)end sendChat(pick(R_.sit))elseif cmd=="stand"then S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick(R_.stand))elseif cmd=="jump"then local h=hum()if h then h.Jump=true sendChat(pick(R_.jump))end elseif cmd=="hide"then doHide(false)elseif cmd=="spawn"then doSpawn()elseif cmd=="dance"then playDance(tonumber(args)or 1)elseif cmd=="undance"then stopDance()sendChat(pick(R_.undance))elseif cmd=="spin"then startSpin(args)elseif cmd=="unspin"then stopSpin()sendChat(pick(R_.unspin))elseif cmd=="lead"then startLead(args)elseif cmd=="unlead"then stopLead(true)elseif cmd=="bam"then startBam(args)elseif cmd=="unbam"then stopBam(false)teleportToHost()sendChat(pick(R_.unbam))elseif cmd=="annoy"then startAnnoy(args)elseif cmd=="unannoy"then stopAnnoy(false)teleportToHost()sendChat(pick(R_.unannoy))elseif cmd=="fling"then startFling(args)elseif cmd=="unfling"then stopFling(false,false)teleportToHost()sendChat(pick(R_.unfling))elseif cmd=="swordkill"then startSwordKill(args)elseif cmd=="unswordkill"then stopSwordKill(true)elseif cmd=="math"then handleMath(args)elseif cmd=="cmds"then sendSeq({"here ya go","!ask <msg> - talk to XcH","XcH can also write code for you","just say: make me fly/swim/speed/jump","!orbit <1-1000> | !unorbit","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!annoy <player> | !unannoy","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!dance 1-4 | !undance","!spin 1-100 | !unspin","!math <num><op><num>","!say <text>","!cmds"},0.9)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end
 function processMessage(uid,text)if not text or text==""then return end if ROLE~="BOT"and ROLE~="HOST"then return end if not isFromHost(uid)then return end local lowText=text:lower()if lowText:sub(1,4)=="!ask"then local prompt=trim(text:sub(5))if prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return end if isDuplicateMessage(uid,text)then return end task.spawn(function()handleAIChat(prompt)end)return end if ROLE~="BOT"then return end if text:sub(1,#commandPrefix)~=commandPrefix then return end if isDuplicateMessage(uid,text)then return end local body=trim(text:sub(#commandPrefix+1))if body==""then return end local sp=body:find("%s")local cmd,args if sp then cmd=body:sub(1,sp-1):lower()args=trim(body:sub(sp+1))else cmd=body:lower()args=""end task.spawn(function()local ok,err=pcall(handleCommand,cmd,args)if not ok then warn("[MyPanel] cmd error:",err)if botLogRef then pushLog(botLogRef,"err: "..tostring(err):sub(1,60),C.red)end end end)end
 pcall(function()if TC and TC.ChatVersion==Enum.ChatVersion.TextChatService then TC.MessageReceived:Connect(function(m)local s=m.TextSource if not s then return end processMessage(s.UserId,m.Text)end)end end)
@@ -452,69 +353,69 @@ local apiPad=Instance.new("UIPadding")apiPad.PaddingTop=UDim.new(0,14)apiPad.Pad
 local apiTitle=Instance.new("TextLabel")apiTitle.Size=UDim2.new(1,0,0,18)apiTitle.Position=UDim2.new(0,0,0,0)apiTitle.BackgroundTransparency=1 apiTitle.Font=Enum.Font.GothamBold apiTitle.Text="API KEYS"apiTitle.TextColor3=C.text apiTitle.TextSize=13 apiTitle.TextXAlignment=Enum.TextXAlignment.Left apiTitle.Parent=apiPage
 local apiSub=Instance.new("TextLabel")apiSub.Size=UDim2.new(1,0,0,16)apiSub.Position=UDim2.new(0,0,0,20)apiSub.BackgroundTransparency=1 apiSub.Font=Enum.Font.Gotham apiSub.Text="click any key below to copy it to clipboard"apiSub.TextColor3=C.subText apiSub.TextSize=9 apiSub.TextXAlignment=Enum.TextXAlignment.Left apiSub.Parent=apiPage
 function copyToClipboard(txt)
-    if type(setclipboard)=="function" then pcall(setclipboard,txt) return true end
-    if type(toclipboard)=="function" then pcall(toclipboard,txt) return true end
-    if syn and type(syn.write_clipboard)=="function" then pcall(syn.write_clipboard,txt) return true end
-    if type(writeclipboard)=="function" then pcall(writeclipboard,txt) return true end
-    return false
+if type(setclipboard)=="function" then pcall(setclipboard,txt) return true end
+if type(toclipboard)=="function" then pcall(toclipboard,txt) return true end
+if syn and type(syn.write_clipboard)=="function" then pcall(syn.write_clipboard,txt) return true end
+if type(writeclipboard)=="function" then pcall(writeclipboard,txt) return true end
+return false
 end
 local function mkKeyRow(y,label,getKey)
-    local ll=Instance.new("TextLabel")
-    ll.Size=UDim2.new(1,0,0,14)
-    ll.Position=UDim2.new(0,0,0,y)
-    ll.BackgroundTransparency=1
-    ll.Font=Enum.Font.GothamBold
-    ll.Text=label
-    ll.TextColor3=C.text
-    ll.TextSize=10
-    ll.TextXAlignment=Enum.TextXAlignment.Left
-    ll.Parent=apiPage
-    local btn=Instance.new("TextButton")
-    btn.Size=UDim2.new(1,0,0,32)
-    btn.Position=UDim2.new(0,0,0,y+16)
-    btn.BackgroundColor3=C.track
-    btn.BorderSizePixel=0
-    btn.Font=Enum.Font.Code
-    btn.Text=getKey() or "(not set)"
-    btn.TextColor3=C.text
-    btn.TextSize=10
-    btn.TextXAlignment=Enum.TextXAlignment.Left
-    btn.TextTruncate=Enum.TextTruncate.AtEnd
-    btn.AutoButtonColor=false
-    btn.Parent=apiPage
-    corner(btn,6)
-    stroke(btn,C.border,1,0.3)
-    local pdd=Instance.new("UIPadding")
-    pdd.PaddingLeft=UDim.new(0,10)
-    pdd.PaddingRight=UDim.new(0,10)
-    pdd.Parent=btn
-    local fb=Instance.new("TextLabel")
-    fb.Size=UDim2.new(1,0,0,12)
-    fb.Position=UDim2.new(0,0,0,y+50)
-    fb.BackgroundTransparency=1
-    fb.Font=Enum.Font.Gotham
-    fb.Text=""
-    fb.TextColor3=C.green
-    fb.TextSize=9
-    fb.TextXAlignment=Enum.TextXAlignment.Left
-    fb.Parent=apiPage
-    btn.MouseEnter:Connect(function()tw(btn,0.15,{BackgroundColor3=C.buttonHover})end)
-    btn.MouseLeave:Connect(function()tw(btn,0.15,{BackgroundColor3=C.track})end)
-    btn.Activated:Connect(function()
-        local k=getKey()
-        if not k or k=="" then fb.Text="no key set"; fb.TextColor3=C.red; return end
-        if copyToClipboard(k) then
-            fb.Text="copied!"
-            fb.TextColor3=C.green
-        else
-            fb.Text="clipboard unsupported"
-            fb.TextColor3=C.red
-        end
-        task.delay(1.6,function()
-            if fb and fb.Parent then fb.Text="" end
-        end)
-    end)
-    return btn
+local ll=Instance.new("TextLabel")
+ll.Size=UDim2.new(1,0,0,14)
+ll.Position=UDim2.new(0,0,0,y)
+ll.BackgroundTransparency=1
+ll.Font=Enum.Font.GothamBold
+ll.Text=label
+ll.TextColor3=C.text
+ll.TextSize=10
+ll.TextXAlignment=Enum.TextXAlignment.Left
+ll.Parent=apiPage
+local btn=Instance.new("TextButton")
+btn.Size=UDim2.new(1,0,0,32)
+btn.Position=UDim2.new(0,0,0,y+16)
+btn.BackgroundColor3=C.track
+btn.BorderSizePixel=0
+btn.Font=Enum.Font.Code
+btn.Text=getKey() or "(not set)"
+btn.TextColor3=C.text
+btn.TextSize=10
+btn.TextXAlignment=Enum.TextXAlignment.Left
+btn.TextTruncate=Enum.TextTruncate.AtEnd
+btn.AutoButtonColor=false
+btn.Parent=apiPage
+corner(btn,6)
+stroke(btn,C.border,1,0.3)
+local pdd=Instance.new("UIPadding")
+pdd.PaddingLeft=UDim.new(0,10)
+pdd.PaddingRight=UDim.new(0,10)
+pdd.Parent=btn
+local fb=Instance.new("TextLabel")
+fb.Size=UDim2.new(1,0,0,12)
+fb.Position=UDim2.new(0,0,0,y+50)
+fb.BackgroundTransparency=1
+fb.Font=Enum.Font.Gotham
+fb.Text=""
+fb.TextColor3=C.green
+fb.TextSize=9
+fb.TextXAlignment=Enum.TextXAlignment.Left
+fb.Parent=apiPage
+btn.MouseEnter:Connect(function()tw(btn,0.15,{BackgroundColor3=C.buttonHover})end)
+btn.MouseLeave:Connect(function()tw(btn,0.15,{BackgroundColor3=C.track})end)
+btn.Activated:Connect(function()
+local k=getKey()
+if not k or k=="" then fb.Text="no key set"; fb.TextColor3=C.red; return end
+if copyToClipboard(k) then
+fb.Text="copied!"
+fb.TextColor3=C.green
+else
+fb.Text="clipboard unsupported"
+fb.TextColor3=C.red
+end
+task.delay(1.6,function()
+if fb and fb.Parent then fb.Text="" end
+end)
+end)
+return btn
 end
 mkKeyRow(46,"XcH Key (primary)",function() return APIKey end)
 mkKeyRow(110,"Xcode Key",function() return APIKey2 end)
@@ -593,46 +494,46 @@ pwErr.TextXAlignment=Enum.TextXAlignment.Left
 pwErr.ZIndex=101
 pwErr.Parent=pwOv
 local function mkPwBtn(txt,pos)
-    local b=Instance.new("TextButton")
-    b.Size=UDim2.new(0.5,-28,0,38)
-    b.Position=pos
-    b.BackgroundColor3=C.button
-    b.BorderSizePixel=0
-    b.Font=Enum.Font.GothamBold
-    b.Text=txt
-    b.TextColor3=C.text
-    b.TextSize=13
-    b.AutoButtonColor=false
-    b.ZIndex=101
-    b.Parent=pwOv
-    corner(b,10)
-    stroke(b,C.border,1,0.2)
-    styleBtn(b)
-    return b
+local b=Instance.new("TextButton")
+b.Size=UDim2.new(0.5,-28,0,38)
+b.Position=pos
+b.BackgroundColor3=C.button
+b.BorderSizePixel=0
+b.Font=Enum.Font.GothamBold
+b.Text=txt
+b.TextColor3=C.text
+b.TextSize=13
+b.AutoButtonColor=false
+b.ZIndex=101
+b.Parent=pwOv
+corner(b,10)
+stroke(b,C.border,1,0.2)
+styleBtn(b)
+return b
 end
 local pwBack=mkPwBtn("BACK",UDim2.new(0,20,1,-60))
 local pwGo=mkPwBtn("UNLOCK",UDim2.new(0.5,8,1,-60))
 apiUnlocked=false
 local function tryUnlock()
-    if pwBox.Text==API_PASSWORD then
-        apiUnlocked=true
-        pwOv.Visible=false
-        pwErr.Text=""
-        pwBox.Text=""
-        slideToPage(apiPage,apiTab)
-    else
-        pwErr.Text="wrong password"
-        pwBox.Text=""
-    end
+if pwBox.Text==API_PASSWORD then
+apiUnlocked=true
+pwOv.Visible=false
+pwErr.Text=""
+pwBox.Text=""
+slideToPage(apiPage,apiTab)
+else
+pwErr.Text="wrong password"
+pwBox.Text=""
+end
 end
 pwGo.Activated:Connect(tryUnlock)
 pwBack.Activated:Connect(function()
-    pwOv.Visible=false
-    pwErr.Text=""
-    pwBox.Text=""
+pwOv.Visible=false
+pwErr.Text=""
+pwBox.Text=""
 end)
 pwBox.FocusLost:Connect(function(ep)
-    if ep then tryUnlock() end
+if ep then tryUnlock() end
 end)
 currentPage=nil currentTabBtn=nil
 function makeTab(name,order,onClick)local b=Instance.new("TextButton")b.Size=UDim2.new(1,0,0,32)b.BackgroundColor3=C.sidebar b.BorderSizePixel=0 b.Font=Enum.Font.GothamMedium b.Text="  "..name b.TextColor3=C.text b.TextSize=11 b.TextXAlignment=Enum.TextXAlignment.Left b.AutoButtonColor=false b.LayoutOrder=order b.Parent=sidebar corner(b,6)b.MouseEnter:Connect(function()if b~=currentTabBtn then tw(b,0.15,{BackgroundColor3=C.buttonHover})end end)b.MouseLeave:Connect(function()if b~=currentTabBtn then tw(b,0.15,{BackgroundColor3=C.sidebar})end end)b.Activated:Connect(onClick)return b end
@@ -641,13 +542,13 @@ logsTab=makeTab("Logs",1,function()slideToPage(logsPage,logsTab)end)
 cmdsTab=makeTab("Cmds",2,function()slideToPage(cmdsPage,cmdsTab)end)
 xcodeTab=makeTab("Xcode",3,function()slideToPage(xcodePage,xcodeTab)end)
 apiTab=makeTab("Api Keys",4,function()
-    if apiUnlocked then
-        slideToPage(apiPage,apiTab)
-    else
-        pwOv.Visible=true
-        pwBox.Text=""
-        pwErr.Text=""
-    end
+if apiUnlocked then
+slideToPage(apiPage,apiTab)
+else
+pwOv.Visible=true
+pwBox.Text=""
+pwErr.Text=""
+end
 end)
 currentPage=nil currentTabBtn=nil slideToPage(cmdsPage,cmdsTab)
 local roleOv=Instance.new("Frame")roleOv.Size=UDim2.new(1,0,1,0)roleOv.BackgroundColor3=C.panel roleOv.BorderSizePixel=0 roleOv.ZIndex=50 roleOv.Visible=true roleOv.Parent=frame
@@ -689,6 +590,6 @@ function findLive()local b=bp()if b then local t=b:FindFirstChild(TN)if t and t:
 function bindTool(t)if not t or not t:IsA("Tool")or bound[t]then return end bound[t]=true t.Equipped:Connect(function()if ROLE=="HOST"or ROLE=="BOT"then show()end end)t.Unequipped:Connect(function()if ROLE=="HOST"or ROLE=="BOT"then hide()end end)t.Destroying:Connect(function()bound[t]=nil end)end
 function removeDupes()local list={}local b=bp()if b then for _,o in ipairs(b:GetChildren())do if o:IsA("Tool")and o.Name==TN then table.insert(list,o)end end end local c=pl.Character if c then for _,o in ipairs(c:GetChildren())do if o:IsA("Tool")and o.Name==TN then table.insert(list,o)end end end for i=2,#list do list[i]:Destroy()end end
 function giveTool()local ex=findLive()if ex then bindTool(ex)return end local b=bp()if not b then return end local t=toolTemplate:Clone()t.Parent=b bindTool(t)end
-pl.CharacterAdded:Connect(function(char)local h=char:WaitForChild("Humanoid",5)if not h then return end task.wait(0.5)removeDupes()giveTool()h.UseJumpPower=true h.WalkSpeed=BS h.JumpPower=BJ rotationOwner="Humanoid"h.AutoRotate=true stopDance()stopSpin()stopLead(false)stopFling(false)stopSwordKill(false)S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.lastPathSig=nil S.stableFollowDir=nil if ROLE=="BOT"then bindDeath()if not S.facing then startFacing()end end end)
+pl.CharacterAdded:Connect(function(char)local h=char:WaitForChild("Humanoid",5)if not h then return end task.wait(0.5)removeDupes()giveTool()h.UseJumpPower=true h.WalkSpeed=BS h.JumpPower=BJ rotationOwner="Humanoid"h.AutoRotate=true stopDance()stopSpin()stopLead(false)stopFling(false)S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.lastPathSig=nil S.stableFollowDir=nil if ROLE=="BOT"then bindDeath()if not S.facing then startFacing()end if S.swordKillActive and S.swordKillTarget then local tg=S.swordKillTarget S.swordKillTarget=nil S.swordKillActive=false if S.swordKillThread then task.cancel(S.swordKillThread)S.swordKillThread=nil end task.wait(0.6)if tg.Parent then startSwordKill(tg.Name)end end end end)
 task.spawn(function()task.wait(0.5)removeDupes()giveTool()local h=hum()if h then h.UseJumpPower=true h.WalkSpeed=BS h.JumpPower=BJ end end)
 gui.Enabled=true roleOv.Visible=true frame.Position=SHOWN pcall(show)
