@@ -1,4 +1,4 @@
---[[ My Panel - InterDimensional Panel By XCDevs | CHAT AI ONLY EDITION ]]
+--[[ My Panel - InterDimensional Panel By XCDevs | CHAT AI ONLY EDITION ]] 
 -- BATCH 1+2: Log filter, Annoy walk/face, Lend permission guards
 -- BATCH A: Removed !lend command + gate (GUI-only lending)
 -- BATCH B: Creator (crixcrix000) green highlight in Bot Setup list
