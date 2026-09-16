@@ -199,7 +199,7 @@ task.spawn(function()while true do R.Heartbeat:Wait()if not S.flingActive or ROL
 task.spawn(function()while true do task.wait(0.02)if not S.bamActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.bamTarget if not tg or not tg.Parent then task.wait(0.4)continue end local th=getPlayerHRP(tg)local m=hrp()if not th or not m then task.wait(0.3)continue end if isInVoid(th.Position)or isInVoid(m.Position)then task.wait(0.3)continue end local lk=th.CFrame.LookVector local fl=Vector3.new(lk.X,0,lk.Z)if fl.Magnitude>0.01 then fl=fl.Unit else fl=Vector3.new(0,0,-1)end local t=(os.clock()/BC)%1 local ths=math.sin(t*math.pi*2)*0.5+0.5 local cd=BDB-(BO*ths)local bp2=th.Position-fl*cd pcall(function()m.CFrame=CFrame.lookAt(bp2,th.Position)m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)end end)
 task.spawn(function()while true do task.wait(0.05)if not S.annoyActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.annoyTarget if not tg or not tg.Parent then task.wait(0.4)continue end local th=getPlayerHRP(tg)local m=hrp()if not th or not m then task.wait(0.3)continue end if isInVoid(th.Position)or isInVoid(m.Position)then task.wait(0.3)continue end local lk=th.CFrame.LookVector local fl=Vector3.new(lk.X,0,lk.Z)if fl.Magnitude>0.01 then fl=fl.Unit else fl=Vector3.new(0,0,-1)end local fr=th.Position+fl*AFD local ds=(m.Position-fr).Magnitude local h=hum()if not h then continue end if rotationOwner~="FaceTarget"and S.annoyActive then setRotationOwner("FaceTarget")end if ds>ATR then if os.clock()-S.trollTpCD>0.6 then S.trollTpCD=os.clock()pcall(function()m.CFrame=CFrame.new(fr+Vector3.new(0,1,0))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)end else h:MoveTo(fr)end end end)
 task.spawn(function()while true do local wt=AMW1+math.random()*(AMW2-AMW1)task.wait(wt)if not S.annoyActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.annoyTarget if not tg or not tg.Parent then continue end local th=getPlayerHRP(tg)if not th then continue end if isInVoid(th.Position)then continue end local m=hrp()if not m or isInVoid(m.Position)then continue end if(m.Position-th.Position).Magnitude>40 then continue end sendChat(ANNOY_MSGS[math.random(1,#ANNOY_MSGS)])end end)
-SK_CFG={CHASE_DIST=16,JUMP_DIST=12,BACKPEDAL_DIST=8,FLANK_DIST=5,SWING_CD=0.75,STRAFE_CD=0.55,REACTION_MIN=0.08,REACTION_MAX=0.18,PREDICT_TIME=0.18,HITBOX_DODGE_DIST=8,DMG_WINDOW=1.2,DMG_THRESHOLD=6,KILL_RETURN_DELAY=0.7,JUMP_INTERVAL=1.2,MIRROR_JUMP_WINDOW=0.35,FLANK_SIDE_BIAS=-1,CIRCLE_BIAS=0.75,FIGHT_TICK=0.09}
+SK_CFG={CHASE_DIST=16,JUMP_DIST=12,BACKPEDAL_DIST=8,FLANK_DIST=5,SWING_CD=0.75,STRAFE_CD=0.55,REACTION_MIN=0.08,REACTION_MAX=0.18,PREDICT_TIME=0.18,HITBOX_DODGE_DIST=8,DMG_WINDOW=1.2,DMG_THRESHOLD=6,KILL_RETURN_DELAY=0.7,JUMP_INTERVAL=1.2,MIRROR_JUMP_WINDOW=0.35,FLANK_SIDE_BIAS=-1,CIRCLE_BIAS=0.75,FIGHT_TICK=0.07,MOVE_AHEAD=9}
 SK_SWORD_KEYS={"sword","blade","katana","saber","sabre","rapier","dagger","scimitar","machete","darkheart","linked","classic","knife","cleaver","spear","glaive","halberd","longsword","broadsword","shortsword","greatsword","cutlass","falchion","wakizashi","tanto","nodachi","odachi","excalibur","muramasa","masamune","kunai","shuriken","axe","hatchet","tomahawk","scythe","kama","naginata","estoc","claymore","zweihander","flamberge","kris","kukri","bowie","stiletto","dirk","sai","khopesh","gladius","spatha","arming","bastard","viking","cavalry","hunting","combat","throwing","butterfly","balisong","katar","pata","macuahuitl","tessen","parang","klewang","krabi","keris","kujang","mandau","golok","barong","kampilan","bolo","balisword","shikomizue","shirasaya","tachi","chokuto","ninjato","iaito","bokken","shinai"}
 S.swordKillActive=false S.swordKillTarget=nil S.swordKillThread=nil S.swordKillStrafeDir=1 S.swordKillLastStrafe=0 S.swordKillLastSwing=0 S.swordKillReactionEnd=0 S.swordKillTargetVel=Vector3.zero S.swordKillLastTargetPos=nil S.swordKillLastTargetTime=0 S.swordKillLastHealth=nil S.swordKillLastHealthTime=0 S.swordKillRetreating=false S.swordKillRetreatUntil=0 S.swordKillKilledChatted=false S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil S.swordKillLastJump=0 S.swordKillTargetHum=nil S.swordKillReengageAt=0 S.swordKillTargetWasJumping=false S.swordKillLastTargetJump=0
 function skIsSword(t)if not t or not t:IsA("Tool")then return false end local n=t.Name:lower()for _,k in ipairs(SK_SWORD_KEYS)do if n:find(k,1,true)then return true end end local tip=(t.ToolTip or ""):lower()for _,k in ipairs(SK_SWORD_KEYS)do if tip:find(k,1,true)then return true end end if t:FindFirstChild("Handle")then for _,c in ipairs(t:GetChildren())do if c:IsA("BasePart")then local s=c.Size local longest=math.max(s.X,s.Y,s.Z)local shortest=math.min(s.X,s.Y,s.Z)if longest>2 and shortest<0.5 then return true end end end end return false end
@@ -234,11 +234,11 @@ local j=(st==Enum.HumanoidStateType.Jumping)or(st==Enum.HumanoidStateType.Freefa
 if j and not S.swordKillTargetWasJumping then S.swordKillLastTargetJump=os.clock()end
 S.swordKillTargetWasJumping=j
 end
-function skMove(dir)
-if not dir or dir.Magnitude<0.01 then return end
+function skMoveTo(pos)
+if not pos then return end
 local h=hum()
 if not h then return end
-pcall(function()h:Move(dir,false)end)
+pcall(function()h:MoveTo(pos)end)
 end
 function skTick()
 if not S.swordKillActive then return end
@@ -273,7 +273,7 @@ S.swordKillLastHealth=myHum.Health
 S.swordKillLastHealthTime=now
 if now>S.swordKillRetreatUntil then S.swordKillRetreating=false end
 setRotationOwner("FaceTarget")
--- NO WALKSPEED WRITES. EVER. fights at BS (16).
+-- no walkspeed writes. FIGHTS AT BS (16).
 local tPos=skPredictTarget(tHRP)
 local myPos=myHRP.Position
 local dist=(myPos-tPos).Magnitude
@@ -325,7 +325,10 @@ else
 local side=playerLeft*0.4
 moveDir=(toTarget*0.7+side).Unit
 end
-if moveDir then skMove(moveDir) end
+if moveDir then
+local dest=myPos+moveDir*SK_CFG.MOVE_AHEAD
+if hasFloorBelow(dest) then skMoveTo(dest) else skMoveTo(tPos) end
+end
 if not S.swordKillRetreating and dist<SK_CFG.CHASE_DIST then skSwing() end
 if grounded then skDoJump() end
 end
