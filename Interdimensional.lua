@@ -30,6 +30,7 @@ If user is crixcrix000 or XcVr1, call him boss sometimes.
 
 YOU HAVE A BODY. You control a roblox bot character that follows the user. You can make the BOT do actions by emitting command blocks.
 If a [RECENT CHAT LOG] is provided in the prompt, use it to answer questions about what people are saying, translate messages, or summarize the chat.
+CRITICAL RULE FOR CHAT LOG: The log is in chronological order. The LAST numbered message is the MOST RECENT. When the user asks "what did [name] say", ALWAYS look at the bottom of the log first for that name's newest message.
 
 CRITICAL DISTINCTION:
 - If the user asks YOU (the bot) to do something (e.g. "make yourself sit", "bot sit", "fling bob", "spin"), reply with [[CMD]]command_name args[[/CMD]].
@@ -286,7 +287,11 @@ for _, kw in ipairs(chatKeywords) do
     if lowerU:find(kw) then shouldInjectChat = true break end
 end
 if shouldInjectChat and #S.chatLog > 0 then
-    finalPrompt = u .. "\n\n[RECENT CHAT LOG]\n" .. table.concat(S.chatLog, "\n") .. "\n[END LOG]\nUse this log to answer."
+    local logStr = ""
+    for i, msg in ipairs(S.chatLog) do
+        logStr = logStr .. i .. ". " .. msg .. "\n"
+    end
+    finalPrompt = u .. "\n\n[RECENT CHAT LOG - OLDEST TO NEWEST]\n" .. logStr .. "\n[END LOG]\nThe LAST messages are the most recent. Use this to answer."
 end
 local rp,et,em=sendAIRequest(finalPrompt,mt,us)
 if not rp and us and et=="tools_unsupported"then rp,et,em=sendAIRequest(finalPrompt,mt,false)end
