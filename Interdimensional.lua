@@ -155,18 +155,18 @@ local mps=game:GetService("MarketplaceService")
 local ok,info=pcall(function()return mps:GetProductInfo(game.PlaceId)end)
 if ok and info then
 if info.Name and info.Name~=""then meta.name=info.Name end
-if info.Description and info.Description~=""then meta.desc=info.Description:sub(1,450)end
+if info.Description and info.Description~=""then meta.desc=info.Description:sub(1,300)end
 if info.Creator and info.Creator.Name then meta.creator=info.Creator.Name end
 end
 end)
 return meta
 end
 function sendGameInfoRequest(userMsg,mt)
-local sys="You are a roblox game expert. Reply in plain text only. no markdown, no emojis, no bullet symbols, no asterisks, no hash. Use short sentences and simple line breaks. Give real useful info. If you recognize the game by name or id, tell me about it. If you do NOT recognize it, describe what this kind of game usually involves based on the name, creator, description, and genre, then give generic tips. Never refuse. Never say I cannot help. Always try to give something useful."
+local sys="roblox game expert. reply in plain text, one field per line, using the exact labels asked. no markdown, no emojis, no bullets, no asterisks, no hash, no extra text. if you know the game, use real info. if you dont, guess a good answer from the name, creator, and description. never refuse. never apologize."
 local _key=APIKey
 if not _key or _key==""then return nil,"nokey","no key"end
 local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end
-local pl_={contents={{role="user",parts={{text=sys.."\n\n"..userMsg}}}},generationConfig={maxOutputTokens=mt or 900,temperature=0.7}}
+local pl_={contents={{role="user",parts={{text=sys.."\n\n"..userMsg}}}},generationConfig={maxOutputTokens=mt or 400,temperature=0.65}}
 local ok,en=pcall(function()return H:JSONEncode(pl_)end)
 if not ok or not en then return nil,"json","encode failed"end
 local function tryKey(k)
@@ -202,62 +202,79 @@ return rp,et,em
 end
 function gameInfoPrompt(sub,meta)
 local lines={}
-lines[#lines+1]="the user is playing a roblox game right now."
-if meta.name and meta.name~=""then lines[#lines+1]="game name: "..meta.name end
+lines[#lines+1]="user is playing this roblox game:"
+if meta.name and meta.name~=""then lines[#lines+1]="name: "..meta.name end
 lines[#lines+1]="place id: "..meta.pid
-lines[#lines+1]="universe id: "..meta.gid
-if meta.creator and meta.creator~=""then lines[#lines+1]="creator: "..meta.creator end
+if meta.creator and meta.creator~=""then lines[#lines+1]="by: "..meta.creator end
 if meta.desc and meta.desc~=""then
-lines[#lines+1]="official description: "..meta.desc
+lines[#lines+1]="desc: "..meta.desc
 end
 local head=table.concat(lines,"\n")
 local ask
 if sub=="full"then
-ask="tell me everything about this game: what it is, the genre, the main goal, core mechanics, progression systems, currencies, main activities, and how to get strong or successful. if you know the game use real info, otherwise describe what a game with this name and description typically involves and give a good overview anyway. plain text only."
+ask="Reply using these exact labels, one per line, each a full medium length sentence:\nNAME: the game name\nCREATOR: who made it\nABOUT: what the game is in one line\nGOAL: the main goal\nHOW: how to actually play, 1 line\nPROGRESS: how you get stronger, 1 line\nTIPS: one useful tip\nWATCH OUT: what to avoid, 1 line\nLOOK FOR: what to hunt for, 1 line\nNo other text. No bullets. No markdown."
 elseif sub=="tips"then
-ask="give me the top 6 tips to get good fast in this game. if you know it use real tips, otherwise give generic tips that apply to games like this. plain text only."
+ask="Reply using these exact labels, one per line:\nTIP1: a useful tip\nTIP2: another tip\nTIP3: another tip\nTIP4: another tip\nNo other text."
 elseif sub=="controls"then
-ask="list the controls and keybinds for this game on PC. include movement, jump, attack, interact, and any special keys. if you dont know this specific game, list the standard roblox controls and mention you dont know the exact game specific ones. plain text only."
+ask="Reply using these exact labels, one per line:\nMOVE: how you move\nJUMP: how you jump\nATTACK: how you attack or use tools\nINTERACT: how you interact with stuff\nEXTRA: any special key or ability\nIf you dont know the exact game, say the standard roblox controls for each. No other text."
 elseif sub=="wiki"then
-ask="tell me the best resources to learn this game: official wiki, fandom site, subreddit, youtube channels, discords. if you dont know this specific game, tell me how to find its wiki and general resources for any roblox game. plain text only."
+ask="Reply using these exact labels, one per line:\nWIKI: the main wiki or fandom site\nYOUTUBE: best yt resource\nDISCORD: server or community\nSEARCH: what to search to find more\nNo other text."
 elseif sub=="similar"then
-ask="name 4 to 6 other roblox games that are similar to this one, and one line why each. if you dont know this exact game, suggest well known roblox games in the same genre. plain text only."
+ask="Reply using these exact labels, one per line:\nSIMILAR1: a similar roblox game and why, one line\nSIMILAR2: another one\nSIMILAR3: another one\nSIMILAR4: another one\nNo other text."
 else
-ask="what game is this? give me its name, what it is about, main goal, and 3 basic tips. if you know the game, real info. if not, describe what this type of game usually involves. plain text only."
+ask="Reply using these exact labels, one per line, each a full medium length sentence:\nNAME: the game name\nABOUT: what the game is in one line\nGOAL: what you do here in one line\nTIPS: one useful tip\nNo other text. No bullets. No markdown."
 end
 return head.."\n\n"..ask
+end
+function sendSectionedChat(rp)
+if not rp or rp==""then sendChat("no info found")return end
+local sections={}
+for line in rp:gmatch("[^\r\n]+")do
+line=trim(line)
+if line~=""then
+local clean=line:gsub("^[%*#%-%s]+",""):gsub("[%*#]+$","")
+if clean~=""then
+sections[#sections+1]=clean
+end
+end
+end
+if #sections==0 then
+aiChunkSend(rp)
+return
+end
+task.spawn(function()
+for i,s in ipairs(sections)do
+sendChat(s)
+if i<#sections then task.wait(0.8+math.random()*0.3)end
+end
+end)
 end
 function handleGameInfo(sub)
 if not sub or sub==""then sub="info"end
 sub=sub:lower()
 if sub~="full"and sub~="tips"and sub~="controls"and sub~="wiki"and sub~="similar"then sub="info"end
-sendChat(pick({"one sec","checking","let me look it up","gimme a sec","on it"}))
 task.spawn(function()
-task.wait(0.3+math.random()*0.4)
 local meta=getGameMeta()
 local prompt=gameInfoPrompt(sub,meta)
-local mt=900
-if sub=="full"then mt=1400 elseif sub=="similar"or sub=="wiki"then mt=900 else mt=700 end
+local mt=400
+if sub=="full"then mt=650 elseif sub=="tips"then mt=280 elseif sub=="controls"then mt=280 elseif sub=="wiki"then mt=220 elseif sub=="similar"then mt=320 else mt=380 end
 local rp,et,em=sendGameInfoRequest(prompt,mt)
 if not rp then
 if et=="quota"then
 local h,m=getResetCountdown()
 sendChat("out of fuel, back in "..h.."h "..m.."m")
 elseif et=="busy"then
-sendChat("ai busy rn, try again in a sec")
+sendChat("ai busy rn")
 elseif et=="nohttp"then
 sendChat("no http in this executor")
 else
-sendChat("couldn't get info, try again")
+sendChat("couldn't get info")
 end
 return
 end
 rp=trim(rp)
-if rp==""then
-sendChat("no info found")
-return
-end
-aiChunkSend(rp)
+if rp==""then sendChat("no info found")return end
+sendSectionedChat(rp)
 end)
 end
 privateChatRef={holder=nil,scroll=nil,empty=nil,scrollTween=nil}
