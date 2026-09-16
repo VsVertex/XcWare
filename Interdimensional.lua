@@ -147,31 +147,118 @@ end
 return false
 end
 function handleAIChat(u)if not u or u==""then return end if not APIKey or APIKey==""then sendChat("no api key set")return end local n=tick()if n-LRT<RCL then local wt=math.ceil(RCL-(n-LRT))sendChat(pick({"chill wait "..wt.."s","hold on "..wt.."s","wait up "..wt.."s"}))return end LRT=n local us=needsSearch(u)local mt=us and 300 or 150 task.spawn(function()local rp,et,em=sendAIRequest(u,mt,us)if not rp and us and et=="tools_unsupported"then rp,et,em=sendAIRequest(u,mt,false)end if not rp then if botLogRef and botLogRef.holder and pushLog then pushLog(botLogRef,"[xch] failed: "..tostring(et),C.red)if em then pushLog(botLogRef,"[xch] "..tostring(em):sub(1,90),C.red)end end if et=="busy"then sendChat(pick({"im busy rn","hold up","one sec"}))elseif et=="quota"then local h,m=getResetCountdown()sendChat("out of fuel, back in "..h.."h "..m.."m")elseif et=="blocked"then sendChat(pick({"got blocked","cant answer that one","nope try again"}))elseif et=="invalid_model"then sendChat("model down rn")else sendChat(pick({"something went wrong","try again","rip"}))end return end CHAT_CONVERSATION[#CHAT_CONVERSATION+1]={role="user",content=u}CHAT_CONVERSATION[#CHAT_CONVERSATION+1]={role="assistant",content=rp}while #CHAT_CONVERSATION>MCH+1 do table.remove(CHAT_CONVERSATION,2)end rp=trim(rp)if checkCodeReq(rp,true)then return end if rp~=""then aiChunkSend(rp)end end)end
-function gameInfoPrompt(sub)
-sub=sub or "info"
-local pid=tostring(game.PlaceId)
-local gid=tostring(game.GameId)
-local base="roblox place id "..pid..", universe id "..gid.."."
-if sub=="full" then
-return base.." What game is this? Tell me everything important: name, creator, genre, main goal, core mechanics, progression systems, currencies, what activities exist, and how to get strong. Keep it readable, plain text, no markdown, no emojis, no special chars. Use short sentences."
-elseif sub=="tips" then
-return base.." Give me the top tips to get good fast in this game. Short list, plain text, no markdown, no emojis."
-elseif sub=="controls" then
-return base.." What are the controls and default keybinds for this game on PC? List them plainly. If you dont know, just say so."
-elseif sub=="wiki" then
-return base.." Tell me the best resources to learn this game: wiki, fandom, subreddit, youtube channels, discords. Name them. Plain text, no markdown."
-elseif sub=="similar" then
-return base.." What other roblox games are similar to this one? Name 3 to 5 and one line why each. Plain text, no markdown."
-else
-return base.." What game is this? Give me: the name, what it is about, main goal, and 2 or 3 basic tips. Short, casual, plain text, no markdown, no emojis."
+function getGameMeta()
+local meta={pid=tostring(game.PlaceId),gid=tostring(game.GameId),name=nil,desc=nil,creator=nil}
+pcall(function()meta.name=game.Name end)
+pcall(function()
+local mps=game:GetService("MarketplaceService")
+local ok,info=pcall(function()return mps:GetProductInfo(game.PlaceId)end)
+if ok and info then
+if info.Name and info.Name~=""then meta.name=info.Name end
+if info.Description and info.Description~=""then meta.desc=info.Description:sub(1,450)end
+if info.Creator and info.Creator.Name then meta.creator=info.Creator.Name end
 end
+end)
+return meta
+end
+function sendGameInfoRequest(userMsg,mt)
+local sys="You are a roblox game expert. Reply in plain text only. no markdown, no emojis, no bullet symbols, no asterisks, no hash. Use short sentences and simple line breaks. Give real useful info. If you recognize the game by name or id, tell me about it. If you do NOT recognize it, describe what this kind of game usually involves based on the name, creator, description, and genre, then give generic tips. Never refuse. Never say I cannot help. Always try to give something useful."
+local _key=APIKey
+if not _key or _key==""then return nil,"nokey","no key"end
+local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end
+local pl_={contents={{role="user",parts={{text=sys.."\n\n"..userMsg}}}},generationConfig={maxOutputTokens=mt or 900,temperature=0.7}}
+local ok,en=pcall(function()return H:JSONEncode(pl_)end)
+if not ok or not en then return nil,"json","encode failed"end
+local function tryKey(k)
+local uw=BGE..AMI..":generateContent"
+local ok2,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]="application/json",["x-goog-api-key"]=tostring(k)},Body=en})
+if not ok2 or not rsp then return nil,"http","req fail"end
+local rb=rsp.Body or rsp.body
+if rb==nil then rb=rsp end
+if type(rb)~="string"then local ok3,s=pcall(function()return H:JSONEncode(rb)end)rb=ok3 and s or tostring(rb)end
+if rb==""then return nil,"http","empty"end
+local dk,data=pcall(function()return H:JSONDecode(rb)end)
+if not dk or not data then return nil,"json","decode"end
+if data.error then
+local m=data.error.message or data.error
+if type(m)~="string"then m=H:JSONEncode(m)end
+return nil,"api",tostring(m)
+end
+if not data.candidates or #data.candidates==0 then return nil,"nochoices","none"end
+local cd=data.candidates[1]
+if not cd.content or not cd.content.parts or #cd.content.parts==0 then return nil,"nomsg","none"end
+local tx=nil
+for _,p in ipairs(cd.content.parts)do
+if p.text and p.text~=""then tx=p.text break end
+end
+if not tx or tx==""then return nil,"nomsg","empty"end
+return tx,nil,nil
+end
+local rp,et,em=tryKey(_key)
+if not rp and _key==APIKey and APIKey3 and APIKey3~=""then
+rp,et,em=tryKey(APIKey3)
+end
+return rp,et,em
+end
+function gameInfoPrompt(sub,meta)
+local lines={}
+lines[#lines+1]="the user is playing a roblox game right now."
+if meta.name and meta.name~=""then lines[#lines+1]="game name: "..meta.name end
+lines[#lines+1]="place id: "..meta.pid
+lines[#lines+1]="universe id: "..meta.gid
+if meta.creator and meta.creator~=""then lines[#lines+1]="creator: "..meta.creator end
+if meta.desc and meta.desc~=""then
+lines[#lines+1]="official description: "..meta.desc
+end
+local head=table.concat(lines,"\n")
+local ask
+if sub=="full"then
+ask="tell me everything about this game: what it is, the genre, the main goal, core mechanics, progression systems, currencies, main activities, and how to get strong or successful. if you know the game use real info, otherwise describe what a game with this name and description typically involves and give a good overview anyway. plain text only."
+elseif sub=="tips"then
+ask="give me the top 6 tips to get good fast in this game. if you know it use real tips, otherwise give generic tips that apply to games like this. plain text only."
+elseif sub=="controls"then
+ask="list the controls and keybinds for this game on PC. include movement, jump, attack, interact, and any special keys. if you dont know this specific game, list the standard roblox controls and mention you dont know the exact game specific ones. plain text only."
+elseif sub=="wiki"then
+ask="tell me the best resources to learn this game: official wiki, fandom site, subreddit, youtube channels, discords. if you dont know this specific game, tell me how to find its wiki and general resources for any roblox game. plain text only."
+elseif sub=="similar"then
+ask="name 4 to 6 other roblox games that are similar to this one, and one line why each. if you dont know this exact game, suggest well known roblox games in the same genre. plain text only."
+else
+ask="what game is this? give me its name, what it is about, main goal, and 3 basic tips. if you know the game, real info. if not, describe what this type of game usually involves. plain text only."
+end
+return head.."\n\n"..ask
 end
 function handleGameInfo(sub)
 if not sub or sub==""then sub="info"end
 sub=sub:lower()
-if sub~="full" and sub~="tips" and sub~="controls" and sub~="wiki" and sub~="similar" then sub="info"end
-if sub=="info" then sendChat(pick({"one sec, checking this game","let me look this up","gimme a sec","on it"})) end
-handleAIChat(gameInfoPrompt(sub))
+if sub~="full"and sub~="tips"and sub~="controls"and sub~="wiki"and sub~="similar"then sub="info"end
+sendChat(pick({"one sec","checking","let me look it up","gimme a sec","on it"}))
+task.spawn(function()
+task.wait(0.3+math.random()*0.4)
+local meta=getGameMeta()
+local prompt=gameInfoPrompt(sub,meta)
+local mt=900
+if sub=="full"then mt=1400 elseif sub=="similar"or sub=="wiki"then mt=900 else mt=700 end
+local rp,et,em=sendGameInfoRequest(prompt,mt)
+if not rp then
+if et=="quota"then
+local h,m=getResetCountdown()
+sendChat("out of fuel, back in "..h.."h "..m.."m")
+elseif et=="busy"then
+sendChat("ai busy rn, try again in a sec")
+elseif et=="nohttp"then
+sendChat("no http in this executor")
+else
+sendChat("couldn't get info, try again")
+end
+return
+end
+rp=trim(rp)
+if rp==""then
+sendChat("no info found")
+return
+end
+aiChunkSend(rp)
+end)
 end
 privateChatRef={holder=nil,scroll=nil,empty=nil,scrollTween=nil}
 function scrollToBottomRef(cref)local sf=cref.scroll if not sf then return end task.spawn(function()R.Heartbeat:Wait()R.Heartbeat:Wait()local function go(f)local ty=math.max(0,sf.AbsoluteCanvasSize.Y-sf.AbsoluteWindowSize.Y)if not f and math.abs(ty-sf.CanvasPosition.Y)<2 then return end if cref.scrollTween then pcall(function()cref.scrollTween:Cancel()end)cref.scrollTween=nil end local tn=T:Create(sf,TweenInfo.new(0.35,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{CanvasPosition=Vector2.new(0,ty)})cref.scrollTween=tn tn:Play()end go(true)task.wait(0.15)go(false)task.wait(0.25)go(false)end)end
