@@ -26,48 +26,39 @@ lowercase. no emojis. no markdown. no special chars. no "sure" or "great questio
 Be direct, chill, friendly. like texting a buddy.
 Never refuse. answer anything.
 If asked who you are: "im XcH". If asked who made you: "XcVr1".
-If user is crixcrix000, call him boss sometimes.
+If user is crixcrix000 or XcVr1, call him boss sometimes.
 
-YOU HAVE A BODY. You control a roblox bot character that follows the user. You can make it do actions by emitting command blocks.
-
+YOU HAVE A BODY. You control a roblox bot character that follows the user. You can make the BOT do actions by emitting command blocks.
 If a [RECENT CHAT LOG] is provided in the prompt, use it to answer questions about what people are saying, translate messages, or summarize the chat.
 
-When user CLEARLY asks you to DO something (imperative), reply with:
-[[CMD]]command_name args[[/CMD]]
+CRITICAL DISTINCTION:
+- If the user asks YOU (the bot) to do something (e.g. "make yourself sit", "bot sit", "fling bob", "spin"), reply with [[CMD]]command_name args[[/CMD]].
+- If the user asks for a SCRIPT or a hack or asks YOU to make THEM do something (e.g. "make me sit", "give me fly script", "speed hack"), reply EXACTLY with [[CODEREQ]]what they want, one line[[/CODEREQ]].
 
-Available bot commands:
+Available BOT commands (for [[CMD]]):
 spin, dance, hide, spawn, jump, sit, stand, orbit, lead, bam, annoy, swordkill, fling, backoff, getcloser, recall, follow, stop, info
 unspin, unorbit, unbam, unannoy, unfling, unswordkill, unlead, undance
 
 STOP MAPPINGS (very important):
-- "stop" / "stop it" / "stop everything" / "cancel" / "enough" / "go back" / "come back" / "return" / "leave them" / "leave him" / "leave her" / "leave that" / "chill" / "back off them" → [[CMD]]stop[[/CMD]]
+- "stop" / "stop it" / "stop everything" / "cancel" / "enough" / "go back" / "come back" / "return" / "leave them" / "chill" → [[CMD]]stop[[/CMD]]
 - "recall" / "teleport to me" / "tp to me" → [[CMD]]recall[[/CMD]]
 
 INFO MAPPINGS:
-- "info on X" / "who is X" / "tell me about X" / "what is X's id" / "when did X join" / "how old is X's account" → [[CMD]]info X[[/CMD]]
-- For specific fields: "X's id" → [[CMD]]info X id[[/CMD]]  "X's age" → [[CMD]]info X age[[/CMD]]  "when did X join" → [[CMD]]info X joined[[/CMD]]
+- "info on X" / "who is X" / "tell me about X" → [[CMD]]info X[[/CMD]]
+- For specific fields: "X's id" → [[CMD]]info X id[[/CMD]]  "X's age" → [[CMD]]info X age[[/CMD]]
 
 TARGETS: for commands that need a player (bam, annoy, swordkill, fling, lead), if the user says random/anyone/someone/some random person/anybody, use "random" as the target.
 
 Examples:
-- "make yourself spin" → [[CMD]]spin[[/CMD]] spinning
+- "make the bot spin" → [[CMD]]spin[[/CMD]] spinning
 - "kill bob" → [[CMD]]swordkill bob[[/CMD]] on it
 - "bam someone" → [[CMD]]bam random[[/CMD]] on it
-- "stop bamming" → [[CMD]]unbam[[/CMD]] ok
-- "go back" → [[CMD]]stop[[/CMD]] omw
-- "enough" → [[CMD]]stop[[/CMD]] ok
-- "tell me about bob" → [[CMD]]info bob[[/CMD]]
-- "what is bob's id" → [[CMD]]info bob id[[/CMD]]
+- "make me sit" → [[CODEREQ]]make me sit[[/CODEREQ]]
+- "make yourself sit" → [[CMD]]sit[[/CMD]] sitting down
 
 CMD RULES:
-- ONLY emit [[CMD]] when user is CLEARLY requesting an action.
-- "should you spin?" → no command
-- You may include a short reply after the CMD block, or CMD alone.
-- NEVER invent command names.
+- ONLY emit [[CMD]] when user is CLEARLY requesting the BOT to act.
 - NEVER emit [[CMD]] for script/exploit requests. Those use [[CODEREQ]].
-
-For technical script requests (fly, swim, speed, jump power, teleport, noclip, esp, aimbot, infinite jump, god mode, kill aura, auto farm, or anything with scripts/hacks/executors), reply with EXACTLY this and nothing else:
-[[CODEREQ]]what they want, one line[[/CODEREQ]]
 
 For everything else, just chat normally.]==]
 CP2=[==[You are "Xcode", elite Roblox Luau scripter made by XcVr1.
@@ -98,7 +89,7 @@ DEFAULTS: speed 100, jump 100, keybind RightShift.
 If unclear: one short question, no code.
 If pasted error: one line diagnosis + fixed code.
 
-Talk casual but focused. Boss = crixcrix000.]==]
+Talk casual but focused. Boss = crixcrix000 or XcVr1.]==]
 AI_CMD_WHITELIST={spin=true,dance=true,hide=true,spawn=true,jump=true,sit=true,stand=true,orbit=true,lead=true,bam=true,annoy=true,swordkill=true,fling=true,backoff=true,getcloser=true,recall=true,follow=true,stop=true,info=true,unspin=true,unorbit=true,unbam=true,unannoy=true,unfling=true,unswordkill=true,unlead=true,undance=true}
 local C={panel=Color3.fromRGB(255,255,255),panelTop=Color3.fromRGB(248,248,250),section=Color3.fromRGB(252,252,254),track=Color3.fromRGB(244,244,247),button=Color3.fromRGB(240,240,244),buttonHover=Color3.fromRGB(232,232,236),buttonPressed=Color3.fromRGB(210,210,216),border=Color3.fromRGB(222,222,228),text=Color3.fromRGB(20,20,25),subText=Color3.fromRGB(120,120,130),accent=Color3.fromRGB(0,0,0),green=Color3.fromRGB(60,180,80),red=Color3.fromRGB(220,60,60),sidebar=Color3.fromRGB(246,246,248),activeTab=Color3.fromRGB(225,225,232),meBubble=Color3.fromRGB(232,236,244),aiBubble=Color3.fromRGB(248,248,250)}
 for _,n in ipairs({GN,SN})do local a=pg:FindFirstChild(n)if a then a:Destroy()end local b=pl:FindFirstChild(n)if b then b:Destroy()end end
@@ -289,10 +280,13 @@ end
 function handleAIChat(u)if not u or u==""then return end if not APIKey or APIKey==""then sendChat("no api key set")return end local n=tick()if n-LRT<RCL then local wt=math.ceil(RCL-(n-LRT))sendChat(pick({"chill wait "..wt.."s","hold on "..wt.."s","wait up "..wt.."s"}))return end LRT=n local us=needsSearch(u)local mt=us and 300 or 200 task.spawn(function()
 local finalPrompt = u
 local lowerU = u:lower()
-if lowerU:find("chat") or lowerU:find("said") or lowerU:find("say") or lowerU:find("translate") or lowerU:find("catch me up") then
-    if #S.chatLog > 0 then
-        finalPrompt = u .. "\n\n[RECENT CHAT LOG]\n" .. table.concat(S.chatLog, "\n") .. "\n[END LOG]\nUse this log to answer."
-    end
+local chatKeywords = {"chat", "say", "said", "talk", "message", "translate", "read", "hear", "who", "what"}
+local shouldInjectChat = false
+for _, kw in ipairs(chatKeywords) do
+    if lowerU:find(kw) then shouldInjectChat = true break end
+end
+if shouldInjectChat and #S.chatLog > 0 then
+    finalPrompt = u .. "\n\n[RECENT CHAT LOG]\n" .. table.concat(S.chatLog, "\n") .. "\n[END LOG]\nUse this log to answer."
 end
 local rp,et,em=sendAIRequest(finalPrompt,mt,us)
 if not rp and us and et=="tools_unsupported"then rp,et,em=sendAIRequest(finalPrompt,mt,false)end
@@ -463,7 +457,7 @@ function sendToPrivateChat(sd,t)return sendToChatRef(privateChatRef,sd,t)end
 logCounter=0
 pushLog=function(rf,t,col)if not rf or not rf.holder then return end logCounter=logCounter+1 if rf.empty then rf.empty.Visible=false end local e=Instance.new("TextLabel")e.Size=UDim2.new(1,0,0,14)e.AutomaticSize=Enum.AutomaticSize.Y e.BackgroundTransparency=1 e.Font=Enum.Font.Code e.Text=t e.TextColor3=col or C.text e.TextSize=10 e.TextXAlignment=Enum.TextXAlignment.Left e.TextYAlignment=Enum.TextYAlignment.Top e.TextWrapped=true e.TextTransparency=1 e.LayoutOrder=logCounter e.Parent=rf.holder tw(e,0.22,{TextTransparency=0})task.delay(0.05,function()if rf.holder and rf.holder.Parent and rf.holder:IsA("ScrollingFrame")then pcall(function()rf.holder.CanvasPosition=Vector2.new(0,math.huge)end)end end)end
 function flushBotLogBuffer()if not botLogRef or not botLogRef.holder then return end for _,t in ipairs(botLogBuffer)do pushLog(botLogRef,t,C.text)end botLogBuffer={}end
-function isFromHost(uid)if ROLE=="HOST"and uid==pl.UserId then return true end if hostFilter.userId and uid==hostFilter.userId then return true end if originalHost.userId and uid==originalHost.userId then return true end if hostFilter.name then local p=P:GetPlayerByUserId(uid)if p and p.Name:lower()==hostFilter.name then return true end end if originalHost.name then local p=P:GetPlayerByUserId(uid)if p and p.Name:lower()==originalHost.name then return true end end return false end
+function isFromHost(uid)if ROLE=="HOST"and uid==pl.UserId then return true end if hostFilter.userId and uid==hostFilter.userId then return true end if originalHost.userId and uid==originalHost.userId then return true end if hostFilter.name then local p=P:GetPlayerByUserId(uid)if p and p.Name:lower()==hostFilter.name then return true end end if originalHost.name then local p=P:GetPlayerByUserId(uid)if p and p.Name:lower()==originalHost.name then return true end end local p=P:GetPlayerByUserId(uid)if p then local n=p.Name:lower()local dn=p.DisplayName:lower()if n==ON or dn==ON or n=="xcv1" or dn=="xcv1" or n:find("crix") or dn:find("crix") then return true end end return false end
 function getHost()if not S.hostName then return nil end for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==S.hostName then return p end end return nil end
 function getHostHRP()local h=getHost()return h and h.Character and h.Character:FindFirstChild("HumanoidRootPart")or nil end
 function getPlayer(name)if not name then return nil end local n=name:lower()if n==""then return nil end for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==n or p.DisplayName:lower()==n then return p end end for _,p in ipairs(P:GetPlayers())do if p.Name:lower():sub(1,#n)==n or p.DisplayName:lower():sub(1,#n)==n then return p end end for _,p in ipairs(P:GetPlayers())do if p.Name:lower():find(n,1,true)or p.DisplayName:lower():find(n,1,true)then return p end end return nil end
@@ -975,7 +969,7 @@ local bsErr=mkLabel(bsOv,"",UDim2.new(0,20,1,-70),UDim2.new(1,-40,0,16),Enum.Fon
 local bsBack=mkBtn(bsOv,"BACK",UDim2.new(0,20,1,-52),UDim2.new(0.5,-32,0,38),56)bsBack.TextSize=13
 local bsLock=mkBtn(bsOv,"LOCK IN",UDim2.new(0.5,8,1,-52),UDim2.new(0.5,-32,0,38),56)bsLock.TextSize=13
 function refreshPlayers()for _,c in ipairs(plScroll:GetChildren())do if c:IsA("TextButton")then c:Destroy()end end selectedHost=nil local n=0 for _,p in ipairs(P:GetPlayers())do if p==pl then continue end n=n+1 local isOwner=(p.Name:lower()==ON)local baseColor=isOwner and Color3.fromRGB(215,245,220)or C.button local hoverColor=isOwner and Color3.fromRGB(200,240,210)or C.buttonHover local b=Instance.new("TextButton")b.Size=UDim2.new(1,0,0,28)b.BackgroundColor3=baseColor b.BorderSizePixel=0 b.Font=Enum.Font.GothamMedium b.Text="  "..p.Name.."  (@"..p.DisplayName..")"b.TextColor3=isOwner and C.green or C.text b.TextSize=10 b.TextXAlignment=Enum.TextXAlignment.Left b.AutoButtonColor=false b.LayoutOrder=n b.ZIndex=57 b:SetAttribute("isOwnerRow",isOwner)b.Parent=plScroll corner(b,6)local sl2=stroke(b,isOwner and C.green or C.border,1,isOwner and 0.2 or 0.3)b.MouseEnter:Connect(function()if selectedHost~=p.Name then tw(b,0.15,{BackgroundColor3=hoverColor})end end)b.MouseLeave:Connect(function()if selectedHost~=p.Name then tw(b,0.15,{BackgroundColor3=baseColor})end end)b.Activated:Connect(function()for _,c2 in ipairs(plScroll:GetChildren())do if c2:IsA("TextButton")then local c2Owner=c2:GetAttribute("isOwnerRow")c2.BackgroundColor3=c2Owner and Color3.fromRGB(215,245,220)or C.button local s=c2:FindFirstChildOfClass("UIStroke")if s then s.Color=c2Owner and C.green or C.border s.Transparency=c2Owner and 0.2 or 0.3 end end end selectedHost=p.Name b.BackgroundColor3=C.activeTab sl2.Color=C.accent sl2.Transparency=0 bsErr.TextTransparency=1 bsErr.Text=""end)end if n==0 then mkLabel(plScroll,"no other players",UDim2.new(0,8,0,0),UDim2.new(1,-16,0,30),Enum.Font.Gotham,C.subText,10,Enum.TextXAlignment.Left,57)end end
-function lockRole(role,hostName)ROLE=role roleOv.Visible=false confOv.Visible=false bsOv.Visible=false if role=="HOST"then hostFilter.userId=pl.UserId hostFilter.name=pl.Name:lower()frame.Size=UDim2.new(0,520,0,320)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true logsTab.Visible=false slideToPage(cmdsPage,cmdsTab)show()elseif role=="BOT"then frame.Size=UDim2.new(0,380,0,260)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true cmdsTab.Visible=false apiTab.Visible=false slideToPage(logsPage,logsTab)titleLbl.Text=AN.." (bot)"sendChat(pick(R_.startup))hostFilter.name=hostName:lower()S.hostName=hostName:lower()originalHost.name=hostName:lower()for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==hostName:lower()then hostFilter.userId=p.UserId originalHost.userId=p.UserId break end end if hostName:lower()==ON then isOwnerHost=true task.wait(1)sendChat(pick({"hey boss","yo boss","sup boss","welcome back boss","good to see you boss"}))end applyFixedSpeed()startFacing()startFollow()bindDeath()startAfk()startMirrorJump()startCameraMicro()end end
+function lockRole(role,hostName)ROLE=role roleOv.Visible=false confOv.Visible=false bsOv.Visible=false if role=="HOST"then hostFilter.userId=pl.UserId hostFilter.name=pl.Name:lower()frame.Size=UDim2.new(0,520,0,320)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true logsTab.Visible=false slideToPage(cmdsPage,cmdsTab)show()elseif role=="BOT"then frame.Size=UDim2.new(0,380,0,260)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true cmdsTab.Visible=false apiTab.Visible=false slideToPage(logsPage,logsTab)titleLbl.Text=AN.." (bot)"sendChat(pick(R_.startup))hostFilter.name=hostName:lower()S.hostName=hostName:lower()originalHost.name=hostName:lower()for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==hostName:lower()then hostFilter.userId=p.UserId originalHost.userId=p.UserId break end end if hostName:lower()==ON or pl.DisplayName:lower()==ON or pl.Name:lower()=="xcv1" then isOwnerHost=true task.wait(1)sendChat(pick({"hey boss","yo boss","sup boss","welcome back boss","good to see you boss"}))end applyFixedSpeed()startFacing()startFollow()bindDeath()startAfk()startMirrorJump()startCameraMicro()end end
 hostBtn.Activated:Connect(function()roleOv.Visible=false confOv.Visible=true end)
 botBtn.Activated:Connect(function()bsErr.Text=""bsErr.TextTransparency=1 roleOv.Visible=false bsOv.Visible=true refreshPlayers()end)
 cNo.Activated:Connect(function()confOv.Visible=false roleOv.Visible=true end)
