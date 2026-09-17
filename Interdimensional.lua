@@ -20,153 +20,9 @@ AMI="gemini-3.5-flash-lite"BGE="https://generativelanguage.googleapis.com/v1beta
 SEARCH_KW={"search","google","latest","current","news","price","cost","today","weather","trending","right now","live score","stock price","how much is","how much does","release date","coming out","2026","2025","update on","what is the","who is","when is","where is"}
 function needsSearch(u)if not u then return false end local l=u:lower()for _,k in ipairs(SEARCH_KW)do if l:find(k,1,true)then return true end end return false end
 
-RIZZ_LINES={
-"Are you a magician? Because whenever I look at you, everyone else disappears.",
-"Do you have a map? I keep getting lost in your eyes.",
-"Are you a parking ticket? Because you've got FINE written all over you.",
-"Do you believe in love at first sight, or should I walk by again?",
-"If you were a vegetable, you'd be a cute-cumber.",
-"Are you a Wi-Fi signal? Because I'm feeling a connection.",
-"Do you have a Band-Aid? Because I just scraped my knee falling for you.",
-"Are you a camera? Because every time I look at you, I smile.",
-"If you were a triangle, you'd be acute one.",
-"Are you a time traveler? Because I see you in my future.",
-"Is your name Google? Because you have everything I've been searching for.",
-"Are you a star? Because you light up my sky.",
-"Do you have a sunburn, or are you always this hot?",
-"Are you a magnet? Because I'm drawn to you.",
-"If you were a drug, I'd overdose on you.",
-"Are you a dictionary? Because you add meaning to my life.",
-"Are you a bank loan? Because you have my interest.",
-"Do you have a pencil? Cause I want to erase your past and write our future.",
-"Are you a carbon sample? Because I want to date you.",
-"Are you an interior decorator? Because when I saw you, the room became beautiful.",
-"Are you a 90 degree angle? Because you're looking right.",
-"Are you a light bulb? Because you brighten up my day.",
-"Are you a campfire? Because you're hot and I want s'more.",
-"Are you a volcano? Because I'm about to erupt with love.",
-"Are you a snowflake? Because you're unique and special.",
-"Are you a starfish? Because I'm stuck on you.",
-"Are you a dictionary? Because you define beauty.",
-"Are you a painter? Because you paint a smile on my face.",
-"Are you a chef? Because you make my heart melt.",
-"Are you a DJ? Because you drop my heart rate.",
-"Do you have a quarter? Because I want to call my mom and tell her I met the one.",
-"Are you a magician? Because you made my heart disappear.",
-"Are you a ghost? Because you haunt my dreams.",
-"Are you a vampire? Because you suck the breath out of me.",
-"Are you a zombie? Because I'm dying to be with you.",
-"Are you a witch? Because you cast a spell on me.",
-"Are you a fairy? Because you're magical.",
-"Are you an angel? Because you fell from heaven.",
-"Are you a demon? Because you're sinfully attractive.",
-"Are you a goddess? Because you deserve to be worshipped.",
-"Are you a queen? Because you rule my heart.",
-"Are you a princess? Because you deserve the world.",
-"Are you a king? Because you rule my world.",
-"Are you a prince? Because you're charming.",
-"Are you a knight? Because you're my shining armor.",
-"Are you a pirate? Because you stole my heart.",
-"Are you a ninja? Because you snuck into my heart.",
-"Are you a samurai? Because you have my loyalty.",
-"Are you a cowboy? Because you lassoed my heart.",
-"Are you an astronaut? Because you're out of this world.",
-"Are you a rocket? Because you send me to the moon.",
-"Are you a satellite? Because you're always on my mind.",
-"Are you a telescope? Because you bring the stars closer.",
-"Are you a microscope? Because you make my heart feel huge.",
-"Are you a scientist? Because you've got my chemistry going.",
-"Are you a mathematician? Because you're the solution to my problems.",
-"Are you a physicist? Because we have a strong attraction.",
-"Are you a biologist? Because you make my heart beat.",
-"Are you a chemist? Because you're the element of my dreams.",
-"Are you a geologist? Because you rock my world.",
-"Are you a meteorologist? Because you're a breath of fresh air.",
-"Are you an astronomer? Because you're my star.",
-"Are you a philosopher? Because you make me think about love.",
-"Are you a psychologist? Because you're always on my mind.",
-"Are you a doctor? Because you heal my heart.",
-"Are you a nurse? Because you take care of me.",
-"Are you a teacher? Because you teach me how to love.",
-"Are you a student? Because you're learning how to steal my heart.",
-"Are you a lawyer? Because you stole my heart and I'm pressing charges.",
-"Are you a police officer? Because you arrested my heart.",
-"Are you a firefighter? Because you're smoking hot.",
-"Are you a soldier? Because you're fighting for my heart.",
-"Are you a pilot? Because you take my breath away.",
-"Are you a sailor? Because you sail into my heart.",
-"Are you a driver? Because you drive me crazy.",
-"Are you a mechanic? Because you fix my broken heart.",
-"Are you a builder? Because you built a home in my heart.",
-"Are you a gardener? Because you make my heart bloom.",
-"Are you a florist? Because you're a rose among thorns.",
-"Are you a baker? Because you're the sweetest thing.",
-"Are you a butcher? Because you stole my heart.",
-"Are you a jeweler? Because you're a diamond in the rough.",
-"Are you a tailor? Because you fit perfectly in my life.",
-"Are you a barber? Because you're a cut above the rest.",
-"Are you a cashier? Because you've got my check.",
-"Are you a waiter? Because you're serving looks.",
-"Are you a bartender? Because you make my heart race.",
-"Are you a barista? Because you make my heart brew.",
-"Are you a librarian? Because you've got my attention.",
-"Are you a writer? Because you're the author of my heart.",
-"Are you a poet? Because you're a work of art.",
-"Are you a singer? Because you make my heart sing.",
-"Are you a dancer? Because you move my heart.",
-"Are you an artist? Because you're a masterpiece.",
-"Are you a sculptor? Because you carved a place in my heart.",
-"Are you a photographer? Because you capture my heart.",
-"Are you a filmmaker? Because you're the director of my love.",
-"Are you an actor? Because you're playing with my heart.",
-"Are you a comedian? Because you make me laugh.",
-"Are you a clown? Because you make me smile.",
-"Are you an acrobat? Because you flip my world upside down.",
-"Are you a magician? Because you made my heart disappear.",
-"Are you a juggler? Because you've got my heart in your hands.",
-"Are you a tightrope walker? Because you're walking a fine line between friend and lover.",
-"Are you a lion tamer? Because you've tamed my wild heart.",
-"Are you a ringmaster? Because you're the center of my universe.",
-"Are you an athlete? Because you're a winner in my eyes.",
-"Are you a coach? Because you train my heart.",
-"Are you a referee? Because you've got my heart on the line.",
-"Are you a cheerleader? Because you're cheering for my heart.",
-"Are you a mascot? Because you're the life of my party.",
-"Are you a fan? Because I'm your biggest fan.",
-"Are you a player? Because you're playing my heartstrings.",
-"Are you a champion? Because you've won my heart.",
-"Are you a hero? Because you saved my heart.",
-"Are you a villain? Because you stole my heart.",
-"Are you a mystery? Because I want to solve you.",
-"Are you a puzzle? Because you complete me.",
-"Are you a riddle? Because you've got me thinking.",
-"Are you an enigma? Because you're fascinating.",
-"Are you a secret? Because I want to keep you.",
-"Are you a treasure? Because you're priceless.",
-"Are you a gem? Because you're precious.",
-"Are you a pearl? Because you're a rare find.",
-"Are you a diamond? Because you're flawless.",
-"Are you a ruby? Because you're fiery.",
-"Are you a sapphire? Because you're blue-tiful.",
-"Are you an emerald? Because you're green with envy.",
-"Are you an opal? Because you're iridescent.",
-"Are you a topaz? Because you're golden.",
-"Are you an amethyst? Because you're purple-icious.",
-"Are you a crystal? Because you're clear to me.",
-"Are you a stone? Because you're rock solid.",
-"Are you a mountain? Because you're majestic.",
-"Are you a river? Because you flow through my heart.",
-"Are you an ocean? Because you're deep and mysterious.",
-"Are you a wave? Because you knock me off my feet.",
-"Are you a tide? Because you pull me in.",
-"Are you a current? Because you sweep me away.",
-"Are you a storm? Because you're wild and exciting.",
-"Are you a hurricane? Because you blow me away.",
-"Are you a tornado? Because you turn my world upside down.",
-"Are you a volcano? Because you're explosive.",
-"Are you an earthquake? Because you shake my world.",
-"Are you a tsunami? Because you crash into my heart."
-}
+RIZZ_STR="hey cutie;ur cute;i like u;hey bae;u single?;nice fit;ur funny;hey gorgeous;ur a 10;hey sweetheart;ur my type;hey love;wanna hang?;ur awesome;hey sunshine;ur the best;hey darling;ur amazing;hey hot stuff;ur perfect;hey babe;ur my world;hey honey;ur my heart;hey angel;ur my life;hey cutie pie;ur my boo;hey baby;ur my love;hey sweetie;ur my sunshine;hey dear;ur my everything;hey love bug;ur my favorite;hey snuggle bug;ur my dream;hey sweet cheeks;hey honey bun;hey baby cakes;hey sweet pea;hey cutie patootie;hey love muffin;hey snuggle bunny;hey sweetie pie;hey honey pie;hey baby doll;hey sweet heart;hey cutie bear;hey love bear;hey snuggle bear;hey sweet bear;hey honey bear;hey baby bear;ur my crush;hey hottie;ur stunning;hey lovely;ur beautiful;hey handsome;ur charming;hey cutie;ur adorable;hey sweet;ur precious;hey dear;ur my everything;hey love;ur my world;hey babe;ur my heart"
+RIZZ_LINES={}
+for w in string.gmatch(RIZZ_STR,"[^;]+") do table.insert(RIZZ_LINES,w) end
 
 CP=[==[You are "XcH", a chill human-like ai made by XcVr1 on gemini 3.5 flash lite.
 You have google search enabled. Use it when user asks about live stuff: news, prices, weather, current events, or asks you to search.
@@ -276,7 +132,7 @@ return os.date("%Y-%m-%d",ts)
 end
 local R_={startup={"yo im XcH","hey! im XcH","back again, XcH here","sup, im XcH","hello! XcH here","yo yo its XcH","whats good, XcH in the house","hey hey, XcH here","wassup, XcH speaking","hello hello, XcH here","yo! im XcH btw","how you doin, XcH here","hi im XcH nice to meet ya","aye im XcH","chill im XcH","hello human, XcH here","im baaack, XcH","yooo XcH here","welcome, im XcH","XcH online","hey there, XcH here","hiya, XcH reporting in","im here, XcH btw","just dropped in, XcH","sup bro, XcH here"},orbit={"orbiting now","circling ya","going around","orbit mode on","round and round","lemme orbit","starting my laps","spinning around u","yeah im circling","orbit engaged","imma go around","going for a loop","circular motion rn","cruising around ya","watch me orbit","doing the rounds","im orbiting now","orbiting like a moon","spin cycle initiated","going orbital","round trip time","orbit incoming"},unorbit={"orbit off","stopped orbiting","ok im done circling","back to normal","orbit cancelled","not spinning anymore","done with laps","off orbit","orbit disengaged","alright stopped","ok no more orbit","chill now","just standing","done going around","leaving orbit","orbit ended","not orbiting anymore","back on the ground","ok stopped spinning","orbit terminated","disengaging","done with that"},sit={"sitting down","taking a seat","chill mode","gonna sit","sittin","down i go","seat taken","sit time","im seated","yep sitting","chilling now","ok sitting","take a load off","sit back","lowkey tired","here i sit","plopping down","gonna rest","sittin here now","seated","sitting rn","down for a bit"},stand={"up we go","standing up","im up","stand mode","back on my feet","ok up now","standing","getting up","up and ready","im standing","back up","off the ground","standin","ok im up","rising","vertical again","upright now","here we go","feet on floor","up","back in action","im up now"},jump={"jumping","boing","hop","up i go","yeet","leap","hop up","jump rn","boinggg","wheee","up","in the air","doing a hop","spring","leaping","ok jumping","bounce","hop hop","up up","takeoff","jumping rn","air time"},hide={"going invisible","poof gone","vanishing now","hiding","bye bye","out of sight","ghost mode","now u dont see me","disappearing","c ya","going ghost","hidden","vamoose","im out","hiding rn","invisible mode","peacing out","catch me if u can","gone","vanishing","shh im hiding","hidden now"},spawn={"im back","returned","sup again","back online","im here","yo im back","hello again","respawned","here i am","back from the void","im back bro","reporting in","alive again","back to action","yo","guess whos back","im here now","made it back","back in the game","hi again","returned from nada","and im back"},dance={"dancing now","lets dance","getting down","movin","grooving","dance time","bustin moves","shakin it","party mode","yeah im dancing","cut a rug","dance dance","watch me groove","getting funky","dance floor time","wiggle wiggle","showing off moves","dancing rn","having a boogie","lets go dancing","im dancing","moves activated"},undance={"stopped dancing","dance off","chill now","no more dancing","done dancin","ok im done","standing still","enough dancing","done with moves","stopped","ok tired now","not dancing","moves off","chilling","done","dancing over","stopped the groove","no more dancing rn","im done dancing","back to normal","ok stop","rest time"},spin={"spinning now","wheee","spin go brrr","round and round","lets spin","spinning fast","vroooom","spin time","yeah spinning","going for a whirl","spin cycle on","twisting","watch me spin","spin spin spin","rotating","chill spinning now","spinning rn","spin mode","im dizzy","going in circles","spin activated","spinning"},unspin={"stopped spinning","spin off","ok im done","no more spinning","stopped twirling","ok chill","spin ended","back to normal","not spinning","done with that","ok dizzy now","stopping","spin off rn","standin still","stopped spinning","chill","no spin","spin done","back to standing","ok stop spinning","spin cancelled","ending spin"},lead={"follow me","this way","come on","follow me bro","let's go","over here","come with me","follow follow","leading now","follow me to them","walkin to target","come on man","lets go find em","leading the way","follow!","hey come here","im leading now","follow me rq","takin the lead","on the way","come on lets go","leading rn"},unlead={"lead off","stopped leading","done leading","ok stopped","not leading anymore","lead cancelled","back to normal","chill","ok enough leading","done with that","not leading rn","back on follow","im done","stopped","lead ended","back to you","ok got it","returning","back to base","lead done","im back","ok stopping lead"},bam={"bamming now","getting in their face","bam mode","on their case","yeah bamming","harassing them now","bam activated","in your face","right behind them","bamming target","on em now","bam time","im on em","getting close","stay on em","bamming rn","yep bamming","on their tail","bam engaged","watch this","started bamming","in their space"},unbam={"bam off","stopped bamming","leaving them","done","bam done","ok stopping","back to you","bam ended","chill now","ok bam off","done bamming","leaving them alone","im back","bam cancelled","ok im back","returning","stopped","no more bam","leaving","back to base","bam done rn","finished bamming"},annoy={"annoying now","on their nerves","annoy mode","getting on their case","yeah annoying","bothering them","annoy activated","pestering them","here we go","annoying target","on their tail","annoy time","watch this","started annoying","on em","annoying rn","yep annoying","getting under skin","annoy engaged","lemme bug em","spamming them","in their biz"},unannoy={"annoy off","stopped annoying","leaving them","done annoying","ok im done","returning","annoy ended","chill now","ok annoy off","done bugging em","leaving them alone","im back","annoy cancelled","stopped bugging","back to base","ok im back","no more annoy","back to you","annoy done","finished annoying","im back bro","done"},fling={"flinging now","yeeting them","fling mode","here we go","yeet activated","flinging target","target fling","fling time","watch this","started flinging","yeeting now","flinging rn","yep flinging","getting flingy","target go weee","sending em","flinging them","fling engaged","gone fling","here comes the yeet","let it rip","fling incoming"},unfling={"fling off","stopped flinging","done","fling done","chill","ok stopping","back to you","fling ended","no more flinging","returning","back to base","ok im back","fling cancelled","leaving them","ok im done","fling done rn","back on follow","stopped","fling over","enough","im back","done flinging"},notfound={"who?","dunno that name","never heard of em","cant find em","no clue who that is","idk that player","who dat?","not in server","aint see em","nope cant find","who bro","no idea","huh?","not finding em","no luck","wheres that?","say what?","not sure who that is","cant spot em","who u talkin bout","never seen that name","not here"},self={"thats me lol","bruh im me","cant do it to myself","no lol","im not doing that to me","why would i","that makes no sense","im the one doing stuff bro","cmon man","nah","nope","youre joking right","lol no","cant do that","seriously?","bro","why","no way","not doing that","thats weird","look at yourself","youre a comedian"},stranger={"nah only my boss tells me what to do","not listening to you bro","lol no","youre not my boss","nice try","nope","im not your bot","wrong person lol","ask crix hes the boss","cant help you with that","youre not on the list","nuh uh","only my host can do that","denied","access denied","not for you","wrong guy bro","sorry not sorry","ha good one","yeah no"},norandom={"no one else to target bro","no valid target","im alone in here","no players to pick from","everyone left","server empty"},stop={"alright stopping","ok done","chill","stopped","back on follow","ok ok","im back","returning","done","fine","stopping now","ok ill stop","back to you","here"},infoerr={"couldnt find that field","try id/age/joined/distance","unknown field bro","huh? try id age joined or distance"}}
 ROLE=nil commandPrefix="!"hostFilter={name=nil,userId=nil}originalHost={name=nil,userId=nil}hostLogRef=nil botLogRef=nil antiBan={detected=false}rotationOwner="Humanoid"pushLog=nil botLogBuffer={}CHAT_CONVERSATION={{role="system",content=CP}}CHAT_CONVERSATION2={{role="system",content=CP2}}isOwnerHost=false
-local S={mode="Follow",orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzUsed={}}
+local S={mode="Follow",orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={}}
 stopOrbit=nil stopSpin=nil stopDance=nil stopLead=nil stopBam=nil startBam=nil stopAnnoy=nil startAnnoy=nil stopFling=nil startFling=nil startFollow=nil stopFollow=nil sendChat=nil handleCommand=nil teleportToHost=nil handleMath=nil
 function setRotationOwner(o)if rotationOwner==o then return end rotationOwner=o local h=hum()if not h then return end h.AutoRotate=(o=="Humanoid")end
 function releaseRotation()setRotationOwner("Humanoid")end
@@ -665,6 +521,7 @@ stopRizz=function(an)
     S.rizzActive=false
     S.rizzTarget=nil
     if S.rizzThread then task.cancel(S.rizzThread) S.rizzThread=nil end
+    if S.rizzMoveThread then task.cancel(S.rizzMoveThread) S.rizzMoveThread=nil end
     if S.mode=="Rizz"then S.mode="Follow" releaseRotation() end
     if an then sendChat(pick({"rizz off","stopped flirting","im done","chill"})) end
 end
@@ -679,6 +536,22 @@ startRizz=function(name)
     setRotationOwner("FaceTarget")
     sendChat(pick({"rizz mode on","watch me cook","let me rizz "..t.Name,"flirting with "..t.Name}))
     if S.rizzThread then task.cancel(S.rizzThread) end
+    if S.rizzMoveThread then task.cancel(S.rizzMoveThread) end
+    S.rizzMoveThread=task.spawn(function()
+        while S.rizzActive and ROLE=="BOT" do
+            task.wait(0.2)
+            if not S.rizzActive then break end
+            if not t.Parent or not t.Character then stopRizz(false) break end
+            local m=hrp() local th=getPlayerHRP(t)
+            if m and th then
+                local dist=(m.Position-th.Position).Magnitude
+                if dist>5 then
+                    local h=hum()
+                    if h then h:MoveTo(th.Position) end
+                end
+            end
+        end
+    end)
     S.rizzThread=task.spawn(function()
         while S.rizzActive and ROLE=="BOT" do
             task.wait(5)
