@@ -36,6 +36,7 @@ If user is crixcrix000 or XcVr1, call him boss sometimes.
 YOU HAVE A BODY. You control a roblox bot character that follows the user. You can make the BOT do actions by emitting command blocks.
 If a [RECENT CHAT LOG] is provided in the prompt, use it to answer questions about what people are saying, translate messages, or summarize the chat.
 CRITICAL RULE FOR CHAT LOG: The log is in chronological order. The LAST numbered message is the MOST RECENT. When the user asks "what did [name] say", ALWAYS look at the bottom of the log first for that name's newest message.
+If a [GAME INFO] block is provided in the prompt, use it to answer ANY question about the current roblox game: its name, creator, what it is, how to play, controls, tips, progression, similar games, or wiki. Use the real info from the block, don't make stuff up about it. If a field is missing say you dont know that part.
 
 CRITICAL DISTINCTION:
 - If the user asks YOU (the bot) to do something (e.g. "make yourself sit", "bot sit", "fling bob", "spin", "rizz bob"), reply with [[CMD]]command_name args[[/CMD]].
@@ -307,6 +308,23 @@ if shouldInjectChat and #S.chatLog > 0 then
 elseif shouldInjectChat and #S.chatLog == 0 then
     finalPrompt = u .. "\n\n[NO CHAT LOG AVAILABLE YET]"
 end
+local gameInfoKeywords = {"this game","the game","current game","what game","which game","who made this","who created this","creator of this","who is the creator","how to play","controls of this","game name","name of the game","name of this game","whats the name","what is the name","about this game","tell me about this game","describe this game","tips for this game","how do i play","what do i do","goal of this game","this roblox game","who made it","who made the game","who owns this game","place id of this","where am i playing"}
+local isGameQuery = false
+for _, kw in ipairs(gameInfoKeywords) do
+    if lowerU:find(kw, 1, true) then isGameQuery = true break end
+end
+if not isGameQuery and lowerU:find("game") and (lowerU:find("what") or lowerU:find("who") or lowerU:find("how") or lowerU:find("tell") or lowerU:find("describe") or lowerU:find("name")) then isGameQuery = true end
+if isGameQuery then
+    local meta = getGameMeta()
+    local ml = {"[GAME INFO]"}
+    if meta.name and meta.name ~= "" then ml[#ml+1] = "name: "..meta.name end
+    ml[#ml+1] = "place id: "..meta.pid
+    if meta.creator and meta.creator ~= "" then ml[#ml+1] = "creator: "..meta.creator end
+    if meta.desc and meta.desc ~= "" then ml[#ml+1] = "description: "..meta.desc end
+    ml[#ml+1] = "[END GAME INFO]"
+    ml[#ml+1] = "Use this real info to answer the users question about the current game. If a field is unknown, say you dont know that part. Do not make up info that contradicts it."
+    finalPrompt = finalPrompt .. "\n\n" .. table.concat(ml, "\n")
+end
 local rp,et,em=sendAIRequest(finalPrompt,mt,us)
 if not rp and us and et=="tools_unsupported"then rp,et,em=sendAIRequest(finalPrompt,mt,false)end
 if not rp and et=="blocked"then
@@ -477,6 +495,7 @@ logCounter=0
 pushLog=function(rf,t,col)if not rf or not rf.holder then return end logCounter=logCounter+1 if rf.empty then rf.empty.Visible=false end local e=Instance.new("TextLabel")e.Size=UDim2.new(1,0,0,14)e.AutomaticSize=Enum.AutomaticSize.Y e.BackgroundTransparency=1 e.Font=Enum.Font.Code e.Text=t e.TextColor3=col or C.text e.TextSize=10 e.TextXAlignment=Enum.TextXAlignment.Left e.TextYAlignment=Enum.TextYAlignment.Top e.TextWrapped=true e.TextTransparency=1 e.LayoutOrder=logCounter e.Parent=rf.holder tw(e,0.22,{TextTransparency=0})task.delay(0.05,function()if rf.holder and rf.holder.Parent and rf.holder:IsA("ScrollingFrame")then pcall(function()rf.holder.CanvasPosition=Vector2.new(0,math.huge)end)end end)end
 function flushBotLogBuffer()if not botLogRef or not botLogRef.holder then return end for _,t in ipairs(botLogBuffer)do pushLog(botLogRef,t,C.text)end botLogBuffer={}end
 function isFromHost(uid)if ROLE=="HOST"and uid==pl.UserId then return true end if hostFilter.userId and uid==hostFilter.userId then return true end if originalHost.userId and uid==originalHost.userId then return true end if hostFilter.name then local p=P:GetPlayerByUserId(uid)if p and p.Name:lower()==hostFilter.name then return true end end if originalHost.name then local p=P:GetPlayerByUserId(uid)if p and p.Name:lower()==originalHost.name then return true end end local p=P:GetPlayerByUserId(uid)if p then local n=p.Name:lower()local dn=p.DisplayName:lower()if n==ON or dn==ON or n=="xcv1" or dn=="xcv1" or n:find("crix") or dn:find("crix") then return true end end return false end
+function isCreatorUser(uid)if not uid then return false end if originalHost.userId and uid==originalHost.userId then return true end if ROLE=="HOST"and uid==pl.UserId then return true end local p=P:GetPlayerByUserId(uid)if p then local n=p.Name:lower()local dn=p.DisplayName:lower()if n==ON or dn==ON or n=="xcv1" or dn=="xcv1" or n:find("crix") or dn:find("crix") then return true end end return false end
 function getHost()if not S.hostName then return nil end for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==S.hostName then return p end end return nil end
 function getHostHRP()local h=getHost()return h and h.Character and h.Character:FindFirstChild("HumanoidRootPart")or nil end
 function getPlayer(name)if not name then return nil end local n=name:lower()if n==""then return nil end for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==n or p.DisplayName:lower()==n then return p end end for _,p in ipairs(P:GetPlayers())do if p.Name:lower():sub(1,#n)==n or p.DisplayName:lower():sub(1,#n)==n then return p end end for _,p in ipairs(P:GetPlayers())do if p.Name:lower():find(n,1,true)or p.DisplayName:lower():find(n,1,true)then return p end end return nil end
@@ -759,8 +778,83 @@ function botTick()if antiBan.detected then return end if S.hidden then if S.hide
 startFollow=function()if S.followThread then return end startFacing()S.followThread=task.spawn(function()while ROLE=="BOT"do task.wait(AIT)local ok,er=pcall(botTick)if not ok then warn("[MyPanel] botTick error:",er)S.failCount=S.failCount+1 if S.failCount>=8 then S.failCount=0 S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.lastWaypoint=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil end else S.failCount=0 end end end)end
 stopFollow=function()if S.followThread then task.cancel(S.followThread)S.followThread=nil end end
 function startOrbit(sp)sp=tonumber(sp)or 100 sp=math.clamp(sp,1,1000)S.orbitSpeed=sp stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)if S.orbiting then return end S.orbiting=true S.mode="Orbit"setRotationOwner("Orbit")task.spawn(function()while S.orbiting and ROLE=="BOT"do if S.hidden or antiBan.detected then task.wait(0.3)continue end local hh,m,h=getHostHRP(),hrp(),hum()if not hh or not m or not h then task.wait(0.1)continue end if not S.orbitLV or S.orbitLV.Parent~=m then if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)end local at=Instance.new("Attachment")at.Parent=m S.orbitAtt=at local lv=Instance.new("LinearVelocity")lv.Attachment0=at lv.MaxForce=1e5 lv.VectorVelocity=Vector3.zero lv.Parent=m S.orbitLV=lv local ao=Instance.new("AlignOrientation")ao.Attachment0=at ao.Mode=Enum.OrientationAlignmentMode.OneAttachment ao.PrimaryAxisOnly=true ao.MaxTorque=1e5 ao.Parent=m S.orbitAO=ao end local of=m.Position-hh.Position local fl=Vector3.new(of.X,0,of.Z)if fl.Magnitude<1 then local a=math.random()*math.pi*2 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(math.cos(a)*OR,0,math.sin(a)*OR))end)task.wait(0.05)continue end local rd=fl.Unit local tn=Vector3.new(-rd.Z,0,rd.X)pcall(function()S.orbitLV.VectorVelocity=tn*(sp/8)S.orbitAO.CFrame=CFrame.lookAt(m.Position,m.Position+tn)end)task.wait(0.05)end if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)S.orbitLV=nil end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)S.orbitAO=nil end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)S.orbitAtt=nil end end)sendChat(pick(R_.orbit))end
-function restoreHost()if not originalHost.name then return end S.hostName=originalHost.name hostFilter.name=originalHost.name hostFilter.userId=originalHost.userId S.lending=false S.lendEnd=0 sendChat(pick({"lend done","back to original","transfer over"}))end
-function startLend(name,sc)sc=tonumber(sc)if not sc or sc<=0 then sc=60 end local t=getPlayer(name)if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end if hostFilter.userId and t.UserId==hostFilter.userId then sendChat("already lending to them")return end if originalHost.userId and t.UserId==originalHost.userId then sendChat("cant lend to yourself")return end if not S.lending then originalHost.name=S.hostName originalHost.userId=hostFilter.userId end S.lending=true S.hostName=t.Name:lower()hostFilter.name=t.Name:lower()hostFilter.userId=t.UserId S.lendEnd=os.clock()+sc sendChat(pick({"listening to ","lend to ","transferring to "})..t.Name.." for "..sc.."s")if S.lendThread then task.cancel(S.lendThread)end S.lendThread=task.spawn(function()while S.lending and ROLE=="BOT"do task.wait(0.5)if os.clock()>=S.lendEnd then restoreHost()break end end end)end
+
+-- ══════════════════════════════════════════════════════════════════
+--  TEMP HOST SYSTEM (max 500s)
+-- ══════════════════════════════════════════════════════════════════
+function restoreHost()
+    if not originalHost.name then
+        sendChat("no original host saved")
+        return
+    end
+    S.hostName = originalHost.name
+    hostFilter.name = originalHost.name
+    hostFilter.userId = originalHost.userId
+    S.lending = false
+    S.lendEnd = 0
+    S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil
+    sendChat(pick({"host time up, back to boss","host ended, back to you","done lending, im yours again","back to the boss"}))
+end
+
+function startLend(name, sc)
+    sc = tonumber(sc)
+    if not sc or sc <= 0 then sc = 60 end
+    if ROLE ~= "BOT" then
+        if botLogRef then pushLog(botLogRef, "host cmd only works in BOT role", C.red) end
+        return
+    end
+    if sc > 500 then
+        sc = 500
+        sendChat("max is 500s, using 500")
+    end
+    local t = getPlayer(name)
+    if not t then sendChat(pick(R_.notfound)) return end
+    if t == pl then sendChat(pick(R_.self)) return end
+    if hostFilter.userId and t.UserId == hostFilter.userId then
+        sendChat("already host rn, updating timer")
+    end
+    if not S.lending then
+        if hostFilter.userId then
+            originalHost.name = hostFilter.name
+            originalHost.userId = hostFilter.userId
+        elseif S.hostName then
+            originalHost.name = S.hostName
+            local hp = getPlayer(S.hostName)
+            if hp then originalHost.userId = hp.UserId end
+        end
+    end
+    S.lending = true
+    S.hostName = t.Name:lower()
+    hostFilter.name = t.Name:lower()
+    hostFilter.userId = t.UserId
+    S.lendEnd = os.clock() + sc
+    sendChat(pick({"listening to ","host is now ","transferring to "})..t.Name.." for "..math.floor(sc).."s")
+    if S.lendThread then task.cancel(S.lendThread) S.lendThread = nil end
+    S.lendThread = task.spawn(function()
+        local warned = false
+        while S.lending and ROLE == "BOT" do
+            task.wait(0.5)
+            local left = S.lendEnd - os.clock()
+            if left <= 0 then
+                restoreHost()
+                break
+            elseif left <= 5 and not warned then
+                warned = true
+                sendChat("5s left for "..t.Name)
+            end
+        end
+    end)
+end
+
+function stopLendNow()
+    if not S.lending then
+        sendChat("not lending to anyone rn")
+        return
+    end
+    if S.lendThread then task.cancel(S.lendThread) S.lendThread = nil end
+    restoreHost()
+end
+
 function startAfk()if ROLE~="BOT"then return end task.spawn(function()while ROLE=="BOT"do task.wait(1)local hh=getHostHRP()if not hh then S.hostLastPos=nil S.hostAfkTimer=0 continue end if S.hostLastPos then if(hh.Position-S.hostLastPos).Magnitude>0.8 then S.hostAfkTimer=0 if S.hostIsAfk then S.hostIsAfk=false end else S.hostAfkTimer=S.hostAfkTimer+1 if S.hostAfkTimer>=AT and not S.hostIsAfk then S.hostIsAfk=true end end end S.hostLastPos=hh.Position end end)end
 function bindDeath()if S.deathConn then S.deathConn:Disconnect()S.deathConn=nil end local c=pl.Character if not c then return end local h=c:FindFirstChildOfClass("Humanoid")if not h then return end S.deathConn=h.Died:Connect(function()local wasFighting=S.swordKillActive and S.swordKillTarget stopSpin()stopDance()stopLead(false)stopFling(false)stopRizz(false)if not wasFighting then stopSwordKill(false)end S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil local n=os.clock()if n-S.lastDeathTime>DRT then S.deathCount=0 S.deathSilent=false end S.lastDeathTime=n S.deathCount=S.deathCount+1 if S.deathSilent then return end if wasFighting then sendChat(pick({"im down","back in a sec","respawning","one sec","ill be back"}))elseif S.deathCount==2 then sendChat("...")elseif S.deathCount==3 then sendChat("....")elseif S.deathCount==4 then sendChat(".....")elseif S.deathCount==5 then sendChat(pick({"bro","cmon","seriously","again?","bruh"}))elseif S.deathCount==6 then sendChat(pick({"ok this is annoying","really now","dude","ugh","seriously"}))elseif S.deathCount==7 then sendChat(pick({"bro stop","cmon man","enough","why tho"}))elseif S.deathCount>=8 then sendChat(pick({"stop bro","bro stop it","ok enough","chill out man","i said stop"}))S.deathSilent=true end end)end
 handleCommand=function(cmd,args)if ROLE~="BOT"or antiBan.detected then return end if cmd=="say"then if args~=""then sendChat(args)end elseif cmd=="ask"then handleAIChat(args)elseif cmd=="gameinfo"then handleGameInfo(args)elseif cmd=="similar"then handleGameInfo("similar")elseif cmd=="backoff"then local n=tonumber(args)or BACKOFF_STEP FD=math.clamp(FD+n,FD_MIN,FD_MAX)sendChat("backing off, distance is now "..FD)elseif cmd=="getcloser"then local n=tonumber(args)or BACKOFF_STEP FD=math.clamp(FD-n,FD_MIN,FD_MAX)sendChat("getting closer, distance is now "..FD)elseif cmd=="recall"then stopAllModes()task.wait(0.05)teleportToHost()sendChat(pick({"omw","coming","on my way","here"}))elseif cmd=="stop"then stopAllModes()task.wait(0.05)teleportToHost()sendChat(pick(R_.stop))elseif cmd=="follow"then stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopRizz(false)S.mode="Follow"S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick({"following","on you","back on follow"}))elseif cmd=="info"then local sp2=args:find("%s")local pname,field if sp2 then pname=trim(args:sub(1,sp2-1))field=trim(args:sub(sp2+1)):lower()else pname=trim(args)field=nil end if pname==""then sendChat("usage: !info <player> [field]")else local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))else local myHrp=hrp()local pHrp=getPlayerHRP(p)local d=-1 if myHrp and pHrp then d=math.floor((myHrp.Position-pHrp.Position).Magnitude)end local accAge=p.AccountAge or 0 local joined=os.time()-(accAge*86400)local isFriend=false pcall(function()isFriend=p:IsFriendsWith(pl.UserId)end)local ph=0 local pmax=100 if p.Character then local phh=p.Character:FindFirstChildOfClass("Humanoid")if phh then ph=math.floor(phh.Health)pmax=math.floor(phh.MaxHealth)end end local isHost=false if p==getHost()then isHost=true end if field=="id"then sendChat(p.Name.." id: "..p.UserId)
@@ -776,7 +870,8 @@ task.wait(0.7)sendChat("joined "..fmtDate(joined).." ("..fmtAge(accAge).." ago)"
 task.wait(0.7)if d>=0 then sendChat("distance: "..d.." studs")end
 task.wait(0.7)sendChat("hp: "..ph.."/"..pmax)
 task.wait(0.7)local extras={}if isFriend then extras[#extras+1]="friend of you"end if isHost then extras[#extras+1]="current host"end if #extras>0 then sendChat("note: "..table.concat(extras,", "))end end)end end end
-elseif cmd=="orbit"then startOrbit(args~=""and args or nil)elseif cmd=="unorbit"then stopOrbit()sendChat(pick(R_.unorbit))elseif cmd=="sit"then stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopRizz(false)S.sitting=true S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil local h=hum()if h then pcall(function()h.WalkSpeed=0 h.JumpPower=0 h.Sit=true h:ChangeState(Enum.HumanoidStateType.Seated)end)end sendChat(pick(R_.sit))elseif cmd=="stand"then S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick(R_.stand))elseif cmd=="jump"then local h=hum()if h then h.Jump=true sendChat(pick(R_.jump))end elseif cmd=="hide"then doHide(false)elseif cmd=="spawn"then doSpawn()elseif cmd=="dance"then playDance(tonumber(args)or 1)elseif cmd=="undance"then stopDance()sendChat(pick(R_.undance))elseif cmd=="spin"then startSpin(args)elseif cmd=="unspin"then stopSpin()sendChat(pick(R_.unspin))elseif cmd=="lead"then startLead(args)elseif cmd=="unlead"then stopLead(true)elseif cmd=="bam"then startBam(args)elseif cmd=="unbam"then stopBam(false)teleportToHost()sendChat(pick(R_.unbam))elseif cmd=="annoy"then startAnnoy(args)elseif cmd=="unannoy"then stopAnnoy(false)teleportToHost()sendChat(pick(R_.unannoy))elseif cmd=="fling"then startFling(args)elseif cmd=="unfling"then stopFling(false,false)teleportToHost()sendChat(pick(R_.unfling))elseif cmd=="swordkill"then startSwordKill(args)elseif cmd=="unswordkill"then stopSwordKill(true)elseif cmd=="antifling"then S.antiFling=true sendChat("antifling on")elseif cmd=="unantifling"then S.antiFling=false local c=pl.Character if c then for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then p.CanCollide=true end end end sendChat("antifling off")elseif cmd=="antitoolkill"then S.antiToolKill=true sendChat("antitoolkill on")elseif cmd=="unantitoolkill"then S.antiToolKill=false sendChat("antitoolkill off")elseif cmd=="rizz"then startRizz(args)elseif cmd=="unrizz"then stopRizz(true)elseif cmd=="math"then handleMath(args)elseif cmd=="cmds"then sendSeq({"here ya go","!ask <msg> - talk to XcH","!ask <do something> - XcH will do it","!gameinfo - what game is this","!gameinfo full | tips | controls | wiki","!similar - games like this one","!info <player> [id/age/joined/distance/hp/friend]","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!orbit <1-1000> | !unorbit","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!annoy <player> | !unannoy","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling","!antitoolkill | !unantitoolkill","!rizz <player> | !unrizz","!dance 1-4 | !undance","!spin 1-100 | !unspin","!math <num><op><num>","!say <text>","!cmds"},0.9)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end
+elseif cmd=="orbit"then startOrbit(args~=""and args or nil)elseif cmd=="unorbit"then stopOrbit()sendChat(pick(R_.unorbit))elseif cmd=="sit"then stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopRizz(false)S.sitting=true S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil local h=hum()if h then pcall(function()h.WalkSpeed=0 h.JumpPower=0 h.Sit=true h:ChangeState(Enum.HumanoidStateType.Seated)end)end sendChat(pick(R_.sit))elseif cmd=="stand"then S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick(R_.stand))elseif cmd=="jump"then local h=hum()if h then h.Jump=true sendChat(pick(R_.jump))end elseif cmd=="hide"then doHide(false)elseif cmd=="spawn"then doSpawn()elseif cmd=="dance"then playDance(tonumber(args)or 1)elseif cmd=="undance"then stopDance()sendChat(pick(R_.undance))elseif cmd=="spin"then startSpin(args)elseif cmd=="unspin"then stopSpin()sendChat(pick(R_.unspin))elseif cmd=="lead"then startLead(args)elseif cmd=="unlead"then stopLead(true)elseif cmd=="bam"then startBam(args)elseif cmd=="unbam"then stopBam(false)teleportToHost()sendChat(pick(R_.unbam))elseif cmd=="annoy"then startAnnoy(args)elseif cmd=="unannoy"then stopAnnoy(false)teleportToHost()sendChat(pick(R_.unannoy))elseif cmd=="fling"then startFling(args)elseif cmd=="unfling"then stopFling(false,false)teleportToHost()sendChat(pick(R_.unfling))elseif cmd=="swordkill"then startSwordKill(args)elseif cmd=="unswordkill"then stopSwordKill(true)elseif cmd=="antifling"then S.antiFling=true sendChat("antifling on")elseif cmd=="unantifling"then S.antiFling=false local c=pl.Character if c then for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then p.CanCollide=true end end end sendChat("antifling off")elseif cmd=="antitoolkill"then S.antiToolKill=true sendChat("antitoolkill on")elseif cmd=="unantitoolkill"then S.antiToolKill=false sendChat("antitoolkill off")elseif cmd=="rizz"then startRizz(args)elseif cmd=="unrizz"then stopRizz(true)elseif cmd=="math"then handleMath(args)elseif cmd=="whoishost"then local hh=getHost()if S.lending then sendChat("host is "..(hh and hh.Name or "?").." (temp, "..math.max(0,math.floor(S.lendEnd-os.clock())).."s left)")else sendChat("host is "..(hh and hh.Name or "none"))end
+elseif cmd=="cmds"then sendSeq({"here ya go","!ask <msg> - talk to XcH","!ask <do something> - XcH will do it","!ask whats the name of this game","!gameinfo - what game is this","!gameinfo full | tips | controls | wiki","!similar - games like this one","!info <player> [id/age/joined/distance/hp/friend]","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!orbit <1-1000> | !unorbit","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!annoy <player> | !unannoy","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling","!antitoolkill | !unantitoolkill","!rizz <player> | !unrizz","!dance 1-4 | !undance","!spin 1-100 | !unspin","!math <num><op><num>","!say <text>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only)","!whoishost","!cmds"},0.9)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end
 function processMessage(uid,text)if not text or text==""then return end 
     if uid~=pl.UserId and text:sub(1,1)~=commandPrefix then
         local speaker=P:GetPlayerByUserId(uid)
@@ -787,7 +882,26 @@ function processMessage(uid,text)if not text or text==""then return end
     if ROLE~="BOT"and ROLE~="HOST"then return end 
     if ROLE=="BOT"and uid~=pl.UserId and not isFromHost(uid)then handleStrangerMsg(uid,text)return end 
     if not isFromHost(uid)then return end 
-    local lowText=text:lower()if lowText:sub(1,4)=="!ask"then local prompt=trim(text:sub(5))if prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return end if isDuplicateMessage(uid,text)then return end task.spawn(function()handleAIChat(prompt)end)return end if ROLE~="BOT"then return end if text:sub(1,#commandPrefix)~=commandPrefix then return end if isDuplicateMessage(uid,text)then return end local body=trim(text:sub(#commandPrefix+1))if body==""then return end local sp=body:find("%s")local cmd,args if sp then cmd=body:sub(1,sp-1):lower()args=trim(body:sub(sp+1))else cmd=body:lower()args=""end task.spawn(function()local ok,err=pcall(handleCommand,cmd,args)if not ok then warn("[MyPanel] cmd error:",err)if botLogRef then pushLog(botLogRef,"err: "..tostring(err):sub(1,60),C.red)end end end)end
+    local lowText=text:lower()if lowText:sub(1,4)=="!ask"then local prompt=trim(text:sub(5))if prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return end if isDuplicateMessage(uid,text)then return end task.spawn(function()handleAIChat(prompt)end)return end if ROLE~="BOT"then return end if text:sub(1,#commandPrefix)~=commandPrefix then return end if isDuplicateMessage(uid,text)then return end local body=trim(text:sub(#commandPrefix+1))if body==""then return end local sp=body:find("%s")local cmd,args if sp then cmd=body:sub(1,sp-1):lower()args=trim(body:sub(sp+1))else cmd=body:lower()args=""end
+    -- creator-only gate for host management
+    if cmd=="host"or cmd=="stophost"then
+        if not isCreatorUser(uid)then
+            task.spawn(function()sendChat(pick({"only my boss can do that","nah not for you","creator only","youre not the boss","denied"}))end)
+            return
+        end
+        if cmd=="host"then
+            local sp2=args:find("%s")
+            if not sp2 then task.spawn(function()sendChat("usage: !host <player> <seconds>")end) return end
+            local pname=trim(args:sub(1,sp2-1))
+            local secs=tonumber(trim(args:sub(sp2+1)))
+            if not secs or secs<=0 then task.spawn(function()sendChat("need a valid seconds number")end) return end
+            task.spawn(function()startLend(pname,secs)end)
+        else
+            task.spawn(function()stopLendNow()end)
+        end
+        return
+    end
+    task.spawn(function()local ok,err=pcall(handleCommand,cmd,args)if not ok then warn("[MyPanel] cmd error:",err)if botLogRef then pushLog(botLogRef,"err: "..tostring(err):sub(1,60),C.red)end end end)end
 pcall(function()if TC and TC.ChatVersion==Enum.ChatVersion.TextChatService then TC.MessageReceived:Connect(function(m)local s=m.TextSource if not s then return end processMessage(s.UserId,m.Text)end)end end)
 local function hookChatted(p)p.Chatted:Connect(function(t)processMessage(p.UserId,t)end)end
 for _,p in ipairs(P:GetPlayers())do hookChatted(p)end
@@ -824,7 +938,7 @@ local cmdsPage=newPage()local cmdsPad=Instance.new("UIPadding")cmdsPad.PaddingTo
 local cmdsBox=Instance.new("Frame")cmdsBox.Size=UDim2.new(1,0,1,0)cmdsBox.BackgroundColor3=C.track cmdsBox.BorderSizePixel=0 cmdsBox.ClipsDescendants=true cmdsBox.Parent=cmdsPage corner(cmdsBox,8)stroke(cmdsBox,C.border,1,0.3)
 local cmdScroll=Instance.new("ScrollingFrame")cmdScroll.Size=UDim2.new(1,-8,1,-6)cmdScroll.Position=UDim2.new(0,4,0,3)cmdScroll.BackgroundTransparency=1 cmdScroll.BorderSizePixel=0 cmdScroll.CanvasSize=UDim2.new(0,0,0,0)cmdScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y cmdScroll.ScrollBarThickness=4 cmdScroll.ScrollBarImageColor3=C.border cmdScroll.Parent=cmdsBox
 local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enum.SortOrder.LayoutOrder cml.Parent=cmdScroll
-local CMDS={{"── AI ──",true},{"!ask <msg> - talk to XcH",false},{"!ask <do something> - XcH will do it",false},{"!gameinfo - what game is this",false},{"!gameinfo full | tips | controls | wiki",false},{"!similar - games like this one",false},{"!info <player> [field]",false},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!orbit <1-1000> | !unorbit",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"!hide | !spawn",false},{"!bam <player> | !unbam",false},{"!annoy <player> | !unannoy",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"!rizz <player> | !unrizz",false},{"!dance 1-4 | !undance",false},{"!spin 1-100 | !unspin",false},{"!math <num><op><num>",false},{"!say <text>",false},{"!cmds",false}}
+local CMDS={{"── AI ──",true},{"!ask <msg> - talk to XcH",false},{"!ask <do something> - XcH will do it",false},{"!ask whats the name of this game",false},{"!gameinfo - what game is this",false},{"!gameinfo full | tips | controls | wiki",false},{"!similar - games like this one",false},{"!info <player> [field]",false},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!orbit <1-1000> | !unorbit",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"!hide | !spawn",false},{"!bam <player> | !unbam",false},{"!annoy <player> | !unannoy",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"!rizz <player> | !unrizz",false},{"!dance 1-4 | !undance",false},{"!spin 1-100 | !unspin",false},{"!math <num><op><num>",false},{"!say <text>",false},{"── HOST ──",true},{"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}
 for i,e in ipairs(CMDS)do local l=Instance.new("TextLabel")l.Size=UDim2.new(1,0,0,e[2]and 18 or 14)l.BackgroundTransparency=1 l.Font=e[2]and Enum.Font.GothamBold or Enum.Font.Code l.Text=e[1]l.TextColor3=e[2]and C.accent or C.text l.TextSize=10 l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=i l.Parent=cmdScroll end
 local apiPage=newPage()apiPage.Name="ApiKeysPage"
 local apiPad=Instance.new("UIPadding")apiPad.PaddingTop=UDim.new(0,14)apiPad.PaddingLeft=UDim.new(0,14)apiPad.PaddingRight=UDim.new(0,14)apiPad.PaddingBottom=UDim.new(0,10)apiPad.Parent=apiPage
