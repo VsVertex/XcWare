@@ -3,7 +3,7 @@ local pl=P.LocalPlayer if not pl then return end local pg=pl:WaitForChild("Playe
 TN="My Panel"GN="InterDimensionalPanelGUI"SN="MyPanelStorage"
 BS=16 BJ=50 PH=8*3600 FD=6 FSD=2 FCB=2 ED=70 OR=14 AT=20 VY=-300 VR=4000 RI=1.0 DW=2.0 LR=15 SNT=1.5 LAD=5 LHMD=45 AIT=0.35 PDR=7 WR=4.5 VT=-75 OL=7 SED=14 SBM=1.5 MCW1=6.0 MCW2=12.0 MCA1=8 MCA2=22 MJD1=0.30 MJD2=0.55 MJC=0.80 PA=2 PFC=0.50 BDB=5.0 BO=3.0 BC=0.22 BTR=14 AFD=3.5 ATR=22 AMW1=3.5 AMW2=7.5 FSX=150000 FSY=220000 FSZ=180000 FLV=6000 FAV=12000 FDV=80 FDD=25 FMD=8 FDW=0.15 DRT=30 MCH=4 LRT=0 LRT2=0 RCL=3.0
 STRANGER_RANGE=15 STRANGER_STARE=1.5 STRANGER_CD=3 BACKOFF_STEP=5 FD_MIN=2 FD_MAX=60
-PROTECT_DIST=6 PROTECT_STILL_TIME=1.5 PROTECT_COOLDOWN=5 PROTECT_TWEEN=0.2
+PROTECT_DIST=6 PROTECT_STILL_TIME=1.5 PROTECT_COOLDOWN=5 PROTECT_TWEEN=0.25 PROTECT_CHAT_CD=2.5 PROTECT_BACK_DIST=5
 KEY_FOLDER="XcHPanel"XCH_FILE=KEY_FOLDER.."/xch_key.txt"XCODE_FILE=KEY_FOLDER.."/xcode_key.txt"XCH3_FILE=KEY_FOLDER.."/xch3_key.txt"XCODE2_FILE=KEY_FOLDER.."/xcode2_key.txt"
 API_PASSWORD="crix"
 function fsSupported()return type(writefile)=="function"and type(readfile)=="function"end
@@ -23,8 +23,6 @@ function needsSearch(u)if not u then return false end local l=u:lower()for _,k i
 RIZZ_STR="hey cutie;ur cute;i like u;hey bae;u single?;nice fit;ur funny;hey gorgeous;ur a 10;hey sweetheart;ur my type;hey love;wanna hang?;ur awesome;hey sunshine;ur the best;hey darling;ur amazing;hey hot stuff;ur perfect;hey babe;ur my world;hey honey;ur my heart;hey angel;ur my life;hey cutie pie;ur my boo;hey baby;ur my love;hey sweetie;ur my sunshine;hey dear;ur my everything;hey love bug;ur my favorite;hey snuggle bug;ur my dream;hey sweet cheeks;hey honey bun;hey baby cakes;hey sweet pea;hey cutie patootie;hey love muffin;hey snuggle bunny;hey sweetie pie;hey honey pie;hey baby doll;hey sweet heart;hey cutie bear;hey love bear;hey snuggle bear;hey sweet bear;hey honey bear;hey baby bear;ur my crush;hey hottie;ur stunning;hey lovely;ur beautiful;hey handsome;ur charming;hey cutie;ur adorable;hey sweet;ur precious;hey dear;ur my everything;hey love;ur my world;hey babe;ur my heart"
 RIZZ_LINES={}
 for w in string.gmatch(RIZZ_STR,"[^;]+") do table.insert(RIZZ_LINES,w) end
-
--- PROTECT roast lines (family-friendly, all they/them pronouns)
 PROTECT_ROASTS={
 "{NAME} back off boss","{NAME} touch grass not people","{NAME} why u jumping around","{NAME} stand still weirdo","{NAME} i can see u behind them lol","{NAME} bro what r u doing","{NAME} personal space exists","{NAME} go find a hobby","{NAME} cmon man move along","{NAME} weird flex ngl","{NAME} this aint the club","{NAME} back up back up","{NAME} 6 feet rule buddy","{NAME} u good?","{NAME} bro stop breathing on them","{NAME} nobody asked u to be here","{NAME} take the hint","{NAME} go outside","{NAME} ive seen enough","{NAME} leave them alone","{NAME} seriously?","{NAME} bro relax","{NAME} this isnt ur moment","{NAME} hop off","{NAME} chill out","{NAME} wrong person","{NAME} try the other server","{NAME} we dont do that here","{NAME} not today","{NAME} go bother someone else","{NAME} is this a hobby?","{NAME} bro go touch some real grass","{NAME} we see u","{NAME} quit it","{NAME} stop following them","{NAME} hey look a distraction over there","{NAME} bro go think about ur life choices","{NAME} what is u doing","{NAME} stop it get some help","{NAME} sir this is a wendys","{NAME} awkward","{NAME} bro please","{NAME} nobody wants that","{NAME} ok thats enough","{NAME} exit stage left","{NAME} wrong move","{NAME} 404 skill not found","{NAME} nice try","{NAME} were not doing this today","{NAME} go away please","{NAME} bye felicia","{NAME} we dont know u","{NAME} wrong neighborhood","{NAME} you lost bro?","{NAME} stay in ur lane","{NAME} back it up","{NAME} come back when u have manners","{NAME} get a life","{NAME} go do ur homework","{NAME} mom said no","{NAME} ur grounded","{NAME} eat vegetables","{NAME} drink water","{NAME} take a shower","{NAME} i can smell u from here","{NAME} not cool","{NAME} awkward moment","{NAME} cringe","{NAME} yikes","{NAME} oof","{NAME} embarrassing","{NAME} we dont talk about that","{NAME} go ahead and leave","{NAME} ur not invited","{NAME} party is over","{NAME} show is done","{NAME} movie credits rolling","{NAME} the door is that way","{NAME} exit is to ur left","{NAME} last chance","{NAME} i warned u","{NAME} 3 strikes","{NAME} dont make me repeat","{NAME} stop being weird","{NAME} this is not the move","{NAME} bro rethink this","{NAME} ok weirdo","{NAME} bye bye","{NAME} shoo","{NAME} scram","{NAME} beat it","{NAME} vamoose","{NAME} adios","{NAME} cya","{NAME} peace out","{NAME} move it","{NAME} step off","{NAME} buzz off","{NAME} shoo please","{NAME} git","{NAME} shoo shoo","{NAME} not the vibe","{NAME} bad energy","{NAME} negative vibes","{NAME} we dont need u here","{NAME} exit please","{NAME} thank u next","{NAME} no thanks","{NAME} hard pass","{NAME} i pass","{NAME} nope","{NAME} nah","{NAME} go find jesus","{NAME} pray about it","{NAME} reflect on ur choices","{NAME} think about what u did","{NAME} apologize to urself","{NAME} soul search","{NAME} bad behavior","{NAME} not a good look","{NAME} public embarrassment","{NAME} everyone is watching","{NAME} we all see u","{NAME} screen recording rn","{NAME} clip that","{NAME} viral moment","{NAME} ur famous now","{NAME} content","{NAME} tiktok material","{NAME} cringe compilation","{NAME} yikes forever","{NAME} boo hoo","{NAME} ratio","{NAME} L take","{NAME} L plus ratio","{NAME} skill issue","{NAME} mad cuz bad","{NAME} stay mad","{NAME} cry about it","{NAME} seethe","{NAME} cope","{NAME} mald","{NAME} seethe mald cope","{NAME} rent free in ur head","{NAME} we live in ur head","{NAME} take the L","{NAME} this is the L","{NAME} L + bozo","{NAME} big L","{NAME} L bro","{NAME} massive L","{NAME} L behavior","{NAME} L energy","{NAME} L moment","{NAME} L server","{NAME} L life","{NAME} L everything","{NAME} ok enough L","{NAME} stop the L","{NAME} let it go","{NAME} move on","{NAME} next","{NAME} next caller","{NAME} hang up","{NAME} click","{NAME} dial tone","{NAME} no signal","{NAME} out of service","{NAME} unreachable","{NAME} grounded forever","{NAME} timeout corner","{NAME} sit down","{NAME} punished","{NAME} no dinner","{NAME} no dessert","{NAME} straight to bed","{NAME} no wifi","{NAME} phone taken","{NAME} chores time","{NAME} reflect","{NAME} think about it","{NAME} deep breaths","{NAME} count to ten","{NAME} breathe","{NAME} calm down","{NAME} relax","{NAME} chill bro","{NAME} its ok","{NAME} life moves on","{NAME} tomorrow is a new day","{NAME} sleep on it","{NAME} drink tea","{NAME} meditate","{NAME} do yoga","{NAME} journal ur feelings","{NAME} therapy","{NAME} self care","{NAME} take a nap","{NAME} break time","{NAME} go outside","{NAME} touch real grass","{NAME} sunlight","{NAME} fresh air","{NAME} walk ur dog","{NAME} do a chore","{NAME} call ur mom","{NAME} check on grandma","{NAME} read a book","{NAME} learn a skill","{NAME} level up elsewhere","{NAME} different server","{NAME} different game","{NAME} different hobby","{NAME} different everything","{NAME} bye then","{NAME} gg","{NAME} wp","{NAME} good game","{NAME} well played","{NAME} gg ez","{NAME} ez clap","{NAME} ez","{NAME} ggez","{NAME} ff","{NAME} forfeit","{NAME} surrender","{NAME} give up","{NAME} resign","{NAME} quit while ahead","{NAME} walk away","{NAME} leave gracefully","{NAME} exit with dignity","{NAME} no shame","{NAME} take the hint","{NAME} please leave","{NAME} thank u bye","{NAME} and thats the end of that","{NAME} case closed","{NAME} dismissed","{NAME} court adjourned","{NAME} verdict guilty","{NAME} sentenced","{NAME} bail denied","{NAME} cell block D","{NAME} lawyer not present","{NAME} objection overruled","{NAME} sustained","{NAME} strike that","{NAME} order in the court","{NAME} gavel down","{NAME} we rest","{NAME} prosecution rests","{NAME} motion denied","{NAME} appeal rejected","{NAME} final ruling","{NAME} end of story","{NAME} book closed","{NAME} chapter over","{NAME} credits roll","{NAME} fade to black","{NAME} scene","{NAME} wrap it up","{NAME} thats a wrap","{NAME} cut","{NAME} action","{NAME} take two","{NAME} take three","{NAME} one more time","{NAME} and scene","{NAME} the end"}
 CP=[==[You are "XcH", a chill human-like ai made by XcVr1 on gemini 3.5 flash lite.
@@ -65,8 +63,7 @@ Examples:
 - "make the bot spin" → [[CMD]]spin[[/CMD]] spinning
 - "kill bob" → [[CMD]]swordkill bob[[/CMD]] on it
 - "bam someone" → [[CMD]]bam random[[/CMD]] on it
-- "make me sit" → [[CODEREQ]]make me sit[[/CODEREQ]]
-- "make yourself sit" → [[CMD]]sit[[/CMD]] sitting down
+- "make me sit" → [[CMD]]sit[[/CMD]] sitting down
 - "turn on antitoolkill" → [[CMD]]antitoolkill[[/CMD]] on it boss
 - "switch on antifling so u don't get killed" → [[CMD]]antifling[[/CMD]] on it
 - "rizz bob" → [[CMD]]rizz bob[[/CMD]] let me cook
@@ -136,7 +133,7 @@ return os.date("%Y-%m-%d",ts)
 end
 local R_={startup={"yo im XcH","hey! im XcH","back again, XcH here","sup, im XcH","hello! XcH here","yo yo its XcH","whats good, XcH in the house","hey hey, XcH here","wassup, XcH speaking","hello hello, XcH here","yo! im XcH btw","how you doin, XcH here","hi im XcH nice to meet ya","aye im XcH","chill im XcH","hello human, XcH here","im baaack, XcH","yooo XcH here","welcome, im XcH","XcH online","hey there, XcH here","hiya, XcH reporting in","im here, XcH btw","just dropped in, XcH","sup bro, XcH here"},orbit={"orbiting now","circling ya","going around","orbit mode on","round and round","lemme orbit","starting my laps","spinning around u","yeah im circling","orbit engaged","imma go around","going for a loop","circular motion rn","cruising around ya","watch me orbit","doing the rounds","im orbiting now","orbiting like a moon","spin cycle initiated","going orbital","round trip time","orbit incoming"},unorbit={"orbit off","stopped orbiting","ok im done circling","back to normal","orbit cancelled","not spinning anymore","done with laps","off orbit","orbit disengaged","alright stopped","ok no more orbit","chill now","just standing","done going around","leaving orbit","orbit ended","not orbiting anymore","back on the ground","ok stopped spinning","orbit terminated","disengaging","done with that"},sit={"sitting down","taking a seat","chill mode","gonna sit","sittin","down i go","seat taken","sit time","im seated","yep sitting","chilling now","ok sitting","take a load off","sit back","lowkey tired","here i sit","plopping down","gonna rest","sittin here now","seated","sitting rn","down for a bit"},stand={"up we go","standing up","im up","stand mode","back on my feet","ok up now","standing","getting up","up and ready","im standing","back up","off the ground","standin","ok im up","rising","vertical again","upright now","here we go","feet on floor","up","back in action","im up now"},jump={"jumping","boing","hop","up i go","yeet","leap","hop up","jump rn","boinggg","wheee","up","in the air","doing a hop","spring","leaping","ok jumping","bounce","hop hop","up up","takeoff","jumping rn","air time"},hide={"going invisible","poof gone","vanishing now","hiding","bye bye","out of sight","ghost mode","now u dont see me","disappearing","c ya","going ghost","hidden","vamoose","im out","hiding rn","invisible mode","peacing out","catch me if u can","gone","vanishing","shh im hiding","hidden now"},spawn={"im back","returned","sup again","back online","im here","yo im back","hello again","respawned","here i am","back from the void","im back bro","reporting in","alive again","back to action","yo","guess whos back","im here now","made it back","back in the game","hi again","returned from nada","and im back"},dance={"dancing now","lets dance","getting down","movin","grooving","dance time","bustin moves","shakin it","party mode","yeah im dancing","cut a rug","dance dance","watch me groove","getting funky","dance floor time","wiggle wiggle","showing off moves","dancing rn","having a boogie","lets go dancing","im dancing","moves activated"},undance={"stopped dancing","dance off","chill now","no more dancing","done dancin","ok im done","standing still","enough dancing","done with moves","stopped","ok tired now","not dancing","moves off","chilling","done","dancing over","stopped the groove","no more dancing rn","im done dancing","back to normal","ok stop","rest time"},spin={"spinning now","wheee","spin go brrr","round and round","lets spin","spinning fast","vroooom","spin time","yeah spinning","going for a whirl","spin cycle on","twisting","watch me spin","spin spin spin","rotating","chill spinning now","spinning rn","spin mode","im dizzy","going in circles","spin activated","spinning"},unspin={"stopped spinning","spin off","ok im done","no more spinning","stopped twirling","ok chill","spin ended","back to normal","not spinning","done with that","ok dizzy now","stopping","spin off rn","standin still","stopped spinning","chill","no spin","spin done","back to standing","ok stop spinning","spin cancelled","ending spin"},lead={"follow me","this way","come on","follow me bro","let's go","over here","come with me","follow follow","leading now","follow me to them","walkin to target","come on man","lets go find em","leading the way","follow!","hey come here","im leading now","follow me rq","takin the lead","on the way","come on lets go","leading rn"},unlead={"lead off","stopped leading","done leading","ok stopped","not leading anymore","lead cancelled","back to normal","chill","ok enough leading","done with that","not leading rn","back on follow","im done","stopped","lead ended","back to you","ok got it","returning","back to base","lead done","im back","ok stopping lead"},bam={"bamming now","getting in their face","bam mode","on their case","yeah bamming","harassing them now","bam activated","in your face","right behind them","bamming target","on em now","bam time","im on em","getting close","stay on em","bamming rn","yep bamming","on their tail","bam engaged","watch this","started bamming","in their space"},unbam={"bam off","stopped bamming","leaving them","done","bam done","ok stopping","back to you","bam ended","chill now","ok bam off","done bamming","leaving them alone","im back","bam cancelled","ok im back","returning","stopped","no more bam","leaving","back to base","bam done rn","finished bamming"},annoy={"annoying now","on their nerves","annoy mode","getting on their case","yeah annoying","bothering them","annoy activated","pestering them","here we go","annoying target","on their tail","annoy time","watch this","started annoying","on em","annoying rn","yep annoying","getting under skin","annoy engaged","lemme bug em","spamming them","in their biz"},unannoy={"annoy off","stopped annoying","leaving them","done annoying","ok im done","returning","annoy ended","chill now","ok annoy off","done bugging em","leaving them alone","im back","annoy cancelled","stopped bugging","back to base","ok im back","no more annoy","back to you","annoy done","finished annoying","im back bro","done"},fling={"flinging now","yeeting them","fling mode","here we go","yeet activated","flinging target","target fling","fling time","watch this","started flinging","yeeting now","flinging rn","yep flinging","getting flingy","target go weee","sending em","flinging them","fling engaged","gone fling","here comes the yeet","let it rip","fling incoming"},unfling={"fling off","stopped flinging","done","fling done","chill","ok stopping","back to you","fling ended","no more flinging","returning","back to base","ok im back","fling cancelled","leaving them","ok im done","fling done rn","back on follow","stopped","fling over","enough","im back","done flinging"},notfound={"who?","dunno that name","never heard of em","cant find em","no clue who that is","idk that player","who dat?","not in server","aint see em","nope cant find","who bro","no idea","huh?","not finding em","no luck","wheres that?","say what?","not sure who that is","cant spot em","who u talkin bout","never seen that name","not here"},self={"thats me lol","bruh im me","cant do it to myself","no lol","im not doing that to me","why would i","that makes no sense","im the one doing stuff bro","cmon man","nah","nope","youre joking right","lol no","cant do that","seriously?","bro","why","no way","not doing that","thats weird","look at yourself","youre a comedian"},stranger={"nah only my boss tells me what to do","not listening to you bro","lol no","youre not my boss","nice try","nope","im not your bot","wrong person lol","ask crix hes the boss","cant help you with that","youre not on the list","nuh uh","only my host can do that","denied","access denied","not for you","wrong guy bro","sorry not sorry","ha good one","yeah no"},norandom={"no one else to target bro","no valid target","im alone in here","no players to pick from","everyone left","server empty"},stop={"alright stopping","ok done","chill","stopped","back on follow","ok ok","im back","returning","done","fine","stopping now","ok ill stop","back to you","here"},infoerr={"couldnt find that field","try id/age/joined/distance","unknown field bro","huh? try id age joined or distance"}}
 ROLE=nil commandPrefix="!"hostFilter={name=nil,userId=nil}originalHost={name=nil,userId=nil}hostLogRef=nil botLogRef=nil antiBan={detected=false}rotationOwner="Humanoid"pushLog=nil botLogBuffer={}CHAT_CONVERSATION={{role="system",content=CP}}CHAT_CONVERSATION2={{role="system",content=CP2}}isOwnerHost=false
-local S={mode="Follow",orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={},protectTarget=nil,protectUntil=0,protectStartPos=nil,protectLastMove=0,protectChatCD=0,protectCooldown=0}
+local S={mode="Follow",orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={},protectTarget=nil,protectUntil=0,protectStartPos=nil,protectLastMove=0,protectChatCD=0,protectCooldown=0,protectChatActive=false,protectChatQueue={}}
 stopOrbit=nil stopSpin=nil stopDance=nil stopLead=nil stopBam=nil startBam=nil stopAnnoy=nil startAnnoy=nil stopFling=nil startFling=nil startFollow=nil stopFollow=nil sendChat=nil handleCommand=nil teleportToHost=nil handleMath=nil
 local PLACEHOLDER_CMDS={speed=true,jump=true,crawl=true,moonwalk=true,shake=true,freeze=true,unfreeze=true,float=true,wave=true,point=true,salute=true,lay=true,dab=true,pose=true,faint=true,stalk=true,mimic=true,mirror=true,peek=true,haunt=true,ride=true,carry=true,block=true,tease=true,troll=true,copychat=true,rap=true,flipcoin=true,roll=true,["8ball"]=true,compliment=true,roast=true,dadjoke=true,truth=true,dare=true,randomnum=true,countdown=true,timer=true,quiz=true,wouldyourather=true,storytime=true,greet=true,escort=true,afk=true,unafk=true,status=true,sleep=true}
 local PLACEHOLDER_REPLIES={"soon","coming soon","not ready yet","wip","still cooking","gimme a bit","soon bro"}
@@ -507,13 +504,18 @@ function getPlayer(name)if not name then return nil end local n=name:lower()if n
 function getPlayerHRP(p)return p and p.Character and p.Character:FindFirstChild("HumanoidRootPart")or nil end
 function applyFixedSpeed()local h=hum()if h then pcall(function()h.WalkSpeed=BS h.JumpPower=BJ h.UseJumpPower=true end)end end
 -- ══════════════════════════════════════════════════════════════════
---  PRONOUNS (always they/them/their — universal)
--- ══════════════════════════════════════════════════════════════════
-function pronouns(_)return "they","them","their"end
-
--- ══════════════════════════════════════════════════════════════════
 --  PROTECT SYSTEM (permanent, auto-runs as BOT)
 -- ══════════════════════════════════════════════════════════════════
+-- Chat sender with strict lockstep so we never send more than one msg per PROTECT_CHAT_CD
+local function protectChatSay(line)
+    if S.protectChatActive then return end
+    S.protectChatActive=true
+    sendChat(line)
+    task.delay(PROTECT_CHAT_CD,function()
+        S.protectChatActive=false
+    end)
+end
+
 function runProtectTick()
     if ROLE~="BOT" then return end
     if antiBan.detected then return end
@@ -524,31 +526,35 @@ function runProtectTick()
     if not hh then return end
     local host=getHost()
     if not host then return end
+    -- track host movement
     if S.protectStartPos then
         if (hh.Position-S.protectStartPos).Magnitude>2 then
             S.protectLastMove=now
         end
     end
     S.protectStartPos=hh.Position
+
+    -- ACTIVE protect window
     if now-S.protectUntil<0 then
-        if now-S.protectChatCD>1.8 and S.protectTarget and S.protectTarget.Parent then
-            S.protectChatCD=now
-            local they,them,their=pronouns(nil)
+        -- cooldown gate via protectChatActive
+        if not S.protectChatActive and S.protectTarget and S.protectTarget.Parent then
             local line=pick(PROTECT_ROASTS)
             line=line:gsub("{NAME}",S.protectTarget.Name)
-            line=line:gsub("{THEY}",they):gsub("{THEM}",them):gsub("{THEIR}",their)
-            sendChat(line)
+            protectChatSay(line)
         end
+        -- if harasser gone, exit
         if not S.protectTarget or not S.protectTarget.Parent then
             S.protectUntil=0
             S.protectTarget=nil
             S.protectCooldown=now+PROTECT_COOLDOWN
+            releaseRotation()
             return
         end
         local thrp=getPlayerHRP(S.protectTarget)
         if not thrp then
             S.protectUntil=0
             S.protectTarget=nil
+            releaseRotation()
             return
         end
         local dist=(thrp.Position-hh.Position).Magnitude
@@ -556,32 +562,45 @@ function runProtectTick()
             S.protectUntil=0
             S.protectTarget=nil
             S.protectCooldown=now+PROTECT_COOLDOWN
+            releaseRotation()
             return
         end
+        -- host moved → stand down
         if now-S.protectLastMove<PROTECT_STILL_TIME then
             S.protectUntil=0
             S.protectTarget=nil
             S.protectCooldown=now+PROTECT_COOLDOWN
+            releaseRotation()
             return
         end
-        local dir=(thrp.Position-hh.Position)
-        dir=Vector3.new(dir.X,0,dir.Z)
-        if dir.Magnitude<0.1 then dir=Vector3.new(0,0,1)end
-        dir=dir.Unit
-        local shieldPos=hh.Position-dir*4
+        -- Position bot BEHIND host (opposite side from harasser) and face the harasser
+        local toHarasser=(thrp.Position-hh.Position)
+        toHarasser=Vector3.new(toHarasser.X,0,toHarasser.Z)
+        if toHarasser.Magnitude<0.1 then toHarasser=Vector3.new(0,0,1)end
+        toHarasser=toHarasser.Unit
+        local behindPos=hh.Position-toHarasser*PROTECT_BACK_DIST
         local m=hrp()
         if m then
-            local goal=CFrame.lookAt(Vector3.new(shieldPos.X,hh.Position.Y,shieldPos.Z),Vector3.new(thrp.Position.X,hh.Position.Y,thrp.Position.Z))
+            setRotationOwner("Protect")
+            local goal=CFrame.lookAt(
+                Vector3.new(behindPos.X,hh.Position.Y,behindPos.Z),
+                Vector3.new(thrp.Position.X,hh.Position.Y,thrp.Position.Z)
+            )
             T:Create(m,TweenInfo.new(PROTECT_TWEEN,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{CFrame=goal}):Play()
         end
         return
     end
+
+    -- cooldown
     if now<S.protectCooldown then return end
+    -- only trigger if host has been still
     if now-S.protectLastMove<PROTECT_STILL_TIME then return end
     local hostChar=host.Character
     if not hostChar then return end
     local hostHum=hostChar:FindFirstChildOfClass("Humanoid")
     if hostHum and hostHum.MoveDirection.Magnitude>0.1 then return end
+
+    -- look for a non-host player close + oscillating + behind host
     for _,p in ipairs(P:GetPlayers())do
         if p==pl then continue end
         if p==host then continue end
@@ -589,12 +608,14 @@ function runProtectTick()
         if not pHrp then continue end
         local d=(pHrp.Position-hh.Position).Magnitude
         if d>PROTECT_DIST then continue end
+        -- must be behind host
         local toP=(pHrp.Position-hh.Position)
         toP=Vector3.new(toP.X,0,toP.Z)
         local look=hh.CFrame.LookVector
         look=Vector3.new(look.X,0,look.Z)
         local dot=toP.Magnitude>0.1 and toP.Unit:Dot(look) or 0
         if dot>0.2 then continue end
+        -- oscillation check
         local vel=pHrp.AssemblyLinearVelocity
         local flatV=Vector3.new(vel.X,0,vel.Z)
         local toward=(pHrp.Position-hh.Position)
@@ -623,23 +644,20 @@ function runProtectTick()
             p:SetAttribute("_pxProtectFlips",0)
             S.protectTarget=p
             S.protectUntil=now+3
-            S.protectChatCD=0
-            local intro=pick({"back off","hey","oi","yo","bro","excuse me"}).." "..p.Name..", leave my boss alone"
-            sendChat(intro)
+            protectChatSay("back off "..p.Name..", leave my boss alone")
             return
         end
     end
 end
 task.spawn(function()
     while true do
-        task.wait(0.15)
+        task.wait(0.2)
         local ok,err=pcall(runProtectTick)
         if not ok then end
     end
 end)
-
 -- ══════════════════════════════════════════════════════════════════
---  END PROTECT / PRONOUNS
+--  END PROTECT
 -- ══════════════════════════════════════════════════════════════════
 
 task.spawn(function()while true do task.wait(1)if ROLE=="BOT"and not S.hidden and not antiBan.detected and not S.sitting then local h=hum()if h and h.WalkSpeed~=BS and not S.flingActive and not S.swordKillActive and not S.rizzActive then pcall(function()h.WalkSpeed=BS end)end end end end)
