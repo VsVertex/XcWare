@@ -20,11 +20,9 @@ local C={
     track=Color3.fromRGB(244,244,247),
     button=Color3.fromRGB(240,240,244),
     buttonHover=Color3.fromRGB(232,232,236),
-    buttonPressed=Color3.fromRGB(210,210,216),
     border=Color3.fromRGB(210,210,216),
     text=Color3.fromRGB(20,20,25),
     subText=Color3.fromRGB(120,120,130),
-    accent=Color3.fromRGB(0,0,0),
     sidebar=Color3.fromRGB(246,246,248),
     activeTab=Color3.fromRGB(225,225,232),
     pill=Color3.fromRGB(20,20,25),
@@ -91,7 +89,7 @@ frame.Size=UDim2.new(0,520,0,320)
 frame.Position=UDim2.new(0,12,0.5,-160)
 frame.BackgroundColor3=C.panel
 frame.BorderSizePixel=0
-frame.ClipsDescendants=true
+frame.ClipsDescendants=false
 frame.Active=true
 frame.Parent=gui
 stroke(frame,C.border,1,0)
@@ -158,6 +156,25 @@ task.spawn(function()
         task.wait(1)
     end
 end)
+
+-- ══════════════════════════════════════════════════════════════════
+--  COLLAPSE ARROW (outside top-right corner of panel)
+-- ══════════════════════════════════════════════════════════════════
+local arrowBtn=Instance.new("TextButton")
+arrowBtn.Name="CollapseArrow"
+arrowBtn.Size=UDim2.new(0,26,0,26)
+arrowBtn.Position=UDim2.new(1,4,0,-13)
+arrowBtn.BackgroundColor3=C.panelTop
+arrowBtn.BorderSizePixel=0
+arrowBtn.Font=Enum.Font.GothamBold
+arrowBtn.Text="^"
+arrowBtn.TextColor3=C.text
+arrowBtn.TextSize=13
+arrowBtn.AutoButtonColor=false
+arrowBtn.ZIndex=5
+arrowBtn.Parent=frame
+stroke(arrowBtn,C.border,1,0)
+crispText(arrowBtn)
 
 -- ══════════════════════════════════════════════════════════════════
 --  SIDEBAR
@@ -258,7 +275,7 @@ homeSub.Parent=homePage
 -- ══════════════════════════════════════════════════════════════════
 local pill=Instance.new("TextButton")
 pill.Name="Pill"
-pill.Size=UDim2.new(0,120,0,22)
+pill.Size=UDim2.new(0,120,0,24)
 pill.Position=UDim2.new(0.5,-60,-40,0)
 pill.BackgroundColor3=C.pill
 pill.BorderSizePixel=0
@@ -288,17 +305,11 @@ pillClock.TextXAlignment=Enum.TextXAlignment.Center
 crispText(pillClock)
 pillClock.Parent=pill
 
-local PILL_W_SMALL=120
-local PILL_W_LARGE=520
-local PILL_H=22
-local PILL_TOP=6
-
-local function pillPosAtWidth(w)
-    return UDim2.new(0.5,-w/2,PILL_TOP,0)
-end
-
-local PILL_SHOWN_SMALL=pillPosAtWidth(PILL_W_SMALL)
-local PILL_HIDDEN=UDim2.new(0.5,-PILL_W_SMALL/2,-PILL_H-8,0)
+local PILL_W=120
+local PILL_H=24
+local PILL_TOP=8
+local PILL_SHOWN=UDim2.new(0.5,-PILL_W/2,PILL_TOP,0)
+local PILL_HIDDEN=UDim2.new(0.5,-PILL_W/2,-PILL_H-10,0)
 
 task.spawn(function()
     while pillClock and pillClock.Parent do
@@ -315,9 +326,11 @@ local dragStart=nil
 local startPos=nil
 local activeInput=nil
 local dragTarget=nil
+local moved=false
 
 local function beginDrag(input, target)
     dragging=true
+    moved=false
     activeInput=input
     dragStart=input.Position
     startPos=target.Position
@@ -365,6 +378,9 @@ UIS.InputChanged:Connect(function(input)
     if input.UserInputType==Enum.UserInputType.MouseMovement
         or input.UserInputType==Enum.UserInputType.Touch then
         local delta=input.Position-dragStart
+        if math.abs(delta.X)>4 or math.abs(delta.Y)>4 then
+            moved=true
+        end
         if dragTarget then
             dragTarget.Position=UDim2.new(
                 startPos.X.Scale,
@@ -384,7 +400,7 @@ UIS.InputEnded:Connect(function(input)
 end)
 
 -- ══════════════════════════════════════════════════════════════════
---  COLLAPSE / EXPAND (stretch + slide)
+--  COLLAPSE / EXPAND
 -- ══════════════════════════════════════════════════════════════════
 local collapsed=false
 local busy=false
@@ -394,41 +410,30 @@ local function collapse()
     busy=true
     collapsed=true
 
-    -- 1. retract the panel body upward (sidebar + content shrink to 0)
-    tw(contentArea,0.30,{
-        Size=UDim2.new(1,-100,0,0)
-    },Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+    -- hide arrow
+    tw(arrowBtn,0.15,{BackgroundTransparency=1,TextTransparency=1},Enum.EasingStyle.Quad,Enum.EasingDirection.In)
 
-    tw(sidebar,0.30,{
-        Size=UDim2.new(0,100,0,0)
-    },Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+    -- retract body
+    tw(contentArea,0.28,{Size=UDim2.new(1,-100,0,0)},Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+    tw(sidebar,0.28,{Size=UDim2.new(0,100,0,0)},Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+    tw(frame,0.28,{Size=TOP_SIZE},Enum.EasingStyle.Quart,Enum.EasingDirection.In)
 
-    -- shrink frame height down to topbar only
-    tw(frame,0.30,{
-        Size=TOP_SIZE
-    },Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+    task.wait(0.24)
 
-    task.wait(0.26)
+    -- slide topbar up
+    tw(frame,0.26,{Position=UDim2.new(0,12,-60,0)},Enum.EasingStyle.Quint,Enum.EasingDirection.In)
 
-    -- 2. slide the topbar up off-screen
-    tw(frame,0.28,{
-        Position=UDim2.new(0,12,-60,0)
-    },Enum.EasingStyle.Quint,Enum.EasingDirection.In)
+    task.wait(0.16)
 
-    task.wait(0.18)
-
-    -- 3. pill appears at small width, at top of screen
-    pill.Size=UDim2.new(0,PILL_W_SMALL,0,PILL_H)
+    -- pill appears
+    pill.Size=UDim2.new(0,PILL_W,0,PILL_H)
     pill.Position=PILL_HIDDEN
     pill.BackgroundTransparency=0
     pill.Visible=true
 
-    -- slide down into view
-    tw(pill,0.22,{
-        Position=PILL_SHOWN_SMALL
-    },Enum.EasingStyle.Quint,Enum.EasingDirection.Out)
+    tw(pill,0.22,{Position=PILL_SHOWN},Enum.EasingStyle.Quint,Enum.EasingDirection.Out)
 
-    task.wait(0.30)
+    task.wait(0.28)
     frame.Visible=false
     busy=false
 end
@@ -437,55 +442,56 @@ local function expand()
     if busy or not collapsed then return end
     busy=true
 
-    -- 1. slide pill up out of view
-    tw(pill,0.20,{
-        Position=PILL_HIDDEN
-    },Enum.EasingStyle.Quint,Enum.EasingDirection.In)
+    -- pill slides up and hides
+    tw(pill,0.18,{Position=PILL_HIDDEN},Enum.EasingStyle.Quint,Enum.EasingDirection.In)
 
-    task.wait(0.16)
+    task.wait(0.14)
     pill.Visible=false
-    pill.Size=UDim2.new(0,PILL_W_SMALL,0,PILL_H)
-    pill.Position=PILL_SHOWN_SMALL
+    pill.Position=PILL_SHOWN
 
-    -- 2. show frame at top, only topbar height, off-screen
+    -- frame shows as topbar only, off-screen
     frame.Visible=true
     frame.Size=TOP_SIZE
     frame.Position=UDim2.new(0,12,-60,0)
-
-    -- keep body collapsed at this moment
     contentArea.Size=UDim2.new(1,-100,0,0)
     sidebar.Size=UDim2.new(0,100,0,0)
 
     task.wait(0.02)
 
-    -- 3. slide frame down into open position
-    tw(frame,0.30,{
-        Position=OPEN_POS
-    },Enum.EasingStyle.Quint,Enum.EasingDirection.Out)
+    -- slide down
+    tw(frame,0.28,{Position=OPEN_POS},Enum.EasingStyle.Quint,Enum.EasingDirection.Out)
 
     task.wait(0.16)
 
-    -- 4. stretch body open downward
-    tw(frame,0.32,{
-        Size=OPEN_SIZE
-    },Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+    -- stretch body down
+    tw(frame,0.30,{Size=OPEN_SIZE},Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+    tw(contentArea,0.30,{Size=UDim2.new(1,-100,1,-40)},Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+    tw(sidebar,0.30,{Size=UDim2.new(0,100,1,-40)},Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
 
-    tw(contentArea,0.32,{
-        Size=UDim2.new(1,-100,1,-40)
-    },Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+    task.wait(0.28)
 
-    tw(sidebar,0.32,{
-        Size=UDim2.new(0,100,1,-40)
-    },Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+    -- show arrow back
+    tw(arrowBtn,0.2,{BackgroundTransparency=0,TextTransparency=0},Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
 
-    task.wait(0.34)
+    task.wait(0.24)
     collapsed=false
     busy=false
 end
 
+arrowBtn.Activated:Connect(function()
+    if not busy then collapse() end
+end)
+
 pill.Activated:Connect(function()
-    if dragging then return end
+    if dragging or moved then return end
     expand()
+end)
+
+arrowBtn.MouseEnter:Connect(function()
+    tw(arrowBtn,0.12,{BackgroundColor3=C.buttonHover})
+end)
+arrowBtn.MouseLeave:Connect(function()
+    tw(arrowBtn,0.15,{BackgroundColor3=C.panelTop})
 end)
 
 pill.MouseEnter:Connect(function()
@@ -493,30 +499,6 @@ pill.MouseEnter:Connect(function()
 end)
 pill.MouseLeave:Connect(function()
     tw(pill,0.15,{BackgroundColor3=C.pill})
-end)
-
--- collapse trigger: right-click OR long-press the topbar
--- (no arrow button now, so we need a gesture)
-local pressStart=0
-local longPressThreshold=0.6
-
-topBar.InputBegan:Connect(function(input)
-    if input.UserInputType==Enum.UserInputType.MouseButton2 then
-        if not busy then collapse() end
-    elseif input.UserInputType==Enum.UserInputType.Touch
-        or input.UserInputType==Enum.UserInputType.MouseButton1 then
-        pressStart=os.clock()
-    end
-end)
-
-topBar.InputEnded:Connect(function(input)
-    if input.UserInputType==Enum.UserInputType.Touch
-        or input.UserInputType==Enum.UserInputType.MouseButton1 then
-        local held=os.clock()-pressStart
-        if held>=longPressThreshold and not busy then
-            collapse()
-        end
-    end
 end)
 
 -- ══════════════════════════════════════════════════════════════════
