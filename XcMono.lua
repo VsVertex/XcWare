@@ -92,9 +92,13 @@ local BAR_VISIBLE_H=240
 
 local CIRCLE_SIZE=26
 
--- figure out viewport (screen) size so we never go off too far
-local cam=workspace.CurrentCamera
+-- fixed on-screen x dock, used for BOTH collapsed + open states.
+-- this is the actual fix: the panel never slides past the edge of
+-- the screen anymore -- it just grows/shrinks its own width in place
+local PANEL_X=12
+
 local function getViewport()
+    local cam=workspace.CurrentCamera
     if cam then
         local v=cam.ViewportSize
         if v and v.X>0 and v.Y>0 then return v end
@@ -102,25 +106,34 @@ local function getViewport()
     return Vector2.new(1280,720)
 end
 
--- return the fully-hidden X offset (just enough to hide the panel)
-local function getOffLeftX()
+-- clamp the "open" panel size to whatever the current screen can fit
+local function getOpenDims()
     local vp=getViewport()
-    -- panel width + small margin, but never more than viewport width
-    return -math.min(PANEL_W+40, vp.X+40)
+    local w=math.min(PANEL_W,math.max(300,vp.X-24))
+    local h=math.min(PANEL_H,math.max(220,vp.Y-24))
+    return w,h
 end
 
--- OPEN_POS uses center of screen regardless of size
-local function getOpenPos()
-    return UDim2.new(0,12,0.5,-PANEL_H/2)
+local function getBarVisH(openH)
+    return math.min(BAR_VISIBLE_H,openH-40)
+end
+
+-- only used once, for the initial slide-in on load
+local function getIntroHiddenX()
+    local vp=getViewport()
+    local openW=getOpenDims()
+    return -math.min(openW+40,vp.X+60)
 end
 
 -- ══════════════════════════════════════════════════════════════════
 --  MAIN PANEL FRAME
 -- ══════════════════════════════════════════════════════════════════
+local openW0,openH0=getOpenDims()
+
 local frame=Instance.new("Frame")
 frame.Name="MainPanel"
-frame.Size=UDim2.new(0,PANEL_W,0,PANEL_H)
-frame.Position=getOpenPos()
+frame.Size=UDim2.new(0,openW0,0,openH0)
+frame.Position=UDim2.new(0,PANEL_X,0.5,-openH0/2)
 frame.BackgroundColor3=C.panel
 frame.BorderSizePixel=0
 frame.ClipsDescendants=false
@@ -188,7 +201,7 @@ task.spawn(function()
 end)
 
 -- ══════════════════════════════════════════════════════════════════
---  MINUS BUTTON (blends into topbar — black dash, no box)
+--  MINUS BUTTON (blends into topbar -- black dash, no box)
 -- ══════════════════════════════════════════════════════════════════
 local minusBtn=Instance.new("TextButton")
 minusBtn.Name="MinusBtn"
@@ -362,6 +375,7 @@ homeSub.Parent=homePage
 -- ══════════════════════════════════════════════════════════════════
 local collapsed=false
 local busy=false
+local introDone=false
 local dragProgress=0
 local dragActive=false
 local dragStartX=nil
@@ -431,22 +445,22 @@ end)
 local function applyProgress(p)
     p=math.clamp(p,0,1)
 
-    -- bar width grows 40 → 100
+    local openW,openH=getOpenDims()
+    local barVisH=getBarVisH(openH)
+
+    -- sidebar's own width: 40 → 100
     local bw=BAR_W_COLLAPSED+(BAR_W_SIDEBAR-BAR_W_COLLAPSED)*p
 
-    -- off-left X is now viewport-aware
-    local offX=getOffLeftX()
-    local onX=12
-    local fx=offX+(onX-offX)*p
+    -- frame's overall width: 40 (thin bar) → full open width
+    local fw=BAR_W_COLLAPSED+(openW-BAR_W_COLLAPSED)*p
 
-    -- frame height: collapsed bar height → full panel height
-    local fh=BAR_VISIBLE_H+(PANEL_H-BAR_VISIBLE_H)*p
-    local fyOff=-BAR_VISIBLE_H/2+(-PANEL_H/2+BAR_VISIBLE_H/2)*p
+    -- frame height: bar height → full open height
+    local fh=barVisH+(openH-barVisH)*p
+    local fyOff=-barVisH/2+(-openH/2+barVisH/2)*p
 
     sidebar.Size=UDim2.new(0,bw,1,-40)
     circleBtn.Position=UDim2.new(0,bw-CIRCLE_SIZE/2,0.5,-CIRCLE_SIZE/2)
 
-    -- sidebar content swap
     if p<0.4 then
         boxesHolder.Visible=true
         homeTab.Visible=false
@@ -458,10 +472,11 @@ local function applyProgress(p)
         homeTab.Visible=true
     end
 
-    frame.Position=UDim2.new(0,math.floor(fx+0.5),0.5,math.floor(fyOff+0.5))
-    frame.Size=UDim2.new(0,PANEL_W,0,math.floor(fh+0.5))
+    -- X is ALWAYS PANEL_X now -- the panel never leaves the screen,
+    -- it just shrinks down to a thin dockable bar in place
+    frame.Position=UDim2.new(0,PANEL_X,0.5,math.floor(fyOff+0.5))
+    frame.Size=UDim2.new(0,math.floor(fw+0.5),0,math.floor(fh+0.5))
 
-    -- content fade
     local cp=math.clamp((p-0.5)/0.5,0,1)
     contentArea.BackgroundTransparency=1-cp
     for _,ch in ipairs(contentArea:GetDescendants())do
@@ -469,6 +484,10 @@ local function applyProgress(p)
             ch.TextTransparency=1-cp
         end
     end
+    -- title + clock live outside contentArea, fade them the same way
+    -- so nothing floats over the screen once the panel is collapsed
+    titleLbl.TextTransparency=1-cp
+    timeLbl.TextTransparency=1-cp
 end
 
 -- ══════════════════════════════════════════════════════════════════
@@ -637,18 +656,45 @@ UIS.InputEnded:Connect(function(input)
 end)
 
 -- ══════════════════════════════════════════════════════════════════
+--  SCREEN-SIZE / ORIENTATION REFLOW
+-- ══════════════════════════════════════════════════════════════════
+local function reflow()
+    if not introDone then return end
+    if dragActive or topDragActive or busy then return end
+    applyProgress(collapsed and 0 or 1)
+end
+
+local function bindViewportListener()
+    local cam=workspace.CurrentCamera
+    if cam then
+        cam:GetPropertyChangedSignal("ViewportSize"):Connect(reflow)
+    end
+end
+bindViewportListener()
+workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(bindViewportListener)
+
+-- ══════════════════════════════════════════════════════════════════
 --  INTRO
 -- ══════════════════════════════════════════════════════════════════
-frame.Position=UDim2.new(0,getOffLeftX(),0.5,-PANEL_H/2)
-task.spawn(function()
-    task.wait(0.15)
-    local startT=os.clock()
-    local duration=0.55
-    while os.clock()-startT<duration do
-        local a=(os.clock()-startT)/duration
-        local e=1-math.pow(1-a,3)
-        applyProgress(e)
-        task.wait()
-    end
-    applyProgress(1)
-end)
+do
+    local openW,openH=getOpenDims()
+    local barVisH=getBarVisH(openH)
+    local hiddenX=getIntroHiddenX()
+    frame.Position=UDim2.new(0,hiddenX,0.5,-barVisH/2)
+    frame.Size=UDim2.new(0,BAR_W_COLLAPSED,0,barVisH)
+    task.spawn(function()
+        task.wait(0.15)
+        local startT=os.clock()
+        local duration=0.55
+        while os.clock()-startT<duration do
+            local a=(os.clock()-startT)/duration
+            local e=1-math.pow(1-a,3)
+            applyProgress(e)
+            local curX=hiddenX+(PANEL_X-hiddenX)*e
+            frame.Position=UDim2.new(0,math.floor(curX+0.5),frame.Position.Y.Scale,frame.Position.Y.Offset)
+            task.wait()
+        end
+        applyProgress(1)
+        introDone=true
+    end)
+end
