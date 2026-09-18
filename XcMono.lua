@@ -78,20 +78,19 @@ if not parented then
 end
 
 -- ══════════════════════════════════════════════════════════════════
---  CONSTANTS
+--  CONSTANTS (mobile-friendly sizing)
 -- ══════════════════════════════════════════════════════════════════
-local PANEL_W=520
-local PANEL_H=320
-local PANEL_SIDEBAR_W=100
+local PANEL_W=340
+local PANEL_H=220
+local PANEL_SIDEBAR_W=76
 local PANEL_X=12
 
-local BAR_W_COLLAPSED=44
-local BAR_VISIBLE_H=240
+local BAR_W_COLLAPSED=36
+local BAR_VISIBLE_H=160
 
-local LINE_THICK=3
-local LINE_LEN_COLLAPSED=20
-local LINE_LEN_OPEN=BAR_W_COLLAPSED-4
-local LINE_HITBOX=26
+local LINE_THICK=5
+local LINE_LEN_COLLAPSED=24
+local LINE_HITBOX=32
 
 local function getViewport()
     local cam=workspace.CurrentCamera
@@ -104,8 +103,8 @@ end
 
 local function getOpenDims()
     local vp=getViewport()
-    local w=math.min(PANEL_W,math.max(300,vp.X-24))
-    local h=math.min(PANEL_H,math.max(220,vp.Y-24))
+    local w=math.min(PANEL_W,math.max(280,vp.X-24))
+    local h=math.min(PANEL_H,math.max(180,vp.Y-60))
     return w,h
 end
 
@@ -134,7 +133,7 @@ stroke(frame,C.border,1,0)
 -- ══════════════════════════════════════════════════════════════════
 local topBar=Instance.new("Frame")
 topBar.Name="TopBar"
-topBar.Size=UDim2.new(1,0,0,40)
+topBar.Size=UDim2.new(1,0,0,34)
 topBar.Position=UDim2.new(0,0,0,0)
 topBar.BackgroundColor3=C.panelTop
 topBar.BorderSizePixel=0
@@ -150,25 +149,25 @@ topBarStroke.LineJoinMode=Enum.LineJoinMode.Miter
 topBarStroke.Parent=topBar
 
 local titleLbl=Instance.new("TextLabel")
-titleLbl.Size=UDim2.new(0,200,1,0)
-titleLbl.Position=UDim2.new(0,16,0,0)
+titleLbl.Size=UDim2.new(0,140,1,0)
+titleLbl.Position=UDim2.new(0,12,0,0)
 titleLbl.BackgroundTransparency=1
 titleLbl.Font=Enum.Font.GothamBold
 titleLbl.Text="XcMono"
 titleLbl.TextColor3=C.text
-titleLbl.TextSize=15
+titleLbl.TextSize=13
 titleLbl.TextXAlignment=Enum.TextXAlignment.Left
 crisp(titleLbl)
 titleLbl.Parent=topBar
 
 local timeLbl=Instance.new("TextLabel")
-timeLbl.Size=UDim2.new(0,200,1,0)
-timeLbl.Position=UDim2.new(1,-260,0,0)
+timeLbl.Size=UDim2.new(0,160,1,0)
+timeLbl.Position=UDim2.new(1,-210,0,0)
 timeLbl.BackgroundTransparency=1
 timeLbl.Font=Enum.Font.Code
 timeLbl.Text="12:00:00 AM PHT"
 timeLbl.TextColor3=C.subText
-timeLbl.TextSize=11
+timeLbl.TextSize=10
 timeLbl.TextXAlignment=Enum.TextXAlignment.Right
 crisp(timeLbl)
 timeLbl.Parent=topBar
@@ -193,14 +192,14 @@ end)
 -- ══════════════════════════════════════════════════════════════════
 local minusBtn=Instance.new("TextButton")
 minusBtn.Name="MinusBtn"
-minusBtn.Size=UDim2.new(0,36,0,36)
-minusBtn.Position=UDim2.new(1,-42,0,2)
+minusBtn.Size=UDim2.new(0,30,0,30)
+minusBtn.Position=UDim2.new(1,-36,0,2)
 minusBtn.BackgroundTransparency=1
 minusBtn.BorderSizePixel=0
 minusBtn.Font=Enum.Font.GothamBold
 minusBtn.Text="−"
 minusBtn.TextColor3=Color3.fromRGB(0,0,0)
-minusBtn.TextSize=20
+minusBtn.TextSize=18
 minusBtn.AutoButtonColor=false
 minusBtn.ZIndex=6
 minusBtn.Parent=topBar
@@ -211,8 +210,8 @@ crisp(minusBtn)
 -- ══════════════════════════════════════════════════════════════════
 local sidebar=Instance.new("Frame")
 sidebar.Name="Sidebar"
-sidebar.Size=UDim2.new(0,PANEL_SIDEBAR_W,1,-40)
-sidebar.Position=UDim2.new(0,0,0,40)
+sidebar.Size=UDim2.new(0,PANEL_SIDEBAR_W,1,-34)
+sidebar.Position=UDim2.new(0,0,0,34)
 sidebar.BackgroundColor3=C.sidebar
 sidebar.BorderSizePixel=0
 sidebar.ClipsDescendants=true
@@ -233,14 +232,14 @@ sideLayout.Parent=sidebar
 
 local homeTab=Instance.new("TextButton")
 homeTab.Name="HomeTab"
-homeTab.Size=UDim2.new(1,0,0,36)
+homeTab.Size=UDim2.new(1,0,0,30)
 homeTab.Position=UDim2.new(0,0,0,0)
 homeTab.BackgroundColor3=C.activeTab
 homeTab.BorderSizePixel=0
 homeTab.Font=Enum.Font.GothamMedium
 homeTab.Text="  Home"
 homeTab.TextColor3=C.text
-homeTab.TextSize=11
+homeTab.TextSize=10
 homeTab.TextXAlignment=Enum.TextXAlignment.Left
 homeTab.AutoButtonColor=false
 homeTab.LayoutOrder=1
@@ -257,49 +256,41 @@ homeStroke.Parent=homeTab
 crisp(homeTab)
 
 -- ══════════════════════════════════════════════════════════════════
---  4 BOXES (beautified)
+--  4 BOXES (2x2 grid, centered in sidebar)
 -- ══════════════════════════════════════════════════════════════════
 local boxesHolder=Instance.new("Frame")
 boxesHolder.Name="QuickBoxes"
-boxesHolder.Size=UDim2.new(1,0,0,152)
-boxesHolder.Position=UDim2.new(0,0,1,-160)
+boxesHolder.Size=UDim2.new(1,0,0,68)
+boxesHolder.Position=UDim2.new(0,0,0.5,-34)
 boxesHolder.BackgroundTransparency=1
 boxesHolder.Visible=false
 boxesHolder.ZIndex=3
 boxesHolder.Parent=sidebar
 
-local boxesLayout=Instance.new("UIListLayout")
-boxesLayout.Padding=UDim.new(0,8)
-boxesLayout.SortOrder=Enum.SortOrder.LayoutOrder
-boxesLayout.HorizontalAlignment=Enum.HorizontalAlignment.Center
-boxesLayout.VerticalAlignment=Enum.VerticalAlignment.Bottom
-boxesLayout.Parent=boxesHolder
+local boxesGrid=Instance.new("UIGridLayout")
+boxesGrid.CellSize=UDim2.new(0,24,0,24)
+boxesGrid.CellPadding=UDim2.new(0,4,0,4)
+boxesGrid.SortOrder=Enum.SortOrder.LayoutOrder
+boxesGrid.HorizontalAlignment=Enum.HorizontalAlignment.Center
+boxesGrid.VerticalAlignment=Enum.VerticalAlignment.Center
+boxesGrid.Parent=boxesHolder
 
 local quickBoxes={}
 for i=1,4 do
     local wrap=Instance.new("Frame")
     wrap.Name="BoxWrap"..i
-    wrap.Size=UDim2.new(0,28,0,28)
-    wrap.BackgroundTransparency=1
+    wrap.Size=UDim2.new(0,24,0,24)
+    wrap.BackgroundColor3=C.barFill
+    wrap.BorderSizePixel=0
     wrap.LayoutOrder=i
     wrap.ZIndex=4
     wrap.Parent=boxesHolder
-
-    local b=Instance.new("Frame")
-    b.Name="Box"..i
-    b.Size=UDim2.new(1,0,1,0)
-    b.Position=UDim2.new(0,0,0,0)
-    b.BackgroundColor3=C.barFill
-    b.BorderSizePixel=0
-    b.ZIndex=4
-    b.Parent=wrap
-    stroke(b,C.border,1,0.15)
+    stroke(wrap,C.border,1,0.15)
 
     local corner=Instance.new("UICorner")
-    corner.CornerRadius=UDim.new(0,6)
-    corner.Parent=b
+    corner.CornerRadius=UDim.new(0,5)
+    corner.Parent=wrap
 
-    -- subtle inner dot so it doesn't look totally blank
     local dot=Instance.new("Frame")
     dot.Name="Dot"
     dot.Size=UDim2.new(0,6,0,6)
@@ -308,7 +299,7 @@ for i=1,4 do
     dot.BackgroundTransparency=0.5
     dot.BorderSizePixel=0
     dot.ZIndex=5
-    dot.Parent=b
+    dot.Parent=wrap
     local dc=Instance.new("UICorner")
     dc.CornerRadius=UDim.new(0.5,0)
     dc.Parent=dot
@@ -317,10 +308,7 @@ for i=1,4 do
 end
 
 -- ══════════════════════════════════════════════════════════════════
---  BLACK LINE HANDLE (replaces circle arrow)
---  - collapsed: short black line (20px)
---  - open: full-length black line (bar width - 4)
---  - clickable via invisible hitbox around it
+--  BLACK LINE HANDLE
 -- ══════════════════════════════════════════════════════════════════
 local lineHit=Instance.new("TextButton")
 lineHit.Name="LineHandle"
@@ -352,8 +340,8 @@ crisp(lineHit)
 -- ══════════════════════════════════════════════════════════════════
 local contentArea=Instance.new("Frame")
 contentArea.Name="ContentArea"
-contentArea.Size=UDim2.new(1,-PANEL_SIDEBAR_W,1,-40)
-contentArea.Position=UDim2.new(0,PANEL_SIDEBAR_W,0,40)
+contentArea.Size=UDim2.new(1,-PANEL_SIDEBAR_W,1,-34)
+contentArea.Position=UDim2.new(0,PANEL_SIDEBAR_W,0,34)
 contentArea.BackgroundColor3=C.panel
 contentArea.BorderSizePixel=0
 contentArea.ClipsDescendants=true
@@ -368,20 +356,20 @@ homePage.Visible=true
 homePage.Parent=contentArea
 
 local homeLabel=Instance.new("TextLabel")
-homeLabel.Size=UDim2.new(1,0,0,20)
-homeLabel.Position=UDim2.new(0,16,0,16)
+homeLabel.Size=UDim2.new(1,0,0,18)
+homeLabel.Position=UDim2.new(0,14,0,14)
 homeLabel.BackgroundTransparency=1
 homeLabel.Font=Enum.Font.GothamBold
 homeLabel.Text="HOME"
 homeLabel.TextColor3=C.text
-homeLabel.TextSize=13
+homeLabel.TextSize=12
 homeLabel.TextXAlignment=Enum.TextXAlignment.Left
 crisp(homeLabel)
 homeLabel.Parent=homePage
 
 local homeSub=Instance.new("TextLabel")
-homeSub.Size=UDim2.new(1,-32,0,16)
-homeSub.Position=UDim2.new(0,16,0,38)
+homeSub.Size=UDim2.new(1,-28,0,16)
+homeSub.Position=UDim2.new(0,14,0,34)
 homeSub.BackgroundTransparency=1
 homeSub.Font=Enum.Font.Gotham
 homeSub.Text="welcome to XcMono"
@@ -399,14 +387,13 @@ local busy=false
 local introDone=false
 
 -- ══════════════════════════════════════════════════════════════════
---  TOPBAR DRAG (bulletproof — captures input, follows finger/mouse
---  even at max speed using UIS.InputChanged + UIS.TouchMoved)
+--  TOPBAR DRAG
 -- ══════════════════════════════════════════════════════════════════
 local topDragActive=false
 local topDragStartPos=nil
 local frameStartPos=nil
 
-topBar.InputBegan:Connect(function(input)
+local function beginTopDrag(input)
     if collapsed then return end
     if input.UserInputType==Enum.UserInputType.MouseButton1
         or input.UserInputType==Enum.UserInputType.Touch then
@@ -414,20 +401,12 @@ topBar.InputBegan:Connect(function(input)
         topDragStartPos=input.Position
         frameStartPos=frame.Position
     end
-end)
+end
 
 local function stopTopDrag()
     topDragActive=false
 end
 
-topBar.InputEnded:Connect(function(input)
-    if input.UserInputType==Enum.UserInputType.MouseButton1
-        or input.UserInputType==Enum.UserInputType.Touch then
-        stopTopDrag()
-    end
-end)
-
--- dedicated handlers (UIS) so speed doesn't drop the drag
 local function updateTopDrag(pos)
     if not topDragActive then return end
     local d=pos-topDragStartPos
@@ -438,6 +417,15 @@ local function updateTopDrag(pos)
         frameStartPos.Y.Offset+math.floor(d.Y+0.5)
     )
 end
+
+topBar.InputBegan:Connect(beginTopDrag)
+
+topBar.InputEnded:Connect(function(input)
+    if input.UserInputType==Enum.UserInputType.MouseButton1
+        or input.UserInputType==Enum.UserInputType.Touch then
+        stopTopDrag()
+    end
+end)
 
 UIS.InputChanged:Connect(function(input)
     if input.UserInputType==Enum.UserInputType.MouseMovement then
@@ -458,9 +446,7 @@ UIS.InputEnded:Connect(function(input)
     end
 end)
 
-UIS.TouchEnded:Connect(function()
-    stopTopDrag()
-end)
+UIS.TouchEnded:Connect(stopTopDrag)
 
 -- ══════════════════════════════════════════════════════════════════
 --  APPLY PROGRESS
@@ -476,12 +462,9 @@ local function applyProgress(p)
     local fh=barVisH+(openH-barVisH)*p
     local fyOff=-barVisH/2+(-openH/2+barVisH/2)*p
 
-    sidebar.Size=UDim2.new(0,bw,1,-40)
-
-    -- line handle follows sidebar edge, positioned inside bar when open
+    sidebar.Size=UDim2.new(0,bw,1,-34)
     lineHit.Position=UDim2.new(0,bw-LINE_HITBOX/2,0.5,-LINE_HITBOX/2)
 
-    -- line visual: grows from 20px to (bar width - 8)
     local ll=LINE_LEN_COLLAPSED+(BAR_W_COLLAPSED-8-LINE_LEN_COLLAPSED)*p
     lineVis.Size=UDim2.new(0,math.floor(ll+0.5),0,LINE_THICK)
     lineVis.Position=UDim2.new(0.5,-math.floor(ll/2+0.5),0.5,-LINE_THICK/2)
@@ -589,7 +572,7 @@ minusBtn.Activated:Connect(function()
 end)
 
 -- ══════════════════════════════════════════════════════════════════
---  BLACK LINE HANDLE — click/tap to toggle
+--  BLACK LINE HANDLE
 -- ══════════════════════════════════════════════════════════════════
 lineHit.Activated:Connect(function()
     if busy then return end
@@ -600,7 +583,6 @@ lineHit.Activated:Connect(function()
     end
 end)
 
--- hover effect on the line
 lineHit.MouseEnter:Connect(function()
     tw(lineVis,0.15,{BackgroundColor3=Color3.fromRGB(60,60,70)})
 end)
@@ -609,7 +591,7 @@ lineHit.MouseLeave:Connect(function()
 end)
 
 -- ══════════════════════════════════════════════════════════════════
---  REFLOW ON SCREEN CHANGE
+--  REFLOW
 -- ══════════════════════════════════════════════════════════════════
 local function reflow()
     if not introDone then return end
