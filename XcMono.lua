@@ -17,13 +17,16 @@ local PH=8*3600
 local C={
     panel=Color3.fromRGB(255,255,255),
     panelTop=Color3.fromRGB(248,248,250),
+    track=Color3.fromRGB(244,244,247),
+    button=Color3.fromRGB(240,240,244),
+    buttonHover=Color3.fromRGB(232,232,236),
+    buttonPressed=Color3.fromRGB(210,210,216),
     border=Color3.fromRGB(210,210,216),
     text=Color3.fromRGB(20,20,25),
     subText=Color3.fromRGB(120,120,130),
+    accent=Color3.fromRGB(0,0,0),
     sidebar=Color3.fromRGB(246,246,248),
     activeTab=Color3.fromRGB(225,225,232),
-    barFill=Color3.fromRGB(235,235,238),
-    barLine=Color3.fromRGB(20,20,25),
 }
 
 for _,n in ipairs({GN})do
@@ -50,7 +53,7 @@ local function tw(o,d,p,st,dr)
     return a
 end
 
-local function crisp(lbl)
+local function crispText(lbl)
     pcall(function()
         lbl.TextScaled=false
         lbl.RichText=false
@@ -77,63 +80,20 @@ if not parented then
     end)
 end
 
--- ══════════════════════════════════════════════════════════════════
---  CONSTANTS (mobile-friendly sizing)
--- ══════════════════════════════════════════════════════════════════
-local PANEL_W=340
-local PANEL_H=220
-local PANEL_SIDEBAR_W=76
-local PANEL_X=12
-
-local BAR_W_COLLAPSED=36
-local BAR_VISIBLE_H=160
-
-local LINE_THICK=5
-local LINE_LEN_COLLAPSED=24
-local LINE_HITBOX=32
-
-local function getViewport()
-    local cam=workspace.CurrentCamera
-    if cam then
-        local v=cam.ViewportSize
-        if v and v.X>0 and v.Y>0 then return v end
-    end
-    return Vector2.new(1280,720)
-end
-
-local function getOpenDims()
-    local vp=getViewport()
-    local w=math.min(PANEL_W,math.max(280,vp.X-24))
-    local h=math.min(PANEL_H,math.max(180,vp.Y-60))
-    return w,h
-end
-
-local function getBarVisH(openH)
-    return math.min(BAR_VISIBLE_H,openH-40)
-end
-
--- ══════════════════════════════════════════════════════════════════
---  MAIN FRAME
--- ══════════════════════════════════════════════════════════════════
-local openW0,openH0=getOpenDims()
-
 local frame=Instance.new("Frame")
 frame.Name="MainPanel"
-frame.Size=UDim2.new(0,openW0,0,openH0)
-frame.Position=UDim2.new(0,PANEL_X,0.5,-openH0/2)
+frame.Size=UDim2.new(0,520,0,320)
+frame.Position=UDim2.new(0,12,0.5,-160)
 frame.BackgroundColor3=C.panel
 frame.BorderSizePixel=0
-frame.ClipsDescendants=false
+frame.ClipsDescendants=true
 frame.Active=true
 frame.Parent=gui
 stroke(frame,C.border,1,0)
 
--- ══════════════════════════════════════════════════════════════════
---  TOP BAR
--- ══════════════════════════════════════════════════════════════════
 local topBar=Instance.new("Frame")
 topBar.Name="TopBar"
-topBar.Size=UDim2.new(1,0,0,34)
+topBar.Size=UDim2.new(1,0,0,40)
 topBar.Position=UDim2.new(0,0,0,0)
 topBar.BackgroundColor3=C.panelTop
 topBar.BorderSizePixel=0
@@ -149,27 +109,27 @@ topBarStroke.LineJoinMode=Enum.LineJoinMode.Miter
 topBarStroke.Parent=topBar
 
 local titleLbl=Instance.new("TextLabel")
-titleLbl.Size=UDim2.new(0,140,1,0)
-titleLbl.Position=UDim2.new(0,12,0,0)
+titleLbl.Size=UDim2.new(0,200,1,0)
+titleLbl.Position=UDim2.new(0,16,0,0)
 titleLbl.BackgroundTransparency=1
 titleLbl.Font=Enum.Font.GothamBold
 titleLbl.Text="XcMono"
 titleLbl.TextColor3=C.text
-titleLbl.TextSize=13
+titleLbl.TextSize=15
 titleLbl.TextXAlignment=Enum.TextXAlignment.Left
-crisp(titleLbl)
+crispText(titleLbl)
 titleLbl.Parent=topBar
 
 local timeLbl=Instance.new("TextLabel")
-timeLbl.Size=UDim2.new(0,160,1,0)
-timeLbl.Position=UDim2.new(1,-210,0,0)
+timeLbl.Size=UDim2.new(0,220,1,0)
+timeLbl.Position=UDim2.new(1,-236,0,0)
 timeLbl.BackgroundTransparency=1
 timeLbl.Font=Enum.Font.Code
 timeLbl.Text="12:00:00 AM PHT"
 timeLbl.TextColor3=C.subText
-timeLbl.TextSize=10
+timeLbl.TextSize=11
 timeLbl.TextXAlignment=Enum.TextXAlignment.Right
-crisp(timeLbl)
+crispText(timeLbl)
 timeLbl.Parent=topBar
 
 local function phTime()
@@ -187,31 +147,10 @@ task.spawn(function()
     end
 end)
 
--- ══════════════════════════════════════════════════════════════════
---  MINUS BUTTON
--- ══════════════════════════════════════════════════════════════════
-local minusBtn=Instance.new("TextButton")
-minusBtn.Name="MinusBtn"
-minusBtn.Size=UDim2.new(0,30,0,30)
-minusBtn.Position=UDim2.new(1,-36,0,2)
-minusBtn.BackgroundTransparency=1
-minusBtn.BorderSizePixel=0
-minusBtn.Font=Enum.Font.GothamBold
-minusBtn.Text="−"
-minusBtn.TextColor3=Color3.fromRGB(0,0,0)
-minusBtn.TextSize=18
-minusBtn.AutoButtonColor=false
-minusBtn.ZIndex=6
-minusBtn.Parent=topBar
-crisp(minusBtn)
-
--- ══════════════════════════════════════════════════════════════════
---  SIDEBAR
--- ══════════════════════════════════════════════════════════════════
 local sidebar=Instance.new("Frame")
 sidebar.Name="Sidebar"
-sidebar.Size=UDim2.new(0,PANEL_SIDEBAR_W,1,-34)
-sidebar.Position=UDim2.new(0,0,0,34)
+sidebar.Size=UDim2.new(0,100,1,-40)
+sidebar.Position=UDim2.new(0,0,0,40)
 sidebar.BackgroundColor3=C.sidebar
 sidebar.BorderSizePixel=0
 sidebar.ClipsDescendants=true
@@ -232,14 +171,14 @@ sideLayout.Parent=sidebar
 
 local homeTab=Instance.new("TextButton")
 homeTab.Name="HomeTab"
-homeTab.Size=UDim2.new(1,0,0,30)
+homeTab.Size=UDim2.new(1,0,0,36)
 homeTab.Position=UDim2.new(0,0,0,0)
 homeTab.BackgroundColor3=C.activeTab
 homeTab.BorderSizePixel=0
 homeTab.Font=Enum.Font.GothamMedium
 homeTab.Text="  Home"
 homeTab.TextColor3=C.text
-homeTab.TextSize=10
+homeTab.TextSize=11
 homeTab.TextXAlignment=Enum.TextXAlignment.Left
 homeTab.AutoButtonColor=false
 homeTab.LayoutOrder=1
@@ -253,95 +192,12 @@ homeStroke.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
 homeStroke.LineJoinMode=Enum.LineJoinMode.Miter
 homeStroke.Parent=homeTab
 
-crisp(homeTab)
+crispText(homeTab)
 
--- ══════════════════════════════════════════════════════════════════
---  4 BOXES (2x2 grid, centered in sidebar)
--- ══════════════════════════════════════════════════════════════════
-local boxesHolder=Instance.new("Frame")
-boxesHolder.Name="QuickBoxes"
-boxesHolder.Size=UDim2.new(1,0,0,68)
-boxesHolder.Position=UDim2.new(0,0,0.5,-34)
-boxesHolder.BackgroundTransparency=1
-boxesHolder.Visible=false
-boxesHolder.ZIndex=3
-boxesHolder.Parent=sidebar
-
-local boxesGrid=Instance.new("UIGridLayout")
-boxesGrid.CellSize=UDim2.new(0,24,0,24)
-boxesGrid.CellPadding=UDim2.new(0,4,0,4)
-boxesGrid.SortOrder=Enum.SortOrder.LayoutOrder
-boxesGrid.HorizontalAlignment=Enum.HorizontalAlignment.Center
-boxesGrid.VerticalAlignment=Enum.VerticalAlignment.Center
-boxesGrid.Parent=boxesHolder
-
-local quickBoxes={}
-for i=1,4 do
-    local wrap=Instance.new("Frame")
-    wrap.Name="BoxWrap"..i
-    wrap.Size=UDim2.new(0,24,0,24)
-    wrap.BackgroundColor3=C.barFill
-    wrap.BorderSizePixel=0
-    wrap.LayoutOrder=i
-    wrap.ZIndex=4
-    wrap.Parent=boxesHolder
-    stroke(wrap,C.border,1,0.15)
-
-    local corner=Instance.new("UICorner")
-    corner.CornerRadius=UDim.new(0,5)
-    corner.Parent=wrap
-
-    local dot=Instance.new("Frame")
-    dot.Name="Dot"
-    dot.Size=UDim2.new(0,6,0,6)
-    dot.Position=UDim2.new(0.5,-3,0.5,-3)
-    dot.BackgroundColor3=C.subText
-    dot.BackgroundTransparency=0.5
-    dot.BorderSizePixel=0
-    dot.ZIndex=5
-    dot.Parent=wrap
-    local dc=Instance.new("UICorner")
-    dc.CornerRadius=UDim.new(0.5,0)
-    dc.Parent=dot
-
-    quickBoxes[i]=wrap
-end
-
--- ══════════════════════════════════════════════════════════════════
---  BLACK LINE HANDLE
--- ══════════════════════════════════════════════════════════════════
-local lineHit=Instance.new("TextButton")
-lineHit.Name="LineHandle"
-lineHit.Size=UDim2.new(0,LINE_HITBOX,0,LINE_HITBOX)
-lineHit.Position=UDim2.new(0,PANEL_SIDEBAR_W-LINE_HITBOX/2,0.5,-LINE_HITBOX/2)
-lineHit.BackgroundTransparency=1
-lineHit.Text=""
-lineHit.AutoButtonColor=false
-lineHit.ZIndex=10
-lineHit.Parent=frame
-
-local lineVis=Instance.new("Frame")
-lineVis.Name="LineVisual"
-lineVis.Size=UDim2.new(0,LINE_LEN_COLLAPSED,0,LINE_THICK)
-lineVis.Position=UDim2.new(0.5,-LINE_LEN_COLLAPSED/2,0.5,-LINE_THICK/2)
-lineVis.BackgroundColor3=C.barLine
-lineVis.BorderSizePixel=0
-lineVis.ZIndex=11
-lineVis.Parent=lineHit
-
-local lineCorner=Instance.new("UICorner")
-lineCorner.CornerRadius=UDim.new(1,0)
-lineCorner.Parent=lineVis
-
-crisp(lineHit)
-
--- ══════════════════════════════════════════════════════════════════
---  CONTENT AREA
--- ══════════════════════════════════════════════════════════════════
 local contentArea=Instance.new("Frame")
 contentArea.Name="ContentArea"
-contentArea.Size=UDim2.new(1,-PANEL_SIDEBAR_W,1,-34)
-contentArea.Position=UDim2.new(0,PANEL_SIDEBAR_W,0,34)
+contentArea.Size=UDim2.new(1,-100,1,-40)
+contentArea.Position=UDim2.new(0,100,0,40)
 contentArea.BackgroundColor3=C.panel
 contentArea.BorderSizePixel=0
 contentArea.ClipsDescendants=true
@@ -356,280 +212,81 @@ homePage.Visible=true
 homePage.Parent=contentArea
 
 local homeLabel=Instance.new("TextLabel")
-homeLabel.Size=UDim2.new(1,0,0,18)
-homeLabel.Position=UDim2.new(0,14,0,14)
+homeLabel.Size=UDim2.new(1,0,0,20)
+homeLabel.Position=UDim2.new(0,16,0,16)
 homeLabel.BackgroundTransparency=1
 homeLabel.Font=Enum.Font.GothamBold
 homeLabel.Text="HOME"
 homeLabel.TextColor3=C.text
-homeLabel.TextSize=12
+homeLabel.TextSize=13
 homeLabel.TextXAlignment=Enum.TextXAlignment.Left
-crisp(homeLabel)
+crispText(homeLabel)
 homeLabel.Parent=homePage
 
 local homeSub=Instance.new("TextLabel")
-homeSub.Size=UDim2.new(1,-28,0,16)
-homeSub.Position=UDim2.new(0,14,0,34)
+homeSub.Size=UDim2.new(1,-32,0,16)
+homeSub.Position=UDim2.new(0,16,0,38)
 homeSub.BackgroundTransparency=1
 homeSub.Font=Enum.Font.Gotham
 homeSub.Text="welcome to XcMono"
 homeSub.TextColor3=C.subText
 homeSub.TextSize=10
 homeSub.TextXAlignment=Enum.TextXAlignment.Left
-crisp(homeSub)
+crispText(homeSub)
 homeSub.Parent=homePage
 
--- ══════════════════════════════════════════════════════════════════
---  STATE
--- ══════════════════════════════════════════════════════════════════
-local collapsed=false
-local busy=false
-local introDone=false
+local dragging=false
+local dragStart=nil
+local startPos=nil
+local activeInput=nil
 
--- ══════════════════════════════════════════════════════════════════
---  TOPBAR DRAG
--- ══════════════════════════════════════════════════════════════════
-local topDragActive=false
-local topDragStartPos=nil
-local frameStartPos=nil
-
-local function beginTopDrag(input)
-    if collapsed then return end
+topBar.InputBegan:Connect(function(input)
     if input.UserInputType==Enum.UserInputType.MouseButton1
         or input.UserInputType==Enum.UserInputType.Touch then
-        topDragActive=true
-        topDragStartPos=input.Position
-        frameStartPos=frame.Position
+        dragging=true
+        activeInput=input
+        dragStart=input.Position
+        startPos=frame.Position
     end
-end
+end)
 
-local function stopTopDrag()
-    topDragActive=false
+local function stopDrag(input)
+    if activeInput and input~=activeInput then return end
+    dragging=false
+    activeInput=nil
 end
-
-local function updateTopDrag(pos)
-    if not topDragActive then return end
-    local d=pos-topDragStartPos
-    frame.Position=UDim2.new(
-        frameStartPos.X.Scale,
-        frameStartPos.X.Offset+math.floor(d.X+0.5),
-        frameStartPos.Y.Scale,
-        frameStartPos.Y.Offset+math.floor(d.Y+0.5)
-    )
-end
-
-topBar.InputBegan:Connect(beginTopDrag)
 
 topBar.InputEnded:Connect(function(input)
     if input.UserInputType==Enum.UserInputType.MouseButton1
         or input.UserInputType==Enum.UserInputType.Touch then
-        stopTopDrag()
+        stopDrag(input)
     end
 end)
 
 UIS.InputChanged:Connect(function(input)
-    if input.UserInputType==Enum.UserInputType.MouseMovement then
-        updateTopDrag(input.Position)
-    end
-end)
-
-UIS.TouchMoved:Connect(function(input)
-    if input.UserInputType==Enum.UserInputType.Touch then
-        updateTopDrag(input.Position)
+    if not dragging then return end
+    if activeInput and input~=activeInput then return end
+    if input.UserInputType==Enum.UserInputType.MouseMovement
+        or input.UserInputType==Enum.UserInputType.Touch then
+        local delta=input.Position-dragStart
+        frame.Position=UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset+math.floor(delta.X+0.5),
+            startPos.Y.Scale,
+            startPos.Y.Offset+math.floor(delta.Y+0.5)
+        )
     end
 end)
 
 UIS.InputEnded:Connect(function(input)
     if input.UserInputType==Enum.UserInputType.MouseButton1
         or input.UserInputType==Enum.UserInputType.Touch then
-        stopTopDrag()
+        stopDrag(input)
     end
 end)
 
-UIS.TouchEnded:Connect(stopTopDrag)
-
--- ══════════════════════════════════════════════════════════════════
---  APPLY PROGRESS
--- ══════════════════════════════════════════════════════════════════
-local function applyProgress(p)
-    p=math.clamp(p,0,1)
-
-    local openW,openH=getOpenDims()
-    local barVisH=getBarVisH(openH)
-
-    local bw=BAR_W_COLLAPSED+(PANEL_SIDEBAR_W-BAR_W_COLLAPSED)*p
-    local fw=BAR_W_COLLAPSED+(openW-BAR_W_COLLAPSED)*p
-    local fh=barVisH+(openH-barVisH)*p
-    local fyOff=-barVisH/2+(-openH/2+barVisH/2)*p
-
-    sidebar.Size=UDim2.new(0,bw,1,-34)
-    lineHit.Position=UDim2.new(0,bw-LINE_HITBOX/2,0.5,-LINE_HITBOX/2)
-
-    local ll=LINE_LEN_COLLAPSED+(BAR_W_COLLAPSED-8-LINE_LEN_COLLAPSED)*p
-    lineVis.Size=UDim2.new(0,math.floor(ll+0.5),0,LINE_THICK)
-    lineVis.Position=UDim2.new(0.5,-math.floor(ll/2+0.5),0.5,-LINE_THICK/2)
-
-    if p<0.4 then
-        boxesHolder.Visible=true
-        homeTab.Visible=false
-        for _,w in ipairs(quickBoxes)do
-            w.BackgroundTransparency=0
-        end
-    else
-        boxesHolder.Visible=false
-        homeTab.Visible=true
-    end
-
-    frame.Position=UDim2.new(0,PANEL_X,0.5,math.floor(fyOff+0.5))
-    frame.Size=UDim2.new(0,math.floor(fw+0.5),0,math.floor(fh+0.5))
-
-    local cp=math.clamp((p-0.5)/0.5,0,1)
-    contentArea.BackgroundTransparency=1-cp
-    for _,ch in ipairs(contentArea:GetDescendants())do
-        if ch:IsA("TextLabel")or ch:IsA("TextButton")then
-            ch.TextTransparency=1-cp
-        end
-    end
-    titleLbl.TextTransparency=1-cp
-    timeLbl.TextTransparency=1-cp
-end
-
--- ══════════════════════════════════════════════════════════════════
---  COLLAPSE / EXPAND
--- ══════════════════════════════════════════════════════════════════
-local function collapse()
-    if busy or collapsed then return end
-    busy=true
-
-    tw(minusBtn,0.15,{TextTransparency=1},Enum.EasingStyle.Quad,Enum.EasingDirection.In)
-
-    for _,w in ipairs(quickBoxes)do
-        w.BackgroundTransparency=1
-        tw(w,0.3,{BackgroundTransparency=0})
-    end
-
-    homeTab.Visible=true
-    tw(homeTab,0.15,{TextTransparency=1,BackgroundTransparency=1},Enum.EasingStyle.Quad,Enum.EasingDirection.In)
-    task.delay(0.15,function()
-        homeTab.Visible=false
-        homeTab.BackgroundTransparency=0
-        homeTab.TextTransparency=0
-    end)
-    boxesHolder.Visible=true
-
-    local startT=os.clock()
-    local duration=0.45
-    task.spawn(function()
-        while os.clock()-startT<duration do
-            local a=(os.clock()-startT)/duration
-            local e=1-math.pow(1-a,3)
-            applyProgress(1-e)
-            task.wait()
-        end
-        applyProgress(0)
-        for _,ch in ipairs(contentArea:GetDescendants())do
-            if ch:IsA("TextLabel")or ch:IsA("TextButton")then
-                ch.TextTransparency=1
-            end
-        end
-        contentArea.BackgroundTransparency=1
-        collapsed=true
-        busy=false
-    end)
-end
-
-local function expand()
-    if busy or not collapsed then return end
-    busy=true
-
-    for _,ch in ipairs(contentArea:GetDescendants())do
-        if ch:IsA("TextLabel")or ch:IsA("TextButton")then
-            ch.TextTransparency=1
-        end
-    end
-    contentArea.BackgroundTransparency=1
-
-    local startT=os.clock()
-    local duration=0.5
-    task.spawn(function()
-        while os.clock()-startT<duration do
-            local a=(os.clock()-startT)/duration
-            local e=1-math.pow(1-a,3)
-            applyProgress(e)
-            task.wait()
-        end
-        applyProgress(1)
-        collapsed=false
-        busy=false
-        tw(minusBtn,0.2,{TextTransparency=0},Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
-        homeTab.Visible=true
-        boxesHolder.Visible=false
-    end)
-end
-
-minusBtn.Activated:Connect(function()
-    if not busy then collapse() end
+frame.Position=UDim2.new(0,-600,0.5,-160)
+task.spawn(function()
+    task.wait(0.1)
+    tw(frame,0.45,{Position=UDim2.new(0,12,0.5,-160)},Enum.EasingStyle.Quint)
 end)
-
--- ══════════════════════════════════════════════════════════════════
---  BLACK LINE HANDLE
--- ══════════════════════════════════════════════════════════════════
-lineHit.Activated:Connect(function()
-    if busy then return end
-    if collapsed then
-        expand()
-    else
-        collapse()
-    end
-end)
-
-lineHit.MouseEnter:Connect(function()
-    tw(lineVis,0.15,{BackgroundColor3=Color3.fromRGB(60,60,70)})
-end)
-lineHit.MouseLeave:Connect(function()
-    tw(lineVis,0.15,{BackgroundColor3=C.barLine})
-end)
-
--- ══════════════════════════════════════════════════════════════════
---  REFLOW
--- ══════════════════════════════════════════════════════════════════
-local function reflow()
-    if not introDone then return end
-    if busy then return end
-    applyProgress(collapsed and 0 or 1)
-end
-
-local function bindViewportListener()
-    local cam=workspace.CurrentCamera
-    if cam then
-        cam:GetPropertyChangedSignal("ViewportSize"):Connect(reflow)
-    end
-end
-bindViewportListener()
-workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(bindViewportListener)
-
--- ══════════════════════════════════════════════════════════════════
---  INTRO
--- ══════════════════════════════════════════════════════════════════
-do
-    local openW,openH=getOpenDims()
-    local barVisH=getBarVisH(openH)
-    local hiddenX=-math.min(openW+40,getViewport().X+60)
-    frame.Position=UDim2.new(0,hiddenX,0.5,-barVisH/2)
-    frame.Size=UDim2.new(0,BAR_W_COLLAPSED,0,barVisH)
-    task.spawn(function()
-        task.wait(0.15)
-        local startT=os.clock()
-        local duration=0.55
-        while os.clock()-startT<duration do
-            local a=(os.clock()-startT)/duration
-            local e=1-math.pow(1-a,3)
-            applyProgress(e)
-            local curX=hiddenX+(PANEL_X-hiddenX)*e
-            frame.Position=UDim2.new(0,math.floor(curX+0.5),frame.Position.Y.Scale,frame.Position.Y.Offset)
-            task.wait()
-        end
-        applyProgress(1)
-        introDone=true
-    end)
-end
