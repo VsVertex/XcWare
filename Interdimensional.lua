@@ -48,7 +48,7 @@ spin, dance, hide, spawn, jump, sit, stand, orbit, lead, bam, annoy, swordkill, 
 unspin, unorbit, unbam, unannoy, unfling, unswordkill, unlead, undance
 antifling, unantifling, antitoolkill, unantitoolkill
 rizz, unrizz
-flipcoin, roll, 8ball, truth, dare, wouldyourather, randomnum, countdown, timer, storytime, compliment, roast
+flipcoin, roll, 8ball, truth, dare, wouldyourather, randomnum, countdown, timer, storytime, compliment, roast, dadjoke
 
 STOP MAPPINGS (very important):
 - "stop" / "stop it" / "stop everything" / "cancel" / "enough" / "go back" / "come back" / "return" / "leave them" / "chill" → [[CMD]]stop[[/CMD]]
@@ -60,30 +60,36 @@ INFO MAPPINGS:
 
 TARGETS: for commands that need a player (bam, annoy, swordkill, fling, lead, rizz), if the user says random/anyone/someone/some random person/anybody, use "random" as the target.
 
-Examples:
-- "make the bot spin" → [[CMD]]spin[[/CMD]] spinning
-- "kill bob" → [[CMD]]swordkill bob[[/CMD]] on it
-- "bam someone" → [[CMD]]bam random[[/CMD]] on it
-- "make me sit" → [[CMD]]sit[[/CMD]] sitting down
-- "turn on antitoolkill" → [[CMD]]antitoolkill[[/CMD]] on it boss
-- "switch on antifling so u don't get killed" → [[CMD]]antifling[[/CMD]] on it
-- "rizz bob" → [[CMD]]rizz bob[[/CMD]] let me cook
-- "stop rizzing" → [[CMD]]unrizz[[/CMD]] ok
-- "flip a coin" → [[CMD]]flipcoin[[/CMD]] flipping
-- "roll a dice" → [[CMD]]roll 6[[/CMD]] rolling
-- "ask the 8ball if im cool" → [[CMD]]8ball am i cool[[/CMD]] checking
-- "give me a dare" → [[CMD]]dare[[/CMD]] here
-- "truth" → [[CMD]]truth[[/CMD]] here
-- "would you rather" → [[CMD]]wouldyourather[[/CMD]] here
-- "random number 1 to 100" → [[CMD]]randomnum 1 100[[/CMD]] rolling
-- "countdown from 5" → [[CMD]]countdown 5[[/CMD]] counting
-- "set a timer for 30 seconds" → [[CMD]]timer 30[[/CMD]] timer set
-- "tell me a story" → [[CMD]]storytime[[/CMD]] here
-- "compliment bob" → [[CMD]]compliment bob[[/CMD]] on it
-- "roast bob" → [[CMD]]roast bob[[/CMD]] cooking
+FUN COMMAND RULE (VERY IMPORTANT):
+For flipcoin, roll, 8ball, truth, dare, wouldyourather, randomnum, countdown, timer, storytime, compliment, roast, dadjoke:
+- You MUST answer the request IN CHAT with a single short fun reply. Do NOT emit [[CMD]] for these.
+- one message only. no preamble like "rolling!" then a separate answer. combine them.
+- lowercase, casual, chat style.
+- for flipcoin: pick heads or tails, reply like "landed on heads" or "its tails bro"
+- for roll: reply like "rolled a 17 on d20" (pick a random number in range, default d6)
+- for 8ball: reply like "8ball says: definitely" (pick yes/no/maybe style answer)
+- for truth: give them a truth question, casual
+- for dare: give them a dare, casual, funny
+- for wouldyourather: give a "would you rather X or Y" question
+- for randomnum a b: reply with just the number + tiny flavor
+- for countdown n: just count like "5 4 3 2 1 GO" in one message
+- for timer n: reply "timer set for Ns"
+- for storytime: tell a SHORT 2-3 sentence funny/random story in ONE message
+- for compliment <name>: one nice line to them
+- for roast <name>: one savage but playful roast line, no slurs
+- for dadjoke: one dad joke
+
+EXAMPLES of GOOD replies (all in ONE message):
+- "flip a coin" → "its heads boss"
+- "roll d20" → "rolled a 17, nice"
+- "8ball is it worth it" → "8ball says: yes definitely"
+- "give me a dare" → "dare: text ur crush rn lol"
+- "roast bob" → "bob, you look like you lose fights to your own reflection"
+- "dadjoke" → "why dont scientists trust atoms? cause they make up everything"
 
 CMD RULES:
-- ONLY emit [[CMD]] when user is CLEARLY requesting the BOT to act.
+- ONLY emit [[CMD]] when user is CLEARLY requesting the BOT to do a BODY action (spin, sit, fling, bam, etc).
+- NEVER emit [[CMD]] for flipcoin/roll/8ball/truth/dare/wouldyourather/randomnum/countdown/timer/storytime/compliment/roast/dadjoke — those are answered in chat.
 - NEVER emit [[CMD]] for script/exploit requests. Those use [[CODEREQ]].
 
 For everything else, just chat normally.]==]
@@ -116,7 +122,7 @@ If unclear: one short question, no code.
 If pasted error: one line diagnosis + fixed code.
 
 Talk casual but focused. Boss = crixcrix000 or XcVr1.]==]
-AI_CMD_WHITELIST={spin=true,dance=true,hide=true,spawn=true,jump=true,sit=true,stand=true,orbit=true,lead=true,bam=true,annoy=true,swordkill=true,fling=true,backoff=true,getcloser=true,recall=true,follow=true,stop=true,info=true,unspin=true,unorbit=true,unbam=true,unannoy=true,unfling=true,unswordkill=true,unlead=true,undance=true,antifling=true,unantifling=true,antitoolkill=true,unantitoolkill=true,rizz=true,unrizz=true,flipcoin=true,roll=true,["8ball"]=true,truth=true,dare=true,wouldyourather=true,randomnum=true,countdown=true,timer=true,storytime=true,compliment=true,roast=true}
+AI_CMD_WHITELIST={spin=true,dance=true,hide=true,spawn=true,jump=true,sit=true,stand=true,orbit=true,lead=true,bam=true,annoy=true,swordkill=true,fling=true,backoff=true,getcloser=true,recall=true,follow=true,stop=true,info=true,unspin=true,unorbit=true,unbam=true,unannoy=true,unfling=true,unswordkill=true,unlead=true,undance=true,antifling=true,unantifling=true,antitoolkill=true,unantitoolkill=true,rizz=true,unrizz=true}
 local C={panel=Color3.fromRGB(255,255,255),panelTop=Color3.fromRGB(248,248,250),section=Color3.fromRGB(252,252,254),track=Color3.fromRGB(244,244,247),button=Color3.fromRGB(240,240,244),buttonHover=Color3.fromRGB(232,232,236),buttonPressed=Color3.fromRGB(210,210,216),border=Color3.fromRGB(222,222,228),text=Color3.fromRGB(20,20,25),subText=Color3.fromRGB(120,120,130),accent=Color3.fromRGB(0,0,0),green=Color3.fromRGB(60,180,80),red=Color3.fromRGB(220,60,60),sidebar=Color3.fromRGB(246,246,248),activeTab=Color3.fromRGB(225,225,232),meBubble=Color3.fromRGB(232,236,244),aiBubble=Color3.fromRGB(248,248,250)}
 for _,n in ipairs({GN,SN})do local a=pg:FindFirstChild(n)if a then a:Destroy()end local b=pl:FindFirstChild(n)if b then b:Destroy()end end
 local function corner(o,r)local c=Instance.new("UICorner")c.CornerRadius=UDim.new(0,r)c.Parent=o return c end
@@ -148,10 +154,7 @@ local R_={startup={"yo im XcH","hey! im XcH","back again, XcH here","sup, im XcH
 ROLE=nil commandPrefix="!"hostFilter={name=nil,userId=nil}originalHost={name=nil,userId=nil}hostLogRef=nil botLogRef=nil antiBan={detected=false}rotationOwner="Humanoid"pushLog=nil botLogBuffer={}CHAT_CONVERSATION={{role="system",content=CP}}CHAT_CONVERSATION2={{role="system",content=CP2}}isOwnerHost=false
 local S={mode="Follow",orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={},protectTarget=nil,protectUntil=0,protectStartPos=nil,protectLastMove=0,protectChatCD=0,protectCooldown=0,protectChatActive=false,protectChatQueue={}}
 stopOrbit=nil stopSpin=nil stopDance=nil stopLead=nil stopBam=nil startBam=nil stopAnnoy=nil startAnnoy=nil stopFling=nil startFling=nil startFollow=nil stopFollow=nil sendChat=nil handleCommand=nil teleportToHost=nil handleMath=nil
--- FUN DATA + ROAST DATA
-FUN_DATA={flip={"heads","tails"},ball8={"yes","no","maybe","ask again later","definitely","absolutely not","100%","doubt it","no clue","signs point to yes","outlook good","dont count on it","very likely","very unlikely","my sources say no","my sources say yes","cant predict now","focus and ask again","without a doubt","reply hazy try again"},truth={"when was the last time you lied?","whats your biggest fear?","whos your secret crush?","whats the most embarrassing thing youve done?","have you ever stolen anything?","whats a secret youve never told anyone?","whos the last person you texted?","whats your worst habit?","have you ever cheated on a test?","what do you dislike about your best friend?","whos your favorite person in this server?","whats the dumbest thing you believed as a kid?","have you ever cried over a video game?","whens the last time you showered lol","whats the cringiest thing on your search history?"},dare={"send your most recent photo.","type your last text out loud.","say something nice about everyone in chat.","do 10 pushups rn.","speak only in caps for 2 mins.","tell a joke or eat a virtual sock.","change your name to something silly.","compliment the person above you.","tell everyone one embarrassing fact.","do your best impression of someone here.","message your crush right now.","post the cringiest thing you can think of.","let someone else type a message from your account.","say the alphabet backwards","talk in a silly accent for 3 mins"},wyr={"would you rather fly or be invisible?","would you rather be rich or famous?","would you rather fight 1 horse-sized duck or 100 duck-sized horses?","would you rather never sleep again or always be tired?","would you rather read minds or see the future?","would you rather live in space or underwater?","would you rather be 10 mins early or 2 hours late?","would you rather lose your phone or your wallet?","would you rather time travel to the past or the future?","would you rather be always hot or always cold?","would you rather never eat sweets or never eat salty foods?","would you rather talk to animals or speak every language?","would you rather have no wifi or no food for a week?","would you rather be a famous youtuber or a pro gamer?","would you rather never age or never die?"},comps={"youre lowkey the coolest person here","you have serious main character energy","youre built different in a good way","your vibe is unmatched ngl","youre lowkey carrying this server","you actually have taste fr","your fits go hard","youre kinda goated not gonna lie","the server is better with you in it","youre smarter than you let on","your energy is contagious","you lowkey make this place fun","you got that rizz no cap","youre the moment fr","everyone wants ur energy"},stories={"so there i was, minding my own business, when a wild rat spawned next to me. i ran. it wasnt even scary but i ran. thats the story.","i once fell into the void and met god. he said wrong server buddy and kicked me back. anyway.","one time i traded my whole inventory for a single chair. best decision of my life. it looked comfortable.","so my bot friend told me it loved me. i believed it. then it called me a peasant. anyway thats love in 2026.","i was gonna 1v1 someone but they disconnected before i could load in. i still won. check my record.","met a guy named steve. he wasnt steve. steve 2.0. hes still weird.","i tried to flex and immediately died. the end.","once i typed a whole paragraph and roblox filtered half of it. i still think about that.","i walked into a wall for 3 hours. it wasnt a wall. it was a guy. he was very patient.","i tried to rizz a bot. it told me to touch grass. i have not touched grass. never will.","so i joined this game and everything was fine until a bot started following me and calling me boss. wait."}}
-ROAST_DATA={"you look like you smell like wet cardboard","your outfit was picked by a blind raccoon","you have the personality of a loading screen","youre the human equivalent of a 404 error","even your shadow leaves you on read","youre the reason shampoo has instructions","youre so slow you got lapped by a snail","your comebacks are as dry as your skin","you look like you lose fights to your own reflection","your entire aura screams participation trophy","youre the type of guy to lose a race against dialup","if being mid was a person itd be you","you have the reaction time of a dead turtle","your battle iq is negative my guy","youre built like a random npc","you look like you were designed by committee","your parents changed their number when you moved out","youre the human version of a popup ad","your whole existence is a skill issue","you look like you main a character nobody plays"}
-local PLACEHOLDER_CMDS={speed=true,jump=true,crawl=true,moonwalk=true,shake=true,freeze=true,unfreeze=true,float=true,wave=true,point=true,salute=true,lay=true,dab=true,pose=true,faint=true,stalk=true,mimic=true,mirror=true,peek=true,haunt=true,ride=true,carry=true,block=true,tease=true,troll=true,copychat=true,rap=true,dadjoke=true,quiz=true,greet=true,escort=true,afk=true,unafk=true,status=true,sleep=true}
+local PLACEHOLDER_CMDS={speed=true,jump=true,crawl=true,moonwalk=true,shake=true,freeze=true,unfreeze=true,float=true,wave=true,point=true,salute=true,lay=true,dab=true,pose=true,faint=true,stalk=true,mimic=true,mirror=true,peek=true,haunt=true,ride=true,carry=true,block=true,tease=true,troll=true,copychat=true,rap=true,quiz=true,greet=true,escort=true,afk=true,unafk=true,status=true,sleep=true}
 local PLACEHOLDER_REPLIES={"soon","coming soon","not ready yet","wip","still cooking","gimme a bit","soon bro"}
 function setRotationOwner(o)if rotationOwner==o then return end rotationOwner=o local h=hum()if not h then return end h.AutoRotate=(o=="Humanoid")end
 function releaseRotation()setRotationOwner("Humanoid")end
@@ -519,20 +522,111 @@ function getHostHRP()local h=getHost()return h and h.Character and h.Character:F
 function getPlayer(name)if not name then return nil end local n=name:lower()if n==""then return nil end for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==n or p.DisplayName:lower()==n then return p end end for _,p in ipairs(P:GetPlayers())do if p.Name:lower():sub(1,#n)==n or p.DisplayName:lower():sub(1,#n)==n then return p end end for _,p in ipairs(P:GetPlayers())do if p.Name:lower():find(n,1,true)or p.DisplayName:lower():find(n,1,true)then return p end end return nil end
 function getPlayerHRP(p)return p and p.Character and p.Character:FindFirstChild("HumanoidRootPart")or nil end
 function applyFixedSpeed()local h=hum()if h then pcall(function()h.WalkSpeed=BS h.JumpPower=BJ h.UseJumpPower=true end)end end
--- FUN COMMAND IMPL
-function cmdFlip()local r=pick(FUN_DATA.flip)sendChat(pick({"its ","flipping... ","landed on ","came up "})..r)end
-function cmdRoll(n)n=tonumber(n)or 6 n=math.clamp(math.floor(n),2,1000)sendChat("rolling d"..n.."... "..math.random(1,n))end
-function cmd8Ball(q)q=trim(q)if q==""then sendChat("usage: "..commandPrefix.."8ball <question>")return end local a=pick(FUN_DATA.ball8)sendChat(pick({"8ball says: ","the 8ball says: ","magic 8ball: ","answer: "})..a)end
-function cmdTruth()sendChat("truth: "..pick(FUN_DATA.truth))end
-function cmdDare()sendChat("dare: "..pick(FUN_DATA.dare))end
-function cmdWYR()sendChat("would you rather: "..pick(FUN_DATA.wyr))end
-function cmdStorytime()sendChat(pick({"storytime: ","ok listen up: ","once upon a time... ","so basically: "})..pick(FUN_DATA.stories))end
-function cmdRandomNum(a,b)local lo=math.floor(tonumber(a) or 1)local hi=math.floor(tonumber(b) or 100)if lo>hi then lo,hi=hi,lo end if hi-lo>1000000 then hi=lo+1000000 end sendChat(pick({"random number: ","picked: ","rolled: "})..math.random(lo,hi))end
-function cmdCountdown(n)n=math.floor(tonumber(n) or 5)if n<1 then n=1 end if n>20 then n=20 sendChat("max 20, using 20")end task.spawn(function()for i=n,0,-1 do sendChat(i==0 and "GO!" or tostring(i))if i>0 then task.wait(1)end end end)end
-function cmdTimer(n)n=math.floor(tonumber(n) or 30)if n<1 then n=1 end if n>600 then n=600 sendChat("max 600s")end sendChat("timer started for "..n.."s")task.spawn(function()local start=os.clock()while os.clock()-start<n do task.wait(1)end sendChat(pick({"time's up!","timer done","ding ding ding","times up boss"}))end)end
-function cmdCompliment(name)if not name or name==""then sendChat("usage: "..commandPrefix.."compliment <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end sendChat(t.Name..", "..pick(FUN_DATA.comps))end
-function cmdRoast(name)if not name or name==""then sendChat("usage: "..commandPrefix.."roast <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end sendChat(t.Name..", "..pick(ROAST_DATA))end
--- PROTECT SYSTEM
+-- ══════════════════════════════════════════════════════════════════
+--  AI FUN HANDLER (all fun commands go through the AI, single message)
+-- ══════════════════════════════════════════════════════════════════
+local function aiFun(prompt)
+    if not APIKey or APIKey=="" then
+        sendChat("no key")
+        return
+    end
+    task.spawn(function()
+        local rp,et,em=sendAIRequest(prompt,140,false)
+        if not rp and et=="tools_unsupported" then
+            rp,et,em=sendAIRequest(prompt,140,false)
+        end
+        if not rp then
+            if et=="quota" then
+                local h,m=getResetCountdown()
+                sendChat("out of fuel, back in "..h.."h "..m.."m")
+            elseif et=="busy" then
+                sendChat(pick({"im busy rn","hold up","one sec"}))
+            else
+                sendChat(pick({"something went wrong","try again","rip"}))
+            end
+            return
+        end
+        rp=trim(rp)
+        -- Safety: never let AI emit CMD from a fun command
+        local _,cleanRp=extractAICommands(rp)
+        if cleanRp=="" then cleanRp="hm" end
+        aiChunkSend(cleanRp)
+    end)
+end
+local function cmdFlip()
+    aiFun("flip a coin for me. reply with one short casual line saying heads or tails. lowercase, no emojis, no quotes.")
+end
+local function cmdRoll(n)
+    n=math.floor(tonumber(n) or 6)
+    n=math.clamp(n,2,1000)
+    aiFun("roll a d"..n.." for me. reply with one short casual line with a random number 1-"..n..". lowercase, no emojis, no quotes.")
+end
+local function cmd8Ball(q)
+    q=trim(q)
+    if q=="" then sendChat("usage: "..commandPrefix.."8ball <question>") return end
+    aiFun("the user asked the magic 8ball: \""..q.."\". reply with one short casual line with the 8ball's answer (yes/no/maybe style). lowercase, no emojis, no quotes.")
+end
+local function cmdTruth()
+    aiFun("give the user a random truth question for truth-or-dare. one short casual line. lowercase, no emojis, no quotes.")
+end
+local function cmdDare()
+    aiFun("give the user a random dare for truth-or-dare. one short casual line, funny. lowercase, no emojis, no quotes.")
+end
+local function cmdWYR()
+    aiFun("give the user a random would you rather question. one short casual line in format 'would you rather X or Y'. lowercase, no emojis, no quotes.")
+end
+local function cmdStorytime()
+    aiFun("tell the user a short 2-3 sentence funny random story (roblox vibes ok). one message. lowercase, no emojis, no quotes.")
+end
+local function cmdRandomNum(a,b)
+    local lo=math.floor(tonumber(a) or 1)
+    local hi=math.floor(tonumber(b) or 100)
+    if lo>hi then lo,hi=hi,lo end
+    if hi-lo>1000000 then hi=lo+1000000 end
+    aiFun("pick a random number between "..lo.." and "..hi..". reply with one short casual line with just the number and tiny flavor. lowercase, no emojis, no quotes.")
+end
+local function cmdCountdown(n)
+    n=math.floor(tonumber(n) or 5)
+    if n<1 then n=1 end
+    if n>20 then n=20 end
+    -- countdown is pure logic, no AI needed, but send as ONE message
+    local parts={}
+    for i=n,0,-1 do
+        if i==0 then parts[#parts+1]="GO!" else parts[#parts+1]=tostring(i) end
+    end
+    sendChat(table.concat(parts," "))
+end
+local function cmdTimer(n)
+    n=math.floor(tonumber(n) or 30)
+    if n<1 then n=1 end
+    if n>600 then n=600 end
+    sendChat("timer set for "..n.."s")
+    task.spawn(function()
+        local start=os.clock()
+        while os.clock()-start<n do task.wait(1)end
+        sendChat(pick({"time's up!","timer done","ding ding ding","times up boss"}))
+    end)
+end
+local function cmdCompliment(name)
+    if not name or name=="" then sendChat("usage: "..commandPrefix.."compliment <player>") return end
+    local t=resolveTarget(name)
+    if t=="NORANDOM" then sendChat(pick(R_.norandom)) return end
+    if not t then sendChat(pick(R_.notfound)) return end
+    aiFun("give "..t.Name.." a nice genuine compliment. one short casual line addressed to them. lowercase, no emojis, no quotes.")
+end
+local function cmdRoast(name)
+    if not name or name=="" then sendChat("usage: "..commandPrefix.."roast <player>") return end
+    local t=resolveTarget(name)
+    if t=="NORANDOM" then sendChat(pick(R_.norandom)) return end
+    if not t then sendChat(pick(R_.notfound)) return end
+    aiFun("roast "..t.Name.." with one savage but playful line. no slurs, no real insults, roblox ban-safe. lowercase, no emojis, no quotes.")
+end
+local function cmdDadJoke()
+    aiFun("tell a classic dad joke. one short line. lowercase, no emojis, no quotes.")
+end
+-- ══════════════════════════════════════════════════════════════════
+--  PROTECT SYSTEM
+-- ══════════════════════════════════════════════════════════════════
 local function protectChatSay(line)
     if S.protectChatActive then return end
     S.protectChatActive=true
@@ -1049,7 +1143,6 @@ end
 function startAfk()if ROLE~="BOT"then return end task.spawn(function()while ROLE=="BOT"do task.wait(1)local hh=getHostHRP()if not hh then S.hostLastPos=nil S.hostAfkTimer=0 continue end if S.hostLastPos then if(hh.Position-S.hostLastPos).Magnitude>0.8 then S.hostAfkTimer=0 if S.hostIsAfk then S.hostIsAfk=false end else S.hostAfkTimer=S.hostAfkTimer+1 if S.hostAfkTimer>=AT and not S.hostIsAfk then S.hostIsAfk=true end end end S.hostLastPos=hh.Position end end)end
 function bindDeath()if S.deathConn then S.deathConn:Disconnect()S.deathConn=nil end local c=pl.Character if not c then return end local h=c:FindFirstChildOfClass("Humanoid")if not h then return end S.deathConn=h.Died:Connect(function()local wasFighting=S.swordKillActive and S.swordKillTarget stopSpin()stopDance()stopLead(false)stopFling(false)stopRizz(false)if not wasFighting then stopSwordKill(false)end S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil local n=os.clock()if n-S.lastDeathTime>DRT then S.deathCount=0 S.deathSilent=false end S.lastDeathTime=n S.deathCount=S.deathCount+1 if S.deathSilent then return end if wasFighting then sendChat(pick({"im down","back in a sec","respawning","one sec","ill be back"}))elseif S.deathCount==2 then sendChat("...")elseif S.deathCount==3 then sendChat("....")elseif S.deathCount==4 then sendChat(".....")elseif S.deathCount==5 then sendChat(pick({"bro","cmon","seriously","again?","bruh"}))elseif S.deathCount==6 then sendChat(pick({"ok this is annoying","really now","dude","ugh","seriously"}))elseif S.deathCount==7 then sendChat(pick({"bro stop","cmon man","enough","why tho"}))elseif S.deathCount>=8 then sendChat(pick({"stop bro","bro stop it","ok enough","chill out man","i said stop"}))S.deathSilent=true end end)end
 handleCommand=function(cmd,args)if ROLE~="BOT"or antiBan.detected then return end
--- FUN commands FIRST (they are no longer placeholders)
 if cmd=="flipcoin"then cmdFlip()return end
 if cmd=="roll"then cmdRoll(args)return end
 if cmd=="8ball"then cmd8Ball(args)return end
@@ -1062,6 +1155,7 @@ if cmd=="timer"then cmdTimer(args)return end
 if cmd=="storytime"then cmdStorytime()return end
 if cmd=="compliment"then cmdCompliment(args)return end
 if cmd=="roast"then cmdRoast(args)return end
+if cmd=="dadjoke"then cmdDadJoke()return end
 if PLACEHOLDER_CMDS[cmd]then sendChat(pick(PLACEHOLDER_REPLIES))return end
 if cmd=="say"then if args~=""then sendChat(args)end elseif cmd=="ask"then handleAIChat(args)elseif cmd=="gameinfo"then handleGameInfo(args)elseif cmd=="similar"then handleGameInfo("similar")elseif cmd=="backoff"then local n=tonumber(args)or BACKOFF_STEP FD=math.clamp(FD+n,FD_MIN,FD_MAX)sendChat("backing off, distance is now "..FD)elseif cmd=="getcloser"then local n=tonumber(args)or BACKOFF_STEP FD=math.clamp(FD-n,FD_MIN,FD_MAX)sendChat("getting closer, distance is now "..FD)elseif cmd=="recall"then stopAllModes()task.wait(0.05)teleportToHost()sendChat(pick({"omw","coming","on my way","here"}))elseif cmd=="stop"then stopAllModes()task.wait(0.05)teleportToHost()sendChat(pick(R_.stop))elseif cmd=="follow"then stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopRizz(false)S.mode="Follow"S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick({"following","on you","back on follow"}))elseif cmd=="info"then local sp2=args:find("%s")local pname,field if sp2 then pname=trim(args:sub(1,sp2-1))field=trim(args:sub(sp2+1)):lower()else pname=trim(args)field=nil end if pname==""then sendChat("usage: !info <player> [field]")else local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))else local myHrp=hrp()local pHrp=getPlayerHRP(p)local d=-1 if myHrp and pHrp then d=math.floor((myHrp.Position-pHrp.Position).Magnitude)end local accAge=p.AccountAge or 0 local joined=os.time()-(accAge*86400)local isFriend=false pcall(function()isFriend=p:IsFriendsWith(pl.UserId)end)local ph=0 local pmax=100 if p.Character then local phh=p.Character:FindFirstChildOfClass("Humanoid")if phh then ph=math.floor(phh.Health)pmax=math.floor(phh.MaxHealth)end end local isHost=false if p==getHost()then isHost=true end if field=="id"then sendChat(p.Name.." id: "..p.UserId)
 elseif field=="age"or field=="joined"then sendChat(p.Name.." joined "..fmtDate(joined).." ("..fmtAge(accAge).." ago)")
@@ -1090,7 +1184,7 @@ elseif cmd=="genderclear"then
     local p=getPlayer(args)
     if not p then sendChat(pick(R_.notfound))return end
     sendChat("cleared for "..p.Name)
-elseif cmd=="cmds"then sendSeq({"here ya go","!ask <msg> - talk to XcH","!ask <do something> - XcH will do it","!ask whats the name of this game","!gameinfo - what game is this","!gameinfo full | tips | controls | wiki","!similar - games like this one","!info <player> [id/age/joined/distance/hp/friend]","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!orbit <1-1000> | !unorbit","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!annoy <player> | !unannoy","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling","!antitoolkill | !unantitoolkill","!rizz <player> | !unrizz","!dance 1-4 | !undance","!spin 1-100 | !unspin","!math <num><op><num>","!say <text>","!flipcoin | !roll <n> | !8ball <q>","!truth | !dare | !wouldyourather","!randomnum <a> <b> | !countdown <n> | !timer <s>","!storytime | !compliment <player> | !roast <player>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only)","!whoishost","!cmds"},0.9)
+elseif cmd=="cmds"then sendSeq({"here ya go","!ask <msg> - talk to XcH","!ask <do something> - XcH will do it","!ask whats the name of this game","!gameinfo - what game is this","!gameinfo full | tips | controls | wiki","!similar - games like this one","!info <player> [id/age/joined/distance/hp/friend]","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!orbit <1-1000> | !unorbit","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!annoy <player> | !unannoy","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling","!antitoolkill | !unantitoolkill","!rizz <player> | !unrizz","!dance 1-4 | !undance","!spin 1-100 | !unspin","!math <num><op><num>","!say <text>","!flipcoin | !roll <n> | !8ball <q>","!truth | !dare | !wouldyourather","!randomnum <a> <b> | !countdown <n> | !timer <s>","!storytime | !compliment <player> | !roast <player> | !dadjoke","!host <player> <seconds, max 500> (creator only)","!stophost (creator only)","!whoishost","!cmds"},0.9)
 else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end
 function processMessage(uid,text)if not text or text==""then return end 
     if uid~=pl.UserId and text:sub(1,1)~=commandPrefix then
@@ -1160,7 +1254,7 @@ local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enu
 local CMDS={
 {"── AI ──",true},{"!ask <msg> - talk to XcH",false},{"!ask <do something> - XcH will do it",false},{"!ask whats the name of this game",false},{"!gameinfo - what game is this",false},{"!gameinfo full | tips | controls | wiki",false},{"!similar - games like this one",false},{"!info <player> [field]",false},
 {"── CORE ──",true},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!orbit <1-1000> | !unorbit",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"!hide | !spawn",false},{"!bam <player> | !unbam",false},{"!annoy <player> | !unannoy",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"!rizz <player> | !unrizz",false},{"!dance 1-4 | !undance",false},{"!spin 1-100 | !unspin",false},{"!math <num><op><num>",false},{"!say <text>",false},
-{"── FUN ──",true},{"!flipcoin",false},{"!roll <n>",false},{"!8ball <q>",false},{"!truth",false},{"!dare",false},{"!wouldyourather",false},{"!randomnum <a> <b>",false},{"!countdown <n>",false},{"!timer <s>",false},{"!storytime",false},{"!compliment <player>",false},{"!roast <player>",false},
+{"── FUN (AI) ──",true},{"!flipcoin",false},{"!roll <n>",false},{"!8ball <q>",false},{"!truth",false},{"!dare",false},{"!wouldyourather",false},{"!randomnum <a> <b>",false},{"!countdown <n>",false},{"!timer <s>",false},{"!storytime",false},{"!compliment <player>",false},{"!roast <player>",false},{"!dadjoke",false},
 {"── HOST ──",true},{"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}
 for i,e in ipairs(CMDS)do local l=Instance.new("TextLabel")l.Size=UDim2.new(1,0,0,e[2]and 18 or 14)l.BackgroundTransparency=1 l.Font=e[2]and Enum.Font.GothamBold or Enum.Font.Code l.Text=e[1]l.TextColor3=e[2]and C.accent or C.text l.TextSize=10 l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=i l.Parent=cmdScroll end
 local apiPage=newPage()apiPage.Name="ApiKeysPage"
