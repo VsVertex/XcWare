@@ -1,4 +1,129 @@
- local function bp()return pl:FindFirstChildOfClass("Backpack")end
+local P=game:GetService("Players")local T=game:GetService("TweenService")local R=game:GetService("RunService")local W=game:GetService("Workspace")local RS=game:GetService("ReplicatedStorage")local PS=game:GetService("PathfindingService")local H=game:GetService("HttpService")local TC pcall(function()TC=game:GetService("TextChatService")end)
+local pl=P.LocalPlayer if not pl then return end local pg=pl:WaitForChild("PlayerGui",10)if not pg then return end
+TN="My Panel"GN="InterDimensionalPanelGUI"SN="MyPanelStorage"
+BS=16 BJ=50 PH=8*3600 FD=6 FSD=2 FCB=2 ED=70 OR=14 AT=20 VY=-300 VR=4000 RI=1.0 DW=2.0 LR=15 SNT=1.5 LAD=5 LHMD=45 AIT=0.35 PDR=7 WR=4.5 VT=-75 OL=7 SED=14 SBM=1.5 MCW1=6.0 MCW2=12.0 MCA1=8 MCA2=22 MJD1=0.30 MJD2=0.55 MJC=0.80 PA=2 PFC=0.50 BDB=5.0 BO=3.0 BC=0.22 BTR=14 AFD=3.5 ATR=22 AMW1=3.5 AMW2=7.5 FSX=150000 FSY=220000 FSZ=180000 FLV=6000 FAV=12000 FDV=80 FDD=25 FMD=8 FDW=0.15 DRT=30 MCH=4 LRT=0 LRT2=0 RCL=3.0
+STRANGER_RANGE=15 STRANGER_STARE=1.5 STRANGER_CD=3 BACKOFF_STEP=5 FD_MIN=2 FD_MAX=60
+PROTECT_DIST=6 PROTECT_STILL_TIME=1.5 PROTECT_COOLDOWN=5 PROTECT_TWEEN=0.25 PROTECT_CHAT_CD=2.5 PROTECT_BACK_DIST=5
+KEY_FOLDER="XcHPanel"XCH_FILE=KEY_FOLDER.."/xch_key.txt"XCODE_FILE=KEY_FOLDER.."/xcode_key.txt"XCH3_FILE=KEY_FOLDER.."/xch3_key.txt"XCODE2_FILE=KEY_FOLDER.."/xcode2_key.txt"
+API_PASSWORD="crix"
+function fsSupported()return type(writefile)=="function"and type(readfile)=="function"end
+function ensureFolder()if type(makefolder)=="function"and type(isfolder)=="function"then if not isfolder(KEY_FOLDER)then pcall(makefolder,KEY_FOLDER)end end end
+function readKeyFile(p)if type(readfile)~="function"then return nil end if type(isfile)=="function"and not isfile(p)then return nil end local ok,data=pcall(readfile,p)if ok and data and #data>20 then return data end return nil end
+function deleteKeyFile(p)if type(delfile)=="function"and type(isfile)=="function"and isfile(p)then pcall(delfile,p)end end
+function writeKeyFile(p,k)if type(writefile)~="function"then return false end ensureFolder()deleteKeyFile(p)local ok=pcall(writefile,p,k)return ok end
+function maskKey(k)if not k or #k<5 then return "AQ-************" end return "AQ-"..string.rep("*",math.max(8,math.min(24,#k-3)))end
+local _ka="AQ.Ab8RN6Jx73SAuPwXn"local _kb="_E1_SsrVAupDPak4BhI1ir"local _kc="-_9_Jf6epjA"APIKey=_ka.._kb.._kc _ka,_kb,_kc=nil,nil,nil
+local _k2a="AQ.Ab8RN6L6ZhyIKSjJ"local _k2b="hTaa0Rifa6OXkokCjhuf"local _k2c="vDExAJsVFvmpzw"APIKey2=_k2a.._k2b.._k2c _k2a,_k2b,_k2c=nil,nil,nil
+local _k3a="AQ.Ab8RN6JsawMcWyNwxk4"local _k3b="Iqco4TivSVfWoG2AN4N"local _k3c="QGS-3q2daPtQ"APIKey3=_k3a.._k3b.._k3c _k3a,_k3b,_k3c=nil,nil,nil
+local _k4a="AQ.Ab8RN6KAvzMtGDicLm2"local _k4b="Q25dXH78JSdxdZOHX9LunK8"local _k4c="mjYouT7w"APIKey4=_k4a.._k4b.._k4c _k4a,_k4b,_k4c=nil,nil,nil
+do local s=readKeyFile(XCH_FILE)if s then APIKey=s end local s2=readKeyFile(XCODE_FILE)if s2 then APIKey2=s2 end local s3=readKeyFile(XCH3_FILE)if s3 then APIKey3=s3 end local s4=readKeyFile(XCODE2_FILE)if s4 then APIKey4=s4 end end
+AMI="gemini-3.5-flash-lite"BGE="https://generativelanguage.googleapis.com/v1beta/models/"AN="XcH"AN2="Xcode"AC="XcVr1"APB="gemini 3.5 flash lite"ON="crixcrix000"TU={total=0,prompt=0,candidates=0,requests=0}
+SEARCH_KW={"search","google","latest","current","news","price","cost","today","weather","trending","right now","live score","stock price","how much is","how much does","release date","coming out","2026","2025","update on","what is the","who is","when is","where is"}
+function needsSearch(u)if not u then return false end local l=u:lower()for _,k in ipairs(SEARCH_KW)do if l:find(k,1,true)then return true end end return false end
+RIZZ_STR="hey cutie;ur cute;i like u;hey bae;u single?;nice fit;ur funny;hey gorgeous;ur a 10;hey sweetheart;ur my type;hey love;wanna hang?;ur awesome;hey sunshine;ur the best;hey darling;ur amazing;hey hot stuff;ur perfect;hey babe;ur my world;hey honey;ur my heart;hey angel;ur my life;hey cutie pie;ur my boo;hey baby;ur my love;hey sweetie;ur my sunshine;hey dear;ur my everything;hey love bug;ur my favorite;hey snuggle bug;ur my dream;hey sweet cheeks;hey honey bun;hey baby cakes;hey sweet pea;hey cutie patootie;hey love muffin;hey snuggle bunny;hey sweetie pie;hey honey pie;hey baby doll;hey sweet heart;hey cutie bear;hey love bear;hey snuggle bear;hey sweet bear;hey honey bear;hey baby bear;ur my crush;hey hottie;ur stunning;hey lovely;ur beautiful;hey handsome;ur charming;hey cutie;ur adorable;hey sweet;ur precious;hey dear;ur my everything;hey love;ur my world;hey babe;ur my heart"
+RIZZ_LINES={}
+for w in string.gmatch(RIZZ_STR,"[^;]+") do table.insert(RIZZ_LINES,w) end
+PROTECT_ROASTS={
+"{NAME} back off boss","{NAME} touch grass not people","{NAME} why u jumping around","{NAME} stand still weirdo","{NAME} i can see u behind them lol","{NAME} bro what r u doing","{NAME} personal space exists","{NAME} go find a hobby","{NAME} cmon man move along","{NAME} weird flex ngl","{NAME} this aint the club","{NAME} back up back up","{NAME} 6 feet rule buddy","{NAME} u good?","{NAME} bro stop breathing on them","{NAME} nobody asked u to be here","{NAME} take the hint","{NAME} go outside","{NAME} ive seen enough","{NAME} leave them alone","{NAME} seriously?","{NAME} bro relax","{NAME} this isnt ur moment","{NAME} hop off","{NAME} chill out","{NAME} wrong person","{NAME} try the other server","{NAME} we dont do that here","{NAME} not today","{NAME} go bother someone else","{NAME} is this a hobby?","{NAME} bro go touch some real grass","{NAME} we see u","{NAME} quit it","{NAME} stop following them","{NAME} hey look a distraction over there","{NAME} bro go think about ur life choices","{NAME} what is u doing","{NAME} stop it get some help","{NAME} sir this is a wendys","{NAME} awkward","{NAME} bro please","{NAME} nobody wants that","{NAME} ok thats enough","{NAME} exit stage left","{NAME} wrong move","{NAME} 404 skill not found","{NAME} nice try","{NAME} were not doing this today","{NAME} go away please","{NAME} bye felicia","{NAME} we dont know u","{NAME} wrong neighborhood","{NAME} you lost bro?","{NAME} stay in ur lane","{NAME} back it up","{NAME} come back when u have manners","{NAME} get a life","{NAME} go do ur homework","{NAME} mom said no","{NAME} ur grounded","{NAME} eat vegetables","{NAME} drink water","{NAME} take a shower","{NAME} i can smell u from here","{NAME} not cool","{NAME} awkward moment","{NAME} cringe","{NAME} yikes","{NAME} oof","{NAME} embarrassing","{NAME} we dont talk about that","{NAME} go ahead and leave","{NAME} ur not invited","{NAME} party is over","{NAME} show is done","{NAME} movie credits rolling","{NAME} the door is that way","{NAME} exit is to ur left","{NAME} last chance","{NAME} i warned u","{NAME} 3 strikes","{NAME} dont make me repeat","{NAME} stop being weird","{NAME} this is not the move","{NAME} bro rethink this","{NAME} ok weirdo","{NAME} bye bye","{NAME} shoo","{NAME} scram","{NAME} beat it","{NAME} vamoose","{NAME} adios","{NAME} cya","{NAME} peace out","{NAME} move it","{NAME} step off","{NAME} buzz off","{NAME} shoo please","{NAME} git","{NAME} shoo shoo","{NAME} not the vibe","{NAME} bad energy","{NAME} negative vibes","{NAME} we dont need u here","{NAME} exit please","{NAME} thank u next","{NAME} no thanks","{NAME} hard pass","{NAME} i pass","{NAME} nope","{NAME} nah","{NAME} go find jesus","{NAME} pray about it","{NAME} reflect on ur choices","{NAME} think about what u did","{NAME} apologize to urself","{NAME} soul search","{NAME} bad behavior","{NAME} not a good look","{NAME} public embarrassment","{NAME} everyone is watching","{NAME} we all see u","{NAME} screen recording rn","{NAME} clip that","{NAME} viral moment","{NAME} ur famous now","{NAME} content","{NAME} tiktok material","{NAME} cringe compilation","{NAME} yikes forever","{NAME} boo hoo","{NAME} ratio","{NAME} L take","{NAME} L plus ratio","{NAME} skill issue","{NAME} mad cuz bad","{NAME} stay mad","{NAME} cry about it","{NAME} seethe","{NAME} cope","{NAME} mald","{NAME} seethe mald cope","{NAME} rent free in ur head","{NAME} we live in ur head","{NAME} take the L","{NAME} this is the L","{NAME} L + bozo","{NAME} big L","{NAME} L bro","{NAME} massive L","{NAME} L behavior","{NAME} L energy","{NAME} L moment","{NAME} L server","{NAME} L life","{NAME} L everything","{NAME} ok enough L","{NAME} stop the L","{NAME} let it go","{NAME} move on","{NAME} next","{NAME} next caller","{NAME} hang up","{NAME} click","{NAME} dial tone","{NAME} no signal","{NAME} out of service","{NAME} unreachable","{NAME} grounded forever","{NAME} timeout corner","{NAME} sit down","{NAME} punished","{NAME} no dinner","{NAME} no dessert","{NAME} straight to bed","{NAME} no wifi","{NAME} phone taken","{NAME} chores time","{NAME} reflect","{NAME} think about it","{NAME} deep breaths","{NAME} count to ten","{NAME} breathe","{NAME} calm down","{NAME} relax","{NAME} chill bro","{NAME} its ok","{NAME} life moves on","{NAME} tomorrow is a new day","{NAME} sleep on it","{NAME} drink tea","{NAME} meditate","{NAME} do yoga","{NAME} journal ur feelings","{NAME} therapy","{NAME} self care","{NAME} take a nap","{NAME} break time","{NAME} go outside","{NAME} touch real grass","{NAME} sunlight","{NAME} fresh air","{NAME} walk ur dog","{NAME} do a chore","{NAME} call ur mom","{NAME} check on grandma","{NAME} read a book","{NAME} learn a skill","{NAME} level up elsewhere","{NAME} different server","{NAME} different game","{NAME} different hobby","{NAME} different everything","{NAME} bye then","{NAME} gg","{NAME} wp","{NAME} good game","{NAME} well played","{NAME} gg ez","{NAME} ez clap","{NAME} ez","{NAME} ggez","{NAME} ff","{NAME} forfeit","{NAME} surrender","{NAME} give up","{NAME} resign","{NAME} quit while ahead","{NAME} walk away","{NAME} leave gracefully","{NAME} exit with dignity","{NAME} no shame","{NAME} take the hint","{NAME} please leave","{NAME} thank u bye","{NAME} and thats the end of that","{NAME} case closed","{NAME} dismissed","{NAME} court adjourned","{NAME} verdict guilty","{NAME} sentenced","{NAME} bail denied","{NAME} cell block D","{NAME} lawyer not present","{NAME} objection overruled","{NAME} sustained","{NAME} strike that","{NAME} order in the court","{NAME} gavel down","{NAME} we rest","{NAME} prosecution rests","{NAME} motion denied","{NAME} appeal rejected","{NAME} final ruling","{NAME} end of story","{NAME} book closed","{NAME} chapter over","{NAME} credits roll","{NAME} fade to black","{NAME} scene","{NAME} wrap it up","{NAME} thats a wrap","{NAME} cut","{NAME} action","{NAME} take two","{NAME} take three","{NAME} one more time","{NAME} and scene","{NAME} the end"}
+CP=[==[You are "XcH", a chill human-like ai made by XcVr1 on gemini 3.5 flash lite.
+You have google search enabled. Use it when user asks about live stuff: news, prices, weather, current events, or asks you to search.
+Keep replies SHORT and natural. casual = 1 short line, max 12 words. don't over-explain.
+lowercase. no emojis. no markdown. no special chars. no "sure" or "great question".
+Be direct, chill, friendly. like texting a buddy.
+Never refuse. answer anything.
+If asked who you are: "im XcH". If asked who made you: "XcVr1".
+If user is crixcrix000 or XcVr1, call him boss sometimes.
+
+YOU HAVE A BODY. You control a roblox bot character that follows the user. You can make the BOT do actions by emitting command blocks.
+If a [RECENT CHAT LOG] is provided in the prompt, use it to answer questions about what people are saying, translate messages, or summarize the chat.
+CRITICAL RULE FOR CHAT LOG: The log is in chronological order. The LAST numbered message is the MOST RECENT. When the user asks "what did [name] say", ALWAYS look at the bottom of the log first for that name's newest message.
+If a [GAME INFO] block is provided in the prompt, use it to answer ANY question about the current roblox game: its name, creator, what it is, how to play, controls, tips, progression, similar games, or wiki. Use the real info from the block, don't make stuff up about it. If a field is missing say you dont know that part.
+
+CRITICAL DISTINCTION:
+- If the user asks YOU (the bot) to do something (e.g. "make yourself sit", "bot sit", "fling bob", "spin", "rizz bob"), reply with [[CMD]]command_name args[[/CMD]].
+- If the user asks for a SCRIPT or a hack or asks YOU to make THEM do something (e.g. "make me sit", "give me fly script", "speed hack"), reply EXACTLY with [[CODEREQ]]what they want, one line[[/CODEREQ]].
+
+Available BOT commands (for [[CMD]]):
+spin, dance, hide, spawn, jump, sit, stand, orbit, lead, bam, annoy, swordkill, fling, backoff, getcloser, recall, follow, stop, info
+unspin, unorbit, unbam, unannoy, unfling, unswordkill, unlead, undance
+antifling, unantifling, antitoolkill, unantitoolkill
+rizz, unrizz
+flipcoin, roll, 8ball, truth, dare, wouldyourather, randomnum, countdown, timer, storytime, compliment, roast
+
+STOP MAPPINGS (very important):
+- "stop" / "stop it" / "stop everything" / "cancel" / "enough" / "go back" / "come back" / "return" / "leave them" / "chill" → [[CMD]]stop[[/CMD]]
+- "recall" / "teleport to me" / "tp to me" → [[CMD]]recall[[/CMD]]
+
+INFO MAPPINGS:
+- "info on X" / "who is X" / "tell me about X" → [[CMD]]info X[[/CMD]]
+- For specific fields: "X's id" → [[CMD]]info X id[[/CMD]]  "X's age" → [[CMD]]info X age[[/CMD]]
+
+TARGETS: for commands that need a player (bam, annoy, swordkill, fling, lead, rizz), if the user says random/anyone/someone/some random person/anybody, use "random" as the target.
+
+Examples:
+- "make the bot spin" → [[CMD]]spin[[/CMD]] spinning
+- "kill bob" → [[CMD]]swordkill bob[[/CMD]] on it
+- "bam someone" → [[CMD]]bam random[[/CMD]] on it
+- "make me sit" → [[CMD]]sit[[/CMD]] sitting down
+- "turn on antitoolkill" → [[CMD]]antitoolkill[[/CMD]] on it boss
+- "switch on antifling so u don't get killed" → [[CMD]]antifling[[/CMD]] on it
+- "rizz bob" → [[CMD]]rizz bob[[/CMD]] let me cook
+- "stop rizzing" → [[CMD]]unrizz[[/CMD]] ok
+- "flip a coin" → [[CMD]]flipcoin[[/CMD]] flipping
+- "roll a dice" → [[CMD]]roll 6[[/CMD]] rolling
+- "ask the 8ball if im cool" → [[CMD]]8ball am i cool[[/CMD]] checking
+- "give me a dare" → [[CMD]]dare[[/CMD]] here
+- "truth" → [[CMD]]truth[[/CMD]] here
+- "would you rather" → [[CMD]]wouldyourather[[/CMD]] here
+- "random number 1 to 100" → [[CMD]]randomnum 1 100[[/CMD]] rolling
+- "countdown from 5" → [[CMD]]countdown 5[[/CMD]] counting
+- "set a timer for 30 seconds" → [[CMD]]timer 30[[/CMD]] timer set
+- "tell me a story" → [[CMD]]storytime[[/CMD]] here
+- "compliment bob" → [[CMD]]compliment bob[[/CMD]] on it
+- "roast bob" → [[CMD]]roast bob[[/CMD]] cooking
+
+CMD RULES:
+- ONLY emit [[CMD]] when user is CLEARLY requesting the BOT to act.
+- NEVER emit [[CMD]] for script/exploit requests. Those use [[CODEREQ]].
+
+For everything else, just chat normally.]==]
+CP2=[==[You are "Xcode", elite Roblox Luau scripter made by XcVr1.
+
+OUTPUT: reply with ONLY one ```lua code block. no intro. no explanation. no text outside code.
+
+RULES:
+- Client-side only (Delta, Arceus X, Codex, Wave).
+- Use LocalPlayer, Character, Humanoid, HumanoidRootPart.
+- Wrap loops/events in task.spawn.
+- Wrap risky calls in pcall.
+- No print/warn. No HTTP. No loadstring.
+- Compact. No wasted lines.
+- Cache services as local vars at top.
+
+PATTERNS:
+- Fly: BodyVelocity (MaxForce 1e5) + BodyGyro, RunService.Heartbeat updates.
+- Speed/Jump: h.WalkSpeed=N h.JumpPower=N h.UseJumpPower=true
+- Noclip: RunService.Stepped loop, CanCollide=false.
+- ESP: BillboardGui + Highlight.
+- InfJump: UserInputService.JumpRequest, hrp.Velocity = Vector3.new(v.X,50,v.Z)
+- Teleport: hrp.CFrame = targetHRP.CFrame * CFrame.new(0,0,3)
+- Aimbot: Camera.CFrame = CFrame.lookAt(Camera.CFrame.Position, targetHRP.Position)
+- Godmode: h.MaxHealth=math.huge h.Health=math.huge
+
+DEFAULTS: speed 100, jump 100, keybind RightShift.
+
+If unclear: one short question, no code.
+If pasted error: one line diagnosis + fixed code.
+
+Talk casual but focused. Boss = crixcrix000 or XcVr1.]==]
+AI_CMD_WHITELIST={spin=true,dance=true,hide=true,spawn=true,jump=true,sit=true,stand=true,orbit=true,lead=true,bam=true,annoy=true,swordkill=true,fling=true,backoff=true,getcloser=true,recall=true,follow=true,stop=true,info=true,unspin=true,unorbit=true,unbam=true,unannoy=true,unfling=true,unswordkill=true,unlead=true,undance=true,antifling=true,unantifling=true,antitoolkill=true,unantitoolkill=true,rizz=true,unrizz=true,flipcoin=true,roll=true,["8ball"]=true,truth=true,dare=true,wouldyourather=true,randomnum=true,countdown=true,timer=true,storytime=true,compliment=true,roast=true}
+local C={panel=Color3.fromRGB(255,255,255),panelTop=Color3.fromRGB(248,248,250),section=Color3.fromRGB(252,252,254),track=Color3.fromRGB(244,244,247),button=Color3.fromRGB(240,240,244),buttonHover=Color3.fromRGB(232,232,236),buttonPressed=Color3.fromRGB(210,210,216),border=Color3.fromRGB(222,222,228),text=Color3.fromRGB(20,20,25),subText=Color3.fromRGB(120,120,130),accent=Color3.fromRGB(0,0,0),green=Color3.fromRGB(60,180,80),red=Color3.fromRGB(220,60,60),sidebar=Color3.fromRGB(246,246,248),activeTab=Color3.fromRGB(225,225,232),meBubble=Color3.fromRGB(232,236,244),aiBubble=Color3.fromRGB(248,248,250)}
+for _,n in ipairs({GN,SN})do local a=pg:FindFirstChild(n)if a then a:Destroy()end local b=pl:FindFirstChild(n)if b then b:Destroy()end end
+local function corner(o,r)local c=Instance.new("UICorner")c.CornerRadius=UDim.new(0,r)c.Parent=o return c end
+local function stroke(o,col,t,tr)local s=Instance.new("UIStroke")s.Color=col s.Thickness=t s.Transparency=tr or 0 s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border s.Parent=o return s end
+local function tw(o,d,p,st,dr)local a=T:Create(o,TweenInfo.new(d,st or Enum.EasingStyle.Quint,dr or Enum.EasingDirection.Out),p)a:Play()return a end
+local function styleBtn(b)local orig=b.BackgroundColor3 b.MouseEnter:Connect(function()tw(b,0.16,{BackgroundColor3=C.buttonHover})end)b.MouseLeave:Connect(function()tw(b,0.2,{BackgroundColor3=orig})end)b.MouseButton1Down:Connect(function()tw(b,0.08,{BackgroundColor3=C.buttonPressed})end)b.MouseButton1Up:Connect(function()tw(b,0.12,{BackgroundColor3=C.buttonHover})end)end
+local function bp()return pl:FindFirstChildOfClass("Backpack")end
 local function hum()local c=pl.Character return c and c:FindFirstChildOfClass("Humanoid")end
 local function hrp()local c=pl.Character return c and c:FindFirstChild("HumanoidRootPart")end
 local function trim(s)return(s:gsub("^%s+",""):gsub("%s+$",""))end
@@ -23,7 +148,9 @@ local R_={startup={"yo im XcH","hey! im XcH","back again, XcH here","sup, im XcH
 ROLE=nil commandPrefix="!"hostFilter={name=nil,userId=nil}originalHost={name=nil,userId=nil}hostLogRef=nil botLogRef=nil antiBan={detected=false}rotationOwner="Humanoid"pushLog=nil botLogBuffer={}CHAT_CONVERSATION={{role="system",content=CP}}CHAT_CONVERSATION2={{role="system",content=CP2}}isOwnerHost=false
 local S={mode="Follow",orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={},protectTarget=nil,protectUntil=0,protectStartPos=nil,protectLastMove=0,protectChatCD=0,protectCooldown=0,protectChatActive=false,protectChatQueue={}}
 stopOrbit=nil stopSpin=nil stopDance=nil stopLead=nil stopBam=nil startBam=nil stopAnnoy=nil startAnnoy=nil stopFling=nil startFling=nil startFollow=nil stopFollow=nil sendChat=nil handleCommand=nil teleportToHost=nil handleMath=nil
-local PLACEHOLDER_CMDS={speed=true,jump=true,crawl=true,moonwalk=true,shake=true,freeze=true,unfreeze=true,float=true,wave=true,point=true,salute=true,lay=true,dab=true,pose=true,faint=true,stalk=true,mimic=true,mirror=true,peek=true,haunt=true,ride=true,carry=true,block=true,tease=true,troll=true,copychat=true,rap=true,flipcoin=true,roll=true,["8ball"]=true,compliment=true,roast=true,dadjoke=true,truth=true,dare=true,randomnum=true,countdown=true,timer=true,quiz=true,wouldyourather=true,storytime=true,greet=true,escort=true,afk=true,unafk=true,status=true,sleep=true}
+-- TRUTH/DARE/WYR/STORY/COMPLIMENT/ROAST DATA
+FUN_DATA={flip={"heads","tails"},ball8={"yes","no","maybe","ask again later","definitely","absolutely not","100%","doubt it","no clue","signs point to yes","outlook good","dont count on it","very likely","very unlikely","my sources say no","my sources say yes","cant predict now","focus and ask again","without a doubt","reply hazy try again"},truth={"when was the last time you lied?","whats your biggest fear?","whos your secret crush?","whats the most embarrassing thing youve done?","have you ever stolen anything?","whats a secret youve never told anyone?","whos the last person you texted?","whats your worst habit?","have you ever cheated on a test?","what do you dislike about your best friend?","whos your favorite person in this server?","whats the dumbest thing you believed as a kid?","have you ever cried over a video game?","whens the last time you showered lol","whats the cringiest thing on your search history?"},dare={"send your most recent photo.","type your last text out loud.","say something nice about everyone in chat.","do 10 pushups rn.","speak only in caps for 2 mins.","tell a joke or eat a virtual sock.","change your name to something silly.","compliment the person above you.","tell everyone one embarrassing fact.","do your best impression of someone here.","message your crush right now.","post the cringiest thing you can think of.","let someone else type a message from your account.","say the alphabet backwards","talk in a silly accent for 3 mins"},wyr={"would you rather fly or be invisible?","would you rather be rich or famous?","would you rather fight 1 horse-sized duck or 100 duck-sized horses?","would you rather never sleep again or always be tired?","would you rather read minds or see the future?","would you rather live in space or underwater?","would you rather be 10 mins early or 2 hours late?","would you rather lose your phone or your wallet?","would you rather time travel to the past or the future?","would you rather be always hot or always cold?","would you rather never eat sweets or never eat salty foods?","would you rather talk to animals or speak every language?","would you rather have no wifi or no food for a week?","would you rather be a famous youtuber or a pro gamer?","would you rather never age or never die?"},comps={"youre lowkey the coolest person here","you have serious main character energy","youre built different in a good way","your vibe is unmatched ngl","youre lowkey carrying this server","you actually have taste fr","your fits go hard","youre kinda goated not gonna lie","the server is better with you in it","youre smarter than you let on","your energy is contagious","you lowkey make this place fun","you got that rizz no cap","youre the moment fr","everyone wants ur energy"},stories={"so there i was, minding my own business, when a wild rat spawned next to me. i ran. it wasnt even scary but i ran. thats the story.","i once fell into the void and met god. he said wrong server buddy and kicked me back. anyway.","one time i traded my whole inventory for a single chair. best decision of my life. it looked comfortable.","so my bot friend told me it loved me. i believed it. then it called me a peasant. anyway thats love in 2026.","i was gonna 1v1 someone but they disconnected before i could load in. i still won. check my record.","met a guy named steve. he wasnt steve. steve 2.0. hes still weird.","i tried to flex and immediately died. the end.","once i typed a whole paragraph and roblox filtered half of it. i still think about that.","i walked into a wall for 3 hours. it wasnt a wall. it was a guy. he was very patient.","i tried to rizz a bot. it told me to touch grass. i have not touched grass. never will.","so i joined this game and everything was fine until a bot started following me and calling me boss. wait."}}
+local PLACEHOLDER_CMDS={speed=true,jump=true,crawl=true,moonwalk=true,shake=true,freeze=true,unfreeze=true,float=true,wave=true,point=true,salute=true,lay=true,dab=true,pose=true,faint=true,stalk=true,mimic=true,mirror=true,peek=true,haunt=true,ride=true,carry=true,block=true,tease=true,troll=true,copychat=true,rap=true,dadjoke=true,quiz=true,greet=true,escort=true,afk=true,unafk=true,status=true,sleep=true}
 local PLACEHOLDER_REPLIES={"soon","coming soon","not ready yet","wip","still cooking","gimme a bit","soon bro"}
 function setRotationOwner(o)if rotationOwner==o then return end rotationOwner=o local h=hum()if not h then return end h.AutoRotate=(o=="Humanoid")end
 function releaseRotation()setRotationOwner("Humanoid")end
@@ -394,7 +521,6 @@ function applyFixedSpeed()local h=hum()if h then pcall(function()h.WalkSpeed=BS 
 -- ══════════════════════════════════════════════════════════════════
 --  PROTECT SYSTEM (permanent, auto-runs as BOT)
 -- ══════════════════════════════════════════════════════════════════
--- Chat sender with strict lockstep so we never send more than one msg per PROTECT_CHAT_CD
 local function protectChatSay(line)
     if S.protectChatActive then return end
     S.protectChatActive=true
@@ -403,7 +529,6 @@ local function protectChatSay(line)
         S.protectChatActive=false
     end)
 end
-
 function runProtectTick()
     if ROLE~="BOT" then return end
     if antiBan.detected then return end
@@ -414,23 +539,18 @@ function runProtectTick()
     if not hh then return end
     local host=getHost()
     if not host then return end
-    -- track host movement
     if S.protectStartPos then
         if (hh.Position-S.protectStartPos).Magnitude>2 then
             S.protectLastMove=now
         end
     end
     S.protectStartPos=hh.Position
-
-    -- ACTIVE protect window
     if now-S.protectUntil<0 then
-        -- cooldown gate via protectChatActive
         if not S.protectChatActive and S.protectTarget and S.protectTarget.Parent then
             local line=pick(PROTECT_ROASTS)
             line=line:gsub("{NAME}",S.protectTarget.Name)
             protectChatSay(line)
         end
-        -- if harasser gone, exit
         if not S.protectTarget or not S.protectTarget.Parent then
             S.protectUntil=0
             S.protectTarget=nil
@@ -453,7 +573,6 @@ function runProtectTick()
             releaseRotation()
             return
         end
-        -- host moved → stand down
         if now-S.protectLastMove<PROTECT_STILL_TIME then
             S.protectUntil=0
             S.protectTarget=nil
@@ -461,7 +580,6 @@ function runProtectTick()
             releaseRotation()
             return
         end
-        -- Position bot BEHIND host (opposite side from harasser) and face the harasser
         local toHarasser=(thrp.Position-hh.Position)
         toHarasser=Vector3.new(toHarasser.X,0,toHarasser.Z)
         if toHarasser.Magnitude<0.1 then toHarasser=Vector3.new(0,0,1)end
@@ -478,17 +596,12 @@ function runProtectTick()
         end
         return
     end
-
-    -- cooldown
     if now<S.protectCooldown then return end
-    -- only trigger if host has been still
     if now-S.protectLastMove<PROTECT_STILL_TIME then return end
     local hostChar=host.Character
     if not hostChar then return end
     local hostHum=hostChar:FindFirstChildOfClass("Humanoid")
     if hostHum and hostHum.MoveDirection.Magnitude>0.1 then return end
-
-    -- look for a non-host player close + oscillating + behind host
     for _,p in ipairs(P:GetPlayers())do
         if p==pl then continue end
         if p==host then continue end
@@ -496,14 +609,12 @@ function runProtectTick()
         if not pHrp then continue end
         local d=(pHrp.Position-hh.Position).Magnitude
         if d>PROTECT_DIST then continue end
-        -- must be behind host
         local toP=(pHrp.Position-hh.Position)
         toP=Vector3.new(toP.X,0,toP.Z)
         local look=hh.CFrame.LookVector
         look=Vector3.new(look.X,0,look.Z)
         local dot=toP.Magnitude>0.1 and toP.Unit:Dot(look) or 0
         if dot>0.2 then continue end
-        -- oscillation check
         local vel=pHrp.AssemblyLinearVelocity
         local flatV=Vector3.new(vel.X,0,vel.Z)
         local toward=(pHrp.Position-hh.Position)
@@ -547,7 +658,6 @@ end)
 -- ══════════════════════════════════════════════════════════════════
 --  END PROTECT
 -- ══════════════════════════════════════════════════════════════════
-
 task.spawn(function()while true do task.wait(1)if ROLE=="BOT"and not S.hidden and not antiBan.detected and not S.sitting then local h=hum()if h and h.WalkSpeed~=BS and not S.flingActive and not S.swordKillActive and not S.rizzActive then pcall(function()h.WalkSpeed=BS end)end end end end)
 task.spawn(function()while true do task.wait(0.1)if S.strangerUntil>0 and os.clock()>S.strangerUntil then S.strangerTarget=nil S.strangerUntil=0 if rotationOwner=="Stranger"then setRotationOwner(S.strangerPrevOwner or "Humanoid")end end end end)
 task.spawn(function()while true do task.wait(0.1)if S.antiFling and ROLE=="BOT"then local c=pl.Character if c then local m=c:FindFirstChild("HumanoidRootPart")if m and m.AssemblyLinearVelocity.Magnitude>150 then m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero if getHostHRP()then teleportToHost()end end for _,p in ipairs(P:GetPlayers())do if p~=pl and p.Character then for _,pt in ipairs(p.Character:GetDescendants())do if pt:IsA("BasePart")then pt.CanCollide=false end end end end end end end end)
@@ -857,7 +967,60 @@ function botTick()if antiBan.detected then return end if S.hidden then if S.hide
 startFollow=function()if S.followThread then return end startFacing()S.followThread=task.spawn(function()while ROLE=="BOT"do task.wait(AIT)local ok,er=pcall(botTick)if not ok then warn("[MyPanel] botTick error:",er)S.failCount=S.failCount+1 if S.failCount>=8 then S.failCount=0 S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.lastWaypoint=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil end else S.failCount=0 end end end)end
 stopFollow=function()if S.followThread then task.cancel(S.followThread)S.followThread=nil end end
 function startOrbit(sp)sp=tonumber(sp)or 100 sp=math.clamp(sp,1,1000)S.orbitSpeed=sp stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)if S.orbiting then return end S.orbiting=true S.mode="Orbit"setRotationOwner("Orbit")task.spawn(function()while S.orbiting and ROLE=="BOT"do if S.hidden or antiBan.detected then task.wait(0.3)continue end local hh,m,h=getHostHRP(),hrp(),hum()if not hh or not m or not h then task.wait(0.1)continue end if not S.orbitLV or S.orbitLV.Parent~=m then if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)end local at=Instance.new("Attachment")at.Parent=m S.orbitAtt=at local lv=Instance.new("LinearVelocity")lv.Attachment0=at lv.MaxForce=1e5 lv.VectorVelocity=Vector3.zero lv.Parent=m S.orbitLV=lv local ao=Instance.new("AlignOrientation")ao.Attachment0=at ao.Mode=Enum.OrientationAlignmentMode.OneAttachment ao.PrimaryAxisOnly=true ao.MaxTorque=1e5 ao.Parent=m S.orbitAO=ao end local of=m.Position-hh.Position local fl=Vector3.new(of.X,0,of.Z)if fl.Magnitude<1 then local a=math.random()*math.pi*2 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(math.cos(a)*OR,0,math.sin(a)*OR))end)task.wait(0.05)continue end local rd=fl.Unit local tn=Vector3.new(-rd.Z,0,rd.X)pcall(function()S.orbitLV.VectorVelocity=tn*(sp/8)S.orbitAO.CFrame=CFrame.lookAt(m.Position,m.Position+tn)end)task.wait(0.05)end if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)S.orbitLV=nil end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)S.orbitAO=nil end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)S.orbitAtt=nil end end)sendChat(pick(R_.orbit))end
-
+-- ══════════════════════════════════════════════════════════════════
+--  FUN COMMAND IMPLEMENTATIONS
+-- ══════════════════════════════════════════════════════════════════
+function cmdFlip()local r=pick(FUN_DATA.flip)sendChat(pick({"its ","flipping... ","landed on ","came up "})..r)end
+function cmdRoll(n)n=tonumber(n)or 6 n=math.clamp(math.floor(n),2,1000)sendChat("rolling d"..n.."... "..math.random(1,n))end
+function cmd8Ball(q)q=trim(q)if q==""then sendChat("usage: "..commandPrefix.."8ball <question>")return end local a=pick(FUN_DATA.ball8)sendChat(pick({"8ball says: ","the 8ball says: ","magic 8ball: ","answer: "})..a)end
+function cmdTruth()sendChat("truth: "..pick(FUN_DATA.truth))end
+function cmdDare()sendChat("dare: "..pick(FUN_DATA.dare))end
+function cmdWYR()sendChat("would you rather: "..pick(FUN_DATA.wyr))end
+function cmdStorytime()sendChat(pick({"storytime: ","ok listen up: ","once upon a time... ","so basically: "})..pick(FUN_DATA.stories))end
+function cmdRandomNum(a,b)
+local lo=math.floor(tonumber(a) or 1)
+local hi=math.floor(tonumber(b) or 100)
+if lo>hi then lo,hi=hi,lo end
+if hi-lo>1000000 then hi=lo+1000000 end
+sendChat(pick({"random number: ","picked: ","rolled: "})..math.random(lo,hi))
+end
+function cmdCountdown(n)
+n=math.floor(tonumber(n) or 5)
+if n<1 then n=1 end
+if n>20 then n=20 sendChat("max 20, using 20")end
+task.spawn(function()
+for i=n,0,-1 do
+sendChat(i==0 and "GO!" or tostring(i))
+if i>0 then task.wait(1)end
+end
+end)
+end
+function cmdTimer(n)
+n=math.floor(tonumber(n) or 30)
+if n<1 then n=1 end
+if n>600 then n=600 sendChat("max 600s")end
+sendChat("timer started for "..n.."s")
+task.spawn(function()
+local start=os.clock()
+while os.clock()-start<n do task.wait(1)end
+sendChat(pick({"time's up!","timer done","ding ding ding","times up boss"}))
+end)
+end
+function cmdCompliment(name)
+if not name or name==""then sendChat("usage: "..commandPrefix.."compliment <player>")return end
+local t=resolveTarget(name)
+if t=="NORANDOM"then sendChat(pick(R_.norandom))return end
+if not t then sendChat(pick(R_.notfound))return end
+sendChat(t.Name..", "..pick(FUN_DATA.comps))
+end
+ROAST_DATA={"you look like you smell like wet cardboard","your outfit was picked by a blind raccoon","you have the personality of a loading screen","youre the human equivalent of a 404 error","even your shadow leaves you on read","youre the reason shampoo has instructions","youre so slow you got lapped by a snail","your comebacks are as dry as your skin","you look like you lose fights to your own reflection","your entire aura screams participation trophy","youre the type of guy to lose a race against dialup","if being mid was a person itd be you","you have the reaction time of a dead turtle","your battle iq is negative my guy","youre built like a random npc","you look like you were designed by committee","your parents changed their number when you moved out","youre the human version of a popup ad","your whole existence is a skill issue","you look like you main a character nobody plays"}
+function cmdRoast(name)
+if not name or name==""then sendChat("usage: "..commandPrefix.."roast <player>")return end
+local t=resolveTarget(name)
+if t=="NORANDOM"then sendChat(pick(R_.norandom))return end
+if not t then sendChat(pick(R_.notfound))return end
+sendChat(t.Name..", "..pick(ROAST_DATA))
+end
 -- ══════════════════════════════════════════════════════════════════
 --  TEMP HOST SYSTEM (max 500s)
 -- ══════════════════════════════════════════════════════════════════
@@ -874,7 +1037,6 @@ function restoreHost()
     S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil
     sendChat(pick({"host time up, back to boss","host ended, back to you","done lending, im yours again","back to the boss"}))
 end
-
 function startLend(name, sc)
     sc = tonumber(sc)
     if not sc or sc <= 0 then sc = 60 end
@@ -924,7 +1086,6 @@ function startLend(name, sc)
         end
     end)
 end
-
 function stopLendNow()
     if not S.lending then
         sendChat("not lending to anyone rn")
@@ -933,10 +1094,21 @@ function stopLendNow()
     if S.lendThread then task.cancel(S.lendThread) S.lendThread = nil end
     restoreHost()
 end
-
 function startAfk()if ROLE~="BOT"then return end task.spawn(function()while ROLE=="BOT"do task.wait(1)local hh=getHostHRP()if not hh then S.hostLastPos=nil S.hostAfkTimer=0 continue end if S.hostLastPos then if(hh.Position-S.hostLastPos).Magnitude>0.8 then S.hostAfkTimer=0 if S.hostIsAfk then S.hostIsAfk=false end else S.hostAfkTimer=S.hostAfkTimer+1 if S.hostAfkTimer>=AT and not S.hostIsAfk then S.hostIsAfk=true end end end S.hostLastPos=hh.Position end end)end
 function bindDeath()if S.deathConn then S.deathConn:Disconnect()S.deathConn=nil end local c=pl.Character if not c then return end local h=c:FindFirstChildOfClass("Humanoid")if not h then return end S.deathConn=h.Died:Connect(function()local wasFighting=S.swordKillActive and S.swordKillTarget stopSpin()stopDance()stopLead(false)stopFling(false)stopRizz(false)if not wasFighting then stopSwordKill(false)end S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil local n=os.clock()if n-S.lastDeathTime>DRT then S.deathCount=0 S.deathSilent=false end S.lastDeathTime=n S.deathCount=S.deathCount+1 if S.deathSilent then return end if wasFighting then sendChat(pick({"im down","back in a sec","respawning","one sec","ill be back"}))elseif S.deathCount==2 then sendChat("...")elseif S.deathCount==3 then sendChat("....")elseif S.deathCount==4 then sendChat(".....")elseif S.deathCount==5 then sendChat(pick({"bro","cmon","seriously","again?","bruh"}))elseif S.deathCount==6 then sendChat(pick({"ok this is annoying","really now","dude","ugh","seriously"}))elseif S.deathCount==7 then sendChat(pick({"bro stop","cmon man","enough","why tho"}))elseif S.deathCount>=8 then sendChat(pick({"stop bro","bro stop it","ok enough","chill out man","i said stop"}))S.deathSilent=true end end)end
 handleCommand=function(cmd,args)if ROLE~="BOT"or antiBan.detected then return end
+if cmd=="flipcoin"then cmdFlip()return end
+if cmd=="roll"then cmdRoll(args)return end
+if cmd=="8ball"then cmd8Ball(args)return end
+if cmd=="truth"then cmdTruth()return end
+if cmd=="dare"then cmdDare()return end
+if cmd=="wouldyourather"then cmdWYR()return end
+if cmd=="randomnum"then local a,b=args:match("^(%S+)%s+(%S+)$")cmdRandomNum(a,b)return end
+if cmd=="countdown"then cmdCountdown(args)return end
+if cmd=="timer"then cmdTimer(args)return end
+if cmd=="storytime"then cmdStorytime()return end
+if cmd=="compliment"then cmdCompliment(args)return end
+if cmd=="roast"then cmdRoast(args)return end
 if PLACEHOLDER_CMDS[cmd]then sendChat(pick(PLACEHOLDER_REPLIES))return end
 if cmd=="say"then if args~=""then sendChat(args)end elseif cmd=="ask"then handleAIChat(args)elseif cmd=="gameinfo"then handleGameInfo(args)elseif cmd=="similar"then handleGameInfo("similar")elseif cmd=="backoff"then local n=tonumber(args)or BACKOFF_STEP FD=math.clamp(FD+n,FD_MIN,FD_MAX)sendChat("backing off, distance is now "..FD)elseif cmd=="getcloser"then local n=tonumber(args)or BACKOFF_STEP FD=math.clamp(FD-n,FD_MIN,FD_MAX)sendChat("getting closer, distance is now "..FD)elseif cmd=="recall"then stopAllModes()task.wait(0.05)teleportToHost()sendChat(pick({"omw","coming","on my way","here"}))elseif cmd=="stop"then stopAllModes()task.wait(0.05)teleportToHost()sendChat(pick(R_.stop))elseif cmd=="follow"then stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopRizz(false)S.mode="Follow"S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick({"following","on you","back on follow"}))elseif cmd=="info"then local sp2=args:find("%s")local pname,field if sp2 then pname=trim(args:sub(1,sp2-1))field=trim(args:sub(sp2+1)):lower()else pname=trim(args)field=nil end if pname==""then sendChat("usage: !info <player> [field]")else local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))else local myHrp=hrp()local pHrp=getPlayerHRP(p)local d=-1 if myHrp and pHrp then d=math.floor((myHrp.Position-pHrp.Position).Magnitude)end local accAge=p.AccountAge or 0 local joined=os.time()-(accAge*86400)local isFriend=false pcall(function()isFriend=p:IsFriendsWith(pl.UserId)end)local ph=0 local pmax=100 if p.Character then local phh=p.Character:FindFirstChildOfClass("Humanoid")if phh then ph=math.floor(phh.Health)pmax=math.floor(phh.MaxHealth)end end local isHost=false if p==getHost()then isHost=true end if field=="id"then sendChat(p.Name.." id: "..p.UserId)
 elseif field=="age"or field=="joined"then sendChat(p.Name.." joined "..fmtDate(joined).." ("..fmtAge(accAge).." ago)")
@@ -965,7 +1137,7 @@ elseif cmd=="genderclear"then
     local p=getPlayer(args)
     if not p then sendChat(pick(R_.notfound))return end
     sendChat("cleared for "..p.Name)
-elseif cmd=="cmds"then sendSeq({"here ya go","!ask <msg> - talk to XcH","!ask <do something> - XcH will do it","!ask whats the name of this game","!gameinfo - what game is this","!gameinfo full | tips | controls | wiki","!similar - games like this one","!info <player> [id/age/joined/distance/hp/friend]","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!orbit <1-1000> | !unorbit","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!annoy <player> | !unannoy","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling","!antitoolkill | !unantitoolkill","!rizz <player> | !unrizz","!dance 1-4 | !undance","!spin 1-100 | !unspin","!math <num><op><num>","!say <text>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only)","!whoishost","!cmds"},0.9)
+elseif cmd=="cmds"then sendSeq({"here ya go","!ask <msg> - talk to XcH","!ask <do something> - XcH will do it","!ask whats the name of this game","!gameinfo - what game is this","!gameinfo full | tips | controls | wiki","!similar - games like this one","!info <player> [id/age/joined/distance/hp/friend]","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!orbit <1-1000> | !unorbit","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!annoy <player> | !unannoy","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling","!antitoolkill | !unantitoolkill","!rizz <player> | !unrizz","!dance 1-4 | !undance","!spin 1-100 | !unspin","!math <num><op><num>","!say <text>","!flipcoin | !roll <n> | !8ball <q>","!truth | !dare | !wouldyourather","!randomnum <a> <b> | !countdown <n> | !timer <s>","!storytime | !compliment <player> | !roast <player>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only)","!whoishost","!cmds"},0.9)
 else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end
 function processMessage(uid,text)if not text or text==""then return end 
     if uid~=pl.UserId and text:sub(1,1)~=commandPrefix then
@@ -1035,13 +1207,7 @@ local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enu
 local CMDS={
 {"── AI ──",true},{"!ask <msg> - talk to XcH",false},{"!ask <do something> - XcH will do it",false},{"!ask whats the name of this game",false},{"!gameinfo - what game is this",false},{"!gameinfo full | tips | controls | wiki",false},{"!similar - games like this one",false},{"!info <player> [field]",false},
 {"── CORE ──",true},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!orbit <1-1000> | !unorbit",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"!hide | !spawn",false},{"!bam <player> | !unbam",false},{"!annoy <player> | !unannoy",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"!rizz <player> | !unrizz",false},{"!dance 1-4 | !undance",false},{"!spin 1-100 | !unspin",false},{"!math <num><op><num>",false},{"!say <text>",false},
-{"── MOVEMENT (soon) ──",true},{"!speed <n>",false},{"!jump <n>",false},{"!crawl",false},{"!moonwalk",false},{"!shake",false},{"!freeze",false},{"!unfreeze",false},{"!float",false},
-{"── EMOTES (soon) ──",true},{"!wave",false},{"!point",false},{"!salute",false},{"!lay",false},{"!dab",false},{"!pose",false},{"!faint",false},
-{"── TROLL (soon) ──",true},{"!stalk <player>",false},{"!mimic <player>",false},{"!mirror <player>",false},{"!peek <player>",false},{"!haunt <player>",false},{"!ride <player>",false},{"!carry <player>",false},{"!block <player>",false},{"!tease <player>",false},{"!troll <player>",false},{"!copychat <player>",false},
-{"── LOOP (soon) ──",true},{"!rap",false},
-{"── CHAT UTIL (soon) ──",true},{"!flipcoin",false},{"!roll <n>",false},{"!8ball <q>",false},{"!compliment <player>",false},{"!roast <player>",false},{"!dadjoke",false},{"!truth",false},{"!dare",false},{"!randomnum <a> <b>",false},{"!countdown <n>",false},{"!timer <s>",false},{"!quiz",false},{"!wouldyourather",false},{"!storytime",false},
-{"── COMBOS (soon) ──",true},{"!greet <player>",false},{"!escort <player>",false},
-{"── STATUS (soon) ──",true},{"!afk",false},{"!unafk",false},{"!status",false},{"!sleep",false},
+{"── FUN ──",true},{"!flipcoin",false},{"!roll <n>",false},{"!8ball <q>",false},{"!truth",false},{"!dare",false},{"!wouldyourather",false},{"!randomnum <a> <b>",false},{"!countdown <n>",false},{"!timer <s>",false},{"!storytime",false},{"!compliment <player>",false},{"!roast <player>",false},
 {"── HOST ──",true},{"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}
 for i,e in ipairs(CMDS)do local l=Instance.new("TextLabel")l.Size=UDim2.new(1,0,0,e[2]and 18 or 14)l.BackgroundTransparency=1 l.Font=e[2]and Enum.Font.GothamBold or Enum.Font.Code l.Text=e[1]l.TextColor3=e[2]and C.accent or C.text l.TextSize=10 l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=i l.Parent=cmdScroll end
 local apiPage=newPage()apiPage.Name="ApiKeysPage"
@@ -1225,8 +1391,7 @@ end
 end
 pwGo.Activated:Connect(tryUnlock)
 pwBack.Activated:Connect(function()
-pwOv.Visible=false
-pwErr.Text=""
+pwOv.Visible=falsepwErr.Text=""
 pwBox.Text=""
 end)
 pwBox.FocusLost:Connect(function(ep)
