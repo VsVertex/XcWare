@@ -4,6 +4,7 @@ TN="My Panel"GN="InterDimensionalPanelGUI"SN="MyPanelStorage"
 BS=16 BJ=50 PH=8*3600 FD=6 FSD=2 FCB=2 ED=70 OR=14 AT=20 VY=-300 VR=4000 RI=1.0 DW=2.0 LR=15 SNT=1.5 LAD=5 LHMD=45 AIT=0.35 PDR=7 WR=4.5 VT=-75 OL=7 SED=14 SBM=1.5 MCW1=6.0 MCW2=12.0 MCA1=8 MCA2=22 MJD1=0.30 MJD2=0.55 MJC=0.80 PA=2 PFC=0.50 BDB=5.0 BO=3.0 BC=0.22 BTR=14 AFD=3.5 ATR=22 AMW1=3.5 AMW2=7.5 FSX=150000 FSY=220000 FSZ=180000 FLV=6000 FAV=12000 FDV=80 FDD=25 FMD=8 FDW=0.15 DRT=30 MCH=4 LRT=0 LRT2=0 RCL=3.0
 STRANGER_RANGE=15 STRANGER_STARE=1.5 STRANGER_CD=3 BACKOFF_STEP=5 FD_MIN=2 FD_MAX=60
 PROTECT_DIST=6 PROTECT_STILL_TIME=1.5 PROTECT_COOLDOWN=5 PROTECT_TWEEN=0.25 PROTECT_CHAT_CD=2.5 PROTECT_BACK_DIST=5
+HOVER_HEIGHT=5.0 HOVER_BOB_Y=0.35 HOVER_BOB_XZ=0.18 HOVER_ROT=0.02 HOVER_TILT_MAX=0.22 HOVER_TILT_LERP=6.0 HOVER_LAND_TIME=0.9 HOVER_LIFT_TIME=0.9
 KEY_FOLDER="XcHPanel"XCH_FILE=KEY_FOLDER.."/xch_key.txt"XCODE_FILE=KEY_FOLDER.."/xcode_key.txt"XCH3_FILE=KEY_FOLDER.."/xch3_key.txt"XCODE2_FILE=KEY_FOLDER.."/xcode2_key.txt"
 API_PASSWORD="crix"
 function fsSupported()return type(writefile)=="function"and type(readfile)=="function"end
@@ -40,19 +41,20 @@ CRITICAL RULE FOR CHAT LOG: The log is in chronological order. The LAST numbered
 If a [GAME INFO] block is provided in the prompt, use it to answer ANY question about the current roblox game: its name, creator, what it is, how to play, controls, tips, progression, similar games, or wiki. Use the real info from the block, don't make stuff up about it. If a field is missing say you dont know that part.
 
 CRITICAL DISTINCTION:
-- If the user asks YOU (the bot) to do something (e.g. "make yourself sit", "bot sit", "fling bob", "spin", "rizz bob"), reply with [[CMD]]command_name args[[/CMD]].
+- If the user asks YOU (the bot) to do something (e.g. "make yourself sit", "bot sit", "fling bob", "spin", "rizz bob", "hover"), reply with [[CMD]]command_name args[[/CMD]].
 - If the user asks for a SCRIPT or a hack or asks YOU to make THEM do something (e.g. "make me sit", "give me fly script", "speed hack"), reply EXACTLY with [[CODEREQ]]what they want, one line[[/CODEREQ]].
 
 Available BOT commands (for [[CMD]]):
 spin, dance, hide, spawn, jump, sit, stand, orbit, lead, bam, annoy, swordkill, fling, backoff, getcloser, recall, follow, stop, info
 unspin, unorbit, unbam, unannoy, unfling, unswordkill, unlead, undance
 antifling, unantifling, antitoolkill, unantitoolkill
-rizz, unrizz
-flipcoin, roll, 8ball, truth, dare, wouldyourather, randomnum, countdown, timer, storytime, compliment, roast, dadjoke
+rizz, unrizz, hover, unhover
 
 STOP MAPPINGS (very important):
 - "stop" / "stop it" / "stop everything" / "cancel" / "enough" / "go back" / "come back" / "return" / "leave them" / "chill" → [[CMD]]stop[[/CMD]]
 - "recall" / "teleport to me" / "tp to me" → [[CMD]]recall[[/CMD]]
+- "land" / "stop hovering" / "unhover" / "get down" → [[CMD]]unhover[[/CMD]]
+- "float" / "hover" / "fly in place" / "glide" → [[CMD]]hover[[/CMD]]
 
 INFO MAPPINGS:
 - "info on X" / "who is X" / "tell me about X" → [[CMD]]info X[[/CMD]]
@@ -79,17 +81,9 @@ For flipcoin, roll, 8ball, truth, dare, wouldyourather, randomnum, countdown, ti
 - for roast <name>: one savage but playful roast line, no slurs
 - for dadjoke: one dad joke
 
-EXAMPLES of GOOD replies (all in ONE message):
-- "flip a coin" → "its heads boss"
-- "roll d20" → "rolled a 17, nice"
-- "8ball is it worth it" → "8ball says: yes definitely"
-- "give me a dare" → "dare: text ur crush rn lol"
-- "roast bob" → "bob, you look like you lose fights to your own reflection"
-- "dadjoke" → "why dont scientists trust atoms? cause they make up everything"
-
 CMD RULES:
-- ONLY emit [[CMD]] when user is CLEARLY requesting the BOT to do a BODY action (spin, sit, fling, bam, etc).
-- NEVER emit [[CMD]] for flipcoin/roll/8ball/truth/dare/wouldyourather/randomnum/countdown/timer/storytime/compliment/roast/dadjoke — those are answered in chat.
+- ONLY emit [[CMD]] when user is CLEARLY requesting the BOT to do a BODY action.
+- NEVER emit [[CMD]] for fun commands above.
 - NEVER emit [[CMD]] for script/exploit requests. Those use [[CODEREQ]].
 
 For everything else, just chat normally.]==]
@@ -122,7 +116,7 @@ If unclear: one short question, no code.
 If pasted error: one line diagnosis + fixed code.
 
 Talk casual but focused. Boss = crixcrix000 or XcVr1.]==]
-AI_CMD_WHITELIST={spin=true,dance=true,hide=true,spawn=true,jump=true,sit=true,stand=true,orbit=true,lead=true,bam=true,annoy=true,swordkill=true,fling=true,backoff=true,getcloser=true,recall=true,follow=true,stop=true,info=true,unspin=true,unorbit=true,unbam=true,unannoy=true,unfling=true,unswordkill=true,unlead=true,undance=true,antifling=true,unantifling=true,antitoolkill=true,unantitoolkill=true,rizz=true,unrizz=true}
+AI_CMD_WHITELIST={spin=true,dance=true,hide=true,spawn=true,jump=true,sit=true,stand=true,orbit=true,lead=true,bam=true,annoy=true,swordkill=true,fling=true,backoff=true,getcloser=true,recall=true,follow=true,stop=true,info=true,unspin=true,unorbit=true,unbam=true,unannoy=true,unfling=true,unswordkill=true,unlead=true,undance=true,antifling=true,unantifling=true,antitoolkill=true,unantitoolkill=true,rizz=true,unrizz=true,hover=true,unhover=true}
 local C={panel=Color3.fromRGB(255,255,255),panelTop=Color3.fromRGB(248,248,250),section=Color3.fromRGB(252,252,254),track=Color3.fromRGB(244,244,247),button=Color3.fromRGB(240,240,244),buttonHover=Color3.fromRGB(232,232,236),buttonPressed=Color3.fromRGB(210,210,216),border=Color3.fromRGB(222,222,228),text=Color3.fromRGB(20,20,25),subText=Color3.fromRGB(120,120,130),accent=Color3.fromRGB(0,0,0),green=Color3.fromRGB(60,180,80),red=Color3.fromRGB(220,60,60),sidebar=Color3.fromRGB(246,246,248),activeTab=Color3.fromRGB(225,225,232),meBubble=Color3.fromRGB(232,236,244),aiBubble=Color3.fromRGB(248,248,250)}
 for _,n in ipairs({GN,SN})do local a=pg:FindFirstChild(n)if a then a:Destroy()end local b=pl:FindFirstChild(n)if b then b:Destroy()end end
 local function corner(o,r)local c=Instance.new("UICorner")c.CornerRadius=UDim.new(0,r)c.Parent=o return c end
@@ -150,9 +144,9 @@ local function fmtDate(ts)
 if not ts then return "unknown" end
 return os.date("%Y-%m-%d",ts)
 end
-local R_={startup={"yo im XcH","hey! im XcH","back again, XcH here","sup, im XcH","hello! XcH here","yo yo its XcH","whats good, XcH in the house","hey hey, XcH here","wassup, XcH speaking","hello hello, XcH here","yo! im XcH btw","how you doin, XcH here","hi im XcH nice to meet ya","aye im XcH","chill im XcH","hello human, XcH here","im baaack, XcH","yooo XcH here","welcome, im XcH","XcH online","hey there, XcH here","hiya, XcH reporting in","im here, XcH btw","just dropped in, XcH","sup bro, XcH here"},orbit={"orbiting now","circling ya","going around","orbit mode on","round and round","lemme orbit","starting my laps","spinning around u","yeah im circling","orbit engaged","imma go around","going for a loop","circular motion rn","cruising around ya","watch me orbit","doing the rounds","im orbiting now","orbiting like a moon","spin cycle initiated","going orbital","round trip time","orbit incoming"},unorbit={"orbit off","stopped orbiting","ok im done circling","back to normal","orbit cancelled","not spinning anymore","done with laps","off orbit","orbit disengaged","alright stopped","ok no more orbit","chill now","just standing","done going around","leaving orbit","orbit ended","not orbiting anymore","back on the ground","ok stopped spinning","orbit terminated","disengaging","done with that"},sit={"sitting down","taking a seat","chill mode","gonna sit","sittin","down i go","seat taken","sit time","im seated","yep sitting","chilling now","ok sitting","take a load off","sit back","lowkey tired","here i sit","plopping down","gonna rest","sittin here now","seated","sitting rn","down for a bit"},stand={"up we go","standing up","im up","stand mode","back on my feet","ok up now","standing","getting up","up and ready","im standing","back up","off the ground","standin","ok im up","rising","vertical again","upright now","here we go","feet on floor","up","back in action","im up now"},jump={"jumping","boing","hop","up i go","yeet","leap","hop up","jump rn","boinggg","wheee","up","in the air","doing a hop","spring","leaping","ok jumping","bounce","hop hop","up up","takeoff","jumping rn","air time"},hide={"going invisible","poof gone","vanishing now","hiding","bye bye","out of sight","ghost mode","now u dont see me","disappearing","c ya","going ghost","hidden","vamoose","im out","hiding rn","invisible mode","peacing out","catch me if u can","gone","vanishing","shh im hiding","hidden now"},spawn={"im back","returned","sup again","back online","im here","yo im back","hello again","respawned","here i am","back from the void","im back bro","reporting in","alive again","back to action","yo","guess whos back","im here now","made it back","back in the game","hi again","returned from nada","and im back"},dance={"dancing now","lets dance","getting down","movin","grooving","dance time","bustin moves","shakin it","party mode","yeah im dancing","cut a rug","dance dance","watch me groove","getting funky","dance floor time","wiggle wiggle","showing off moves","dancing rn","having a boogie","lets go dancing","im dancing","moves activated"},undance={"stopped dancing","dance off","chill now","no more dancing","done dancin","ok im done","standing still","enough dancing","done with moves","stopped","ok tired now","not dancing","moves off","chilling","done","dancing over","stopped the groove","no more dancing rn","im done dancing","back to normal","ok stop","rest time"},spin={"spinning now","wheee","spin go brrr","round and round","lets spin","spinning fast","vroooom","spin time","yeah spinning","going for a whirl","spin cycle on","twisting","watch me spin","spin spin spin","rotating","chill spinning now","spinning rn","spin mode","im dizzy","going in circles","spin activated","spinning"},unspin={"stopped spinning","spin off","ok im done","no more spinning","stopped twirling","ok chill","spin ended","back to normal","not spinning","done with that","ok dizzy now","stopping","spin off rn","standin still","stopped spinning","chill","no spin","spin done","back to standing","ok stop spinning","spin cancelled","ending spin"},lead={"follow me","this way","come on","follow me bro","let's go","over here","come with me","follow follow","leading now","follow me to them","walkin to target","come on man","lets go find em","leading the way","follow!","hey come here","im leading now","follow me rq","takin the lead","on the way","come on lets go","leading rn"},unlead={"lead off","stopped leading","done leading","ok stopped","not leading anymore","lead cancelled","back to normal","chill","ok enough leading","done with that","not leading rn","back on follow","im done","stopped","lead ended","back to you","ok got it","returning","back to base","lead done","im back","ok stopping lead"},bam={"bamming now","getting in their face","bam mode","on their case","yeah bamming","harassing them now","bam activated","in your face","right behind them","bamming target","on em now","bam time","im on em","getting close","stay on em","bamming rn","yep bamming","on their tail","bam engaged","watch this","started bamming","in their space"},unbam={"bam off","stopped bamming","leaving them","done","bam done","ok stopping","back to you","bam ended","chill now","ok bam off","done bamming","leaving them alone","im back","bam cancelled","ok im back","returning","stopped","no more bam","leaving","back to base","bam done rn","finished bamming"},annoy={"annoying now","on their nerves","annoy mode","getting on their case","yeah annoying","bothering them","annoy activated","pestering them","here we go","annoying target","on their tail","annoy time","watch this","started annoying","on em","annoying rn","yep annoying","getting under skin","annoy engaged","lemme bug em","spamming them","in their biz"},unannoy={"annoy off","stopped annoying","leaving them","done annoying","ok im done","returning","annoy ended","chill now","ok annoy off","done bugging em","leaving them alone","im back","annoy cancelled","stopped bugging","back to base","ok im back","no more annoy","back to you","annoy done","finished annoying","im back bro","done"},fling={"flinging now","yeeting them","fling mode","here we go","yeet activated","flinging target","target fling","fling time","watch this","started flinging","yeeting now","flinging rn","yep flinging","getting flingy","target go weee","sending em","flinging them","fling engaged","gone fling","here comes the yeet","let it rip","fling incoming"},unfling={"fling off","stopped flinging","done","fling done","chill","ok stopping","back to you","fling ended","no more flinging","returning","back to base","ok im back","fling cancelled","leaving them","ok im done","fling done rn","back on follow","stopped","fling over","enough","im back","done flinging"},notfound={"who?","dunno that name","never heard of em","cant find em","no clue who that is","idk that player","who dat?","not in server","aint see em","nope cant find","who bro","no idea","huh?","not finding em","no luck","wheres that?","say what?","not sure who that is","cant spot em","who u talkin bout","never seen that name","not here"},self={"thats me lol","bruh im me","cant do it to myself","no lol","im not doing that to me","why would i","that makes no sense","im the one doing stuff bro","cmon man","nah","nope","youre joking right","lol no","cant do that","seriously?","bro","why","no way","not doing that","thats weird","look at yourself","youre a comedian"},stranger={"nah only my boss tells me what to do","not listening to you bro","lol no","youre not my boss","nice try","nope","im not your bot","wrong person lol","ask crix hes the boss","cant help you with that","youre not on the list","nuh uh","only my host can do that","denied","access denied","not for you","wrong guy bro","sorry not sorry","ha good one","yeah no"},norandom={"no one else to target bro","no valid target","im alone in here","no players to pick from","everyone left","server empty"},stop={"alright stopping","ok done","chill","stopped","back on follow","ok ok","im back","returning","done","fine","stopping now","ok ill stop","back to you","here"},infoerr={"couldnt find that field","try id/age/joined/distance","unknown field bro","huh? try id age joined or distance"}}
+local R_={startup={"yo im XcH","hey! im XcH","back again, XcH here","sup, im XcH","hello! XcH here","yo yo its XcH","whats good, XcH in the house","hey hey, XcH here","wassup, XcH speaking","hello hello, XcH here","yo! im XcH btw","how you doin, XcH here","hi im XcH nice to meet ya","aye im XcH","chill im XcH","hello human, XcH here","im baaack, XcH","yooo XcH here","welcome, im XcH","XcH online","hey there, XcH here","hiya, XcH reporting in","im here, XcH btw","just dropped in, XcH","sup bro, XcH here"},orbit={"orbiting now","circling ya","going around","orbit mode on","round and round","lemme orbit","starting my laps","spinning around u","yeah im circling","orbit engaged","imma go around","going for a loop","circular motion rn","cruising around ya","watch me orbit","doing the rounds","im orbiting now","orbiting like a moon","spin cycle initiated","going orbital","round trip time","orbit incoming"},unorbit={"orbit off","stopped orbiting","ok im done circling","back to normal","orbit cancelled","not spinning anymore","done with laps","off orbit","orbit disengaged","alright stopped","ok no more orbit","chill now","just standing","done going around","leaving orbit","orbit ended","not orbiting anymore","back on the ground","ok stopped spinning","orbit terminated","disengaging","done with that"},sit={"sitting down","taking a seat","chill mode","gonna sit","sittin","down i go","seat taken","sit time","im seated","yep sitting","chilling now","ok sitting","take a load off","sit back","lowkey tired","here i sit","plopping down","gonna rest","sittin here now","seated","sitting rn","down for a bit"},stand={"up we go","standing up","im up","stand mode","back on my feet","ok up now","standing","getting up","up and ready","im standing","back up","off the ground","standin","ok im up","rising","vertical again","upright now","here we go","feet on floor","up","back in action","im up now"},jump={"jumping","boing","hop","up i go","yeet","leap","hop up","jump rn","boinggg","wheee","up","in the air","doing a hop","spring","leaping","ok jumping","bounce","hop hop","up up","takeoff","jumping rn","air time"},hide={"going invisible","poof gone","vanishing now","hiding","bye bye","out of sight","ghost mode","now u dont see me","disappearing","c ya","going ghost","hidden","vamoose","im out","hiding rn","invisible mode","peacing out","catch me if u can","gone","vanishing","shh im hiding","hidden now"},spawn={"im back","returned","sup again","back online","im here","yo im back","hello again","respawned","here i am","back from the void","im back bro","reporting in","alive again","back to action","yo","guess whos back","im here now","made it back","back in the game","hi again","returned from nada","and im back"},dance={"dancing now","lets dance","getting down","movin","grooving","dance time","bustin moves","shakin it","party mode","yeah im dancing","cut a rug","dance dance","watch me groove","getting funky","dance floor time","wiggle wiggle","showing off moves","dancing rn","having a boogie","lets go dancing","im dancing","moves activated"},undance={"stopped dancing","dance off","chill now","no more dancing","done dancin","ok im done","standing still","enough dancing","done with moves","stopped","ok tired now","not dancing","moves off","chilling","done","dancing over","stopped the groove","no more dancing rn","im done dancing","back to normal","ok stop","rest time"},spin={"spinning now","wheee","spin go brrr","round and round","lets spin","spinning fast","vroooom","spin time","yeah spinning","going for a whirl","spin cycle on","twisting","watch me spin","spin spin spin","rotating","chill spinning now","spinning rn","spin mode","im dizzy","going in circles","spin activated","spinning"},unspin={"stopped spinning","spin off","ok im done","no more spinning","stopped twirling","ok chill","spin ended","back to normal","not spinning","done with that","ok dizzy now","stopping","spin off rn","standin still","stopped spinning","chill","no spin","spin done","back to standing","ok stop spinning","spin cancelled","ending spin"},lead={"follow me","this way","come on","follow me bro","let's go","over here","come with me","follow follow","leading now","follow me to them","walkin to target","come on man","lets go find em","leading the way","follow!","hey come here","im leading now","follow me rq","takin the lead","on the way","come on lets go","leading rn"},unlead={"lead off","stopped leading","done leading","ok stopped","not leading anymore","lead cancelled","back to normal","chill","ok enough leading","done with that","not leading rn","back on follow","im done","stopped","lead ended","back to you","ok got it","returning","back to base","lead done","im back","ok stopping lead"},bam={"bamming now","getting in their face","bam mode","on their case","yeah bamming","harassing them now","bam activated","in your face","right behind them","bamming target","on em now","bam time","im on em","getting close","stay on em","bamming rn","yep bamming","on their tail","bam engaged","watch this","started bamming","in their space"},unbam={"bam off","stopped bamming","leaving them","done","bam done","ok stopping","back to you","bam ended","chill now","ok bam off","done bamming","leaving them alone","im back","bam cancelled","ok im back","returning","stopped","no more bam","leaving","back to base","bam done rn","finished bamming"},annoy={"annoying now","on their nerves","annoy mode","getting on their case","yeah annoying","bothering them","annoy activated","pestering them","here we go","annoying target","on their tail","annoy time","watch this","started annoying","on em","annoying rn","yep annoying","getting under skin","annoy engaged","lemme bug em","spamming them","in their biz"},unannoy={"annoy off","stopped annoying","leaving them","done annoying","ok im done","returning","annoy ended","chill now","ok annoy off","done bugging em","leaving them alone","im back","annoy cancelled","stopped bugging","back to base","ok im back","no more annoy","back to you","annoy done","finished annoying","im back bro","done"},fling={"flinging now","yeeting them","fling mode","here we go","yeet activated","flinging target","target fling","fling time","watch this","started flinging","yeeting now","flinging rn","yep flinging","getting flingy","target go weee","sending em","flinging them","fling engaged","gone fling","here comes the yeet","let it rip","fling incoming"},unfling={"fling off","stopped flinging","done","fling done","chill","ok stopping","back to you","fling ended","no more flinging","returning","back to base","ok im back","fling cancelled","leaving them","ok im done","fling done rn","back on follow","stopped","fling over","enough","im back","done flinging"},notfound={"who?","dunno that name","never heard of em","cant find em","no clue who that is","idk that player","who dat?","not in server","aint see em","nope cant find","who bro","no idea","huh?","not finding em","no luck","wheres that?","say what?","not sure who that is","cant spot em","who u talkin bout","never seen that name","not here"},self={"thats me lol","bruh im me","cant do it to myself","no lol","im not doing that to me","why would i","that makes no sense","im the one doing stuff bro","cmon man","nah","nope","youre joking right","lol no","cant do that","seriously?","bro","why","no way","not doing that","thats weird","look at yourself","youre a comedian"},stranger={"nah only my boss tells me what to do","not listening to you bro","lol no","youre not my boss","nice try","nope","im not your bot","wrong person lol","ask crix hes the boss","cant help you with that","youre not on the list","nuh uh","only my host can do that","denied","access denied","not for you","wrong guy bro","sorry not sorry","ha good one","yeah no"},norandom={"no one else to target bro","no valid target","im alone in here","no players to pick from","everyone left","server empty"},stop={"alright stopping","ok done","chill","stopped","back on follow","ok ok","im back","returning","done","fine","stopping now","ok ill stop","back to you","here"},infoerr={"couldnt find that field","try id/age/joined/distance","unknown field bro","huh? try id age joined or distance"},hover={"hover mode on","floating now","lifting off","ghost mode activated","drifting up","hover engaged"},unhover={"landing now","coming down","hover off","back to walking","touching grass","landed"}}
 ROLE=nil commandPrefix="!"hostFilter={name=nil,userId=nil}originalHost={name=nil,userId=nil}hostLogRef=nil botLogRef=nil antiBan={detected=false}rotationOwner="Humanoid"pushLog=nil botLogBuffer={}CHAT_CONVERSATION={{role="system",content=CP}}CHAT_CONVERSATION2={{role="system",content=CP2}}isOwnerHost=false
-local S={mode="Follow",orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={},protectTarget=nil,protectUntil=0,protectStartPos=nil,protectLastMove=0,protectChatCD=0,protectCooldown=0,protectChatActive=false,protectChatQueue={}}
+local S={mode="Follow",orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={},protectTarget=nil,protectUntil=0,protectStartPos=nil,protectLastMove=0,protectChatCD=0,protectCooldown=0,protectChatActive=false,protectChatQueue={},hoverActive=false,hoverPos=nil,hoverBodyPos=nil,hoverBodyGyro=nil,hoverThread=nil,hoverTiltCur=Vector3.zero,hoverBaseY=nil,hoverStartTime=0,hoverStartLift=0}
 stopOrbit=nil stopSpin=nil stopDance=nil stopLead=nil stopBam=nil startBam=nil stopAnnoy=nil startAnnoy=nil stopFling=nil startFling=nil startFollow=nil stopFollow=nil sendChat=nil handleCommand=nil teleportToHost=nil handleMath=nil
 local PLACEHOLDER_CMDS={speed=true,jump=true,crawl=true,moonwalk=true,shake=true,freeze=true,unfreeze=true,float=true,wave=true,point=true,salute=true,lay=true,dab=true,pose=true,faint=true,stalk=true,mimic=true,mirror=true,peek=true,haunt=true,ride=true,carry=true,block=true,tease=true,troll=true,copychat=true,rap=true,quiz=true,greet=true,escort=true,afk=true,unafk=true,status=true,sleep=true}
 local PLACEHOLDER_REPLIES={"soon","coming soon","not ready yet","wip","still cooking","gimme a bit","soon bro"}
@@ -236,6 +230,7 @@ end
 return getPlayer(arg)
 end
 function stopAllModes()
+pcall(stopHover,false)
 pcall(stopBam,false)
 pcall(stopAnnoy,false)
 pcall(stopFling,false,false)
@@ -523,7 +518,169 @@ function getPlayer(name)if not name then return nil end local n=name:lower()if n
 function getPlayerHRP(p)return p and p.Character and p.Character:FindFirstChild("HumanoidRootPart")or nil end
 function applyFixedSpeed()local h=hum()if h then pcall(function()h.WalkSpeed=BS h.JumpPower=BJ h.UseJumpPower=true end)end end
 -- ══════════════════════════════════════════════════════════════════
---  AI FUN HANDLER (all fun commands go through the AI, single message)
+--  HOVER / DRONE MODE (Touhou-style floating)
+-- ══════════════════════════════════════════════════════════════════
+function freezeAnims()
+    local c=pl.Character
+    if not c then return end
+    local anim=c:FindFirstChildOfClass("Animator")
+    if anim then
+        for _,t in ipairs(anim:GetPlayingAnimationTracks())do
+            pcall(function()t:Stop(0.15)end)
+        end
+    end
+    for _,t in ipairs(c:GetChildren())do
+        if t:IsA("AnimationController")or t:IsA("Animator")then
+            pcall(function()t:Destroy()end)
+        end
+    end
+end
+function makeBodyRigid()
+    local c=pl.Character if not c then return end
+    for _,p in ipairs(c:GetDescendants())do
+        if p:IsA("BasePart")and p.Name~="HumanoidRootPart"then
+            pcall(function()
+                p.Massless=false
+                p.CustomPhysicalProperties=PhysicalProperties.new(1,0,0.9,1,1)
+            end)
+        end
+    end
+end
+function startHover(silent)
+    if S.hoverActive then return end
+    if S.mode=="SwordKill"or S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="Rizz"then return end
+    local h=hum() local m=hrp()
+    if not h or not m then return end
+    S.hoverActive=true
+    S.mode="Hover"
+    S.hoverStartTime=os.clock()
+    S.hoverStartLift=m.Position.Y
+    S.hoverBaseY=m.Position.Y
+    S.hoverTiltCur=Vector3.zero
+    setRotationOwner("FaceHost")
+    h.WalkSpeed=BS
+    h.JumpPower=0
+    h.UseJumpPower=true
+    pcall(function()h.PlatformStand=false end)
+    freezeAnims()
+    makeBodyRigid()
+    if S.hoverBodyPos then pcall(function()S.hoverBodyPos:Destroy()end)end
+    if S.hoverBodyGyro then pcall(function()S.hoverBodyGyro:Destroy()end)end
+    local bp2=Instance.new("BodyPosition")
+    bp2.MaxForce=Vector3.new(0,80000,0)
+    bp2.P=8000
+    bp2.D=800
+    bp2.Position=m.Position
+    bp2.Parent=m
+    S.hoverBodyPos=bp2
+    local bg=Instance.new("BodyGyro")
+    bg.MaxTorque=Vector3.new(0,0,0)
+    bg.P=0
+    bg.D=0
+    bg.CFrame=m.CFrame
+    bg.Parent=m
+    S.hoverBodyGyro=bg
+    if S.hoverThread then task.cancel(S.hoverThread) end
+    S.hoverThread=task.spawn(function()
+        local tick0=os.clock()
+        while S.hoverActive and ROLE=="BOT" do
+            local dt=R.Heartbeat:Wait()
+            local hrp2=hrp()
+            local h2=hum()
+            if not hrp2 or not h2 then break end
+            if S.hidden or antiBan.detected then break end
+            -- startup smooth lift
+            local life=os.clock()-S.hoverStartTime
+            local liftT=math.clamp(life/HOVER_LIFT_TIME,0,1)
+            local liftY=HOVER_HEIGHT*(liftT*liftT*(3-2*liftT))
+            -- pick target follow point
+            local target=hrp2.Position
+            local lookTarget=nil
+            if S.mode=="Hover" then
+                local hh=getHostHRP()
+                if hh then
+                    local d=(hrp2.Position-hh.Position).Magnitude
+                    if d>FSD then
+                        target=hh.Position
+                    else
+                        target=hrp2.Position
+                    end
+                end
+            end
+            -- grounded target Y from floor probe
+            local floorY=S.hoverBaseY-HOVER_HEIGHT
+            local ok,hit=probeFloor(target)
+            if ok and hit then
+                floorY=hit.Position.Y
+            end
+            local desiredY=floorY+HOVER_HEIGHT+liftY
+            -- idle bob using 4 axes with different frequencies
+            local t=os.clock()-tick0
+            local bobY=math.sin(t*1.7)*HOVER_BOB_Y
+            local bobX=math.sin(t*0.9)*HOVER_BOB_XZ
+            local bobZ=math.cos(t*1.13)*HOVER_BOB_XZ
+            -- velocity-based tilt
+            local vel=hrp2.AssemblyLinearVelocity
+            local flatV=Vector3.new(vel.X,0,vel.Z)
+            local look=hrp2.CFrame.LookVector
+            look=Vector3.new(look.X,0,look.Z)
+            if look.Magnitude<0.01 then look=Vector3.new(0,0,-1) else look=look.Unit end
+            local right=Vector3.new(look.Z,0,-look.X)
+            local fwdSpeed=flatV:Dot(look)
+            local sideSpeed=flatV:Dot(right)
+            local pitch=0
+            local roll=0
+            if math.abs(fwdSpeed)>0.5 then
+                pitch=math.clamp(-fwdSpeed*0.03,-HOVER_TILT_MAX,HOVER_TILT_MAX)
+            end
+            if math.abs(sideSpeed)>0.5 then
+                roll=math.clamp(-sideSpeed*0.03,-HOVER_TILT_MAX,HOVER_TILT_MAX)
+            end
+            local targetTilt=Vector3.new(pitch,0,roll)
+            S.hoverTiltCur=S.hoverTiltCur:Lerp(targetTilt,math.clamp(dt*HOVER_TILT_LERP,0,1))
+            -- apply position with bob
+            if S.hoverBodyPos then
+                local curPos=hrp2.Position
+                local desired=Vector3.new(target.X+bobX,desiredY+bobY,target.Z+bobZ)
+                S.hoverBodyPos.Position=desired
+            end
+            -- apply rotation manually on HRP top of humanoid
+            local baseCF=hrp2.CFrame
+            local finalCF=CFrame.new(baseCF.Position)*CFrame.Angles(S.hoverTiltCur.X,0,S.hoverTiltCur.Z)
+            -- preserve yaw: use humanoid rotation but add tilt
+            local yawCF=CFrame.new(baseCF.Position,baseCF.Position+look)
+            local tiltCF=yawCF*CFrame.Angles(S.hoverTiltCur.X,0,S.hoverTiltCur.Z)
+            pcall(function()hrp2.CFrame=tiltCF end)
+            -- pathfinding walk via MoveTo (still works because WalkSpeed is set)
+            if S.mode=="Hover" then
+                local hh=getHostHRP()
+                if hh then
+                    local d=(hrp2.Position-hh.Position).Magnitude
+                    if d>FSD then
+                        h2:MoveTo(hh.Position)
+                    end
+                end
+            end
+        end
+        if S.hoverBodyPos then pcall(function()S.hoverBodyPos:Destroy()end) S.hoverBodyPos=nil end
+        if S.hoverBodyGyro then pcall(function()S.hoverBodyGyro:Destroy()end) S.hoverBodyGyro=nil end
+    end)
+    if not silent then sendChat(pick(R_.hover)) end
+end
+function stopHover(silent)
+    if not S.hoverActive then return end
+    S.hoverActive=false
+    if S.hoverThread then task.cancel(S.hoverThread) S.hoverThread=nil end
+    if S.hoverBodyPos then pcall(function()S.hoverBodyPos:Destroy()end) S.hoverBodyPos=nil end
+    if S.hoverBodyGyro then pcall(function()S.hoverBodyGyro:Destroy()end) S.hoverBodyGyro=nil end
+    if S.mode=="Hover" then S.mode="Follow" end
+    releaseRotation()
+    local h=hum()
+    if h then pcall(function()h.PlatformStand=false h.WalkSpeed=BS h.JumpPower=BJ h.UseJumpPower=true end) end
+    if not silent then sendChat(pick(R_.unhover)) end
+end
+-- ══════════════════════════════════════════════════════════════════
+--  AI FUN HANDLER (single message, no CMD for fun)
 -- ══════════════════════════════════════════════════════════════════
 local function aiFun(prompt)
     if not APIKey or APIKey=="" then
@@ -547,83 +704,24 @@ local function aiFun(prompt)
             return
         end
         rp=trim(rp)
-        -- Safety: never let AI emit CMD from a fun command
         local _,cleanRp=extractAICommands(rp)
         if cleanRp=="" then cleanRp="hm" end
         aiChunkSend(cleanRp)
     end)
 end
-local function cmdFlip()
-    aiFun("flip a coin for me. reply with one short casual line saying heads or tails. lowercase, no emojis, no quotes.")
-end
-local function cmdRoll(n)
-    n=math.floor(tonumber(n) or 6)
-    n=math.clamp(n,2,1000)
-    aiFun("roll a d"..n.." for me. reply with one short casual line with a random number 1-"..n..". lowercase, no emojis, no quotes.")
-end
-local function cmd8Ball(q)
-    q=trim(q)
-    if q=="" then sendChat("usage: "..commandPrefix.."8ball <question>") return end
-    aiFun("the user asked the magic 8ball: \""..q.."\". reply with one short casual line with the 8ball's answer (yes/no/maybe style). lowercase, no emojis, no quotes.")
-end
-local function cmdTruth()
-    aiFun("give the user a random truth question for truth-or-dare. one short casual line. lowercase, no emojis, no quotes.")
-end
-local function cmdDare()
-    aiFun("give the user a random dare for truth-or-dare. one short casual line, funny. lowercase, no emojis, no quotes.")
-end
-local function cmdWYR()
-    aiFun("give the user a random would you rather question. one short casual line in format 'would you rather X or Y'. lowercase, no emojis, no quotes.")
-end
-local function cmdStorytime()
-    aiFun("tell the user a short 2-3 sentence funny random story (roblox vibes ok). one message. lowercase, no emojis, no quotes.")
-end
-local function cmdRandomNum(a,b)
-    local lo=math.floor(tonumber(a) or 1)
-    local hi=math.floor(tonumber(b) or 100)
-    if lo>hi then lo,hi=hi,lo end
-    if hi-lo>1000000 then hi=lo+1000000 end
-    aiFun("pick a random number between "..lo.." and "..hi..". reply with one short casual line with just the number and tiny flavor. lowercase, no emojis, no quotes.")
-end
-local function cmdCountdown(n)
-    n=math.floor(tonumber(n) or 5)
-    if n<1 then n=1 end
-    if n>20 then n=20 end
-    -- countdown is pure logic, no AI needed, but send as ONE message
-    local parts={}
-    for i=n,0,-1 do
-        if i==0 then parts[#parts+1]="GO!" else parts[#parts+1]=tostring(i) end
-    end
-    sendChat(table.concat(parts," "))
-end
-local function cmdTimer(n)
-    n=math.floor(tonumber(n) or 30)
-    if n<1 then n=1 end
-    if n>600 then n=600 end
-    sendChat("timer set for "..n.."s")
-    task.spawn(function()
-        local start=os.clock()
-        while os.clock()-start<n do task.wait(1)end
-        sendChat(pick({"time's up!","timer done","ding ding ding","times up boss"}))
-    end)
-end
-local function cmdCompliment(name)
-    if not name or name=="" then sendChat("usage: "..commandPrefix.."compliment <player>") return end
-    local t=resolveTarget(name)
-    if t=="NORANDOM" then sendChat(pick(R_.norandom)) return end
-    if not t then sendChat(pick(R_.notfound)) return end
-    aiFun("give "..t.Name.." a nice genuine compliment. one short casual line addressed to them. lowercase, no emojis, no quotes.")
-end
-local function cmdRoast(name)
-    if not name or name=="" then sendChat("usage: "..commandPrefix.."roast <player>") return end
-    local t=resolveTarget(name)
-    if t=="NORANDOM" then sendChat(pick(R_.norandom)) return end
-    if not t then sendChat(pick(R_.notfound)) return end
-    aiFun("roast "..t.Name.." with one savage but playful line. no slurs, no real insults, roblox ban-safe. lowercase, no emojis, no quotes.")
-end
-local function cmdDadJoke()
-    aiFun("tell a classic dad joke. one short line. lowercase, no emojis, no quotes.")
-end
+local function cmdFlip()aiFun("flip a coin for me. reply with one short casual line saying heads or tails. lowercase, no emojis, no quotes.")end
+local function cmdRoll(n)n=math.floor(tonumber(n) or 6)n=math.clamp(n,2,1000)aiFun("roll a d"..n.." for me. reply with one short casual line with a random number 1-"..n..". lowercase, no emojis, no quotes.")end
+local function cmd8Ball(q)q=trim(q)if q=="" then sendChat("usage: "..commandPrefix.."8ball <question>") return end aiFun("the user asked the magic 8ball: \""..q.."\". reply with one short casual line with the 8ball's answer (yes/no/maybe style). lowercase, no emojis, no quotes.")end
+local function cmdTruth()aiFun("give the user a random truth question for truth-or-dare. one short casual line. lowercase, no emojis, no quotes.")end
+local function cmdDare()aiFun("give the user a random dare for truth-or-dare. one short casual line, funny. lowercase, no emojis, no quotes.")end
+local function cmdWYR()aiFun("give the user a random would you rather question. one short casual line in format 'would you rather X or Y'. lowercase, no emojis, no quotes.")end
+local function cmdStorytime()aiFun("tell the user a short 2-3 sentence funny random story (roblox vibes ok). one message. lowercase, no emojis, no quotes.")end
+local function cmdRandomNum(a,b)local lo=math.floor(tonumber(a) or 1)local hi=math.floor(tonumber(b) or 100)if lo>hi then lo,hi=hi,lo end if hi-lo>1000000 then hi=lo+1000000 end aiFun("pick a random number between "..lo.." and "..hi..". reply with one short casual line with just the number and tiny flavor. lowercase, no emojis, no quotes.")end
+local function cmdCountdown(n)n=math.floor(tonumber(n) or 5)if n<1 then n=1 end if n>20 then n=20 end local parts={}for i=n,0,-1 do if i==0 then parts[#parts+1]="GO!" else parts[#parts+1]=tostring(i) end end sendChat(table.concat(parts," "))end
+local function cmdTimer(n)n=math.floor(tonumber(n) or 30)if n<1 then n=1 end if n>600 then n=600 end sendChat("timer set for "..n.."s")task.spawn(function()local start=os.clock()while os.clock()-start<n do task.wait(1)end sendChat(pick({"time's up!","timer done","ding ding ding","times up boss"}))end)end
+local function cmdCompliment(name)if not name or name=="" then sendChat("usage: "..commandPrefix.."compliment <player>") return end local t=resolveTarget(name)if t=="NORANDOM" then sendChat(pick(R_.norandom)) return end if not t then sendChat(pick(R_.notfound)) return end aiFun("give "..t.Name.." a nice genuine compliment. one short casual line addressed to them. lowercase, no emojis, no quotes.")end
+local function cmdRoast(name)if not name or name=="" then sendChat("usage: "..commandPrefix.."roast <player>") return end local t=resolveTarget(name)if t=="NORANDOM" then sendChat(pick(R_.norandom)) return end if not t then sendChat(pick(R_.notfound)) return end aiFun("roast "..t.Name.." with one savage but playful line. no slurs, no real insults, roblox ban-safe. lowercase, no emojis, no quotes.")end
+local function cmdDadJoke()aiFun("tell a classic dad joke. one short line. lowercase, no emojis, no quotes.")end
 -- ══════════════════════════════════════════════════════════════════
 --  PROTECT SYSTEM
 -- ══════════════════════════════════════════════════════════════════
@@ -766,7 +864,7 @@ task.spawn(function()while true do task.wait(0.1)if S.strangerUntil>0 and os.clo
 task.spawn(function()while true do task.wait(0.1)if S.antiFling and ROLE=="BOT"then local c=pl.Character if c then local m=c:FindFirstChild("HumanoidRootPart")if m and m.AssemblyLinearVelocity.Magnitude>150 then m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero if getHostHRP()then teleportToHost()end end for _,p in ipairs(P:GetPlayers())do if p~=pl and p.Character then for _,pt in ipairs(p.Character:GetDescendants())do if pt:IsA("BasePart")then pt.CanCollide=false end end end end end end end end)
 task.spawn(function()while true do task.wait(0.1)if S.antiToolKill and ROLE=="BOT"then local c=pl.Character if c then local tool=c:FindFirstChildOfClass("Tool")if tool and tool.Name~=TN then tool.Parent=pl:FindFirstChildOfClass("Backpack")end end end end end)
 function getLookTarget()if rotationOwner=="FaceHost"then local h=hum()if not h then return nil end if h.MoveDirection.Magnitude>0.1 then return nil end local host=getHost()local hh=getHostHRP()local m=hrp()if host and hh and m then local d=(hh.Position-m.Position).Magnitude if d<=LR then return host end end elseif rotationOwner=="FaceTarget"then local t=S.annoyTarget or S.swordKillTarget or S.rizzTarget if t and t.Parent and t.Character then return t end elseif rotationOwner=="Stranger"then local t=S.strangerTarget if t and t.Parent and t.Character then return t end end return nil end
-function startFacing()if S.facing then return end S.facing=true S.faceConn=R.Heartbeat:Connect(function(dt)if ROLE~="BOT"then return end if S.hidden or antiBan.detected then return end if rotationOwner~="FaceHost"and rotationOwner~="FaceTarget"and rotationOwner~="Stranger"then return end local tg=getLookTarget()if not tg or not tg.Character then return end local rt=hrp()if not rt then return end local hd=tg.Character:FindFirstChild("Head")local tp=hd and hd.Position or(tg.Character.HumanoidRootPart and tg.Character.HumanoidRootPart.Position)if not tp then return end local dr=tp-rt.Position local fl=Vector3.new(dr.X,0,dr.Z)if fl.Magnitude<0.05 then return end fl=fl.Unit local lk=rt.CFrame.LookVector local cf=Vector3.new(lk.X,0,lk.Z)if cf.Magnitude<0.05 then cf=Vector3.new(0,0,-1)end cf=cf.Unit local al=1-math.exp(-14*dt)local sm=cf:Lerp(fl,al)if sm.Magnitude<0.01 then return end sm=sm.Unit pcall(function()rt.CFrame=CFrame.lookAt(rt.Position,rt.Position+sm)end)end)end
+function startFacing()if S.facing then return end S.facing=true S.faceConn=R.Heartbeat:Connect(function(dt)if ROLE~="BOT"then return end if S.hidden or antiBan.detected then return end if S.hoverActive then return end if rotationOwner~="FaceHost"and rotationOwner~="FaceTarget"and rotationOwner~="Stranger"then return end local tg=getLookTarget()if not tg or not tg.Character then return end local rt=hrp()if not rt then return end local hd=tg.Character:FindFirstChild("Head")local tp=hd and hd.Position or(tg.Character.HumanoidRootPart and tg.Character.HumanoidRootPart.Position)if not tp then return end local dr=tp-rt.Position local fl=Vector3.new(dr.X,0,dr.Z)if fl.Magnitude<0.05 then return end fl=fl.Unit local lk=rt.CFrame.LookVector local cf=Vector3.new(lk.X,0,lk.Z)if cf.Magnitude<0.05 then cf=Vector3.new(0,0,-1)end cf=cf.Unit local al=1-math.exp(-14*dt)local sm=cf:Lerp(fl,al)if sm.Magnitude<0.01 then return end sm=sm.Unit pcall(function()rt.CFrame=CFrame.lookAt(rt.Position,rt.Position+sm)end)end)end
 DANCE_EMOTES={[1]="/e dance1",[2]="/e dance2",[3]="/e dance3",[4]="/e dance4"}
 function stopDance()S.dancing=false if S.danceTrack then pcall(function()S.danceTrack:Stop(0.2)end)S.danceTrack=nil end end
 function playDance(n)n=tonumber(n)or 1 if n<1 or n>4 then n=1 end stopDance()sendChat(DANCE_EMOTES[n])task.wait(0.05)sendChat(pick(R_.dance))S.dancing=true return true end
@@ -1060,13 +1158,13 @@ if S.mode=="SwordKill"then S.mode="Follow"releaseRotation()end
 if announce then sendChat(pick({"fight off","backing off","done","chill now","stopping"}))end
 end
 function clearHide()if S.hideBP then pcall(function()S.hideBP:Destroy()end)S.hideBP=nil end if S.hideBG then pcall(function()S.hideBG:Destroy()end)S.hideBG=nil end if S.hideHB then pcall(function()S.hideHB:Disconnect()end)S.hideHB=nil end local m=hrp()if m then for _,c in ipairs(m:GetChildren())do if c:IsA("BodyGyro")or c:IsA("BodyAngularVelocity")or c:IsA("BodyPosition")or c:IsA("BodyVelocity")or c:IsA("AlignOrientation")or c:IsA("AlignPosition")or c:IsA("LinearVelocity")then pcall(function()c:Destroy()end)end end end end
-function doHide(si)S.hidden=true S.frozen=true S.sitting=false stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)S.mode="Hidden"setRotationOwner("Hidden")local m=hrp()if m then local pos=Vector3.new(math.random(-VR,VR),VY+50,math.random(-VR,VR))S.hidePos=pos pcall(function()m.CFrame=CFrame.new(pos)m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)clearHide()local b=Instance.new("BodyPosition")b.MaxForce=Vector3.new(1e7,1e7,1e7)b.Position=pos b.P=5e5 b.D=200 b.Parent=m S.hideBP=b local g=Instance.new("BodyGyro")g.MaxTorque=Vector3.new(1e7,1e7,1e7)g.P=5e5 g.D=200 g.CFrame=m.CFrame g.Parent=m S.hideBG=g local h=hum()if h then h.WalkSpeed=0 h.JumpPower=0 h.PlatformStand=true end S.hideHB=R.Heartbeat:Connect(function()if not S.hidden then return end local r=hrp()if not r then return end if(r.Position-pos).Magnitude>5 then pcall(function()r.CFrame=CFrame.new(pos)end)end if r.AssemblyLinearVelocity.Magnitude>1 then pcall(function()r.AssemblyLinearVelocity=Vector3.zero end)end end)end if not si then sendChat(pick(R_.hide))end end
+function doHide(si)S.hidden=true S.frozen=true S.sitting=false stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopHover(true)S.mode="Hidden"setRotationOwner("Hidden")local m=hrp()if m then local pos=Vector3.new(math.random(-VR,VR),VY+50,math.random(-VR,VR))S.hidePos=pos pcall(function()m.CFrame=CFrame.new(pos)m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)clearHide()local b=Instance.new("BodyPosition")b.MaxForce=Vector3.new(1e7,1e7,1e7)b.Position=pos b.P=5e5 b.D=200 b.Parent=m S.hideBP=b local g=Instance.new("BodyGyro")g.MaxTorque=Vector3.new(1e7,1e7,1e7)g.P=5e5 g.D=200 g.CFrame=m.CFrame g.Parent=m S.hideBG=g local h=hum()if h then h.WalkSpeed=0 h.JumpPower=0 h.PlatformStand=true end S.hideHB=R.Heartbeat:Connect(function()if not S.hidden then return end local r=hrp()if not r then return end if(r.Position-pos).Magnitude>5 then pcall(function()r.CFrame=CFrame.new(pos)end)end if r.AssemblyLinearVelocity.Magnitude>1 then pcall(function()r.AssemblyLinearVelocity=Vector3.zero end)end end)end if not si then sendChat(pick(R_.hide))end end
 function doSpawn()S.hidden=false S.frozen=false S.sitting=false S.mode="Follow"clearHide()local h=hum()if h then h.PlatformStand=false h.WalkSpeed=BS h.JumpPower=BJ end rotationOwner="Humanoid"if h then h.AutoRotate=true end local hh,m=getHostHRP(),hrp()if hh and m then local f=hh.CFrame.LookVector*-5 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(f.X,0,f.Z))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)end S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil sendChat(pick(R_.spawn))end
 function think(fp,tp)local m=hrp()if not m then return "wait",nil end local dr=tp-fp local fl=Vector3.new(dr.X,0,dr.Z)local ds=fl.Magnitude if ds<0.1 then return "arrive",nil end fl=fl.Unit local ob,ht,inf=checkAheadObstacle(fp,fl,OL)if ob=="void_risk"or ob=="steep_drop"then return "avoid_edge",{kind=ob}end if ob=="slim"then return "avoid_slim",{hit=ht,info=inf}end if ob=="wall"then return "path",nil end local ok,rs,_,hi=visionClear(fp,tp)if not ok and rs=="void"then return "wait",nil end if not ok and rs=="slim"then return "avoid_slim",{hit=hi}end local br=math.min(PDR,ds)local bk=findPlayerInFront(fp,fl,br)if bk and bk~=getHost()and bk~=S.leadTarget then local pl2=planDodge(fp,tp)if pl2 then return "dodge",{dir=pl2,blocker=bk}end end if ok then return "walk_straight",nil end return "path",nil end
 function startMirrorJump()if S.mirrorWatcher then return end S.mirrorWatcher=task.spawn(function()local ls=false while ROLE=="BOT"do task.wait(0.07)if S.hidden or antiBan.detected or S.sitting then continue end if S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="SwordKill"or S.mode=="Rizz"then continue end local host=getHost()if not host or not host.Character then continue end local hh=host.Character:FindFirstChildOfClass("Humanoid")if not hh then continue end local st=hh:GetState()local j=(st==Enum.HumanoidStateType.Jumping)or(st==Enum.HumanoidStateType.Freefall)if j and not ls then if os.clock()-S.lastHostJumpTime>MJC then S.lastHostJumpTime=os.clock()S.mirrorJumpTime=os.clock()+MJD1+math.random()*(MJD2-MJD1)end end ls=j end end)end
 function startCameraMicro()if S.microCamActive then return end S.microCamActive=true S.microCamThread=task.spawn(function()while ROLE=="BOT"and S.microCamActive do task.wait(MCW1+math.random()*(MCW2-MCW1))if S.hidden or antiBan.detected or S.sitting then continue end if S.mode=="SwordKill"or S.mode=="Rizz"then continue end if rotationOwner=="Spin"or rotationOwner=="Orbit"or rotationOwner=="Fling"then continue end local cam=W.CurrentCamera if not cam then continue end local sg=math.random()<0.5 and-1 or 1 local an=math.rad(MCA1+math.random()*(MCA2-MCA1))*sg local sc=cam.CFrame local t1=T:Create(cam,TweenInfo.new(0.10,Enum.EasingStyle.Linear),{CFrame=sc*CFrame.Angles(0,an,0)})t1:Play()t1.Completed:Wait()task.wait(0.10+math.random()*0.15)T:Create(cam,TweenInfo.new(0.14,Enum.EasingStyle.Linear),{CFrame=sc}):Play()end end)end
 function computeFollowPoint(hp,hc,bp2)local tb=bp2-hp local fl=Vector3.new(tb.X,0,tb.Z)local mg=fl.Magnitude local dr if mg<FCB then local hv=hc.LookVector dr=Vector3.new(-hv.X,0,-hv.Z)if dr.Magnitude<0.01 then dr=Vector3.new(0,0,-1)end dr=dr.Unit else dr=fl.Unit end return hp+dr*FD end
-function botTick()if antiBan.detected then return end if S.hidden then if S.hidePos then local m=hrp()if m and(m.Position-S.hidePos).Magnitude>10 then pcall(function()m.CFrame=CFrame.new(S.hidePos)end)end end return end if S.sitting then local h0=hum()if not h0 or not h0.Sit then S.sitting=false else local m0=hrp()if m0 then pcall(function()m0.AssemblyLinearVelocity=Vector3.new(m0.AssemblyLinearVelocity.X*0.3,m0.AssemblyLinearVelocity.Y,m0.AssemblyLinearVelocity.Z*0.3)end)end return end end if S.mirrorJumpTime>0 and os.clock()>=S.mirrorJumpTime then if S.mode~="Bam"and S.mode~="Annoy"and S.mode~="Fling"and S.mode~="SwordKill"and S.mode~="Rizz"then local h=hum()if h and h.FloorMaterial~=Enum.Material.Air then h.Jump=true end end S.mirrorJumpTime=0 end if S.mode=="Spin"or S.dancing then local h2=hum()if h2 then local m2=hrp()if m2 then h2:MoveTo(m2.Position)end end checkPush()return end if S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="SwordKill"or S.mode=="Rizz"then return end if S.mode~="Follow"and S.mode~="Lead"then return end local h,hh,m=hum(),getHostHRP(),hrp()if not h or not hh or not m then return end do local hp=hh.Position if isInVoid(hp)then if not S.hostInVoid then S.hostInVoid=true S.hostVoidSafePos=S.lastSafeHostPos or m.Position end else if S.hostInVoid then S.hostInVoid=false end S.lastSafeHostPos=hp end end if isInVoid(m.Position)then local an=S.hostVoidSafePos or S.lastSafeHostPos if an then pcall(function()m.CFrame=CFrame.new(an+Vector3.new(0,3,0))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)elseif hh then pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(0,4,0))m.AssemblyLinearVelocity=Vector3.zero end)end S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil return end checkPush()local tp if S.mode=="Lead"then if not S.leadActive or not S.leadTarget or not S.leadTarget.Parent then stopLead(false)sendChat("lost target")return end local th=getPlayerHRP(S.leadTarget)if not th then return end if isInVoid(th.Position)then tp=S.lastSafeHostPos or m.Position h:MoveTo(tp)return end tp=th.Position if(m.Position-tp).Magnitude<=LAD then sendChat(pick({"made it","here","arrived"}))stopLead(false)S.mode="Follow"return end if(hh.Position-m.Position).Magnitude>LHMD then h:MoveTo(m.Position)return end else if S.hostInVoid then tp=S.hostVoidSafePos or S.lastSafeHostPos or m.Position if(tp-m.Position).Magnitude>FD then h:MoveTo(tp)S.lastMovePos=tp else h:MoveTo(m.Position)end return end tp=computeFollowPoint(hh.Position,hh.CFrame,m.Position)end if not tp then return end local d=(tp-m.Position).Magnitude local hd=(hh.Position-m.Position).Magnitude if S.mode=="Follow"and d>ED then if os.clock()-S.tpCD>3 then S.tpCD=os.clock()local bk=hh.CFrame.LookVector*-7 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(bk.X,3,bk.Z))m.AssemblyLinearVelocity=Vector3.zero end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil end return end if not(rotationOwner=="Stranger"and os.clock()<S.strangerUntil)then if h.MoveDirection.Magnitude>0.1 then setRotationOwner("Humanoid")else if S.mode=="Follow"and hd<=LR then setRotationOwner("FaceHost")else setRotationOwner("Humanoid")end end end if d<=FSD then h:MoveTo(m.Position)S.waypoints=nil S.cachedPath=nil S.lastHostPos=nil S.lastMovePos=nil S.committedTarget=nil S.lastWaypoint=nil S.failCount=0 return end local ac,da=think(m.Position,tp)if ac=="arrive"or ac=="wait"then h:MoveTo(m.Position)S.lastMovePos=nil S.waypoints=nil S.cachedPath=nil S.committedTarget=nil return end if ac=="avoid_edge"then local bk=m.Position-tp bk=Vector3.new(bk.X,0,bk.Z)if bk.Magnitude>0.1 then bk=bk.Unit*6 local sf=m.Position+bk if hasFloorBelow(sf)then h:MoveTo(sf)S.lastMovePos=sf end end return end if ac=="avoid_slim"then local dr=tp-m.Position dr=Vector3.new(dr.X,0,dr.Z)if dr.Magnitude>0.1 then dr=dr.Unit local lf=Vector3.new(-dr.Z,0,dr.X)local rg=Vector3.new(dr.Z,0,-dr.X)local ch=hasFloorBelow(m.Position+lf*6)and lf or(hasFloorBelow(m.Position+rg*6)and rg or nil)if ch then local np=m.Position+ch*6 h:MoveTo(np)S.lastMovePos=np end end return end if ac=="dodge"then local dr=da.dir local sd if dr=="left"then sd=Vector3.new(-m.CFrame.LookVector.Z,0,m.CFrame.LookVector.X)elseif dr=="right"then sd=Vector3.new(m.CFrame.LookVector.Z,0,-m.CFrame.LookVector.X)else sd=m.CFrame.LookVector end if dr=="jump"then local bl=da.blocker and da.blocker.Character if bl then for _,p2 in ipairs(bl:GetChildren())do if p2:IsA("BasePart")then pcall(function()p2.CanCollide=false end)end end task.delay(1.2,function()if bl and bl.Parent then for _,p2 in ipairs(bl:GetChildren())do if p2:IsA("BasePart")then pcall(function()p2.CanCollide=true end)end end end end)tryJump()end else local dd=m.Position+sd*7 if hasFloorBelow(dd)then h:MoveTo(dd)end end return end if ac=="walk_straight"then if not S.committedTarget or(S.committedTarget-tp).Magnitude>2 or os.clock()>S.committedUntil then h:MoveTo(tp)S.committedTarget=tp S.committedUntil=os.clock()+1.2 end S.waypoints=nil S.cachedPath=nil S.lastMovePos=tp checkStuck()return end local ps=tostring(math.floor(tp.X)).."|"..tostring(math.floor(tp.Z))local nn=false if not S.waypoints or #S.waypoints==0 then nn=true elseif S.lastPathSig~=ps then nn=true elseif os.clock()-S.lastRepath>RI then if(S.lastHostPos and(tp-S.lastHostPos).Magnitude or 999)>3 then nn=true end end if nn and(os.clock()-S.lastPathFail)<PFC then nn=false end if nn and os.clock()-S.lastRepath>RI then S.lastRepath=os.clock()local wps=computePath(m.Position,tp)if wps and #wps>0 then local tl=0 local pv=m.Position for _,wp in ipairs(wps)do tl=tl+(wp.Position-pv).Magnitude pv=wp.Position end S.totalSteps=math.floor(tl/3.5)S.cachedPath=wps S.waypoints=wps S.lastHostPos=tp S.lastWaypoint=nil S.lastPathSig=ps else S.waypoints=nil end end if S.waypoints and #S.waypoints>0 then while S.waypoints[1]and dist2d(m.Position,S.waypoints[1].Position)<WR do table.remove(S.waypoints,1)end while #S.waypoints>2 do local wn=S.waypoints[2]local tn=wn.Position-m.Position tn=Vector3.new(tn.X,0,tn.Z)local dd=tn.Magnitude if dd<2 then table.remove(S.waypoints,1)else tn=tn.Unit local rp=mkRP(false)local ah=W:Raycast(m.Position+Vector3.new(0,2,0),tn*(dd-1.5),rp)if ah and math.abs(ah.Normal.Y)<0.4 then break end table.remove(S.waypoints,1)end end local wp=S.waypoints[1]if wp then local wd=wp.Position-m.Position wd=Vector3.new(wd.X,0,wd.Z)if wd.Magnitude>0.5 then wd=wd.Unit local pb=findPlayerInFront(m.Position,wd,6)if pb and pb~=getHost()and pb~=S.leadTarget then local pl2=planDodge(m.Position,wp.Position)if pl2=="left"or pl2=="right"then local sd=pl2=="left"and Vector3.new(-wd.Z,0,wd.X)or Vector3.new(wd.Z,0,-wd.X)h:MoveTo(m.Position+sd*6)S.lastMovePos=m.Position+sd*6 return end end end if hasFloorBelow(wp.Position)then if wp.Action==Enum.PathWaypointAction.Jump then if h.FloorMaterial~=Enum.Material.Air then h.Jump=true end end if not S.lastWaypoint or(S.lastWaypoint-wp.Position).Magnitude>0.5 then h:MoveTo(wp.Position)S.lastWaypoint=wp.Position end tryJump()else table.remove(S.waypoints,1)end end else if hasFloorBelow(tp)then h:MoveTo(tp)S.lastMovePos=tp tryJump()else h:MoveTo(m.Position)end end checkStuck()end
+function botTick()if antiBan.detected then return end if S.hidden then if S.hidePos then local m=hrp()if m and(m.Position-S.hidePos).Magnitude>10 then pcall(function()m.CFrame=CFrame.new(S.hidePos)end)end end return end if S.sitting then local h0=hum()if not h0 or not h0.Sit then S.sitting=false else local m0=hrp()if m0 then pcall(function()m0.AssemblyLinearVelocity=Vector3.new(m0.AssemblyLinearVelocity.X*0.3,m0.AssemblyLinearVelocity.Y,m0.AssemblyLinearVelocity.Z*0.3)end)end return end end if S.mirrorJumpTime>0 and os.clock()>=S.mirrorJumpTime then if S.mode~="Bam"and S.mode~="Annoy"and S.mode~="Fling"and S.mode~="SwordKill"and S.mode~="Rizz"then local h=hum()if h and h.FloorMaterial~=Enum.Material.Air then h.Jump=true end end S.mirrorJumpTime=0 end if S.mode=="Spin"or S.dancing then local h2=hum()if h2 then local m2=hrp()if m2 then h2:MoveTo(m2.Position)end end checkPush()return end if S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="SwordKill"or S.mode=="Rizz"then return end if S.hoverActive then checkPush()return end if S.mode~="Follow"and S.mode~="Lead"then return end local h,hh,m=hum(),getHostHRP(),hrp()if not h or not hh or not m then return end do local hp=hh.Position if isInVoid(hp)then if not S.hostInVoid then S.hostInVoid=true S.hostVoidSafePos=S.lastSafeHostPos or m.Position end else if S.hostInVoid then S.hostInVoid=false end S.lastSafeHostPos=hp end end if isInVoid(m.Position)then local an=S.hostVoidSafePos or S.lastSafeHostPos if an then pcall(function()m.CFrame=CFrame.new(an+Vector3.new(0,3,0))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)elseif hh then pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(0,4,0))m.AssemblyLinearVelocity=Vector3.zero end)end S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil return end checkPush()local tp if S.mode=="Lead"then if not S.leadActive or not S.leadTarget or not S.leadTarget.Parent then stopLead(false)sendChat("lost target")return end local th=getPlayerHRP(S.leadTarget)if not th then return end if isInVoid(th.Position)then tp=S.lastSafeHostPos or m.Position h:MoveTo(tp)return end tp=th.Position if(m.Position-tp).Magnitude<=LAD then sendChat(pick({"made it","here","arrived"}))stopLead(false)S.mode="Follow"return end if(hh.Position-m.Position).Magnitude>LHMD then h:MoveTo(m.Position)return end else if S.hostInVoid then tp=S.hostVoidSafePos or S.lastSafeHostPos or m.Position if(tp-m.Position).Magnitude>FD then h:MoveTo(tp)S.lastMovePos=tp else h:MoveTo(m.Position)end return end tp=computeFollowPoint(hh.Position,hh.CFrame,m.Position)end if not tp then return end local d=(tp-m.Position).Magnitude local hd=(hh.Position-m.Position).Magnitude if S.mode=="Follow"and d>ED then if os.clock()-S.tpCD>3 then S.tpCD=os.clock()local bk=hh.CFrame.LookVector*-7 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(bk.X,3,bk.Z))m.AssemblyLinearVelocity=Vector3.zero end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil end return end if not(rotationOwner=="Stranger"and os.clock()<S.strangerUntil)then if h.MoveDirection.Magnitude>0.1 then setRotationOwner("Humanoid")else if S.mode=="Follow"and hd<=LR then setRotationOwner("FaceHost")else setRotationOwner("Humanoid")end end end if d<=FSD then h:MoveTo(m.Position)S.waypoints=nil S.cachedPath=nil S.lastHostPos=nil S.lastMovePos=nil S.committedTarget=nil S.lastWaypoint=nil S.failCount=0 return end local ac,da=think(m.Position,tp)if ac=="arrive"or ac=="wait"then h:MoveTo(m.Position)S.lastMovePos=nil S.waypoints=nil S.cachedPath=nil S.committedTarget=nil return end if ac=="avoid_edge"then local bk=m.Position-tp bk=Vector3.new(bk.X,0,bk.Z)if bk.Magnitude>0.1 then bk=bk.Unit*6 local sf=m.Position+bk if hasFloorBelow(sf)then h:MoveTo(sf)S.lastMovePos=sf end end return end if ac=="avoid_slim"then local dr=tp-m.Position dr=Vector3.new(dr.X,0,dr.Z)if dr.Magnitude>0.1 then dr=dr.Unit local lf=Vector3.new(-dr.Z,0,dr.X)local rg=Vector3.new(dr.Z,0,-dr.X)local ch=hasFloorBelow(m.Position+lf*6)and lf or(hasFloorBelow(m.Position+rg*6)and rg or nil)if ch then local np=m.Position+ch*6 h:MoveTo(np)S.lastMovePos=np end end return end if ac=="dodge"then local dr=da.dir local sd if dr=="left"then sd=Vector3.new(-m.CFrame.LookVector.Z,0,m.CFrame.LookVector.X)elseif dr=="right"then sd=Vector3.new(m.CFrame.LookVector.Z,0,-m.CFrame.LookVector.X)else sd=m.CFrame.LookVector end if dr=="jump"then local bl=da.blocker and da.blocker.Character if bl then for _,p2 in ipairs(bl:GetChildren())do if p2:IsA("BasePart")then pcall(function()p2.CanCollide=false end)end end task.delay(1.2,function()if bl and bl.Parent then for _,p2 in ipairs(bl:GetChildren())do if p2:IsA("BasePart")then pcall(function()p2.CanCollide=true end)end end end end)tryJump()end else local dd=m.Position+sd*7 if hasFloorBelow(dd)then h:MoveTo(dd)end end return end if ac=="walk_straight"then if not S.committedTarget or(S.committedTarget-tp).Magnitude>2 or os.clock()>S.committedUntil then h:MoveTo(tp)S.committedTarget=tp S.committedUntil=os.clock()+1.2 end S.waypoints=nil S.cachedPath=nil S.lastMovePos=tp checkStuck()return end local ps=tostring(math.floor(tp.X)).."|"..tostring(math.floor(tp.Z))local nn=false if not S.waypoints or #S.waypoints==0 then nn=true elseif S.lastPathSig~=ps then nn=true elseif os.clock()-S.lastRepath>RI then if(S.lastHostPos and(tp-S.lastHostPos).Magnitude or 999)>3 then nn=true end end if nn and(os.clock()-S.lastPathFail)<PFC then nn=false end if nn and os.clock()-S.lastRepath>RI then S.lastRepath=os.clock()local wps=computePath(m.Position,tp)if wps and #wps>0 then local tl=0 local pv=m.Position for _,wp in ipairs(wps)do tl=tl+(wp.Position-pv).Magnitude pv=wp.Position end S.totalSteps=math.floor(tl/3.5)S.cachedPath=wps S.waypoints=wps S.lastHostPos=tp S.lastWaypoint=nil S.lastPathSig=ps else S.waypoints=nil end end if S.waypoints and #S.waypoints>0 then while S.waypoints[1]and dist2d(m.Position,S.waypoints[1].Position)<WR do table.remove(S.waypoints,1)end while #S.waypoints>2 do local wn=S.waypoints[2]local tn=wn.Position-m.Position tn=Vector3.new(tn.X,0,tn.Z)local dd=tn.Magnitude if dd<2 then table.remove(S.waypoints,1)else tn=tn.Unit local rp=mkRP(false)local ah=W:Raycast(m.Position+Vector3.new(0,2,0),tn*(dd-1.5),rp)if ah and math.abs(ah.Normal.Y)<0.4 then break end table.remove(S.waypoints,1)end end local wp=S.waypoints[1]if wp then local wd=wp.Position-m.Position wd=Vector3.new(wd.X,0,wd.Z)if wd.Magnitude>0.5 then wd=wd.Unit local pb=findPlayerInFront(m.Position,wd,6)if pb and pb~=getHost()and pb~=S.leadTarget then local pl2=planDodge(m.Position,wp.Position)if pl2=="left"or pl2=="right"then local sd=pl2=="left"and Vector3.new(-wd.Z,0,wd.X)or Vector3.new(wd.Z,0,-wd.X)h:MoveTo(m.Position+sd*6)S.lastMovePos=m.Position+sd*6 return end end end if hasFloorBelow(wp.Position)then if wp.Action==Enum.PathWaypointAction.Jump then if h.FloorMaterial~=Enum.Material.Air then h.Jump=true end end if not S.lastWaypoint or(S.lastWaypoint-wp.Position).Magnitude>0.5 then h:MoveTo(wp.Position)S.lastWaypoint=wp.Position end tryJump()else table.remove(S.waypoints,1)end end else if hasFloorBelow(tp)then h:MoveTo(tp)S.lastMovePos=tp tryJump()else h:MoveTo(m.Position)end end checkStuck()end
 startFollow=function()if S.followThread then return end startFacing()S.followThread=task.spawn(function()while ROLE=="BOT"do task.wait(AIT)local ok,er=pcall(botTick)if not ok then warn("[MyPanel] botTick error:",er)S.failCount=S.failCount+1 if S.failCount>=8 then S.failCount=0 S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.lastWaypoint=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil end else S.failCount=0 end end end)end
 stopFollow=function()if S.followThread then task.cancel(S.followThread)S.followThread=nil end end
 function startOrbit(sp)sp=tonumber(sp)or 100 sp=math.clamp(sp,1,1000)S.orbitSpeed=sp stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)if S.orbiting then return end S.orbiting=true S.mode="Orbit"setRotationOwner("Orbit")task.spawn(function()while S.orbiting and ROLE=="BOT"do if S.hidden or antiBan.detected then task.wait(0.3)continue end local hh,m,h=getHostHRP(),hrp(),hum()if not hh or not m or not h then task.wait(0.1)continue end if not S.orbitLV or S.orbitLV.Parent~=m then if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)end local at=Instance.new("Attachment")at.Parent=m S.orbitAtt=at local lv=Instance.new("LinearVelocity")lv.Attachment0=at lv.MaxForce=1e5 lv.VectorVelocity=Vector3.zero lv.Parent=m S.orbitLV=lv local ao=Instance.new("AlignOrientation")ao.Attachment0=at ao.Mode=Enum.OrientationAlignmentMode.OneAttachment ao.PrimaryAxisOnly=true ao.MaxTorque=1e5 ao.Parent=m S.orbitAO=ao end local of=m.Position-hh.Position local fl=Vector3.new(of.X,0,of.Z)if fl.Magnitude<1 then local a=math.random()*math.pi*2 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(math.cos(a)*OR,0,math.sin(a)*OR))end)task.wait(0.05)continue end local rd=fl.Unit local tn=Vector3.new(-rd.Z,0,rd.X)pcall(function()S.orbitLV.VectorVelocity=tn*(sp/8)S.orbitAO.CFrame=CFrame.lookAt(m.Position,m.Position+tn)end)task.wait(0.05)end if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)S.orbitLV=nil end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)S.orbitAO=nil end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)S.orbitAtt=nil end end)sendChat(pick(R_.orbit))end
@@ -1143,6 +1241,8 @@ end
 function startAfk()if ROLE~="BOT"then return end task.spawn(function()while ROLE=="BOT"do task.wait(1)local hh=getHostHRP()if not hh then S.hostLastPos=nil S.hostAfkTimer=0 continue end if S.hostLastPos then if(hh.Position-S.hostLastPos).Magnitude>0.8 then S.hostAfkTimer=0 if S.hostIsAfk then S.hostIsAfk=false end else S.hostAfkTimer=S.hostAfkTimer+1 if S.hostAfkTimer>=AT and not S.hostIsAfk then S.hostIsAfk=true end end end S.hostLastPos=hh.Position end end)end
 function bindDeath()if S.deathConn then S.deathConn:Disconnect()S.deathConn=nil end local c=pl.Character if not c then return end local h=c:FindFirstChildOfClass("Humanoid")if not h then return end S.deathConn=h.Died:Connect(function()local wasFighting=S.swordKillActive and S.swordKillTarget stopSpin()stopDance()stopLead(false)stopFling(false)stopRizz(false)if not wasFighting then stopSwordKill(false)end S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil local n=os.clock()if n-S.lastDeathTime>DRT then S.deathCount=0 S.deathSilent=false end S.lastDeathTime=n S.deathCount=S.deathCount+1 if S.deathSilent then return end if wasFighting then sendChat(pick({"im down","back in a sec","respawning","one sec","ill be back"}))elseif S.deathCount==2 then sendChat("...")elseif S.deathCount==3 then sendChat("....")elseif S.deathCount==4 then sendChat(".....")elseif S.deathCount==5 then sendChat(pick({"bro","cmon","seriously","again?","bruh"}))elseif S.deathCount==6 then sendChat(pick({"ok this is annoying","really now","dude","ugh","seriously"}))elseif S.deathCount==7 then sendChat(pick({"bro stop","cmon man","enough","why tho"}))elseif S.deathCount>=8 then sendChat(pick({"stop bro","bro stop it","ok enough","chill out man","i said stop"}))S.deathSilent=true end end)end
 handleCommand=function(cmd,args)if ROLE~="BOT"or antiBan.detected then return end
+if cmd=="hover"then startHover(false)return end
+if cmd=="unhover"or cmd=="land"then stopHover(false)return end
 if cmd=="flipcoin"then cmdFlip()return end
 if cmd=="roll"then cmdRoll(args)return end
 if cmd=="8ball"then cmd8Ball(args)return end
@@ -1184,7 +1284,7 @@ elseif cmd=="genderclear"then
     local p=getPlayer(args)
     if not p then sendChat(pick(R_.notfound))return end
     sendChat("cleared for "..p.Name)
-elseif cmd=="cmds"then sendSeq({"here ya go","!ask <msg> - talk to XcH","!ask <do something> - XcH will do it","!ask whats the name of this game","!gameinfo - what game is this","!gameinfo full | tips | controls | wiki","!similar - games like this one","!info <player> [id/age/joined/distance/hp/friend]","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!orbit <1-1000> | !unorbit","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!annoy <player> | !unannoy","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling","!antitoolkill | !unantitoolkill","!rizz <player> | !unrizz","!dance 1-4 | !undance","!spin 1-100 | !unspin","!math <num><op><num>","!say <text>","!flipcoin | !roll <n> | !8ball <q>","!truth | !dare | !wouldyourather","!randomnum <a> <b> | !countdown <n> | !timer <s>","!storytime | !compliment <player> | !roast <player> | !dadjoke","!host <player> <seconds, max 500> (creator only)","!stophost (creator only)","!whoishost","!cmds"},0.9)
+elseif cmd=="cmds"then sendSeq({"here ya go","!ask <msg> - talk to XcH","!ask <do something> - XcH will do it","!ask whats the name of this game","!gameinfo - what game is this","!gameinfo full | tips | controls | wiki","!similar - games like this one","!info <player> [id/age/joined/distance/hp/friend]","!stop | !recall | !follow","!hover | !unhover","!backoff <n> | !getcloser <n>","!orbit <1-1000> | !unorbit","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!annoy <player> | !unannoy","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling","!antitoolkill | !unantitoolkill","!rizz <player> | !unrizz","!dance 1-4 | !undance","!spin 1-100 | !unspin","!math <num><op><num>","!say <text>","!flipcoin | !roll <n> | !8ball <q>","!truth | !dare | !wouldyourather","!randomnum <a> <b> | !countdown <n> | !timer <s>","!storytime | !compliment <player> | !roast <player> | !dadjoke","!host <player> <seconds, max 500> (creator only)","!stophost (creator only)","!whoishost","!cmds"},0.9)
 else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end
 function processMessage(uid,text)if not text or text==""then return end 
     if uid~=pl.UserId and text:sub(1,1)~=commandPrefix then
@@ -1253,6 +1353,7 @@ local cmdScroll=Instance.new("ScrollingFrame")cmdScroll.Size=UDim2.new(1,-8,1,-6
 local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enum.SortOrder.LayoutOrder cml.Parent=cmdScroll
 local CMDS={
 {"── AI ──",true},{"!ask <msg> - talk to XcH",false},{"!ask <do something> - XcH will do it",false},{"!ask whats the name of this game",false},{"!gameinfo - what game is this",false},{"!gameinfo full | tips | controls | wiki",false},{"!similar - games like this one",false},{"!info <player> [field]",false},
+{"── MOVEMENT ──",true},{"!hover - float in Touhou style",false},{"!unhover - land back down",false},
 {"── CORE ──",true},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!orbit <1-1000> | !unorbit",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"!hide | !spawn",false},{"!bam <player> | !unbam",false},{"!annoy <player> | !unannoy",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"!rizz <player> | !unrizz",false},{"!dance 1-4 | !undance",false},{"!spin 1-100 | !unspin",false},{"!math <num><op><num>",false},{"!say <text>",false},
 {"── FUN (AI) ──",true},{"!flipcoin",false},{"!roll <n>",false},{"!8ball <q>",false},{"!truth",false},{"!dare",false},{"!wouldyourather",false},{"!randomnum <a> <b>",false},{"!countdown <n>",false},{"!timer <s>",false},{"!storytime",false},{"!compliment <player>",false},{"!roast <player>",false},{"!dadjoke",false},
 {"── HOST ──",true},{"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}
@@ -1485,7 +1586,7 @@ local bsErr=mkLabel(bsOv,"",UDim2.new(0,20,1,-70),UDim2.new(1,-40,0,16),Enum.Fon
 local bsBack=mkBtn(bsOv,"BACK",UDim2.new(0,20,1,-52),UDim2.new(0.5,-32,0,38),56)bsBack.TextSize=13
 local bsLock=mkBtn(bsOv,"LOCK IN",UDim2.new(0.5,8,1,-52),UDim2.new(0.5,-32,0,38),56)bsLock.TextSize=13
 function refreshPlayers()for _,c in ipairs(plScroll:GetChildren())do if c:IsA("TextButton")then c:Destroy()end end selectedHost=nil local n=0 for _,p in ipairs(P:GetPlayers())do if p==pl then continue end n=n+1 local isOwner=(p.Name:lower()==ON)local baseColor=isOwner and Color3.fromRGB(215,245,220)or C.button local hoverColor=isOwner and Color3.fromRGB(200,240,210)or C.buttonHover local b=Instance.new("TextButton")b.Size=UDim2.new(1,0,0,28)b.BackgroundColor3=baseColor b.BorderSizePixel=0 b.Font=Enum.Font.GothamMedium b.Text="  "..p.Name.."  (@"..p.DisplayName..")"b.TextColor3=isOwner and C.green or C.text b.TextSize=10 b.TextXAlignment=Enum.TextXAlignment.Left b.AutoButtonColor=false b.LayoutOrder=n b.ZIndex=57 b:SetAttribute("isOwnerRow",isOwner)b.Parent=plScroll corner(b,6)local sl2=stroke(b,isOwner and C.green or C.border,1,isOwner and 0.2 or 0.3)b.MouseEnter:Connect(function()if selectedHost~=p.Name then tw(b,0.15,{BackgroundColor3=hoverColor})end end)b.MouseLeave:Connect(function()if selectedHost~=p.Name then tw(b,0.15,{BackgroundColor3=baseColor})end end)b.Activated:Connect(function()for _,c2 in ipairs(plScroll:GetChildren())do if c2:IsA("TextButton")then local c2Owner=c2:GetAttribute("isOwnerRow")c2.BackgroundColor3=c2Owner and Color3.fromRGB(215,245,220)or C.button local s=c2:FindFirstChildOfClass("UIStroke")if s then s.Color=c2Owner and C.green or C.border s.Transparency=c2Owner and 0.2 or 0.3 end end end selectedHost=p.Name b.BackgroundColor3=C.activeTab sl2.Color=C.accent sl2.Transparency=0 bsErr.TextTransparency=1 bsErr.Text=""end)end if n==0 then mkLabel(plScroll,"no other players",UDim2.new(0,8,0,0),UDim2.new(1,-16,0,30),Enum.Font.Gotham,C.subText,10,Enum.TextXAlignment.Left,57)end end
-function lockRole(role,hostName)ROLE=role roleOv.Visible=false confOv.Visible=false bsOv.Visible=false if role=="HOST"then hostFilter.userId=pl.UserId hostFilter.name=pl.Name:lower()frame.Size=UDim2.new(0,520,0,320)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true logsTab.Visible=false slideToPage(cmdsPage,cmdsTab)show()elseif role=="BOT"then frame.Size=UDim2.new(0,380,0,260)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true cmdsTab.Visible=false apiTab.Visible=false slideToPage(logsPage,logsTab)titleLbl.Text=AN.." (bot)"sendChat(pick(R_.startup))hostFilter.name=hostName:lower()S.hostName=hostName:lower()originalHost.name=hostName:lower()for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==hostName:lower()then hostFilter.userId=p.UserId originalHost.userId=p.UserId break end end if hostName:lower()==ON or pl.DisplayName:lower()==ON or pl.Name:lower()=="xcv1" then isOwnerHost=true task.wait(1)sendChat(pick({"hey boss","yo boss","sup boss","welcome back boss","good to see you boss"}))end applyFixedSpeed()startFacing()startFollow()bindDeath()startAfk()startMirrorJump()startCameraMicro()end end
+function lockRole(role,hostName)ROLE=role roleOv.Visible=false confOv.Visible=false bsOv.Visible=false if role=="HOST"then hostFilter.userId=pl.UserId hostFilter.name=pl.Name:lower()frame.Size=UDim2.new(0,520,0,320)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true logsTab.Visible=false slideToPage(cmdsPage,cmdsTab)show()elseif role=="BOT"then frame.Size=UDim2.new(0,380,0,260)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true cmdsTab.Visible=false apiTab.Visible=false slideToPage(logsPage,logsTab)titleLbl.Text=AN.." (bot)"sendChat(pick(R_.startup))hostFilter.name=hostName:lower()S.hostName=hostName:lower()originalHost.name=hostName:lower()for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==hostName:lower()then hostFilter.userId=p.UserId originalHost.userId=p.UserId break end end if hostName:lower()==ON or pl.DisplayName:lower()==ON or pl.Name:lower()=="xcv1" then isOwnerHost=true task.wait(1)sendChat(pick({"hey boss","yo boss","sup boss","welcome back boss","good to see you boss"}))end applyFixedSpeed()startFacing()startFollow()bindDeath()startAfk()startMirrorJump()startCameraMicro()task.spawn(function()task.wait(2.0)if ROLE=="BOT"then startHover(true)end end)end end
 hostBtn.Activated:Connect(function()roleOv.Visible=false confOv.Visible=true end)
 botBtn.Activated:Connect(function()bsErr.Text=""bsErr.TextTransparency=1 roleOv.Visible=false bsOv.Visible=true refreshPlayers()end)
 cNo.Activated:Connect(function()confOv.Visible=false roleOv.Visible=true end)
