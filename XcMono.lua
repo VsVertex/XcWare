@@ -82,23 +82,37 @@ end
 -- ══════════════════════════════════════════════════════════════════
 --  CONSTANTS
 -- ══════════════════════════════════════════════════════════════════
--- main panel
 local PANEL_W=520
 local PANEL_H=320
 local PANEL_SIDEBAR_W=100
 
--- sidebar bar (collapsed state = full sidebar, same object)
-local BAR_W_COLLAPSED=40       -- thin bar width when hidden
-local BAR_W_SIDEBAR=PANEL_SIDEBAR_W -- 100 when fully expanded
-local BAR_VISIBLE_H=240        -- middle-third visual height (of ~720p typical)
-local BAR_FULL_H=PANEL_H-40    -- sidebar full height inside the panel
+local BAR_W_COLLAPSED=40
+local BAR_W_SIDEBAR=PANEL_SIDEBAR_W
+local BAR_VISIBLE_H=240
 
--- positions
-local OPEN_POS=UDim2.new(0,12,0.5,-PANEL_H/2)
-local OFF_LEFT_POS=UDim2.new(0,-PANEL_W-40,0.5,-PANEL_H/2)
-
--- circle arrow
 local CIRCLE_SIZE=26
+
+-- figure out viewport (screen) size so we never go off too far
+local cam=workspace.CurrentCamera
+local function getViewport()
+    if cam then
+        local v=cam.ViewportSize
+        if v and v.X>0 and v.Y>0 then return v end
+    end
+    return Vector2.new(1280,720)
+end
+
+-- return the fully-hidden X offset (just enough to hide the panel)
+local function getOffLeftX()
+    local vp=getViewport()
+    -- panel width + small margin, but never more than viewport width
+    return -math.min(PANEL_W+40, vp.X+40)
+end
+
+-- OPEN_POS uses center of screen regardless of size
+local function getOpenPos()
+    return UDim2.new(0,12,0.5,-PANEL_H/2)
+end
 
 -- ══════════════════════════════════════════════════════════════════
 --  MAIN PANEL FRAME
@@ -106,7 +120,7 @@ local CIRCLE_SIZE=26
 local frame=Instance.new("Frame")
 frame.Name="MainPanel"
 frame.Size=UDim2.new(0,PANEL_W,0,PANEL_H)
-frame.Position=OPEN_POS
+frame.Position=getOpenPos()
 frame.BackgroundColor3=C.panel
 frame.BorderSizePixel=0
 frame.ClipsDescendants=false
@@ -174,26 +188,25 @@ task.spawn(function()
 end)
 
 -- ══════════════════════════════════════════════════════════════════
---  `-` BUTTON (inside topbar, next to clock)
+--  MINUS BUTTON (blends into topbar — black dash, no box)
 -- ══════════════════════════════════════════════════════════════════
 local minusBtn=Instance.new("TextButton")
 minusBtn.Name="MinusBtn"
-minusBtn.Size=UDim2.new(0,26,0,26)
-minusBtn.Position=UDim2.new(1,-30,0,7)
-minusBtn.BackgroundColor3=C.button
+minusBtn.Size=UDim2.new(0,30,0,30)
+minusBtn.Position=UDim2.new(1,-36,0,5)
+minusBtn.BackgroundTransparency=1
 minusBtn.BorderSizePixel=0
 minusBtn.Font=Enum.Font.GothamBold
 minusBtn.Text="−"
-minusBtn.TextColor3=C.text
-minusBtn.TextSize=16
+minusBtn.TextColor3=Color3.fromRGB(0,0,0)
+minusBtn.TextSize=18
 minusBtn.AutoButtonColor=false
 minusBtn.ZIndex=6
 minusBtn.Parent=topBar
-stroke(minusBtn,C.border,1,0)
 crisp(minusBtn)
 
 -- ══════════════════════════════════════════════════════════════════
---  SIDEBAR (this is the bar — same object, changes shape)
+--  SIDEBAR
 -- ══════════════════════════════════════════════════════════════════
 local sidebar=Instance.new("Frame")
 sidebar.Name="Sidebar"
@@ -243,8 +256,7 @@ homeStroke.Parent=homeTab
 crisp(homeTab)
 
 -- ══════════════════════════════════════════════════════════════════
---  4 EMPTY BOXES (quick tabs / utilities placeholder)
---  visible only when collapsed, stacked at bottom of bar
+--  4 EMPTY BOXES (collapsed state, bottom of bar)
 -- ══════════════════════════════════════════════════════════════════
 local boxesHolder=Instance.new("Frame")
 boxesHolder.Name="QuickBoxes"
@@ -277,8 +289,7 @@ for i=1,4 do
 end
 
 -- ══════════════════════════════════════════════════════════════════
---  CIRCLE ARROW (right edge of sidebar, middle)
---  lives on the frame (so it can sit outside the sidebar)
+--  CIRCLE ARROW
 -- ══════════════════════════════════════════════════════════════════
 local circleBtn=Instance.new("TextButton")
 circleBtn.Name="CircleArrow"
@@ -351,20 +362,17 @@ homeSub.Parent=homePage
 -- ══════════════════════════════════════════════════════════════════
 local collapsed=false
 local busy=false
-local dragProgress=0          -- 0 = collapsed, 1 = fully expanded
+local dragProgress=0
 local dragActive=false
 local dragStartX=nil
-local DRAG_RANGE=160          -- pixels of drag to go from bar → full panel
-local HOLD_THRESHOLD=0.15     -- seconds to hold before drag counts
+local DRAG_RANGE=160
+local HOLD_THRESHOLD=0.15
 local holdStart=0
 local holdTimer=nil
 local holdReady=false
 
--- current mouse x position while dragging
-local currentX=nil
-
 -- ══════════════════════════════════════════════════════════════════
---  DRAG LOGIC (topbar drag while open, circle-arrow hold+drag while closed)
+--  TOPBAR DRAG (open state)
 -- ══════════════════════════════════════════════════════════════════
 local topDragActive=false
 local topDragStart=nil
@@ -418,52 +426,42 @@ UIS.InputEnded:Connect(function(input)
 end)
 
 -- ══════════════════════════════════════════════════════════════════
---  APPLY DRAG PROGRESS (0 → 1)
+--  APPLY PROGRESS (0 collapsed → 1 open)
 -- ══════════════════════════════════════════════════════════════════
 local function applyProgress(p)
     p=math.clamp(p,0,1)
 
-    -- bar width: 40 → 100
+    -- bar width grows 40 → 100
     local bw=BAR_W_COLLAPSED+(BAR_W_SIDEBAR-BAR_W_COLLAPSED)*p
 
-    -- frame x: off-left → open
-    local offX=-(PANEL_W+40)
+    -- off-left X is now viewport-aware
+    local offX=getOffLeftX()
     local onX=12
     local fx=offX+(onX-offX)*p
 
-    -- frame height: bar visible height → full panel height
-    local barVisH=BAR_VISIBLE_H
-    local fh=barVisH+(PANEL_H-barVisH)*p
-    local fy=0.5
-    local fyOff=-barVisH/2
-    local endFyOff=-PANEL_H/2
-    local fyOffCur=fyOff+(endFyOff-fyOff)*p
+    -- frame height: collapsed bar height → full panel height
+    local fh=BAR_VISIBLE_H+(PANEL_H-BAR_VISIBLE_H)*p
+    local fyOff=-BAR_VISIBLE_H/2+(-PANEL_H/2+BAR_VISIBLE_H/2)*p
 
-    -- sidebar size/pos
     sidebar.Size=UDim2.new(0,bw,1,-40)
-
-    -- circle button follows sidebar right edge
     circleBtn.Position=UDim2.new(0,bw-CIRCLE_SIZE/2,0.5,-CIRCLE_SIZE/2)
 
-    -- sidebar content visibility
+    -- sidebar content swap
     if p<0.4 then
-        if not boxesHolder.Visible then boxesHolder.Visible=true end
-        if homeTab.Visible then homeTab.Visible=false end
+        boxesHolder.Visible=true
+        homeTab.Visible=false
         for _,b in ipairs(quickBoxes)do
             b.BackgroundTransparency=0
         end
-        boxesHolder.Visible=true
-        homeTab.Visible=false
     else
         boxesHolder.Visible=false
         homeTab.Visible=true
     end
 
-    -- frame geometry
-    frame.Position=UDim2.new(0,math.floor(fx+0.5),fy,math.floor(fyOffCur+0.5))
+    frame.Position=UDim2.new(0,math.floor(fx+0.5),0.5,math.floor(fyOff+0.5))
     frame.Size=UDim2.new(0,PANEL_W,0,math.floor(fh+0.5))
 
-    -- content area fades in at the end
+    -- content fade
     local cp=math.clamp((p-0.5)/0.5,0,1)
     contentArea.BackgroundTransparency=1-cp
     for _,ch in ipairs(contentArea:GetDescendants())do
@@ -474,16 +472,14 @@ local function applyProgress(p)
 end
 
 -- ══════════════════════════════════════════════════════════════════
---  COLLAPSE (from open → bar)
+--  COLLAPSE
 -- ══════════════════════════════════════════════════════════════════
 local function collapse()
     if busy or collapsed then return end
     busy=true
 
-    -- hide minus button
-    tw(minusBtn,0.15,{BackgroundTransparency=1,TextTransparency=1},Enum.EasingStyle.Quad,Enum.EasingDirection.In)
+    tw(minusBtn,0.15,{TextTransparency=1},Enum.EasingStyle.Quad,Enum.EasingDirection.In)
 
-    -- tween bar visuals
     for _,b in ipairs(quickBoxes)do
         b.BackgroundTransparency=1
         tw(b,0.3,{BackgroundTransparency=0})
@@ -498,19 +494,16 @@ local function collapse()
     end)
     boxesHolder.Visible=true
 
-    -- animate the panel geometry with a per-frame tween
     local startT=os.clock()
     local duration=0.45
     task.spawn(function()
         while os.clock()-startT<duration do
             local a=(os.clock()-startT)/duration
-            -- ease out quint
             local e=1-math.pow(1-a,3)
             applyProgress(1-e)
             task.wait()
         end
         applyProgress(0)
-        -- hide content edge
         for _,ch in ipairs(contentArea:GetDescendants())do
             if ch:IsA("TextLabel")or ch:IsA("TextButton")then
                 ch.TextTransparency=1
@@ -524,14 +517,13 @@ local function collapse()
 end
 
 -- ══════════════════════════════════════════════════════════════════
---  EXPAND (from bar → open)
+--  EXPAND
 -- ══════════════════════════════════════════════════════════════════
 local function expand()
     if busy or not collapsed then return end
     busy=true
     circleBtn.Visible=false
 
-    -- bring back content first (invisible)
     for _,ch in ipairs(contentArea:GetDescendants())do
         if ch:IsA("TextLabel")or ch:IsA("TextButton")then
             ch.TextTransparency=1
@@ -544,7 +536,6 @@ local function expand()
     task.spawn(function()
         while os.clock()-startT<duration do
             local a=(os.clock()-startT)/duration
-            -- ease out quint
             local e=1-math.pow(1-a,3)
             applyProgress(e)
             task.wait()
@@ -552,30 +543,21 @@ local function expand()
         applyProgress(1)
         collapsed=false
         busy=false
-        -- reveal minus button
-        tw(minusBtn,0.2,{BackgroundTransparency=0,TextTransparency=0},Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
-        -- ensure home tab visible
+        tw(minusBtn,0.2,{TextTransparency=0},Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
         homeTab.Visible=true
         boxesHolder.Visible=false
     end)
 end
 
 -- ══════════════════════════════════════════════════════════════════
---  MINUS BUTTON → collapse
+--  MINUS BTN
 -- ══════════════════════════════════════════════════════════════════
 minusBtn.Activated:Connect(function()
     if not busy then collapse() end
 end)
 
-minusBtn.MouseEnter:Connect(function()
-    tw(minusBtn,0.12,{BackgroundColor3=C.buttonHover})
-end)
-minusBtn.MouseLeave:Connect(function()
-    tw(minusBtn,0.15,{BackgroundColor3=C.button})
-end)
-
 -- ══════════════════════════════════════════════════════════════════
---  CIRCLE ARROW → hold + drag to expand
+--  CIRCLE DRAG TO EXPAND
 -- ══════════════════════════════════════════════════════════════════
 local function resetHold()
     holdReady=false
@@ -595,7 +577,6 @@ circleBtn.InputBegan:Connect(function(input)
         dragActive=true
         dragStartX=input.Position.X
         dragProgress=0
-        currentX=input.Position.X
         holdTimer=task.delay(HOLD_THRESHOLD,function()
             if dragActive then holdReady=true end
         end)
@@ -606,9 +587,8 @@ UIS.InputChanged:Connect(function(input)
     if not dragActive then return end
     if input.UserInputType==Enum.UserInputType.MouseMovement
         or input.UserInputType==Enum.UserInputType.Touch then
-        currentX=input.Position.X
         if holdReady and collapsed then
-            local dx=currentX-dragStartX
+            local dx=input.Position.X-dragStartX
             if dx<0 then dx=0 end
             local p=math.clamp(dx/DRAG_RANGE,0,1)
             dragProgress=p
@@ -619,15 +599,12 @@ end)
 
 local function endCircleDrag()
     if not dragActive then return end
-    local held=os.clock()-holdStart
     dragActive=false
     resetHold()
 
     if dragProgress>0.6 then
-        -- complete the expand
         expand()
     else
-        -- snap back to collapsed bar
         local startP=dragProgress
         if startP>0.01 then
             local startT=os.clock()
@@ -659,17 +636,10 @@ UIS.InputEnded:Connect(function(input)
     end
 end)
 
-circleBtn.MouseEnter:Connect(function()
-    tw(circleBtn,0.12,{BackgroundColor3=C.buttonHover})
-end)
-circleBtn.MouseLeave:Connect(function()
-    tw(circleBtn,0.15,{BackgroundColor3=C.panelTop})
-end)
-
 -- ══════════════════════════════════════════════════════════════════
 --  INTRO
 -- ══════════════════════════════════════════════════════════════════
-frame.Position=OFF_LEFT_POS
+frame.Position=UDim2.new(0,getOffLeftX(),0.5,-PANEL_H/2)
 task.spawn(function()
     task.wait(0.15)
     local startT=os.clock()
