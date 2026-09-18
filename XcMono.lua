@@ -27,6 +27,8 @@ local C={
     accent=Color3.fromRGB(0,0,0),
     sidebar=Color3.fromRGB(246,246,248),
     activeTab=Color3.fromRGB(225,225,232),
+    pill=Color3.fromRGB(20,20,25),
+    pillText=Color3.fromRGB(240,240,245),
 }
 
 for _,n in ipairs({GN})do
@@ -80,6 +82,9 @@ if not parented then
     end)
 end
 
+-- ══════════════════════════════════════════════════════════════════
+--  MAIN PANEL
+-- ══════════════════════════════════════════════════════════════════
 local frame=Instance.new("Frame")
 frame.Name="MainPanel"
 frame.Size=UDim2.new(0,520,0,320)
@@ -91,6 +96,13 @@ frame.Active=true
 frame.Parent=gui
 stroke(frame,C.border,1,0)
 
+local OPEN_POS=UDim2.new(0,12,0.5,-160)
+local OPEN_SIZE=UDim2.new(0,520,0,320)
+local TOP_SIZE=UDim2.new(0,520,0,40)
+
+-- ══════════════════════════════════════════════════════════════════
+--  TOP BAR
+-- ══════════════════════════════════════════════════════════════════
 local topBar=Instance.new("Frame")
 topBar.Name="TopBar"
 topBar.Size=UDim2.new(1,0,0,40)
@@ -121,8 +133,8 @@ crispText(titleLbl)
 titleLbl.Parent=topBar
 
 local timeLbl=Instance.new("TextLabel")
-timeLbl.Size=UDim2.new(0,220,1,0)
-timeLbl.Position=UDim2.new(1,-236,0,0)
+timeLbl.Size=UDim2.new(0,200,1,0)
+timeLbl.Position=UDim2.new(1,-216,0,0)
 timeLbl.BackgroundTransparency=1
 timeLbl.Font=Enum.Font.Code
 timeLbl.Text="12:00:00 AM PHT"
@@ -147,6 +159,9 @@ task.spawn(function()
     end
 end)
 
+-- ══════════════════════════════════════════════════════════════════
+--  SIDEBAR
+-- ══════════════════════════════════════════════════════════════════
 local sidebar=Instance.new("Frame")
 sidebar.Name="Sidebar"
 sidebar.Size=UDim2.new(0,100,1,-40)
@@ -194,6 +209,9 @@ homeStroke.Parent=homeTab
 
 crispText(homeTab)
 
+-- ══════════════════════════════════════════════════════════════════
+--  CONTENT AREA
+-- ══════════════════════════════════════════════════════════════════
 local contentArea=Instance.new("Frame")
 contentArea.Name="ContentArea"
 contentArea.Size=UDim2.new(1,-100,1,-40)
@@ -235,28 +253,106 @@ homeSub.TextXAlignment=Enum.TextXAlignment.Left
 crispText(homeSub)
 homeSub.Parent=homePage
 
+-- ══════════════════════════════════════════════════════════════════
+--  COLLAPSED PILL (clock only, centered)
+-- ══════════════════════════════════════════════════════════════════
+local pill=Instance.new("TextButton")
+pill.Name="Pill"
+pill.Size=UDim2.new(0,120,0,22)
+pill.Position=UDim2.new(0.5,-60,-40,0)
+pill.BackgroundColor3=C.pill
+pill.BorderSizePixel=0
+pill.Text=""
+pill.AutoButtonColor=false
+pill.Visible=false
+pill.ZIndex=20
+pill.Parent=gui
+
+local pillStroke=Instance.new("UIStroke")
+pillStroke.Color=C.border
+pillStroke.Thickness=1
+pillStroke.Transparency=0.2
+pillStroke.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
+pillStroke.LineJoinMode=Enum.LineJoinMode.Miter
+pillStroke.Parent=pill
+
+local pillClock=Instance.new("TextLabel")
+pillClock.Size=UDim2.new(1,0,1,0)
+pillClock.Position=UDim2.new(0,0,0,0)
+pillClock.BackgroundTransparency=1
+pillClock.Font=Enum.Font.Code
+pillClock.Text="12:00:00 AM PHT"
+pillClock.TextColor3=C.pillText
+pillClock.TextSize=11
+pillClock.TextXAlignment=Enum.TextXAlignment.Center
+crispText(pillClock)
+pillClock.Parent=pill
+
+local PILL_W_SMALL=120
+local PILL_W_LARGE=520
+local PILL_H=22
+local PILL_TOP=6
+
+local function pillPosAtWidth(w)
+    return UDim2.new(0.5,-w/2,PILL_TOP,0)
+end
+
+local PILL_SHOWN_SMALL=pillPosAtWidth(PILL_W_SMALL)
+local PILL_HIDDEN=UDim2.new(0.5,-PILL_W_SMALL/2,-PILL_H-8,0)
+
+task.spawn(function()
+    while pillClock and pillClock.Parent do
+        pillClock.Text=phTime()
+        task.wait(1)
+    end
+end)
+
+-- ══════════════════════════════════════════════════════════════════
+--  DRAG
+-- ══════════════════════════════════════════════════════════════════
 local dragging=false
 local dragStart=nil
 local startPos=nil
 local activeInput=nil
+local dragTarget=nil
 
-topBar.InputBegan:Connect(function(input)
-    if input.UserInputType==Enum.UserInputType.MouseButton1
-        or input.UserInputType==Enum.UserInputType.Touch then
-        dragging=true
-        activeInput=input
-        dragStart=input.Position
-        startPos=frame.Position
-    end
-end)
+local function beginDrag(input, target)
+    dragging=true
+    activeInput=input
+    dragStart=input.Position
+    startPos=target.Position
+    dragTarget=target
+end
 
 local function stopDrag(input)
     if activeInput and input~=activeInput then return end
     dragging=false
     activeInput=nil
+    dragTarget=nil
 end
 
+topBar.InputBegan:Connect(function(input)
+    if input.UserInputType==Enum.UserInputType.MouseButton1
+        or input.UserInputType==Enum.UserInputType.Touch then
+        beginDrag(input, frame)
+    end
+end)
+
 topBar.InputEnded:Connect(function(input)
+    if input.UserInputType==Enum.UserInputType.MouseButton1
+        or input.UserInputType==Enum.UserInputType.Touch then
+        stopDrag(input)
+    end
+end)
+
+pill.InputBegan:Connect(function(input)
+    if input.UserInputType==Enum.UserInputType.MouseButton1
+        or input.UserInputType==Enum.UserInputType.Touch then
+        beginDrag(input, pill)
+    end
+end)
+
+pill.InputEnded:Connect(function(input)
     if input.UserInputType==Enum.UserInputType.MouseButton1
         or input.UserInputType==Enum.UserInputType.Touch then
         stopDrag(input)
@@ -269,12 +365,14 @@ UIS.InputChanged:Connect(function(input)
     if input.UserInputType==Enum.UserInputType.MouseMovement
         or input.UserInputType==Enum.UserInputType.Touch then
         local delta=input.Position-dragStart
-        frame.Position=UDim2.new(
-            startPos.X.Scale,
-            startPos.X.Offset+math.floor(delta.X+0.5),
-            startPos.Y.Scale,
-            startPos.Y.Offset+math.floor(delta.Y+0.5)
-        )
+        if dragTarget then
+            dragTarget.Position=UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset+math.floor(delta.X+0.5),
+                startPos.Y.Scale,
+                startPos.Y.Offset+math.floor(delta.Y+0.5)
+            )
+        end
     end
 end)
 
@@ -285,8 +383,147 @@ UIS.InputEnded:Connect(function(input)
     end
 end)
 
+-- ══════════════════════════════════════════════════════════════════
+--  COLLAPSE / EXPAND (stretch + slide)
+-- ══════════════════════════════════════════════════════════════════
+local collapsed=false
+local busy=false
+
+local function collapse()
+    if busy or collapsed then return end
+    busy=true
+    collapsed=true
+
+    -- 1. retract the panel body upward (sidebar + content shrink to 0)
+    tw(contentArea,0.30,{
+        Size=UDim2.new(1,-100,0,0)
+    },Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+
+    tw(sidebar,0.30,{
+        Size=UDim2.new(0,100,0,0)
+    },Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+
+    -- shrink frame height down to topbar only
+    tw(frame,0.30,{
+        Size=TOP_SIZE
+    },Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+
+    task.wait(0.26)
+
+    -- 2. slide the topbar up off-screen
+    tw(frame,0.28,{
+        Position=UDim2.new(0,12,-60,0)
+    },Enum.EasingStyle.Quint,Enum.EasingDirection.In)
+
+    task.wait(0.18)
+
+    -- 3. pill appears at small width, at top of screen
+    pill.Size=UDim2.new(0,PILL_W_SMALL,0,PILL_H)
+    pill.Position=PILL_HIDDEN
+    pill.BackgroundTransparency=0
+    pill.Visible=true
+
+    -- slide down into view
+    tw(pill,0.22,{
+        Position=PILL_SHOWN_SMALL
+    },Enum.EasingStyle.Quint,Enum.EasingDirection.Out)
+
+    task.wait(0.30)
+    frame.Visible=false
+    busy=false
+end
+
+local function expand()
+    if busy or not collapsed then return end
+    busy=true
+
+    -- 1. slide pill up out of view
+    tw(pill,0.20,{
+        Position=PILL_HIDDEN
+    },Enum.EasingStyle.Quint,Enum.EasingDirection.In)
+
+    task.wait(0.16)
+    pill.Visible=false
+    pill.Size=UDim2.new(0,PILL_W_SMALL,0,PILL_H)
+    pill.Position=PILL_SHOWN_SMALL
+
+    -- 2. show frame at top, only topbar height, off-screen
+    frame.Visible=true
+    frame.Size=TOP_SIZE
+    frame.Position=UDim2.new(0,12,-60,0)
+
+    -- keep body collapsed at this moment
+    contentArea.Size=UDim2.new(1,-100,0,0)
+    sidebar.Size=UDim2.new(0,100,0,0)
+
+    task.wait(0.02)
+
+    -- 3. slide frame down into open position
+    tw(frame,0.30,{
+        Position=OPEN_POS
+    },Enum.EasingStyle.Quint,Enum.EasingDirection.Out)
+
+    task.wait(0.16)
+
+    -- 4. stretch body open downward
+    tw(frame,0.32,{
+        Size=OPEN_SIZE
+    },Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+
+    tw(contentArea,0.32,{
+        Size=UDim2.new(1,-100,1,-40)
+    },Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+
+    tw(sidebar,0.32,{
+        Size=UDim2.new(0,100,1,-40)
+    },Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+
+    task.wait(0.34)
+    collapsed=false
+    busy=false
+end
+
+pill.Activated:Connect(function()
+    if dragging then return end
+    expand()
+end)
+
+pill.MouseEnter:Connect(function()
+    tw(pill,0.15,{BackgroundColor3=Color3.fromRGB(40,40,45)})
+end)
+pill.MouseLeave:Connect(function()
+    tw(pill,0.15,{BackgroundColor3=C.pill})
+end)
+
+-- collapse trigger: right-click OR long-press the topbar
+-- (no arrow button now, so we need a gesture)
+local pressStart=0
+local longPressThreshold=0.6
+
+topBar.InputBegan:Connect(function(input)
+    if input.UserInputType==Enum.UserInputType.MouseButton2 then
+        if not busy then collapse() end
+    elseif input.UserInputType==Enum.UserInputType.Touch
+        or input.UserInputType==Enum.UserInputType.MouseButton1 then
+        pressStart=os.clock()
+    end
+end)
+
+topBar.InputEnded:Connect(function(input)
+    if input.UserInputType==Enum.UserInputType.Touch
+        or input.UserInputType==Enum.UserInputType.MouseButton1 then
+        local held=os.clock()-pressStart
+        if held>=longPressThreshold and not busy then
+            collapse()
+        end
+    end
+end)
+
+-- ══════════════════════════════════════════════════════════════════
+--  INTRO
+-- ══════════════════════════════════════════════════════════════════
 frame.Position=UDim2.new(0,-600,0.5,-160)
 task.spawn(function()
     task.wait(0.1)
-    tw(frame,0.45,{Position=UDim2.new(0,12,0.5,-160)},Enum.EasingStyle.Quint)
+    tw(frame,0.45,{Position=OPEN_POS},Enum.EasingStyle.Quint)
 end)
