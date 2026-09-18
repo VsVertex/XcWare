@@ -17,15 +17,13 @@ local PH=8*3600
 local C={
     panel=Color3.fromRGB(255,255,255),
     panelTop=Color3.fromRGB(248,248,250),
-    track=Color3.fromRGB(244,244,247),
-    button=Color3.fromRGB(240,240,244),
-    buttonHover=Color3.fromRGB(232,232,236),
     border=Color3.fromRGB(210,210,216),
     text=Color3.fromRGB(20,20,25),
     subText=Color3.fromRGB(120,120,130),
     sidebar=Color3.fromRGB(246,246,248),
     activeTab=Color3.fromRGB(225,225,232),
-    barFill=Color3.fromRGB(232,232,236),
+    barFill=Color3.fromRGB(235,235,238),
+    barLine=Color3.fromRGB(20,20,25),
 }
 
 for _,n in ipairs({GN})do
@@ -85,17 +83,15 @@ end
 local PANEL_W=520
 local PANEL_H=320
 local PANEL_SIDEBAR_W=100
+local PANEL_X=12
 
-local BAR_W_COLLAPSED=40
-local BAR_W_SIDEBAR=PANEL_SIDEBAR_W
+local BAR_W_COLLAPSED=44
 local BAR_VISIBLE_H=240
 
-local CIRCLE_SIZE=26
-
--- fixed on-screen x dock, used for BOTH collapsed + open states.
--- this is the actual fix: the panel never slides past the edge of
--- the screen anymore -- it just grows/shrinks its own width in place
-local PANEL_X=12
+local LINE_THICK=3
+local LINE_LEN_COLLAPSED=20
+local LINE_LEN_OPEN=BAR_W_COLLAPSED-4
+local LINE_HITBOX=26
 
 local function getViewport()
     local cam=workspace.CurrentCamera
@@ -106,7 +102,6 @@ local function getViewport()
     return Vector2.new(1280,720)
 end
 
--- clamp the "open" panel size to whatever the current screen can fit
 local function getOpenDims()
     local vp=getViewport()
     local w=math.min(PANEL_W,math.max(300,vp.X-24))
@@ -118,15 +113,8 @@ local function getBarVisH(openH)
     return math.min(BAR_VISIBLE_H,openH-40)
 end
 
--- only used once, for the initial slide-in on load
-local function getIntroHiddenX()
-    local vp=getViewport()
-    local openW=getOpenDims()
-    return -math.min(openW+40,vp.X+60)
-end
-
 -- ══════════════════════════════════════════════════════════════════
---  MAIN PANEL FRAME
+--  MAIN FRAME
 -- ══════════════════════════════════════════════════════════════════
 local openW0,openH0=getOpenDims()
 
@@ -201,18 +189,18 @@ task.spawn(function()
 end)
 
 -- ══════════════════════════════════════════════════════════════════
---  MINUS BUTTON (blends into topbar -- black dash, no box)
+--  MINUS BUTTON
 -- ══════════════════════════════════════════════════════════════════
 local minusBtn=Instance.new("TextButton")
 minusBtn.Name="MinusBtn"
-minusBtn.Size=UDim2.new(0,30,0,30)
-minusBtn.Position=UDim2.new(1,-36,0,5)
+minusBtn.Size=UDim2.new(0,36,0,36)
+minusBtn.Position=UDim2.new(1,-42,0,2)
 minusBtn.BackgroundTransparency=1
 minusBtn.BorderSizePixel=0
 minusBtn.Font=Enum.Font.GothamBold
 minusBtn.Text="−"
 minusBtn.TextColor3=Color3.fromRGB(0,0,0)
-minusBtn.TextSize=18
+minusBtn.TextSize=20
 minusBtn.AutoButtonColor=false
 minusBtn.ZIndex=6
 minusBtn.Parent=topBar
@@ -269,19 +257,19 @@ homeStroke.Parent=homeTab
 crisp(homeTab)
 
 -- ══════════════════════════════════════════════════════════════════
---  4 EMPTY BOXES (collapsed state, bottom of bar)
+--  4 BOXES (beautified)
 -- ══════════════════════════════════════════════════════════════════
 local boxesHolder=Instance.new("Frame")
 boxesHolder.Name="QuickBoxes"
-boxesHolder.Size=UDim2.new(1,-8,0,140)
-boxesHolder.Position=UDim2.new(0,4,1,-148)
+boxesHolder.Size=UDim2.new(1,0,0,152)
+boxesHolder.Position=UDim2.new(0,0,1,-160)
 boxesHolder.BackgroundTransparency=1
 boxesHolder.Visible=false
 boxesHolder.ZIndex=3
 boxesHolder.Parent=sidebar
 
 local boxesLayout=Instance.new("UIListLayout")
-boxesLayout.Padding=UDim.new(0,6)
+boxesLayout.Padding=UDim.new(0,8)
 boxesLayout.SortOrder=Enum.SortOrder.LayoutOrder
 boxesLayout.HorizontalAlignment=Enum.HorizontalAlignment.Center
 boxesLayout.VerticalAlignment=Enum.VerticalAlignment.Bottom
@@ -289,42 +277,75 @@ boxesLayout.Parent=boxesHolder
 
 local quickBoxes={}
 for i=1,4 do
+    local wrap=Instance.new("Frame")
+    wrap.Name="BoxWrap"..i
+    wrap.Size=UDim2.new(0,28,0,28)
+    wrap.BackgroundTransparency=1
+    wrap.LayoutOrder=i
+    wrap.ZIndex=4
+    wrap.Parent=boxesHolder
+
     local b=Instance.new("Frame")
     b.Name="Box"..i
-    b.Size=UDim2.new(0,26,0,26)
+    b.Size=UDim2.new(1,0,1,0)
+    b.Position=UDim2.new(0,0,0,0)
     b.BackgroundColor3=C.barFill
     b.BorderSizePixel=0
-    b.LayoutOrder=i
     b.ZIndex=4
-    b.Parent=boxesHolder
-    stroke(b,C.border,1,0.1)
-    quickBoxes[i]=b
+    b.Parent=wrap
+    stroke(b,C.border,1,0.15)
+
+    local corner=Instance.new("UICorner")
+    corner.CornerRadius=UDim.new(0,6)
+    corner.Parent=b
+
+    -- subtle inner dot so it doesn't look totally blank
+    local dot=Instance.new("Frame")
+    dot.Name="Dot"
+    dot.Size=UDim2.new(0,6,0,6)
+    dot.Position=UDim2.new(0.5,-3,0.5,-3)
+    dot.BackgroundColor3=C.subText
+    dot.BackgroundTransparency=0.5
+    dot.BorderSizePixel=0
+    dot.ZIndex=5
+    dot.Parent=b
+    local dc=Instance.new("UICorner")
+    dc.CornerRadius=UDim.new(0.5,0)
+    dc.Parent=dot
+
+    quickBoxes[i]=wrap
 end
 
 -- ══════════════════════════════════════════════════════════════════
---  CIRCLE ARROW
+--  BLACK LINE HANDLE (replaces circle arrow)
+--  - collapsed: short black line (20px)
+--  - open: full-length black line (bar width - 4)
+--  - clickable via invisible hitbox around it
 -- ══════════════════════════════════════════════════════════════════
-local circleBtn=Instance.new("TextButton")
-circleBtn.Name="CircleArrow"
-circleBtn.Size=UDim2.new(0,CIRCLE_SIZE,0,CIRCLE_SIZE)
-circleBtn.Position=UDim2.new(0,PANEL_SIDEBAR_W-CIRCLE_SIZE/2,0.5,-CIRCLE_SIZE/2)
-circleBtn.BackgroundColor3=C.panelTop
-circleBtn.BorderSizePixel=0
-circleBtn.Font=Enum.Font.GothamBold
-circleBtn.Text=">"
-circleBtn.TextColor3=C.text
-circleBtn.TextSize=13
-circleBtn.AutoButtonColor=false
-circleBtn.ZIndex=10
-circleBtn.Visible=false
-circleBtn.Parent=frame
-stroke(circleBtn,C.border,1,0)
+local lineHit=Instance.new("TextButton")
+lineHit.Name="LineHandle"
+lineHit.Size=UDim2.new(0,LINE_HITBOX,0,LINE_HITBOX)
+lineHit.Position=UDim2.new(0,PANEL_SIDEBAR_W-LINE_HITBOX/2,0.5,-LINE_HITBOX/2)
+lineHit.BackgroundTransparency=1
+lineHit.Text=""
+lineHit.AutoButtonColor=false
+lineHit.ZIndex=10
+lineHit.Parent=frame
 
-local circleCorner=Instance.new("UICorner")
-circleCorner.CornerRadius=UDim.new(0.5,0)
-circleCorner.Parent=circleBtn
+local lineVis=Instance.new("Frame")
+lineVis.Name="LineVisual"
+lineVis.Size=UDim2.new(0,LINE_LEN_COLLAPSED,0,LINE_THICK)
+lineVis.Position=UDim2.new(0.5,-LINE_LEN_COLLAPSED/2,0.5,-LINE_THICK/2)
+lineVis.BackgroundColor3=C.barLine
+lineVis.BorderSizePixel=0
+lineVis.ZIndex=11
+lineVis.Parent=lineHit
 
-crisp(circleBtn)
+local lineCorner=Instance.new("UICorner")
+lineCorner.CornerRadius=UDim.new(1,0)
+lineCorner.Parent=lineVis
+
+crisp(lineHit)
 
 -- ══════════════════════════════════════════════════════════════════
 --  CONTENT AREA
@@ -376,71 +397,73 @@ homeSub.Parent=homePage
 local collapsed=false
 local busy=false
 local introDone=false
-local dragProgress=0
-local dragActive=false
-local dragStartX=nil
-local DRAG_RANGE=160
-local HOLD_THRESHOLD=0.15
-local holdStart=0
-local holdTimer=nil
-local holdReady=false
 
 -- ══════════════════════════════════════════════════════════════════
---  TOPBAR DRAG (open state)
+--  TOPBAR DRAG (bulletproof — captures input, follows finger/mouse
+--  even at max speed using UIS.InputChanged + UIS.TouchMoved)
 -- ══════════════════════════════════════════════════════════════════
 local topDragActive=false
-local topDragStart=nil
 local topDragStartPos=nil
-local topActiveInput=nil
+local frameStartPos=nil
 
 topBar.InputBegan:Connect(function(input)
     if collapsed then return end
     if input.UserInputType==Enum.UserInputType.MouseButton1
         or input.UserInputType==Enum.UserInputType.Touch then
         topDragActive=true
-        topActiveInput=input
-        topDragStart=input.Position
-        topDragStartPos=frame.Position
+        topDragStartPos=input.Position
+        frameStartPos=frame.Position
     end
 end)
 
-local function stopTopDrag(input)
-    if topActiveInput and input~=topActiveInput then return end
+local function stopTopDrag()
     topDragActive=false
-    topActiveInput=nil
 end
 
 topBar.InputEnded:Connect(function(input)
     if input.UserInputType==Enum.UserInputType.MouseButton1
         or input.UserInputType==Enum.UserInputType.Touch then
-        stopTopDrag(input)
+        stopTopDrag()
     end
 end)
 
-UIS.InputChanged:Connect(function(input)
+-- dedicated handlers (UIS) so speed doesn't drop the drag
+local function updateTopDrag(pos)
     if not topDragActive then return end
-    if topActiveInput and input~=topActiveInput then return end
-    if input.UserInputType==Enum.UserInputType.MouseMovement
-        or input.UserInputType==Enum.UserInputType.Touch then
-        local d=input.Position-topDragStart
-        frame.Position=UDim2.new(
-            topDragStartPos.X.Scale,
-            topDragStartPos.X.Offset+math.floor(d.X+0.5),
-            topDragStartPos.Y.Scale,
-            topDragStartPos.Y.Offset+math.floor(d.Y+0.5)
-        )
+    local d=pos-topDragStartPos
+    frame.Position=UDim2.new(
+        frameStartPos.X.Scale,
+        frameStartPos.X.Offset+math.floor(d.X+0.5),
+        frameStartPos.Y.Scale,
+        frameStartPos.Y.Offset+math.floor(d.Y+0.5)
+    )
+end
+
+UIS.InputChanged:Connect(function(input)
+    if input.UserInputType==Enum.UserInputType.MouseMovement then
+        updateTopDrag(input.Position)
+    end
+end)
+
+UIS.TouchMoved:Connect(function(input)
+    if input.UserInputType==Enum.UserInputType.Touch then
+        updateTopDrag(input.Position)
     end
 end)
 
 UIS.InputEnded:Connect(function(input)
     if input.UserInputType==Enum.UserInputType.MouseButton1
         or input.UserInputType==Enum.UserInputType.Touch then
-        stopTopDrag(input)
+        stopTopDrag()
     end
 end)
 
+UIS.TouchEnded:Connect(function()
+    stopTopDrag()
+end)
+
 -- ══════════════════════════════════════════════════════════════════
---  APPLY PROGRESS (0 collapsed → 1 open)
+--  APPLY PROGRESS
 -- ══════════════════════════════════════════════════════════════════
 local function applyProgress(p)
     p=math.clamp(p,0,1)
@@ -448,32 +471,32 @@ local function applyProgress(p)
     local openW,openH=getOpenDims()
     local barVisH=getBarVisH(openH)
 
-    -- sidebar's own width: 40 → 100
-    local bw=BAR_W_COLLAPSED+(BAR_W_SIDEBAR-BAR_W_COLLAPSED)*p
-
-    -- frame's overall width: 40 (thin bar) → full open width
+    local bw=BAR_W_COLLAPSED+(PANEL_SIDEBAR_W-BAR_W_COLLAPSED)*p
     local fw=BAR_W_COLLAPSED+(openW-BAR_W_COLLAPSED)*p
-
-    -- frame height: bar height → full open height
     local fh=barVisH+(openH-barVisH)*p
     local fyOff=-barVisH/2+(-openH/2+barVisH/2)*p
 
     sidebar.Size=UDim2.new(0,bw,1,-40)
-    circleBtn.Position=UDim2.new(0,bw-CIRCLE_SIZE/2,0.5,-CIRCLE_SIZE/2)
+
+    -- line handle follows sidebar edge, positioned inside bar when open
+    lineHit.Position=UDim2.new(0,bw-LINE_HITBOX/2,0.5,-LINE_HITBOX/2)
+
+    -- line visual: grows from 20px to (bar width - 8)
+    local ll=LINE_LEN_COLLAPSED+(BAR_W_COLLAPSED-8-LINE_LEN_COLLAPSED)*p
+    lineVis.Size=UDim2.new(0,math.floor(ll+0.5),0,LINE_THICK)
+    lineVis.Position=UDim2.new(0.5,-math.floor(ll/2+0.5),0.5,-LINE_THICK/2)
 
     if p<0.4 then
         boxesHolder.Visible=true
         homeTab.Visible=false
-        for _,b in ipairs(quickBoxes)do
-            b.BackgroundTransparency=0
+        for _,w in ipairs(quickBoxes)do
+            w.BackgroundTransparency=0
         end
     else
         boxesHolder.Visible=false
         homeTab.Visible=true
     end
 
-    -- X is ALWAYS PANEL_X now -- the panel never leaves the screen,
-    -- it just shrinks down to a thin dockable bar in place
     frame.Position=UDim2.new(0,PANEL_X,0.5,math.floor(fyOff+0.5))
     frame.Size=UDim2.new(0,math.floor(fw+0.5),0,math.floor(fh+0.5))
 
@@ -484,14 +507,12 @@ local function applyProgress(p)
             ch.TextTransparency=1-cp
         end
     end
-    -- title + clock live outside contentArea, fade them the same way
-    -- so nothing floats over the screen once the panel is collapsed
     titleLbl.TextTransparency=1-cp
     timeLbl.TextTransparency=1-cp
 end
 
 -- ══════════════════════════════════════════════════════════════════
---  COLLAPSE
+--  COLLAPSE / EXPAND
 -- ══════════════════════════════════════════════════════════════════
 local function collapse()
     if busy or collapsed then return end
@@ -499,9 +520,9 @@ local function collapse()
 
     tw(minusBtn,0.15,{TextTransparency=1},Enum.EasingStyle.Quad,Enum.EasingDirection.In)
 
-    for _,b in ipairs(quickBoxes)do
-        b.BackgroundTransparency=1
-        tw(b,0.3,{BackgroundTransparency=0})
+    for _,w in ipairs(quickBoxes)do
+        w.BackgroundTransparency=1
+        tw(w,0.3,{BackgroundTransparency=0})
     end
 
     homeTab.Visible=true
@@ -529,19 +550,14 @@ local function collapse()
             end
         end
         contentArea.BackgroundTransparency=1
-        circleBtn.Visible=true
         collapsed=true
         busy=false
     end)
 end
 
--- ══════════════════════════════════════════════════════════════════
---  EXPAND
--- ══════════════════════════════════════════════════════════════════
 local function expand()
     if busy or not collapsed then return end
     busy=true
-    circleBtn.Visible=false
 
     for _,ch in ipairs(contentArea:GetDescendants())do
         if ch:IsA("TextLabel")or ch:IsA("TextButton")then
@@ -568,99 +584,36 @@ local function expand()
     end)
 end
 
--- ══════════════════════════════════════════════════════════════════
---  MINUS BTN
--- ══════════════════════════════════════════════════════════════════
 minusBtn.Activated:Connect(function()
     if not busy then collapse() end
 end)
 
 -- ══════════════════════════════════════════════════════════════════
---  CIRCLE DRAG TO EXPAND
+--  BLACK LINE HANDLE — click/tap to toggle
 -- ══════════════════════════════════════════════════════════════════
-local function resetHold()
-    holdReady=false
-    holdStart=0
-    if holdTimer then
-        task.cancel(holdTimer)
-        holdTimer=nil
-    end
-end
-
-circleBtn.InputBegan:Connect(function(input)
-    if not collapsed then return end
-    if input.UserInputType==Enum.UserInputType.MouseButton1
-        or input.UserInputType==Enum.UserInputType.Touch then
-        holdStart=os.clock()
-        holdReady=false
-        dragActive=true
-        dragStartX=input.Position.X
-        dragProgress=0
-        holdTimer=task.delay(HOLD_THRESHOLD,function()
-            if dragActive then holdReady=true end
-        end)
-    end
-end)
-
-UIS.InputChanged:Connect(function(input)
-    if not dragActive then return end
-    if input.UserInputType==Enum.UserInputType.MouseMovement
-        or input.UserInputType==Enum.UserInputType.Touch then
-        if holdReady and collapsed then
-            local dx=input.Position.X-dragStartX
-            if dx<0 then dx=0 end
-            local p=math.clamp(dx/DRAG_RANGE,0,1)
-            dragProgress=p
-            applyProgress(p)
-        end
-    end
-end)
-
-local function endCircleDrag()
-    if not dragActive then return end
-    dragActive=false
-    resetHold()
-
-    if dragProgress>0.6 then
+lineHit.Activated:Connect(function()
+    if busy then return end
+    if collapsed then
         expand()
     else
-        local startP=dragProgress
-        if startP>0.01 then
-            local startT=os.clock()
-            local duration=0.2
-            task.spawn(function()
-                while os.clock()-startT<duration do
-                    local a=(os.clock()-startT)/duration
-                    local e=1-math.pow(1-a,3)
-                    applyProgress(startP*(1-e))
-                    task.wait()
-                end
-                applyProgress(0)
-            end)
-        end
-    end
-end
-
-circleBtn.InputEnded:Connect(function(input)
-    if input.UserInputType==Enum.UserInputType.MouseButton1
-        or input.UserInputType==Enum.UserInputType.Touch then
-        endCircleDrag()
+        collapse()
     end
 end)
 
-UIS.InputEnded:Connect(function(input)
-    if input.UserInputType==Enum.UserInputType.MouseButton1
-        or input.UserInputType==Enum.UserInputType.Touch then
-        endCircleDrag()
-    end
+-- hover effect on the line
+lineHit.MouseEnter:Connect(function()
+    tw(lineVis,0.15,{BackgroundColor3=Color3.fromRGB(60,60,70)})
+end)
+lineHit.MouseLeave:Connect(function()
+    tw(lineVis,0.15,{BackgroundColor3=C.barLine})
 end)
 
 -- ══════════════════════════════════════════════════════════════════
---  SCREEN-SIZE / ORIENTATION REFLOW
+--  REFLOW ON SCREEN CHANGE
 -- ══════════════════════════════════════════════════════════════════
 local function reflow()
     if not introDone then return end
-    if dragActive or topDragActive or busy then return end
+    if busy then return end
     applyProgress(collapsed and 0 or 1)
 end
 
@@ -679,7 +632,7 @@ workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(bindViewportListener
 do
     local openW,openH=getOpenDims()
     local barVisH=getBarVisH(openH)
-    local hiddenX=getIntroHiddenX()
+    local hiddenX=-math.min(openW+40,getViewport().X+60)
     frame.Position=UDim2.new(0,hiddenX,0.5,-barVisH/2)
     frame.Size=UDim2.new(0,BAR_W_COLLAPSED,0,barVisH)
     task.spawn(function()
