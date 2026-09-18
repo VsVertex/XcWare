@@ -21,7 +21,7 @@ local C={
     button=Color3.fromRGB(240,240,244),
     buttonHover=Color3.fromRGB(232,232,236),
     buttonPressed=Color3.fromRGB(210,210,216),
-    border=Color3.fromRGB(222,222,228),
+    border=Color3.fromRGB(210,210,216),
     text=Color3.fromRGB(20,20,25),
     subText=Color3.fromRGB(120,120,130),
     accent=Color3.fromRGB(0,0,0),
@@ -36,19 +36,13 @@ for _,n in ipairs({GN})do
     if b then b:Destroy()end
 end
 
-local function corner(o,r)
-    local c=Instance.new("UICorner")
-    c.CornerRadius=UDim.new(0,r or 8)
-    c.Parent=o
-    return c
-end
-
 local function stroke(o,col,t,tr)
     local s=Instance.new("UIStroke")
     s.Color=col or C.border
     s.Thickness=t or 1
     s.Transparency=tr or 0
     s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
+    s.LineJoinMode=Enum.LineJoinMode.Miter
     s.Parent=o
     return s
 end
@@ -57,6 +51,13 @@ local function tw(o,d,p,st,dr)
     local a=T:Create(o,TweenInfo.new(d,st or Enum.EasingStyle.Quint,dr or Enum.EasingDirection.Out),p)
     a:Play()
     return a
+end
+
+local function crispText(lbl)
+    pcall(function()
+        lbl.TextScaled=false
+        lbl.RichText=false
+    end)
 end
 
 local gui=Instance.new("ScreenGui")
@@ -85,10 +86,9 @@ frame.Size=UDim2.new(0,520,0,320)
 frame.Position=UDim2.new(0,12,0.5,-160)
 frame.BackgroundColor3=C.panel
 frame.BorderSizePixel=0
-frame.ClipsDescendants=false
+frame.ClipsDescendants=true
 frame.Active=true
 frame.Parent=gui
-corner(frame,12)
 stroke(frame,C.border,1,0)
 
 local topBar=Instance.new("Frame")
@@ -99,21 +99,13 @@ topBar.BackgroundColor3=C.panelTop
 topBar.BorderSizePixel=0
 topBar.Active=true
 topBar.Parent=frame
-corner(topBar,12)
-
-local topBarCover=Instance.new("Frame")
-topBarCover.Size=UDim2.new(1,0,0,12)
-topBarCover.Position=UDim2.new(0,0,1,-12)
-topBarCover.BackgroundColor3=C.panelTop
-topBarCover.BorderSizePixel=0
-topBarCover.ZIndex=topBar.ZIndex
-topBarCover.Parent=topBar
 
 local topBarStroke=Instance.new("UIStroke")
 topBarStroke.Color=C.border
 topBarStroke.Thickness=1
-topBarStroke.Transparency=0.4
+topBarStroke.Transparency=0
 topBarStroke.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
+topBarStroke.LineJoinMode=Enum.LineJoinMode.Miter
 topBarStroke.Parent=topBar
 
 local titleLbl=Instance.new("TextLabel")
@@ -125,6 +117,7 @@ titleLbl.Text="XcMono"
 titleLbl.TextColor3=C.text
 titleLbl.TextSize=15
 titleLbl.TextXAlignment=Enum.TextXAlignment.Left
+crispText(titleLbl)
 titleLbl.Parent=topBar
 
 local timeLbl=Instance.new("TextLabel")
@@ -136,6 +129,7 @@ timeLbl.Text="12:00:00 AM PHT"
 timeLbl.TextColor3=C.subText
 timeLbl.TextSize=11
 timeLbl.TextXAlignment=Enum.TextXAlignment.Right
+crispText(timeLbl)
 timeLbl.Parent=topBar
 
 local function phTime()
@@ -165,9 +159,40 @@ sidebar.Parent=frame
 local sideStroke=Instance.new("UIStroke")
 sideStroke.Color=C.border
 sideStroke.Thickness=1
-sideStroke.Transparency=0.4
+sideStroke.Transparency=0
 sideStroke.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
+sideStroke.LineJoinMode=Enum.LineJoinMode.Miter
 sideStroke.Parent=sidebar
+
+local sideLayout=Instance.new("UIListLayout")
+sideLayout.Padding=UDim.new(0,0)
+sideLayout.SortOrder=Enum.SortOrder.LayoutOrder
+sideLayout.Parent=sidebar
+
+local homeTab=Instance.new("TextButton")
+homeTab.Name="HomeTab"
+homeTab.Size=UDim2.new(1,0,0,36)
+homeTab.Position=UDim2.new(0,0,0,0)
+homeTab.BackgroundColor3=C.activeTab
+homeTab.BorderSizePixel=0
+homeTab.Font=Enum.Font.GothamMedium
+homeTab.Text="  Home"
+homeTab.TextColor3=C.text
+homeTab.TextSize=11
+homeTab.TextXAlignment=Enum.TextXAlignment.Left
+homeTab.AutoButtonColor=false
+homeTab.LayoutOrder=1
+homeTab.Parent=sidebar
+
+local homeStroke=Instance.new("UIStroke")
+homeStroke.Color=C.border
+homeStroke.Thickness=1
+homeStroke.Transparency=0
+homeStroke.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
+homeStroke.LineJoinMode=Enum.LineJoinMode.Miter
+homeStroke.Parent=homeTab
+
+crispText(homeTab)
 
 local contentArea=Instance.new("Frame")
 contentArea.Name="ContentArea"
@@ -178,25 +203,37 @@ contentArea.BorderSizePixel=0
 contentArea.ClipsDescendants=true
 contentArea.Parent=frame
 
-local emptyTab=Instance.new("Frame")
-emptyTab.Name="Tab1"
-emptyTab.Size=UDim2.new(1,0,1,0)
-emptyTab.Position=UDim2.new(0,0,0,0)
-emptyTab.BackgroundTransparency=1
-emptyTab.Visible=true
-emptyTab.Parent=contentArea
+local homePage=Instance.new("Frame")
+homePage.Name="HomePage"
+homePage.Size=UDim2.new(1,0,1,0)
+homePage.Position=UDim2.new(0,0,0,0)
+homePage.BackgroundTransparency=1
+homePage.Visible=true
+homePage.Parent=contentArea
 
-local emptyLabel=Instance.new("TextLabel")
-emptyLabel.Size=UDim2.new(1,0,1,0)
-emptyLabel.Position=UDim2.new(0,0,0,0)
-emptyLabel.BackgroundTransparency=1
-emptyLabel.Font=Enum.Font.Gotham
-emptyLabel.Text=""
-emptyLabel.TextColor3=C.subText
-emptyLabel.TextSize=11
-emptyLabel.TextXAlignment=Enum.TextXAlignment.Center
-emptyLabel.TextYAlignment=Enum.TextYAlignment.Center
-emptyLabel.Parent=emptyTab
+local homeLabel=Instance.new("TextLabel")
+homeLabel.Size=UDim2.new(1,0,0,20)
+homeLabel.Position=UDim2.new(0,16,0,16)
+homeLabel.BackgroundTransparency=1
+homeLabel.Font=Enum.Font.GothamBold
+homeLabel.Text="HOME"
+homeLabel.TextColor3=C.text
+homeLabel.TextSize=13
+homeLabel.TextXAlignment=Enum.TextXAlignment.Left
+crispText(homeLabel)
+homeLabel.Parent=homePage
+
+local homeSub=Instance.new("TextLabel")
+homeSub.Size=UDim2.new(1,-32,0,16)
+homeSub.Position=UDim2.new(0,16,0,38)
+homeSub.BackgroundTransparency=1
+homeSub.Font=Enum.Font.Gotham
+homeSub.Text="welcome to XcMono"
+homeSub.TextColor3=C.subText
+homeSub.TextSize=10
+homeSub.TextXAlignment=Enum.TextXAlignment.Left
+crispText(homeSub)
+homeSub.Parent=homePage
 
 local dragging=false
 local dragStart=nil
@@ -234,9 +271,9 @@ UIS.InputChanged:Connect(function(input)
         local delta=input.Position-dragStart
         frame.Position=UDim2.new(
             startPos.X.Scale,
-            startPos.X.Offset+delta.X,
+            startPos.X.Offset+math.floor(delta.X+0.5),
             startPos.Y.Scale,
-            startPos.Y.Offset+delta.Y
+            startPos.Y.Offset+math.floor(delta.Y+0.5)
         )
     end
 end)
