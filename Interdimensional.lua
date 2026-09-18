@@ -4,7 +4,7 @@ TN="My Panel"GN="InterDimensionalPanelGUI"SN="MyPanelStorage"
 BS=16 BJ=50 PH=8*3600 FD=6 FSD=2 FCB=2 ED=70 OR=14 AT=20 VY=-300 VR=4000 RI=1.0 DW=2.0 LR=15 SNT=1.5 LAD=5 LHMD=45 AIT=0.35 PDR=7 WR=4.5 VT=-75 OL=7 SED=14 SBM=1.5 MCW1=6.0 MCW2=12.0 MCA1=8 MCA2=22 MJD1=0.30 MJD2=0.55 MJC=0.80 PA=2 PFC=0.50 BDB=5.0 BO=3.0 BC=0.22 BTR=14 AFD=3.5 ATR=22 AMW1=3.5 AMW2=7.5 FSX=150000 FSY=220000 FSZ=180000 FLV=6000 FAV=12000 FDV=80 FDD=25 FMD=8 FDW=0.15 DRT=30 MCH=4 LRT=0 LRT2=0 RCL=3.0
 STRANGER_RANGE=15 STRANGER_STARE=1.5 STRANGER_CD=3 BACKOFF_STEP=5 FD_MIN=2 FD_MAX=60
 PROTECT_DIST=6 PROTECT_STILL_TIME=1.5 PROTECT_COOLDOWN=5 PROTECT_TWEEN=0.25 PROTECT_CHAT_CD=2.5 PROTECT_BACK_DIST=5
-HOVER_HEIGHT=5.0 HOVER_BOB_Y=0.35 HOVER_BOB_XZ=0.18 HOVER_ROT=0.02 HOVER_TILT_MAX=0.22 HOVER_TILT_LERP=6.0 HOVER_LAND_TIME=0.9 HOVER_LIFT_TIME=0.9
+HOVER_HEIGHT=4.5 HOVER_BOB_Y=0.18 HOVER_TILT_MAX=0.22 HOVER_TILT_LERP=6.0 HOVER_LIFT_TIME=0.9 HOVER_BACK_OFF=5.0 HOVER_SIDE_OFF=3.0 HOVER_DEADZONE=1.5
 KEY_FOLDER="XcHPanel"XCH_FILE=KEY_FOLDER.."/xch_key.txt"XCODE_FILE=KEY_FOLDER.."/xcode_key.txt"XCH3_FILE=KEY_FOLDER.."/xch3_key.txt"XCODE2_FILE=KEY_FOLDER.."/xcode2_key.txt"
 API_PASSWORD="crix"
 function fsSupported()return type(writefile)=="function"and type(readfile)=="function"end
@@ -146,7 +146,7 @@ return os.date("%Y-%m-%d",ts)
 end
 local R_={startup={"yo im XcH","hey! im XcH","back again, XcH here","sup, im XcH","hello! XcH here","yo yo its XcH","whats good, XcH in the house","hey hey, XcH here","wassup, XcH speaking","hello hello, XcH here","yo! im XcH btw","how you doin, XcH here","hi im XcH nice to meet ya","aye im XcH","chill im XcH","hello human, XcH here","im baaack, XcH","yooo XcH here","welcome, im XcH","XcH online","hey there, XcH here","hiya, XcH reporting in","im here, XcH btw","just dropped in, XcH","sup bro, XcH here"},orbit={"orbiting now","circling ya","going around","orbit mode on","round and round","lemme orbit","starting my laps","spinning around u","yeah im circling","orbit engaged","imma go around","going for a loop","circular motion rn","cruising around ya","watch me orbit","doing the rounds","im orbiting now","orbiting like a moon","spin cycle initiated","going orbital","round trip time","orbit incoming"},unorbit={"orbit off","stopped orbiting","ok im done circling","back to normal","orbit cancelled","not spinning anymore","done with laps","off orbit","orbit disengaged","alright stopped","ok no more orbit","chill now","just standing","done going around","leaving orbit","orbit ended","not orbiting anymore","back on the ground","ok stopped spinning","orbit terminated","disengaging","done with that"},sit={"sitting down","taking a seat","chill mode","gonna sit","sittin","down i go","seat taken","sit time","im seated","yep sitting","chilling now","ok sitting","take a load off","sit back","lowkey tired","here i sit","plopping down","gonna rest","sittin here now","seated","sitting rn","down for a bit"},stand={"up we go","standing up","im up","stand mode","back on my feet","ok up now","standing","getting up","up and ready","im standing","back up","off the ground","standin","ok im up","rising","vertical again","upright now","here we go","feet on floor","up","back in action","im up now"},jump={"jumping","boing","hop","up i go","yeet","leap","hop up","jump rn","boinggg","wheee","up","in the air","doing a hop","spring","leaping","ok jumping","bounce","hop hop","up up","takeoff","jumping rn","air time"},hide={"going invisible","poof gone","vanishing now","hiding","bye bye","out of sight","ghost mode","now u dont see me","disappearing","c ya","going ghost","hidden","vamoose","im out","hiding rn","invisible mode","peacing out","catch me if u can","gone","vanishing","shh im hiding","hidden now"},spawn={"im back","returned","sup again","back online","im here","yo im back","hello again","respawned","here i am","back from the void","im back bro","reporting in","alive again","back to action","yo","guess whos back","im here now","made it back","back in the game","hi again","returned from nada","and im back"},dance={"dancing now","lets dance","getting down","movin","grooving","dance time","bustin moves","shakin it","party mode","yeah im dancing","cut a rug","dance dance","watch me groove","getting funky","dance floor time","wiggle wiggle","showing off moves","dancing rn","having a boogie","lets go dancing","im dancing","moves activated"},undance={"stopped dancing","dance off","chill now","no more dancing","done dancin","ok im done","standing still","enough dancing","done with moves","stopped","ok tired now","not dancing","moves off","chilling","done","dancing over","stopped the groove","no more dancing rn","im done dancing","back to normal","ok stop","rest time"},spin={"spinning now","wheee","spin go brrr","round and round","lets spin","spinning fast","vroooom","spin time","yeah spinning","going for a whirl","spin cycle on","twisting","watch me spin","spin spin spin","rotating","chill spinning now","spinning rn","spin mode","im dizzy","going in circles","spin activated","spinning"},unspin={"stopped spinning","spin off","ok im done","no more spinning","stopped twirling","ok chill","spin ended","back to normal","not spinning","done with that","ok dizzy now","stopping","spin off rn","standin still","stopped spinning","chill","no spin","spin done","back to standing","ok stop spinning","spin cancelled","ending spin"},lead={"follow me","this way","come on","follow me bro","let's go","over here","come with me","follow follow","leading now","follow me to them","walkin to target","come on man","lets go find em","leading the way","follow!","hey come here","im leading now","follow me rq","takin the lead","on the way","come on lets go","leading rn"},unlead={"lead off","stopped leading","done leading","ok stopped","not leading anymore","lead cancelled","back to normal","chill","ok enough leading","done with that","not leading rn","back on follow","im done","stopped","lead ended","back to you","ok got it","returning","back to base","lead done","im back","ok stopping lead"},bam={"bamming now","getting in their face","bam mode","on their case","yeah bamming","harassing them now","bam activated","in your face","right behind them","bamming target","on em now","bam time","im on em","getting close","stay on em","bamming rn","yep bamming","on their tail","bam engaged","watch this","started bamming","in their space"},unbam={"bam off","stopped bamming","leaving them","done","bam done","ok stopping","back to you","bam ended","chill now","ok bam off","done bamming","leaving them alone","im back","bam cancelled","ok im back","returning","stopped","no more bam","leaving","back to base","bam done rn","finished bamming"},annoy={"annoying now","on their nerves","annoy mode","getting on their case","yeah annoying","bothering them","annoy activated","pestering them","here we go","annoying target","on their tail","annoy time","watch this","started annoying","on em","annoying rn","yep annoying","getting under skin","annoy engaged","lemme bug em","spamming them","in their biz"},unannoy={"annoy off","stopped annoying","leaving them","done annoying","ok im done","returning","annoy ended","chill now","ok annoy off","done bugging em","leaving them alone","im back","annoy cancelled","stopped bugging","back to base","ok im back","no more annoy","back to you","annoy done","finished annoying","im back bro","done"},fling={"flinging now","yeeting them","fling mode","here we go","yeet activated","flinging target","target fling","fling time","watch this","started flinging","yeeting now","flinging rn","yep flinging","getting flingy","target go weee","sending em","flinging them","fling engaged","gone fling","here comes the yeet","let it rip","fling incoming"},unfling={"fling off","stopped flinging","done","fling done","chill","ok stopping","back to you","fling ended","no more flinging","returning","back to base","ok im back","fling cancelled","leaving them","ok im done","fling done rn","back on follow","stopped","fling over","enough","im back","done flinging"},notfound={"who?","dunno that name","never heard of em","cant find em","no clue who that is","idk that player","who dat?","not in server","aint see em","nope cant find","who bro","no idea","huh?","not finding em","no luck","wheres that?","say what?","not sure who that is","cant spot em","who u talkin bout","never seen that name","not here"},self={"thats me lol","bruh im me","cant do it to myself","no lol","im not doing that to me","why would i","that makes no sense","im the one doing stuff bro","cmon man","nah","nope","youre joking right","lol no","cant do that","seriously?","bro","why","no way","not doing that","thats weird","look at yourself","youre a comedian"},stranger={"nah only my boss tells me what to do","not listening to you bro","lol no","youre not my boss","nice try","nope","im not your bot","wrong person lol","ask crix hes the boss","cant help you with that","youre not on the list","nuh uh","only my host can do that","denied","access denied","not for you","wrong guy bro","sorry not sorry","ha good one","yeah no"},norandom={"no one else to target bro","no valid target","im alone in here","no players to pick from","everyone left","server empty"},stop={"alright stopping","ok done","chill","stopped","back on follow","ok ok","im back","returning","done","fine","stopping now","ok ill stop","back to you","here"},infoerr={"couldnt find that field","try id/age/joined/distance","unknown field bro","huh? try id age joined or distance"},hover={"hover mode on","floating now","lifting off","ghost mode activated","drifting up","hover engaged"},unhover={"landing now","coming down","hover off","back to walking","touching grass","landed"}}
 ROLE=nil commandPrefix="!"hostFilter={name=nil,userId=nil}originalHost={name=nil,userId=nil}hostLogRef=nil botLogRef=nil antiBan={detected=false}rotationOwner="Humanoid"pushLog=nil botLogBuffer={}CHAT_CONVERSATION={{role="system",content=CP}}CHAT_CONVERSATION2={{role="system",content=CP2}}isOwnerHost=false
-local S={mode="Follow",orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={},protectTarget=nil,protectUntil=0,protectStartPos=nil,protectLastMove=0,protectChatCD=0,protectCooldown=0,protectChatActive=false,protectChatQueue={},hoverActive=false,hoverPos=nil,hoverBodyPos=nil,hoverBodyGyro=nil,hoverThread=nil,hoverTiltCur=Vector3.zero,hoverBaseY=nil,hoverStartTime=0,hoverStartLift=0}
+local S={mode="Follow",orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={},protectTarget=nil,protectUntil=0,protectStartPos=nil,protectLastMove=0,protectChatCD=0,protectCooldown=0,protectChatActive=false,protectChatQueue={},hoverActive=false,hoverPos=nil,hoverAlignPos=nil,hoverAlignOri=nil,hoverAtt=nil,hoverThread=nil,hoverTiltCur=Vector3.zero,hoverStartTime=0,hoverStartLift=0,hoverAnimSaved=nil}
 stopOrbit=nil stopSpin=nil stopDance=nil stopLead=nil stopBam=nil startBam=nil stopAnnoy=nil startAnnoy=nil stopFling=nil startFling=nil startFollow=nil stopFollow=nil sendChat=nil handleCommand=nil teleportToHost=nil handleMath=nil
 local PLACEHOLDER_CMDS={speed=true,jump=true,crawl=true,moonwalk=true,shake=true,freeze=true,unfreeze=true,float=true,wave=true,point=true,salute=true,lay=true,dab=true,pose=true,faint=true,stalk=true,mimic=true,mirror=true,peek=true,haunt=true,ride=true,carry=true,block=true,tease=true,troll=true,copychat=true,rap=true,quiz=true,greet=true,escort=true,afk=true,unafk=true,status=true,sleep=true}
 local PLACEHOLDER_REPLIES={"soon","coming soon","not ready yet","wip","still cooking","gimme a bit","soon bro"}
@@ -518,20 +518,39 @@ function getPlayer(name)if not name then return nil end local n=name:lower()if n
 function getPlayerHRP(p)return p and p.Character and p.Character:FindFirstChild("HumanoidRootPart")or nil end
 function applyFixedSpeed()local h=hum()if h then pcall(function()h.WalkSpeed=BS h.JumpPower=BJ h.UseJumpPower=true end)end end
 -- ══════════════════════════════════════════════════════════════════
---  HOVER / DRONE MODE (Touhou-style floating)
+--  HOVER / DRONE MODE (Touhou-style floating, stiff chassis)
 -- ══════════════════════════════════════════════════════════════════
-function freezeAnims()
+function destroyAnimator()
     local c=pl.Character
     if not c then return end
     local anim=c:FindFirstChildOfClass("Animator")
     if anim then
         for _,t in ipairs(anim:GetPlayingAnimationTracks())do
-            pcall(function()t:Stop(0.15)end)
+            pcall(function()t:Stop(0)end)
         end
     end
-    for _,t in ipairs(c:GetChildren())do
-        if t:IsA("AnimationController")or t:IsA("Animator")then
-            pcall(function()t:Destroy()end)
+    -- save Animate script so we can restore later
+    local animateScript=c:FindFirstChild("Animate")
+    if animateScript then
+        S.hoverAnimSaved=animateScript:Clone()
+        animateScript:Destroy()
+    end
+    -- destroy animator
+    if anim then pcall(function()anim:Destroy()end) end
+end
+function restoreAnimate()
+    local c=pl.Character
+    if not c then return end
+    if c:FindFirstChild("Animate")then return end
+    if S.hoverAnimSaved then
+        local clone=S.hoverAnimSaved:Clone()
+        clone.Parent=c
+    else
+        -- rebuild from default
+        local pg2=pl:FindFirstChildOfClass("PlayerScripts")
+        if pg2 then
+            local a=pg2:FindFirstChild("Animate")
+            if a then a:Clone().Parent=c end
         end
     end
 end
@@ -555,79 +574,97 @@ function startHover(silent)
     S.mode="Hover"
     S.hoverStartTime=os.clock()
     S.hoverStartLift=m.Position.Y
-    S.hoverBaseY=m.Position.Y
     S.hoverTiltCur=Vector3.zero
     setRotationOwner("FaceHost")
-    h.WalkSpeed=BS
-    h.JumpPower=0
-    h.UseJumpPower=true
-    pcall(function()h.PlatformStand=false end)
-    freezeAnims()
+    -- stop humanoid from playing anything
+    pcall(function()
+        h.WalkSpeed=0
+        h.JumpPower=0
+        h.UseJumpPower=false
+        h.AutoRotate=false
+        h:ChangeState(Enum.HumanoidStateType.Physics)
+    end)
+    destroyAnimator()
     makeBodyRigid()
-    if S.hoverBodyPos then pcall(function()S.hoverBodyPos:Destroy()end)end
-    if S.hoverBodyGyro then pcall(function()S.hoverBodyGyro:Destroy()end)end
-    local bp2=Instance.new("BodyPosition")
-    bp2.MaxForce=Vector3.new(0,80000,0)
-    bp2.P=8000
-    bp2.D=800
-    bp2.Position=m.Position
-    bp2.Parent=m
-    S.hoverBodyPos=bp2
-    local bg=Instance.new("BodyGyro")
-    bg.MaxTorque=Vector3.new(0,0,0)
-    bg.P=0
-    bg.D=0
-    bg.CFrame=m.CFrame
-    bg.Parent=m
-    S.hoverBodyGyro=bg
+    -- clean old rig
+    if S.hoverAlignPos then pcall(function()S.hoverAlignPos:Destroy()end)S.hoverAlignPos=nil end
+    if S.hoverAlignOri then pcall(function()S.hoverAlignOri:Destroy()end)S.hoverAlignOri=nil end
+    if S.hoverAtt then pcall(function()S.hoverAtt:Destroy()end)S.hoverAtt=nil end
+    -- build alignment rig
+    local att=Instance.new("Attachment")
+    att.Parent=m
+    S.hoverAtt=att
+    local alignPos=Instance.new("AlignPosition")
+    alignPos.Attachment0=att
+    alignPos.Mode=Enum.PositionAlignmentMode.OneAttachment
+    alignPos.MaxForce=1e6
+    alignPos.Responsiveness=25
+    alignPos.ApplyAtCenterOfMass=true
+    alignPos.Position=m.Position
+    alignPos.Parent=m
+    S.hoverAlignPos=alignPos
+    local alignOri=Instance.new("AlignOrientation")
+    alignOri.Attachment0=att
+    alignOri.Mode=Enum.OrientationAlignmentMode.OneAttachment
+    alignOri.MaxTorque=1e6
+    alignOri.Responsiveness=25
+    alignOri.CFrame=m.CFrame
+    alignOri.Parent=m
+    S.hoverAlignOri=alignOri
     if S.hoverThread then task.cancel(S.hoverThread) end
     S.hoverThread=task.spawn(function()
         local tick0=os.clock()
+        local liftStart=m.Position.Y
         while S.hoverActive and ROLE=="BOT" do
             local dt=R.Heartbeat:Wait()
             local hrp2=hrp()
             local h2=hum()
             if not hrp2 or not h2 then break end
             if S.hidden or antiBan.detected then break end
+            -- host info
+            local hh=getHostHRP()
+            local host=getHost()
+            local targetPos=hrp2.Position
+            local floorY=liftStart-HOVER_HEIGHT
+            if hh then
+                -- compute offset position BEHIND + BESIDE host
+                local hostLook=hh.CFrame.LookVector
+                local hostFlat=Vector3.new(hostLook.X,0,hostLook.Z)
+                if hostFlat.Magnitude<0.01 then hostFlat=Vector3.new(0,0,-1)else hostFlat=hostFlat.Unit end
+                local hostRight=Vector3.new(hostFlat.Z,0,-hostFlat.X)
+                local offsetPos=hh.Position - hostFlat*HOVER_BACK_OFF + hostRight*HOVER_SIDE_OFF
+                -- check if bot is far enough from offset; if so move toward it, else stay
+                local myFlat=Vector3.new(hrp2.Position.X-offsetPos.X,0,hrp2.Position.Z-offsetPos.Z)
+                if myFlat.Magnitude>HOVER_DEADZONE then
+                    targetPos=offsetPos
+                else
+                    targetPos=hrp2.Position
+                end
+                -- floor under target
+                local ok,hit=probeFloor(targetPos)
+                if ok and hit then floorY=hit.Position.Y end
+            else
+                local ok,hit=probeFloor(targetPos)
+                if ok and hit then floorY=hit.Position.Y end
+            end
             -- startup smooth lift
             local life=os.clock()-S.hoverStartTime
             local liftT=math.clamp(life/HOVER_LIFT_TIME,0,1)
-            local liftY=HOVER_HEIGHT*(liftT*liftT*(3-2*liftT))
-            -- pick target follow point
-            local target=hrp2.Position
-            local lookTarget=nil
-            if S.mode=="Hover" then
-                local hh=getHostHRP()
-                if hh then
-                    local d=(hrp2.Position-hh.Position).Magnitude
-                    if d>FSD then
-                        target=hh.Position
-                    else
-                        target=hrp2.Position
-                    end
-                end
-            end
-            -- grounded target Y from floor probe
-            local floorY=S.hoverBaseY-HOVER_HEIGHT
-            local ok,hit=probeFloor(target)
-            if ok and hit then
-                floorY=hit.Position.Y
-            end
-            local desiredY=floorY+HOVER_HEIGHT+liftY
-            -- idle bob using 4 axes with different frequencies
+            local smoothLift=liftT*liftT*(3-2*liftT)
+            local desiredY=floorY+HOVER_HEIGHT*smoothLift+(1-smoothLift)*liftStart
+            -- stiff idle: only Y bob (no XZ wobble)
             local t=os.clock()-tick0
             local bobY=math.sin(t*1.7)*HOVER_BOB_Y
-            local bobX=math.sin(t*0.9)*HOVER_BOB_XZ
-            local bobZ=math.cos(t*1.13)*HOVER_BOB_XZ
-            -- velocity-based tilt
+            -- velocity tilt relative to actual movement direction
             local vel=hrp2.AssemblyLinearVelocity
             local flatV=Vector3.new(vel.X,0,vel.Z)
-            local look=hrp2.CFrame.LookVector
-            look=Vector3.new(look.X,0,look.Z)
-            if look.Magnitude<0.01 then look=Vector3.new(0,0,-1) else look=look.Unit end
-            local right=Vector3.new(look.Z,0,-look.X)
-            local fwdSpeed=flatV:Dot(look)
-            local sideSpeed=flatV:Dot(right)
+            -- use bot's own look for tilt frame
+            local myLook=hrp2.CFrame.LookVector
+            myLook=Vector3.new(myLook.X,0,myLook.Z)
+            if myLook.Magnitude<0.01 then myLook=Vector3.new(0,0,-1)else myLook=myLook.Unit end
+            local myRight=Vector3.new(myLook.Z,0,-myLook.X)
+            local fwdSpeed=flatV:Dot(myLook)
+            local sideSpeed=flatV:Dot(myRight)
             local pitch=0
             local roll=0
             if math.abs(fwdSpeed)>0.5 then
@@ -638,32 +675,48 @@ function startHover(silent)
             end
             local targetTilt=Vector3.new(pitch,0,roll)
             S.hoverTiltCur=S.hoverTiltCur:Lerp(targetTilt,math.clamp(dt*HOVER_TILT_LERP,0,1))
-            -- apply position with bob
-            if S.hoverBodyPos then
-                local curPos=hrp2.Position
-                local desired=Vector3.new(target.X+bobX,desiredY+bobY,target.Z+bobZ)
-                S.hoverBodyPos.Position=desired
+            -- apply position via AlignPosition
+            if S.hoverAlignPos then
+                S.hoverAlignPos.Position=Vector3.new(targetPos.X,desiredY+bobY,targetPos.Z)
             end
-            -- apply rotation manually on HRP top of humanoid
-            local baseCF=hrp2.CFrame
-            local finalCF=CFrame.new(baseCF.Position)*CFrame.Angles(S.hoverTiltCur.X,0,S.hoverTiltCur.Z)
-            -- preserve yaw: use humanoid rotation but add tilt
-            local yawCF=CFrame.new(baseCF.Position,baseCF.Position+look)
-            local tiltCF=yawCF*CFrame.Angles(S.hoverTiltCur.X,0,S.hoverTiltCur.Z)
-            pcall(function()hrp2.CFrame=tiltCF end)
-            -- pathfinding walk via MoveTo (still works because WalkSpeed is set)
-            if S.mode=="Hover" then
-                local hh=getHostHRP()
-                if hh then
-                    local d=(hrp2.Position-hh.Position).Magnitude
-                    if d>FSD then
-                        h2:MoveTo(hh.Position)
-                    end
+            -- apply rotation via AlignOrientation: face host + tilt
+            local yawLook
+            if hh then
+                local towardHost=hh.Position-hrp2.Position
+                towardHost=Vector3.new(towardHost.X,0,towardHost.Z)
+                if towardHost.Magnitude<0.1 then towardHost=myLook else towardHost=towardHost.Unit end
+                yawLook=towardHost
+            else
+                yawLook=myLook
+            end
+            local baseCF=CFrame.lookAt(hrp2.Position,hrp2.Position+yawLook)
+            local finalCF=baseCF*CFrame.Angles(S.hoverTiltCur.X,0,S.hoverTiltCur.Z)
+            if S.hoverAlignOri then
+                S.hoverAlignOri.CFrame=finalCF
+            end
+            -- move bot toward offset via WalkTo so pathfinding still works
+            if hh then
+                local offLook=hh.CFrame.LookVector
+                local offFlat=Vector3.new(offLook.X,0,offLook.Z)
+                if offFlat.Magnitude<0.01 then offFlat=Vector3.new(0,0,-1)else offFlat=offFlat.Unit end
+                local offRight=Vector3.new(offFlat.Z,0,-offFlat.X)
+                local desiredPos=hh.Position - offFlat*HOVER_BACK_OFF + offRight*HOVER_SIDE_OFF
+                local ok,hit=probeFloor(desiredPos)
+                local groundY=ok and hit.Position.Y or desiredPos.Y
+                -- ground-level target for MoveTo (walk system works at ground)
+                local moveTarget=Vector3.new(desiredPos.X,groundY,desiredPos.Z)
+                local distFlat=Vector3.new(hrp2.Position.X-moveTarget.X,0,hrp2.Position.Z-moveTarget.Z).Magnitude
+                if distFlat>HOVER_DEADZONE then
+                    h2.WalkSpeed=BS
+                    h2:MoveTo(moveTarget)
+                else
+                    h2.WalkSpeed=0
                 end
             end
         end
-        if S.hoverBodyPos then pcall(function()S.hoverBodyPos:Destroy()end) S.hoverBodyPos=nil end
-        if S.hoverBodyGyro then pcall(function()S.hoverBodyGyro:Destroy()end) S.hoverBodyGyro=nil end
+        if S.hoverAlignPos then pcall(function()S.hoverAlignPos:Destroy()end) S.hoverAlignPos=nil end
+        if S.hoverAlignOri then pcall(function()S.hoverAlignOri:Destroy()end) S.hoverAlignOri=nil end
+        if S.hoverAtt then pcall(function()S.hoverAtt:Destroy()end) S.hoverAtt=nil end
     end)
     if not silent then sendChat(pick(R_.hover)) end
 end
@@ -671,16 +724,26 @@ function stopHover(silent)
     if not S.hoverActive then return end
     S.hoverActive=false
     if S.hoverThread then task.cancel(S.hoverThread) S.hoverThread=nil end
-    if S.hoverBodyPos then pcall(function()S.hoverBodyPos:Destroy()end) S.hoverBodyPos=nil end
-    if S.hoverBodyGyro then pcall(function()S.hoverBodyGyro:Destroy()end) S.hoverBodyGyro=nil end
+    if S.hoverAlignPos then pcall(function()S.hoverAlignPos:Destroy()end) S.hoverAlignPos=nil end
+    if S.hoverAlignOri then pcall(function()S.hoverAlignOri:Destroy()end) S.hoverAlignOri=nil end
+    if S.hoverAtt then pcall(function()S.hoverAtt:Destroy()end) S.hoverAtt=nil end
     if S.mode=="Hover" then S.mode="Follow" end
     releaseRotation()
     local h=hum()
-    if h then pcall(function()h.PlatformStand=false h.WalkSpeed=BS h.JumpPower=BJ h.UseJumpPower=true end) end
+    if h then
+        pcall(function()
+            h.WalkSpeed=BS
+            h.JumpPower=BJ
+            h.UseJumpPower=true
+            h.AutoRotate=true
+            h:ChangeState(Enum.HumanoidStateType.GettingUp)
+        end)
+    end
+    restoreAnimate()
     if not silent then sendChat(pick(R_.unhover)) end
 end
 -- ══════════════════════════════════════════════════════════════════
---  AI FUN HANDLER (single message, no CMD for fun)
+--  AI FUN HANDLER
 -- ══════════════════════════════════════════════════════════════════
 local function aiFun(prompt)
     if not APIKey or APIKey=="" then
@@ -859,7 +922,7 @@ task.spawn(function()
         if not ok then end
     end
 end)
-task.spawn(function()while true do task.wait(1)if ROLE=="BOT"and not S.hidden and not antiBan.detected and not S.sitting then local h=hum()if h and h.WalkSpeed~=BS and not S.flingActive and not S.swordKillActive and not S.rizzActive then pcall(function()h.WalkSpeed=BS end)end end end end)
+task.spawn(function()while true do task.wait(1)if ROLE=="BOT"and not S.hidden and not antiBan.detected and not S.sitting then local h=hum()if h and h.WalkSpeed~=BS and not S.flingActive and not S.swordKillActive and not S.rizzActive and not S.hoverActive then pcall(function()h.WalkSpeed=BS end)end end end end)
 task.spawn(function()while true do task.wait(0.1)if S.strangerUntil>0 and os.clock()>S.strangerUntil then S.strangerTarget=nil S.strangerUntil=0 if rotationOwner=="Stranger"then setRotationOwner(S.strangerPrevOwner or "Humanoid")end end end end)
 task.spawn(function()while true do task.wait(0.1)if S.antiFling and ROLE=="BOT"then local c=pl.Character if c then local m=c:FindFirstChild("HumanoidRootPart")if m and m.AssemblyLinearVelocity.Magnitude>150 then m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero if getHostHRP()then teleportToHost()end end for _,p in ipairs(P:GetPlayers())do if p~=pl and p.Character then for _,pt in ipairs(p.Character:GetDescendants())do if pt:IsA("BasePart")then pt.CanCollide=false end end end end end end end end)
 task.spawn(function()while true do task.wait(0.1)if S.antiToolKill and ROLE=="BOT"then local c=pl.Character if c then local tool=c:FindFirstChildOfClass("Tool")if tool and tool.Name~=TN then tool.Parent=pl:FindFirstChildOfClass("Backpack")end end end end end)
