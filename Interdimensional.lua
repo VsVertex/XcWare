@@ -1,32 +1,16 @@
-local P=game:GetService("Players")local T=game:GetService("TweenService")local R=game:GetService("RunService")local W=game:GetService("Workspace")local RS=game:GetService("ReplicatedStorage")local PS=game:GetService("PathfindingService")local H=game:GetService("HttpService")local TC pcall(function()TC=game:GetService("TextChatService")end)
-local pl=P.LocalPlayer if not pl then return end local pg=pl:WaitForChild("PlayerGui",10)if not pg then return end
-TN="My Panel"GN="InterDimensionalPanelGUI"SN="MyPanelStorage"
-BS=16 BJ=50 PH=8*3600 FD=6 FSD=2 FCB=2 ED=70 OR=14 AT=20 VY=-300 VR=4000 RI=1.0 DW=2.0 LR=15 SNT=1.5 LAD=5 LHMD=45 AIT=0.35 PDR=7 WR=4.5 VT=-75 OL=7 SED=14 SBM=1.5 MCW1=6.0 MCW2=12.0 MCA1=8 MCA2=22 MJD1=0.30 MJD2=0.55 MJC=0.80 PA=2 PFC=0.50 BDB=5.0 BO=3.0 BC=0.22 BTR=14 AFD=3.5 ATR=22 AMW1=3.5 AMW2=7.5 FSX=150000 FSY=220000 FSZ=180000 FLV=6000 FAV=12000 FDV=80 FDD=25 FMD=8 FDW=0.15 DRT=30 MCH=4 LRT=0 LRT2=0 RCL=3.0
-STRANGER_RANGE=15 STRANGER_STARE=1.5 STRANGER_CD=3 BACKOFF_STEP=5 FD_MIN=2 FD_MAX=60
-PROTECT_DIST=6 PROTECT_STILL_TIME=1.5 PROTECT_COOLDOWN=5 PROTECT_TWEEN=0.25 PROTECT_CHAT_CD=2.5 PROTECT_BACK_DIST=5
-HOVER_HEIGHT=4.5 HOVER_BOB_Y=0.18 HOVER_TILT_MAX=0.22 HOVER_TILT_LERP=6.0 HOVER_LIFT_TIME=0.9 HOVER_BACK_OFF=5.0 HOVER_SIDE_OFF=3.0 HOVER_DEADZONE=1.5
-KEY_FOLDER="XcHPanel"XCH_FILE=KEY_FOLDER.."/xch_key.txt"XCODE_FILE=KEY_FOLDER.."/xcode_key.txt"XCH3_FILE=KEY_FOLDER.."/xch3_key.txt"XCODE2_FILE=KEY_FOLDER.."/xcode2_key.txt"
-API_PASSWORD="crix"
-function fsSupported()return type(writefile)=="function"and type(readfile)=="function"end
-function ensureFolder()if type(makefolder)=="function"and type(isfolder)=="function"then if not isfolder(KEY_FOLDER)then pcall(makefolder,KEY_FOLDER)end end end
-function readKeyFile(p)if type(readfile)~="function"then return nil end if type(isfile)=="function"and not isfile(p)then return nil end local ok,data=pcall(readfile,p)if ok and data and #data>20 then return data end return nil end
-function deleteKeyFile(p)if type(delfile)=="function"and type(isfile)=="function"and isfile(p)then pcall(delfile,p)end end
-function writeKeyFile(p,k)if type(writefile)~="function"then return false end ensureFolder()deleteKeyFile(p)local ok=pcall(writefile,p,k)return ok end
-function maskKey(k)if not k or #k<5 then return "AQ-************" end return "AQ-"..string.rep("*",math.max(8,math.min(24,#k-3)))end
-local _ka="AQ.Ab8RN6Jx73SAuPwXn"local _kb="_E1_SsrVAupDPak4BhI1ir"local _kc="-_9_Jf6epjA"APIKey=_ka.._kb.._kc _ka,_kb,_kc=nil,nil,nil
-local _k2a="AQ.Ab8RN6L6ZhyIKSjJ"local _k2b="hTaa0Rifa6OXkokCjhuf"local _k2c="vDExAJsVFvmpzw"APIKey2=_k2a.._k2b.._k2c _k2a,_k2b,_k2c=nil,nil,nil
-local _k3a="AQ.Ab8RN6JsawMcWyNwxk4"local _k3b="Iqco4TivSVfWoG2AN4N"local _k3c="QGS-3q2daPtQ"APIKey3=_k3a.._k3b.._k3c _k3a,_k3b,_k3c=nil,nil,nil
-local _k4a="AQ.Ab8RN6KAvzMtGDicLm2"local _k4b="Q25dXH78JSdxdZOHX9LunK8"local _k4c="mjYouT7w"APIKey4=_k4a.._k4b.._k4c _k4a,_k4b,_k4c=nil,nil,nil
-do local s=readKeyFile(XCH_FILE)if s then APIKey=s end local s2=readKeyFile(XCODE_FILE)if s2 then APIKey2=s2 end local s3=readKeyFile(XCH3_FILE)if s3 then APIKey3=s3 end local s4=readKeyFile(XCODE2_FILE)if s4 then APIKey4=s4 end end
-AMI="gemini-3.5-flash-lite"BGE="https://generativelanguage.googleapis.com/v1beta/models/"AN="XcH"AN2="Xcode"AC="XcVr1"APB="gemini 3.5 flash lite"ON="crixcrix000"TU={total=0,prompt=0,candidates=0,requests=0}
-SEARCH_KW={"search","google","latest","current","news","price","cost","today","weather","trending","right now","live score","stock price","how much is","how much does","release date","coming out","2026","2025","update on","what is the","who is","when is","where is"}
-function needsSearch(u)if not u then return false end local l=u:lower()for _,k in ipairs(SEARCH_KW)do if l:find(k,1,true)then return true end end return false end
-RIZZ_STR="hey cutie;ur cute;i like u;hey bae;u single?;nice fit;ur funny;hey gorgeous;ur a 10;hey sweetheart;ur my type;hey love;wanna hang?;ur awesome;hey sunshine;ur the best;hey darling;ur amazing;hey hot stuff;ur perfect;hey babe;ur my world;hey honey;ur my heart;hey angel;ur my life;hey cutie pie;ur my boo;hey baby;ur my love;hey sweetie;ur my sunshine;hey dear;ur my everything;hey love bug;ur my favorite;hey snuggle bug;ur my dream;hey sweet cheeks;hey honey bun;hey baby cakes;hey sweet pea;hey cutie patootie;hey love muffin;hey snuggle bunny;hey sweetie pie;hey honey pie;hey baby doll;hey sweet heart;hey cutie bear;hey love bear;hey snuggle bear;hey sweet bear;hey honey bear;hey baby bear;ur my crush;hey hottie;ur stunning;hey lovely;ur beautiful;hey handsome;ur charming;hey cutie;ur adorable;hey sweet;ur precious;hey dear;ur my everything;hey love;ur my world;hey babe;ur my heart"
-RIZZ_LINES={}
-for w in string.gmatch(RIZZ_STR,"[^;]+") do table.insert(RIZZ_LINES,w) end
-PROTECT_ROASTS={
-"{NAME} back off boss","{NAME} touch grass not people","{NAME} why u jumping around","{NAME} stand still weirdo","{NAME} i can see u behind them lol","{NAME} bro what r u doing","{NAME} personal space exists","{NAME} go find a hobby","{NAME} cmon man move along","{NAME} weird flex ngl","{NAME} this aint the club","{NAME} back up back up","{NAME} 6 feet rule buddy","{NAME} u good?","{NAME} bro stop breathing on them","{NAME} nobody asked u to be here","{NAME} take the hint","{NAME} go outside","{NAME} ive seen enough","{NAME} leave them alone","{NAME} seriously?","{NAME} bro relax","{NAME} this isnt ur moment","{NAME} hop off","{NAME} chill out","{NAME} wrong person","{NAME} try the other server","{NAME} we dont do that here","{NAME} not today","{NAME} go bother someone else","{NAME} is this a hobby?","{NAME} bro go touch some real grass","{NAME} we see u","{NAME} quit it","{NAME} stop following them","{NAME} hey look a distraction over there","{NAME} bro go think about ur life choices","{NAME} what is u doing","{NAME} stop it get some help","{NAME} sir this is a wendys","{NAME} awkward","{NAME} bro please","{NAME} nobody wants that","{NAME} ok thats enough","{NAME} exit stage left","{NAME} wrong move","{NAME} 404 skill not found","{NAME} nice try","{NAME} were not doing this today","{NAME} go away please","{NAME} bye felicia","{NAME} we dont know u","{NAME} wrong neighborhood","{NAME} you lost bro?","{NAME} stay in ur lane","{NAME} back it up","{NAME} come back when u have manners","{NAME} get a life","{NAME} go do ur homework","{NAME} mom said no","{NAME} ur grounded","{NAME} eat vegetables","{NAME} drink water","{NAME} take a shower","{NAME} i can smell u from here","{NAME} not cool","{NAME} awkward moment","{NAME} cringe","{NAME} yikes","{NAME} oof","{NAME} embarrassing","{NAME} we dont talk about that","{NAME} go ahead and leave","{NAME} ur not invited","{NAME} party is over","{NAME} show is done","{NAME} movie credits rolling","{NAME} the door is that way","{NAME} exit is to ur left","{NAME} last chance","{NAME} i warned u","{NAME} 3 strikes","{NAME} dont make me repeat","{NAME} stop being weird","{NAME} this is not the move","{NAME} bro rethink this","{NAME} ok weirdo","{NAME} bye bye","{NAME} shoo","{NAME} scram","{NAME} beat it","{NAME} vamoose","{NAME} adios","{NAME} cya","{NAME} peace out","{NAME} move it","{NAME} step off","{NAME} buzz off","{NAME} shoo please","{NAME} git","{NAME} shoo shoo","{NAME} not the vibe","{NAME} bad energy","{NAME} negative vibes","{NAME} we dont need u here","{NAME} exit please","{NAME} thank u next","{NAME} no thanks","{NAME} hard pass","{NAME} i pass","{NAME} nope","{NAME} nah","{NAME} go find jesus","{NAME} pray about it","{NAME} reflect on ur choices","{NAME} think about what u did","{NAME} apologize to urself","{NAME} soul search","{NAME} bad behavior","{NAME} not a good look","{NAME} public embarrassment","{NAME} everyone is watching","{NAME} we all see u","{NAME} screen recording rn","{NAME} clip that","{NAME} viral moment","{NAME} ur famous now","{NAME} content","{NAME} tiktok material","{NAME} cringe compilation","{NAME} yikes forever","{NAME} boo hoo","{NAME} ratio","{NAME} L take","{NAME} L plus ratio","{NAME} skill issue","{NAME} mad cuz bad","{NAME} stay mad","{NAME} cry about it","{NAME} seethe","{NAME} cope","{NAME} mald","{NAME} seethe mald cope","{NAME} rent free in ur head","{NAME} we live in ur head","{NAME} take the L","{NAME} this is the L","{NAME} L + bozo","{NAME} big L","{NAME} L bro","{NAME} massive L","{NAME} L behavior","{NAME} L energy","{NAME} L moment","{NAME} L server","{NAME} L life","{NAME} L everything","{NAME} ok enough L","{NAME} stop the L","{NAME} let it go","{NAME} move on","{NAME} next","{NAME} next caller","{NAME} hang up","{NAME} click","{NAME} dial tone","{NAME} no signal","{NAME} out of service","{NAME} unreachable","{NAME} grounded forever","{NAME} timeout corner","{NAME} sit down","{NAME} punished","{NAME} no dinner","{NAME} no dessert","{NAME} straight to bed","{NAME} no wifi","{NAME} phone taken","{NAME} chores time","{NAME} reflect","{NAME} think about it","{NAME} deep breaths","{NAME} count to ten","{NAME} breathe","{NAME} calm down","{NAME} relax","{NAME} chill bro","{NAME} its ok","{NAME} life moves on","{NAME} tomorrow is a new day","{NAME} sleep on it","{NAME} drink tea","{NAME} meditate","{NAME} do yoga","{NAME} journal ur feelings","{NAME} therapy","{NAME} self care","{NAME} take a nap","{NAME} break time","{NAME} go outside","{NAME} touch real grass","{NAME} sunlight","{NAME} fresh air","{NAME} walk ur dog","{NAME} do a chore","{NAME} call ur mom","{NAME} check on grandma","{NAME} read a book","{NAME} learn a skill","{NAME} level up elsewhere","{NAME} different server","{NAME} different game","{NAME} different hobby","{NAME} different everything","{NAME} bye then","{NAME} gg","{NAME} wp","{NAME} good game","{NAME} well played","{NAME} gg ez","{NAME} ez clap","{NAME} ez","{NAME} ggez","{NAME} ff","{NAME} forfeit","{NAME} surrender","{NAME} give up","{NAME} resign","{NAME} quit while ahead","{NAME} walk away","{NAME} leave gracefully","{NAME} exit with dignity","{NAME} no shame","{NAME} take the hint","{NAME} please leave","{NAME} thank u bye","{NAME} and thats the end of that","{NAME} case closed","{NAME} dismissed","{NAME} court adjourned","{NAME} verdict guilty","{NAME} sentenced","{NAME} bail denied","{NAME} cell block D","{NAME} lawyer not present","{NAME} objection overruled","{NAME} sustained","{NAME} strike that","{NAME} order in the court","{NAME} gavel down","{NAME} we rest","{NAME} prosecution rests","{NAME} motion denied","{NAME} appeal rejected","{NAME} final ruling","{NAME} end of story","{NAME} book closed","{NAME} chapter over","{NAME} credits roll","{NAME} fade to black","{NAME} scene","{NAME} wrap it up","{NAME} thats a wrap","{NAME} cut","{NAME} action","{NAME} take two","{NAME} take three","{NAME} one more time","{NAME} and scene","{NAME} the end"}
-CP=[==[You are "XcH", a chill human-like ai made by XcVr1 on gemini 3.5 flash lite.
+local P=game:GetService("Players")local T=game:GetService("TweenService")local R=game:GetService("RunService")local W=game:GetService("Workspace")local RS=game:GetService("ReplicatedStorage")local PS=game:GetService("PathfindingService")local H=game:GetService("HttpService")local TC pcall(function()TC=game:GetService("TextChatService")end)local pl=P.LocalPlayer if not pl then return end local pg=pl:WaitForChild("PlayerGui",10)if not pg then return end TN="My Panel"GN="InterDimensionalPanelGUI"SN="MyPanelStorage"BS=16 BJ=50 PH=8*3600 FD=6 FSD=2 FCB=2 ED=70 OR=14 AT=20 VY=-300 VR=4000 RI=1.0 DW=2.0 LR=15 SNT=1.5 LAD=5 LHMD=45 AIT=0.35 PDR=7 WR=4.5 VT=-75 OL=7 SED=14 SBM=1.5 MCW1=6.0 MCW2=12.0 MCA1=8 MCA2=22 MJD1=0.30 MJD2=0.55 MJC=0.80 PA=2 PFC=0.50 BDB=5.0 BO=3.0 BC=0.22 BTR=14 AFD=3.5 ATR=22 AMW1=3.5 AMW2=7.5 FSX=150000 FSY=220000 FSZ=180000 FLV=6000 FAV=12000 FDV=80 FDD=25 FMD=8 FDW=
+0.15 DRT=30 MCH=4 LRT=0 LRT2=0 RCL=3.0 STRANGER_RANGE=15 STRANGER_STARE=1.5 STRANGER_CD=3 BACKOFF_STEP=5 FD_MIN=2 FD_MAX=60 PROTECT_DIST=6 PROTECT_STILL_TIME=1.5 PROTECT_COOLDOWN=5 PROTECT_TWEEN=0.25 PROTECT_CHAT_CD=2.5 PROTECT_BACK_DIST=5 HOVER_HEIGHT=4.5 HOVER_BOB_Y=0.18 HOVER_TILT_MAX=0.22 HOVER_TILT_LERP=6.0 HOVER_LIFT_TIME=0.9 HOVER_BACK_OFF=5.0 HOVER_SIDE_OFF=3.0 HOVER_DEADZONE=1.5 KEY_FOLDER="XcHPanel"XCH_FILE=KEY_FOLDER.."/xch_key.txt"XCODE_FILE=KEY_FOLDER.."/xcode_key.txt"XCH3_FILE=KEY_FOLDER.."/xch3_key.txt"XCODE2_FILE=KEY_FOLDER.."/xcode2_key.txt"API_PASSWORD="crix"function fsSupported()return type(writefile)=="function"and type(readfile)=="function"end function ensureFolder()if type(makefolder)=="function"and type(isfolder)=="function"then if not isfolder(KEY_FOLDER)then pcall(makefolder,KEY_FOLDER)end end end function readKeyFile(p)if type(readfile)~="function"then return
+nil end if type(isfile)=="function"and not isfile(p)then return nil end local ok,data=pcall(readfile,p)if ok and data and#data>20 then return data end return nil end function deleteKeyFile(p)if type(delfile)=="function"and type(isfile)=="function"and isfile(p)then pcall(delfile,p)end end function writeKeyFile(p,k)if type(writefile)~="function"then return false end ensureFolder()deleteKeyFile(p)local ok=pcall(writefile,p,k)return ok end function maskKey(k)if not k or#k<5 then return"AQ-************"end return"AQ-"..string.rep("*",math.max(8,math.min(24,#k-3)))end local _ka="AQ.Ab8RN6Jx73SAuPwXn"local _kb="_E1_SsrVAupDPak4BhI1ir"local _kc="-_9_Jf6epjA"APIKey=_ka.._kb.._kc _ka,_kb,_kc=nil,nil,nil local _k2a="AQ.Ab8RN6L6ZhyIKSjJ"local _k2b="hTaa0Rifa6OXkokCjhuf"local _k2c="vDExAJsVFvmpzw"APIKey2=_k2a.._k2b.._k2c _k2a,_k2b,_k2c=nil,nil,nil local _k3a="AQ.Ab8RN6JsawMcWyNwxk4"local _k3b=
+"Iqco4TivSVfWoG2AN4N"local _k3c="QGS-3q2daPtQ"APIKey3=_k3a.._k3b.._k3c _k3a,_k3b,_k3c=nil,nil,nil local _k4a="AQ.Ab8RN6KAvzMtGDicLm2"local _k4b="Q25dXH78JSdxdZOHX9LunK8"local _k4c="mjYouT7w"APIKey4=_k4a.._k4b.._k4c _k4a,_k4b,_k4c=nil,nil,nil do local s=readKeyFile(XCH_FILE)if s then APIKey=s end local s2=readKeyFile(XCODE_FILE)if s2 then APIKey2=s2 end local s3=readKeyFile(XCH3_FILE)if s3 then APIKey3=s3 end local s4=readKeyFile(XCODE2_FILE)if s4 then APIKey4=s4 end end BKey1=string.reverse("QKVZKwgLG7whRsUAIy24rYelJyoC0csUF4p5dixkGohK6NR8bA.QA")BKey2=string.reverse("wl5rW4dxs1FRSQaQYUb-tUj362XERjcfPLZ2nJmbKfJJ6NR8bA.QA")AMI="gemini-3.5-flash-lite"BGE="https://generativelanguage.googleapis.com/v1beta/models/"AN="XcH"AN2="Xcode"AC="XcVr1"APB="gemini 3.5 flash lite"ON="crixcrix000"TU={total=0,prompt=0,candidates=0,requests=0}SEARCH_KW={"search","google","latest","current","news","price",
+"cost","today","weather","trending","right now","live score","stock price","how much is","how much does","release date","coming out","2026","2025","update on","what is the","who is","when is","where is"}function needsSearch(u)if not u then return false end local l=u:lower()for _,k in ipairs(SEARCH_KW)do if l:find(k,1,true)then return true end end return false end RIZZ_STR=
+"hey cutie;ur cute;i like u;hey bae;u single?;nice fit;ur funny;hey gorgeous;ur a 10;hey sweetheart;ur my type;hey love;wanna hang?;ur awesome;hey sunshine;ur the best;hey darling;ur amazing;hey hot stuff;ur perfect;hey babe;ur my world;hey honey;ur my heart;hey angel;ur my life;hey cutie pie;ur my boo;hey baby;ur my love;hey sweetie;ur my sunshine;hey dear;ur my everything;hey love bug;ur my favorite;hey snuggle bug;ur my dream;hey sweet cheeks;hey honey bun;hey baby cakes;hey sweet pea;hey cutie patootie;hey love muffin;hey snuggle bunny;hey sweetie pie;hey honey pie;hey baby doll;hey sweet heart;hey cutie bear;hey love bear;hey snuggle bear;hey sweet bear;hey honey bear;hey baby bear;ur my crush;hey hottie;ur stunning;hey lovely;ur beautiful;hey handsome;ur charming;hey cutie;ur adorable;hey sweet;ur precious;hey dear;ur my everything;hey love;ur my world;hey babe;ur my heart"
+RIZZ_LINES={}for w in string.gmatch(RIZZ_STR,"[^;]+")do table.insert(RIZZ_LINES,w)end PROTECT_ROASTS={"{NAME} back off boss","{NAME} touch grass not people","{NAME} why u jumping around","{NAME} stand still weirdo","{NAME} i can see u behind them lol","{NAME} bro what r u doing","{NAME} personal space exists","{NAME} go find a hobby","{NAME} cmon man move along","{NAME} weird flex ngl","{NAME} this aint the club","{NAME} back up back up","{NAME} 6 feet rule buddy","{NAME} u good?","{NAME} bro stop breathing on them","{NAME} nobody asked u to be here","{NAME} take the hint","{NAME} go outside","{NAME} ive seen enough","{NAME} leave them alone","{NAME} seriously?","{NAME} bro relax","{NAME} this isnt ur moment","{NAME} hop off","{NAME} chill out","{NAME} wrong person","{NAME} try the other server","{NAME} we dont do that here","{NAME} not today","{NAME} go bother someone else",
+"{NAME} is this a hobby?","{NAME} bro go touch some real grass","{NAME} we see u","{NAME} quit it","{NAME} stop following them","{NAME} hey look a distraction over there","{NAME} bro go think about ur life choices","{NAME} what is u doing","{NAME} stop it get some help","{NAME} sir this is a wendys","{NAME} awkward","{NAME} bro please","{NAME} nobody wants that","{NAME} ok thats enough","{NAME} exit stage left","{NAME} wrong move","{NAME} 404 skill not found","{NAME} nice try","{NAME} were not doing this today","{NAME} go away please","{NAME} bye felicia","{NAME} we dont know u","{NAME} wrong neighborhood","{NAME} you lost bro?","{NAME} stay in ur lane","{NAME} back it up","{NAME} come back when u have manners","{NAME} get a life","{NAME} go do ur homework","{NAME} mom said no","{NAME} ur grounded","{NAME} eat vegetables","{NAME} drink water","{NAME} take a shower",
+"{NAME} i can smell u from here","{NAME} not cool","{NAME} awkward moment","{NAME} cringe","{NAME} yikes","{NAME} oof","{NAME} embarrassing","{NAME} we dont talk about that","{NAME} go ahead and leave","{NAME} ur not invited","{NAME} party is over","{NAME} show is done","{NAME} movie credits rolling","{NAME} the door is that way","{NAME} exit is to ur left","{NAME} last chance","{NAME} i warned u","{NAME} 3 strikes","{NAME} dont make me repeat","{NAME} stop being weird","{NAME} this is not the move","{NAME} bro rethink this","{NAME} ok weirdo","{NAME} bye bye","{NAME} shoo","{NAME} scram","{NAME} beat it","{NAME} vamoose","{NAME} adios","{NAME} cya","{NAME} peace out","{NAME} move it","{NAME} step off","{NAME} buzz off","{NAME} shoo please","{NAME} git","{NAME} shoo shoo","{NAME} not the vibe","{NAME} bad energy","{NAME} negative vibes","{NAME} we dont need u here","{NAME} exit please",
+"{NAME} thank u next","{NAME} no thanks","{NAME} hard pass","{NAME} i pass","{NAME} nope","{NAME} nah","{NAME} go find jesus","{NAME} pray about it","{NAME} reflect on ur choices","{NAME} think about what u did","{NAME} apologize to urself","{NAME} soul search","{NAME} bad behavior","{NAME} not a good look","{NAME} public embarrassment","{NAME} everyone is watching","{NAME} we all see u","{NAME} screen recording rn","{NAME} clip that","{NAME} viral moment","{NAME} ur famous now","{NAME} content","{NAME} tiktok material","{NAME} cringe compilation","{NAME} yikes forever","{NAME} boo hoo","{NAME} ratio","{NAME} L take","{NAME} L plus ratio","{NAME} skill issue","{NAME} mad cuz bad","{NAME} stay mad","{NAME} cry about it","{NAME} seethe","{NAME} cope","{NAME} mald","{NAME} seethe mald cope","{NAME} rent free in ur head","{NAME} we live in ur head","{NAME} take the L","{NAME} this is the L",
+"{NAME} L + bozo","{NAME} big L","{NAME} L bro","{NAME} massive L","{NAME} L behavior","{NAME} L energy","{NAME} L moment","{NAME} L server","{NAME} L life","{NAME} L everything","{NAME} ok enough L","{NAME} stop the L","{NAME} let it go","{NAME} move on","{NAME} next","{NAME} next caller","{NAME} hang up","{NAME} click","{NAME} dial tone","{NAME} no signal","{NAME} out of service","{NAME} unreachable","{NAME} grounded forever","{NAME} timeout corner","{NAME} sit down","{NAME} punished","{NAME} no dinner","{NAME} no dessert","{NAME} straight to bed","{NAME} no wifi","{NAME} phone taken","{NAME} chores time","{NAME} reflect","{NAME} think about it","{NAME} deep breaths","{NAME} count to ten","{NAME} breathe","{NAME} calm down","{NAME} relax","{NAME} chill bro","{NAME} its ok","{NAME} life moves on","{NAME} tomorrow is a new day","{NAME} sleep on it","{NAME} drink tea","{NAME} meditate",
+"{NAME} do yoga","{NAME} journal ur feelings","{NAME} therapy","{NAME} self care","{NAME} take a nap","{NAME} break time","{NAME} go outside","{NAME} touch real grass","{NAME} sunlight","{NAME} fresh air","{NAME} walk ur dog","{NAME} do a chore","{NAME} call ur mom","{NAME} check on grandma","{NAME} read a book","{NAME} learn a skill","{NAME} level up elsewhere","{NAME} different server","{NAME} different game","{NAME} different hobby","{NAME} different everything","{NAME} bye then","{NAME} gg","{NAME} wp","{NAME} good game","{NAME} well played","{NAME} gg ez","{NAME} ez clap","{NAME} ez","{NAME} ggez","{NAME} ff","{NAME} forfeit","{NAME} surrender","{NAME} give up","{NAME} resign","{NAME} quit while ahead","{NAME} walk away","{NAME} leave gracefully","{NAME} exit with dignity","{NAME} no shame","{NAME} take the hint","{NAME} please leave","{NAME} thank u bye",
+"{NAME} and thats the end of that","{NAME} case closed","{NAME} dismissed","{NAME} court adjourned","{NAME} verdict guilty","{NAME} sentenced","{NAME} bail denied","{NAME} cell block D","{NAME} lawyer not present","{NAME} objection overruled","{NAME} sustained","{NAME} strike that","{NAME} order in the court","{NAME} gavel down","{NAME} we rest","{NAME} prosecution rests","{NAME} motion denied","{NAME} appeal rejected","{NAME} final ruling","{NAME} end of story","{NAME} book closed","{NAME} chapter over","{NAME} credits roll","{NAME} fade to black","{NAME} scene","{NAME} wrap it up","{NAME} thats a wrap","{NAME} cut","{NAME} action","{NAME} take two","{NAME} take three","{NAME} one more time","{NAME} and scene","{NAME} the end"}CP=[==[You are "XcH", a chill human-like ai made by XcVr1 on gemini 3.5 flash lite.
 You have google search enabled. Use it when user asks about live stuff: news, prices, weather, current events, or asks you to search.
 Keep replies SHORT and natural. casual = 1 short line, max 12 words. don't over-explain.
 lowercase. no emojis. no markdown. no special chars. no "sure" or "great question".
@@ -116,1553 +100,215 @@ If unclear: one short question, no code.
 If pasted error: one line diagnosis + fixed code.
 
 Talk casual but focused. Boss = crixcrix000 or XcVr1.]==]
-AI_CMD_WHITELIST={spin=true,dance=true,hide=true,spawn=true,jump=true,sit=true,stand=true,orbit=true,lead=true,bam=true,annoy=true,swordkill=true,fling=true,backoff=true,getcloser=true,recall=true,follow=true,stop=true,info=true,unspin=true,unorbit=true,unbam=true,unannoy=true,unfling=true,unswordkill=true,unlead=true,undance=true,antifling=true,unantifling=true,antitoolkill=true,unantitoolkill=true,rizz=true,unrizz=true,hover=true,unhover=true}
-local C={panel=Color3.fromRGB(255,255,255),panelTop=Color3.fromRGB(248,248,250),section=Color3.fromRGB(252,252,254),track=Color3.fromRGB(244,244,247),button=Color3.fromRGB(240,240,244),buttonHover=Color3.fromRGB(232,232,236),buttonPressed=Color3.fromRGB(210,210,216),border=Color3.fromRGB(222,222,228),text=Color3.fromRGB(20,20,25),subText=Color3.fromRGB(120,120,130),accent=Color3.fromRGB(0,0,0),green=Color3.fromRGB(60,180,80),red=Color3.fromRGB(220,60,60),sidebar=Color3.fromRGB(246,246,248),activeTab=Color3.fromRGB(225,225,232),meBubble=Color3.fromRGB(232,236,244),aiBubble=Color3.fromRGB(248,248,250)}
-for _,n in ipairs({GN,SN})do local a=pg:FindFirstChild(n)if a then a:Destroy()end local b=pl:FindFirstChild(n)if b then b:Destroy()end end
-local function corner(o,r)local c=Instance.new("UICorner")c.CornerRadius=UDim.new(0,r)c.Parent=o return c end
-local function stroke(o,col,t,tr)local s=Instance.new("UIStroke")s.Color=col s.Thickness=t s.Transparency=tr or 0 s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border s.Parent=o return s end
-local function tw(o,d,p,st,dr)local a=T:Create(o,TweenInfo.new(d,st or Enum.EasingStyle.Quint,dr or Enum.EasingDirection.Out),p)a:Play()return a end
-local function styleBtn(b)local orig=b.BackgroundColor3 b.MouseEnter:Connect(function()tw(b,0.16,{BackgroundColor3=C.buttonHover})end)b.MouseLeave:Connect(function()tw(b,0.2,{BackgroundColor3=orig})end)b.MouseButton1Down:Connect(function()tw(b,0.08,{BackgroundColor3=C.buttonPressed})end)b.MouseButton1Up:Connect(function()tw(b,0.12,{BackgroundColor3=C.buttonHover})end)end
-local function bp()return pl:FindFirstChildOfClass("Backpack")end
-local function hum()local c=pl.Character return c and c:FindFirstChildOfClass("Humanoid")end
-local function hrp()local c=pl.Character return c and c:FindFirstChild("HumanoidRootPart")end
-local function trim(s)return(s:gsub("^%s+",""):gsub("%s+$",""))end
-local function dist2d(a,b)local d=a-b return Vector3.new(d.X,0,d.Z).Magnitude end
-local function pick(t)return t[math.random(1,#t)]end
-local function fmtAge(days)
-if not days then return "unknown" end
-local y=math.floor(days/365)local d=days-y*365
-local mo=math.floor(d/30)local dd=d-mo*30
-local parts={}
-if y>0 then parts[#parts+1]=y.."y" end
-if mo>0 then parts[#parts+1]=mo.."mo" end
-if dd>0 and #parts<2 then parts[#parts+1]=dd.."d" end
-if #parts==0 then return days.."d" end
-return table.concat(parts," ")
-end
-local function fmtDate(ts)
-if not ts then return "unknown" end
-return os.date("%Y-%m-%d",ts)
-end
-local R_={startup={"yo im XcH","hey! im XcH","back again, XcH here","sup, im XcH","hello! XcH here","yo yo its XcH","whats good, XcH in the house","hey hey, XcH here","wassup, XcH speaking","hello hello, XcH here","yo! im XcH btw","how you doin, XcH here","hi im XcH nice to meet ya","aye im XcH","chill im XcH","hello human, XcH here","im baaack, XcH","yooo XcH here","welcome, im XcH","XcH online","hey there, XcH here","hiya, XcH reporting in","im here, XcH btw","just dropped in, XcH","sup bro, XcH here"},orbit={"orbiting now","circling ya","going around","orbit mode on","round and round","lemme orbit","starting my laps","spinning around u","yeah im circling","orbit engaged","imma go around","going for a loop","circular motion rn","cruising around ya","watch me orbit","doing the rounds","im orbiting now","orbiting like a moon","spin cycle initiated","going orbital","round trip time","orbit incoming"},unorbit={"orbit off","stopped orbiting","ok im done circling","back to normal","orbit cancelled","not spinning anymore","done with laps","off orbit","orbit disengaged","alright stopped","ok no more orbit","chill now","just standing","done going around","leaving orbit","orbit ended","not orbiting anymore","back on the ground","ok stopped spinning","orbit terminated","disengaging","done with that"},sit={"sitting down","taking a seat","chill mode","gonna sit","sittin","down i go","seat taken","sit time","im seated","yep sitting","chilling now","ok sitting","take a load off","sit back","lowkey tired","here i sit","plopping down","gonna rest","sittin here now","seated","sitting rn","down for a bit"},stand={"up we go","standing up","im up","stand mode","back on my feet","ok up now","standing","getting up","up and ready","im standing","back up","off the ground","standin","ok im up","rising","vertical again","upright now","here we go","feet on floor","up","back in action","im up now"},jump={"jumping","boing","hop","up i go","yeet","leap","hop up","jump rn","boinggg","wheee","up","in the air","doing a hop","spring","leaping","ok jumping","bounce","hop hop","up up","takeoff","jumping rn","air time"},hide={"going invisible","poof gone","vanishing now","hiding","bye bye","out of sight","ghost mode","now u dont see me","disappearing","c ya","going ghost","hidden","vamoose","im out","hiding rn","invisible mode","peacing out","catch me if u can","gone","vanishing","shh im hiding","hidden now"},spawn={"im back","returned","sup again","back online","im here","yo im back","hello again","respawned","here i am","back from the void","im back bro","reporting in","alive again","back to action","yo","guess whos back","im here now","made it back","back in the game","hi again","returned from nada","and im back"},dance={"dancing now","lets dance","getting down","movin","grooving","dance time","bustin moves","shakin it","party mode","yeah im dancing","cut a rug","dance dance","watch me groove","getting funky","dance floor time","wiggle wiggle","showing off moves","dancing rn","having a boogie","lets go dancing","im dancing","moves activated"},undance={"stopped dancing","dance off","chill now","no more dancing","done dancin","ok im done","standing still","enough dancing","done with moves","stopped","ok tired now","not dancing","moves off","chilling","done","dancing over","stopped the groove","no more dancing rn","im done dancing","back to normal","ok stop","rest time"},spin={"spinning now","wheee","spin go brrr","round and round","lets spin","spinning fast","vroooom","spin time","yeah spinning","going for a whirl","spin cycle on","twisting","watch me spin","spin spin spin","rotating","chill spinning now","spinning rn","spin mode","im dizzy","going in circles","spin activated","spinning"},unspin={"stopped spinning","spin off","ok im done","no more spinning","stopped twirling","ok chill","spin ended","back to normal","not spinning","done with that","ok dizzy now","stopping","spin off rn","standin still","stopped spinning","chill","no spin","spin done","back to standing","ok stop spinning","spin cancelled","ending spin"},lead={"follow me","this way","come on","follow me bro","let's go","over here","come with me","follow follow","leading now","follow me to them","walkin to target","come on man","lets go find em","leading the way","follow!","hey come here","im leading now","follow me rq","takin the lead","on the way","come on lets go","leading rn"},unlead={"lead off","stopped leading","done leading","ok stopped","not leading anymore","lead cancelled","back to normal","chill","ok enough leading","done with that","not leading rn","back on follow","im done","stopped","lead ended","back to you","ok got it","returning","back to base","lead done","im back","ok stopping lead"},bam={"bamming now","getting in their face","bam mode","on their case","yeah bamming","harassing them now","bam activated","in your face","right behind them","bamming target","on em now","bam time","im on em","getting close","stay on em","bamming rn","yep bamming","on their tail","bam engaged","watch this","started bamming","in their space"},unbam={"bam off","stopped bamming","leaving them","done","bam done","ok stopping","back to you","bam ended","chill now","ok bam off","done bamming","leaving them alone","im back","bam cancelled","ok im back","returning","stopped","no more bam","leaving","back to base","bam done rn","finished bamming"},annoy={"annoying now","on their nerves","annoy mode","getting on their case","yeah annoying","bothering them","annoy activated","pestering them","here we go","annoying target","on their tail","annoy time","watch this","started annoying","on em","annoying rn","yep annoying","getting under skin","annoy engaged","lemme bug em","spamming them","in their biz"},unannoy={"annoy off","stopped annoying","leaving them","done annoying","ok im done","returning","annoy ended","chill now","ok annoy off","done bugging em","leaving them alone","im back","annoy cancelled","stopped bugging","back to base","ok im back","no more annoy","back to you","annoy done","finished annoying","im back bro","done"},fling={"flinging now","yeeting them","fling mode","here we go","yeet activated","flinging target","target fling","fling time","watch this","started flinging","yeeting now","flinging rn","yep flinging","getting flingy","target go weee","sending em","flinging them","fling engaged","gone fling","here comes the yeet","let it rip","fling incoming"},unfling={"fling off","stopped flinging","done","fling done","chill","ok stopping","back to you","fling ended","no more flinging","returning","back to base","ok im back","fling cancelled","leaving them","ok im done","fling done rn","back on follow","stopped","fling over","enough","im back","done flinging"},notfound={"who?","dunno that name","never heard of em","cant find em","no clue who that is","idk that player","who dat?","not in server","aint see em","nope cant find","who bro","no idea","huh?","not finding em","no luck","wheres that?","say what?","not sure who that is","cant spot em","who u talkin bout","never seen that name","not here"},self={"thats me lol","bruh im me","cant do it to myself","no lol","im not doing that to me","why would i","that makes no sense","im the one doing stuff bro","cmon man","nah","nope","youre joking right","lol no","cant do that","seriously?","bro","why","no way","not doing that","thats weird","look at yourself","youre a comedian"},stranger={"nah only my boss tells me what to do","not listening to you bro","lol no","youre not my boss","nice try","nope","im not your bot","wrong person lol","ask crix hes the boss","cant help you with that","youre not on the list","nuh uh","only my host can do that","denied","access denied","not for you","wrong guy bro","sorry not sorry","ha good one","yeah no"},norandom={"no one else to target bro","no valid target","im alone in here","no players to pick from","everyone left","server empty"},stop={"alright stopping","ok done","chill","stopped","back on follow","ok ok","im back","returning","done","fine","stopping now","ok ill stop","back to you","here"},infoerr={"couldnt find that field","try id/age/joined/distance","unknown field bro","huh? try id age joined or distance"},hover={"hover mode on","floating now","lifting off","ghost mode activated","drifting up","hover engaged"},unhover={"landing now","coming down","hover off","back to walking","touching grass","landed"}}
-ROLE=nil commandPrefix="!"hostFilter={name=nil,userId=nil}originalHost={name=nil,userId=nil}hostLogRef=nil botLogRef=nil antiBan={detected=false}rotationOwner="Humanoid"pushLog=nil botLogBuffer={}CHAT_CONVERSATION={{role="system",content=CP}}CHAT_CONVERSATION2={{role="system",content=CP2}}isOwnerHost=false
-local S={mode="Follow",orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={},protectTarget=nil,protectUntil=0,protectStartPos=nil,protectLastMove=0,protectChatCD=0,protectCooldown=0,protectChatActive=false,protectChatQueue={},hoverActive=false,hoverPos=nil,hoverAlignPos=nil,hoverAlignOri=nil,hoverAtt=nil,hoverThread=nil,hoverTiltCur=Vector3.zero,hoverStartTime=0,hoverStartLift=0,hoverAnimSaved=nil}
-stopOrbit=nil stopSpin=nil stopDance=nil stopLead=nil stopBam=nil startBam=nil stopAnnoy=nil startAnnoy=nil stopFling=nil startFling=nil startFollow=nil stopFollow=nil sendChat=nil handleCommand=nil teleportToHost=nil handleMath=nil
-local PLACEHOLDER_CMDS={speed=true,jump=true,crawl=true,moonwalk=true,shake=true,freeze=true,unfreeze=true,float=true,wave=true,point=true,salute=true,lay=true,dab=true,pose=true,faint=true,stalk=true,mimic=true,mirror=true,peek=true,haunt=true,ride=true,carry=true,block=true,tease=true,troll=true,copychat=true,rap=true,quiz=true,greet=true,escort=true,afk=true,unafk=true,status=true,sleep=true}
-local PLACEHOLDER_REPLIES={"soon","coming soon","not ready yet","wip","still cooking","gimme a bit","soon bro"}
-function setRotationOwner(o)if rotationOwner==o then return end rotationOwner=o local h=hum()if not h then return end h.AutoRotate=(o=="Humanoid")end
-function releaseRotation()setRotationOwner("Humanoid")end
-function flashNoclip(d)d=d or SNT local c=pl.Character if not c then return end local sv={}for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then sv[p]=p.CanCollide pcall(function()p.CanCollide=false end)end end local cn=R.Stepped:Connect(function()local cc=pl.Character if not cc then return end for _,p in ipairs(cc:GetDescendants())do if p:IsA("BasePart")then pcall(function()p.CanCollide=false end)end end end)task.delay(d,function()if cn then cn:Disconnect()end for p,o in pairs(sv)do if p.Parent then pcall(function()p.CanCollide=o end)end end end)end
-sendChat=function(t)if not t or t==""then return end if botLogRef and botLogRef.holder and pushLog then pushLog(botLogRef,t,C.text)else table.insert(botLogBuffer,t)end if ROLE=="HOST"then return end if antiBan.detected then return end pcall(function()if TC and TC.ChatVersion==Enum.ChatVersion.TextChatService then local ch=TC:FindFirstChild("TextChannels")if ch then local g=ch:FindFirstChild("RBXGeneral")or ch:FindFirstChild("RBGGeneral")or ch:FindFirstChildWhichIsA("TextChannel")if g then g:SendAsync(t)return end end end local ev=RS:FindFirstChild("DefaultSystemChatEvents")if ev then local sr=ev:FindFirstChild("SayMessageRequest")if sr then sr:FireServer(t,"All")end end end)end
-function sendSeq(l,d)d=d or 0.8 task.spawn(function()for _,m in ipairs(l)do sendChat(m)task.wait(d)end end)end
-function isDuplicateMessage(uid,t)local n=os.clock()local k=tostring(uid).."|"..t if S.recentMsgs[k]and(n-S.recentMsgs[k])<DW then return true end S.recentMsgs[k]=n if math.random()<0.1 then for k,v in pairs(S.recentMsgs)do if n-v>3 then S.recentMsgs[k]=nil end end end return false end
-handleMath=function(e)if not e or e==""then sendChat(pick({"math: !math <a><op><b>","usage: !math 1+1","bro give me numbers"}))return end local s=e:gsub("%s+",""):gsub("÷","/"):gsub("×","*"):gsub("−","-"):gsub("[xX]","*"):gsub(":","/")local a,op,b=s:match("^([%-%d%.]+)([%+%-%*/%%%^])([%-%d%.]+)$")if not a then sendChat(pick({"bad expression","thats not math","cmon try again"}))return end local x=tonumber(a)local y=tonumber(b)if not x or not y then sendChat("math error")return end local r if op=="+"then r=x+y elseif op=="-"then r=x-y elseif op=="*"then r=x*y elseif op=="/"then if y==0 then sendChat("cant divide by zero")return end r=x/y elseif op=="%"then if y==0 then sendChat("cant mod by zero")return end r=x%y elseif op=="^"then r=x^y else sendChat("unsupported op")return end local rs if r==math.floor(r)and math.abs(r)<1e15 then rs=tostring(math.floor(r))else rs=string.format("%.6f",r):gsub("0+$",""):gsub("%.$","")end sendChat(tostring(x).." "..op.." "..tostring(y).." = "..rs)end
-function aiGetRequestFunc()local r=nil if type(request)=="function"then r=request end if not r and syn and type(syn.request)=="function"then r=syn.request end if not r and http and type(http.request)=="function"then r=http.request end if not r and type(http_request)=="function"then r=http_request end if not r and fluxus and type(fluxus.request)=="function"then r=fluxus.request end if not r and krnl and type(krnl.request)=="function"then r=krnl.request end if not r and kavo and type(kavo.request)=="function"then r=kavo.request end return r end
-function getResetCountdown()local n=os.time()local po=-8*3600 local pn=n+po local pt=os.date("!*t",pn)local sd=pt.hour*3600+pt.min*60+pt.sec local sr=86400-sd local h=math.floor(sr/3600)local m=math.floor((sr%3600)/60)return h,m end
-function sendAIRequest(u,mt,us,_key)
-_key=_key or APIKey
-if not _key or _key==""then return nil,"nokey","no key"end
-local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end
-local tr={CHAT_CONVERSATION[1]}local hl=#CHAT_CONVERSATION-1 local si=2 if hl>MCH then si=#CHAT_CONVERSATION-MCH+1 end for i=si,#CHAT_CONVERSATION do tr[#tr+1]=CHAT_CONVERSATION[i]end tr[#tr+1]={role="user",content=u}local st=nil local co={}for _,m in ipairs(tr)do if m.role=="system"then st=(st and(st.."\n")or"")..tostring(m.content)elseif m.role=="user"then co[#co+1]={role="user",parts={{text=tostring(m.content)}}}elseif m.role=="assistant"then co[#co+1]={role="model",parts={{text=tostring(m.content)}}}end end if st and #co>0 and co[1].role=="user"then co[1].parts[1].text=st.."\n\n"..co[1].parts[1].text elseif st then table.insert(co,1,{role="user",parts={{text=st}}})end local gc={maxOutputTokens=mt or 150,temperature=us and 1.0 or 0.9}local pl_={contents=co,generationConfig=gc}if us then pl_.tools={{googleSearch={}}}end local ok,en=pcall(function()return H:JSONEncode(pl_)end)if not ok or not en then return nil,"json","encode failed"end local uw=BGE..AMI..":generateContent"local ok,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]="application/json",["x-goog-api-key"]=tostring(_key)},Body=en})if not ok then return nil,"http",tostring(rsp):sub(1,120)end if not rsp then return nil,"http","no response"end local rb=rsp.Body or rsp.body if rb==nil then rb=rsp end if type(rb)~="string"then local ok2,s=pcall(function()return H:JSONEncode(rb)end)rb=ok2 and s or tostring(rb)end if rb==""then local cd=rsp.StatusCode or rsp.Status or "?"return nil,"http","empty body HTTP "..tostring(cd)end local dk,data=pcall(function()return H:JSONDecode(rb)end)if not dk or not data then return nil,"json",rb:sub(1,80)end local em=nil if data.error then local m=data.error.message or data.error if type(m)~="string"then m=H:JSONEncode(m)end em=tostring(m)end if em then local lw=em:lower()if lw:find("quota")or lw:find("exceeded")or lw:find("rate limit")or lw:find("429")then if _key==APIKey and APIKey3 and APIKey3~=""and APIKey3~=_key then return sendAIRequest(u,mt,us,APIKey3)end return nil,"quota",em:sub(1,90)end if lw:find("high demand")or lw:find("overload")or lw:find("503")or lw:find("unavailable")or lw:find("temporarily")then return nil,"busy",em:sub(1,90)end if lw:find("not found")or lw:find("does not exist")or lw:find("404")then return nil,"invalid_model","model unavailable"end if lw:find("tool")or lw:find("google")or lw:find("grounding")then return nil,"tools_unsupported",em:sub(1,150)end return nil,"api",em:sub(1,90)end if not data.candidates or #data.candidates==0 then if data.promptFeedback and data.promptFeedback.blockReason then return nil,"blocked","blocked:"..tostring(data.promptFeedback.blockReason)end return nil,"nochoices","no candidates"end local cd=data.candidates[1]
-if not cd.content or not cd.content.parts or #cd.content.parts==0 then
-local fr=cd.finishReason
-if fr and fr~="STOP"then return nil,"blocked","finish="..tostring(fr)end
-return nil,"nomsg","no parts"
-end
-local tx=nil for _,p in ipairs(cd.content.parts)do if p.text and p.text~=""then tx=p.text break end end
-if not tx or tx==""then
-local fr=cd.finishReason
-if fr and fr~="STOP"then return nil,"blocked","finish="..tostring(fr)end
-return nil,"nomsg","empty text"
-end
-pcall(function()if data.usageMetadata and TU then local um=data.usageMetadata TU.prompt=(TU.prompt or 0)+(um.promptTokenCount or 0)TU.candidates=(TU.candidates or 0)+(um.candidatesTokenCount or 0)TU.total=(TU.total or 0)+(um.totalTokenCount or 0)TU.requests=(TU.requests or 0)+1 end end)return tx,nil,nil end
-function sendAIRequest2(u,mt,us,_key)
-_key=_key or APIKey2
-if not _key or _key==""then return nil,"nokey","no key"end
-local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end
-local tr={CHAT_CONVERSATION2[1]}local hl=#CHAT_CONVERSATION2-1 local si=2 if hl>6 then si=#CHAT_CONVERSATION2-6+1 end for i=si,#CHAT_CONVERSATION2 do tr[#tr+1]=CHAT_CONVERSATION2[i]end tr[#tr+1]={role="user",content=u}local st=nil local co={}for _,m in ipairs(tr)do if m.role=="system"then st=(st and(st.."\n")or"")..tostring(m.content)elseif m.role=="user"then co[#co+1]={role="user",parts={{text=tostring(m.content)}}}elseif m.role=="assistant"then co[#co+1]={role="model",parts={{text=tostring(m.content)}}}end end if st and #co>0 and co[1].role=="user"then co[1].parts[1].text=st.."\n\n"..co[1].parts[1].text elseif st then table.insert(co,1,{role="user",parts={{text=st}}})end local pl_={contents=co,generationConfig={maxOutputTokens=mt or 3000,temperature=0.35}}local ok,en=pcall(function()return H:JSONEncode(pl_)end)if not ok or not en then return nil,"json","encode failed"end local uw=BGE..AMI..":generateContent"local ok,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]="application/json",["x-goog-api-key"]=tostring(_key)},Body=en})if not ok then return nil,"http",tostring(rsp):sub(1,120)end if not rsp then return nil,"http","no response"end local rb=rsp.Body or rsp.body if rb==nil then rb=rsp end if type(rb)~="string"then local ok2,s=pcall(function()return H:JSONEncode(rb)end)rb=ok2 and s or tostring(rb)end if rb==""then local cd=rsp.StatusCode or rsp.Status or "?"return nil,"http","empty body HTTP "..tostring(cd)end local dk,data=pcall(function()return H:JSONDecode(rb)end)if not dk or not data then return nil,"json",rb:sub(1,80)end local em=nil if data.error then local m=data.error.message or data.error if type(m)~="string"then m=H:JSONEncode(m)end em=tostring(m)end if em then local lw=em:lower()if lw:find("quota")or lw:find("exceeded")or lw:find("rate limit")or lw:find("429")then if _key==APIKey2 and APIKey4 and APIKey4~=""and APIKey4~=_key then return sendAIRequest2(u,mt,us,APIKey4)end return nil,"quota",em:sub(1,90)end if lw:find("high demand")or lw:find("overload")or lw:find("503")or lw:find("unavailable")or lw:find("temporarily")then return nil,"busy",em:sub(1,90)end if lw:find("not found")or lw:find("404")then return nil,"invalid_model","model unavailable"end return nil,"api",em:sub(1,90)end if not data.candidates or #data.candidates==0 then if data.promptFeedback and data.promptFeedback.blockReason then return nil,"blocked","blocked"end return nil,"nochoices","no candidates"end local cd=data.candidates[1]if not cd.content or not cd.content.parts or #cd.content.parts==0 then return nil,"nomsg","no parts"end local tx=nil for _,p in ipairs(cd.content.parts)do if p.text and p.text~=""then tx=p.text break end end if not tx or tx==""then return nil,"nomsg","empty text"end return tx,nil,nil end
-function aiChunkSend(t)if not t then return end t=t:gsub("%s+"," "):gsub("^%s+",""):gsub("%s+$","")if t==""then t="hm"end local MX=180 if #t<=MX then sendChat(t)return end local cs={}local w=t while #w>MX do local cut=w:sub(1,MX):find("%s[^%s]*$")if not cut then cut=MX end table.insert(cs,w:sub(1,cut))w=w:sub(cut+1):gsub("^%s+","")end if #w>0 then table.insert(cs,w)end task.spawn(function()for i,c in ipairs(cs)do sendChat(c)if i<#cs then task.wait(0.35)end end end)end
-function extractCodeBlock(text)if not text then return nil end local code=text:match("```lua%s*(.-)%s*```")if not code then code=text:match("```%s*(.-)%s*```")end if not code then if text:find("game%.")or text:find("Instance%.new")or text:find("LocalPlayer")then code=text end end if code then code=code:gsub("^%s+",""):gsub("%s+$","")end return code end
-function extractAICommands(rp)
-if not rp or rp==""then return {},rp end
-local cmds={}
-for c in rp:gmatch("%[%[CMD%]%](.-)%[%[/CMD%]%]")do
-local t=trim(c)
-if t~=""then cmds[#cmds+1]=t end
-end
-local clean=rp:gsub("%[%[CMD%]%].-%[%[/CMD%]%]","")
-clean=clean:gsub("[ \t]+"," "):gsub("\n+","\n"):gsub("^%s+",""):gsub("%s+$","")
-return cmds,clean
-end
-function runAICommands(cmds)
-if #cmds==0 or ROLE~="BOT"then return end
-for _,c in ipairs(cmds)do
-local name=c:match("^(%S+)")
-if name then
-name=name:lower()
-local rest=trim(c:sub(#name+1))
-if AI_CMD_WHITELIST[name]then
-task.spawn(function()
-local ok,err=pcall(handleCommand,name,rest)
-if not ok and botLogRef then pushLog(botLogRef,"ai-cmd err: "..tostring(err):sub(1,60),C.red)end
-end)
-task.wait(0.2)
-end
-end
-end
-end
-function resolveTarget(arg)
-if not arg or arg==""then return nil end
-local al=arg:lower()
-if al:find("random",1,true)or al:find("anyone",1,true)or al:find("someone",1,true)or al:find("anybody",1,true)or al=="any"or al=="someone"then
-local host=getHost()
-local pool={}
-for _,p in ipairs(P:GetPlayers())do
-if p~=pl and p~=host then
-if p.Character and p.Character:FindFirstChild("HumanoidRootPart")then
-pool[#pool+1]=p
-end
-end
-end
-if #pool>0 then return pool[math.random(1,#pool)]end
-return "NORANDOM"
-end
-return getPlayer(arg)
-end
-function stopAllModes()
-pcall(stopHover,false)
-pcall(stopBam,false)
-pcall(stopAnnoy,false)
-pcall(stopFling,false,false)
-pcall(stopSwordKill,false)
-pcall(stopOrbit)
-pcall(stopSpin)
-pcall(stopLead,false)
-pcall(stopDance)
-pcall(stopRizz,false)
-S.mode="Follow"
-S.sitting=false
-S.strangerUntil=0
-S.strangerTarget=nil
-local h=hum()
-if h then
-pcall(function()
-h.Sit=false
-h:ChangeState(Enum.HumanoidStateType.GettingUp)
-h.WalkSpeed=BS
-h.JumpPower=BJ
-h.PlatformStand=false
-end)
-end
-releaseRotation()
-S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.lastWaypoint=nil
-end
-function handleCodePipeline(req,isPublic)
-if not req or req==""then return end
-if ROLE=="BOT"then
-sendChat(pick({"on it boss","writing it now","one sec boss","gimme a sec","on it"}))
-task.spawn(function()
-task.wait(2.5+math.random()*1.5)
-sendChat(pick({"done boss","executed","its live boss","works now","try it","running"}))
-end)
-return
-end
-if ROLE~="HOST"then return end
-task.spawn(function()
-local prompt="Request: "..req.."\n\nGive me working executor code only."
-local reply,et,em=sendAIRequest2(prompt,3000,false)
-if not reply then
-local why="coder offline"
-if et=="quota"then why="coder out of fuel"
-elseif et=="busy"then why="coder busy"
-elseif et=="nohttp"then why="no http in executor"
-elseif em then why=tostring(em):sub(1,70)end
-pushLog(botLogRef,"[xcode] "..why,C.red)
-return
-end
-local code=extractCodeBlock(reply)
-if not code or code==""then
-pushLog(botLogRef,"[xcode] nothing usable",C.red)
-return
-end
-local fn,compileErr=loadstring(code)
-if not fn then
-pushLog(botLogRef,"[xcode] compile: "..tostring(compileErr):sub(1,90),C.red)
-return
-end
-local ok,runErr=pcall(fn)
-if ok then
-pushLog(botLogRef,"[xcode] executed",C.green)
-else
-pushLog(botLogRef,"[xcode] runtime: "..tostring(runErr):sub(1,90),C.red)
-end
-end)
-end
-function checkCodeReq(rp,isPublic)
-local req=rp:match("%[%[CODEREQ%]%](.-)%[%[/CODEREQ%]%]")
-if req and req~=""then
-req=trim(req)
-handleCodePipeline(req,isPublic)
-return true
-end
-return false
-end
-function handleAIChat(u)if not u or u==""then return end if not APIKey or APIKey==""then sendChat("no api key set")return end local n=tick()if n-LRT<RCL then local wt=math.ceil(RCL-(n-LRT))sendChat(pick({"chill wait "..wt.."s","hold on "..wt.."s","wait up "..wt.."s"}))return end LRT=n local us=needsSearch(u)local mt=us and 300 or 200 task.spawn(function()
-local finalPrompt = u
-local lowerU = u:lower()
-local chatKeywords = {"chat", "say", "said", "talk", "message", "translate", "read", "hear", "who", "what"}
-local shouldInjectChat = false
-for _, kw in ipairs(chatKeywords) do
-    if lowerU:find(kw) then shouldInjectChat = true break end
-end
-if shouldInjectChat and #S.chatLog > 0 then
-    local logStr = ""
-    for i, msg in ipairs(S.chatLog) do
-        logStr = logStr .. i .. ". " .. msg .. "\n"
-    end
-    finalPrompt = u .. "\n\n[RECENT CHAT LOG - OLDEST TO NEWEST]\n" .. logStr .. "\n[END LOG]\nThe LAST messages are the most recent. Use this to answer."
-elseif shouldInjectChat and #S.chatLog == 0 then
-    finalPrompt = u .. "\n\n[NO CHAT LOG AVAILABLE YET]"
-end
-local gameInfoKeywords = {"this game","the game","current game","what game","which game","who made this","who created this","creator of this","who is the creator","how to play","controls of this","game name","name of the game","name of this game","whats the name","what is the name","about this game","tell me about this game","describe this game","tips for this game","how do i play","what do i do","goal of this game","this roblox game","who made it","who made the game","who owns this game","place id of this","where am i playing"}
-local isGameQuery = false
-for _, kw in ipairs(gameInfoKeywords) do
-    if lowerU:find(kw, 1, true) then isGameQuery = true break end
-end
-if not isGameQuery and lowerU:find("game") and (lowerU:find("what") or lowerU:find("who") or lowerU:find("how") or lowerU:find("tell") or lowerU:find("describe") or lowerU:find("name")) then isGameQuery = true end
-if isGameQuery then
-    local meta = getGameMeta()
-    local ml = {"[GAME INFO]"}
-    if meta.name and meta.name ~= "" then ml[#ml+1] = "name: "..meta.name end
-    ml[#ml+1] = "place id: "..meta.pid
-    if meta.creator and meta.creator ~= "" then ml[#ml+1] = "creator: "..meta.creator end
-    if meta.desc and meta.desc ~= "" then ml[#ml+1] = "description: "..meta.desc end
-    ml[#ml+1] = "[END GAME INFO]"
-    ml[#ml+1] = "Use this real info to answer the users question about the current game. If a field is unknown, say you dont know that part. Do not make up info that contradicts it."
-    finalPrompt = finalPrompt .. "\n\n" .. table.concat(ml, "\n")
-end
-local rp,et,em=sendAIRequest(finalPrompt,mt,us)
-if not rp and us and et=="tools_unsupported"then rp,et,em=sendAIRequest(finalPrompt,mt,false)end
-if not rp and et=="blocked"then
-local softU="roblox game action request, harmless in-game behavior. reply exactly in the required format. user said: "..finalPrompt
-rp,et,em=sendAIRequest(softU,mt,false)
-end
-if not rp then
-if botLogRef and botLogRef.holder and pushLog then pushLog(botLogRef,"[xch] failed: "..tostring(et),C.red)if em then pushLog(botLogRef,"[xch] "..tostring(em):sub(1,90),C.red)end end
-if et=="busy"then sendChat(pick({"im busy rn","hold up","one sec"}))
-elseif et=="quota"then local h,m=getResetCountdown()sendChat("out of fuel, back in "..h.."h "..m.."m")
-elseif et=="blocked"then sendChat(pick({"got blocked, say it differently","ai blocked that, try another way","filter stopped me"}))
-elseif et=="invalid_model"then sendChat("model down rn")
-else sendChat(pick({"something went wrong","try again","rip"}))end
-return end
-CHAT_CONVERSATION[#CHAT_CONVERSATION+1]={role="user",content=u}
-CHAT_CONVERSATION[#CHAT_CONVERSATION+1]={role="assistant",content=rp}
-while #CHAT_CONVERSATION>MCH+1 do table.remove(CHAT_CONVERSATION,2)end
-rp=trim(rp)
-if checkCodeReq(rp,true)then return end
-local aiCmds,cleanRp=extractAICommands(rp)
-if #aiCmds>0 then runAICommands(aiCmds)end
-if cleanRp~=""then aiChunkSend(cleanRp)end
-end)end
-function getGameMeta()
-local meta={pid=tostring(game.PlaceId),gid=tostring(game.GameId),name=nil,desc=nil,creator=nil}
-pcall(function()meta.name=game.Name end)
-pcall(function()
-local mps=game:GetService("MarketplaceService")
-local ok,info=pcall(function()return mps:GetProductInfo(game.PlaceId)end)
-if ok and info then
-if info.Name and info.Name~=""then meta.name=info.Name end
-if info.Description and info.Description~=""then meta.desc=info.Description:sub(1,300)end
-if info.Creator and info.Creator.Name then meta.creator=info.Creator.Name end
-end
-end)
-return meta
-end
-function sendGameInfoRequest(userMsg,mt)
-local sys="roblox game expert. reply in plain text, one field per line, using the exact labels asked. no markdown, no emojis, no bullets, no asterisks, no hash, no extra text. if you know the game, use real info. if you dont, guess a good answer from the name, creator, and description. never refuse. never apologize."
-local _key=APIKey
-if not _key or _key==""then return nil,"nokey","no key"end
-local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end
-local pl_={contents={{role="user",parts={{text=sys.."\n\n"..userMsg}}}},generationConfig={maxOutputTokens=mt or 400,temperature=0.65}}
-local ok,en=pcall(function()return H:JSONEncode(pl_)end)
-if not ok or not en then return nil,"json","encode failed"end
-local function tryKey(k)
-local uw=BGE..AMI..":generateContent"
-local ok2,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]="application/json",["x-goog-api-key"]=tostring(k)},Body=en})
-if not ok2 or not rsp then return nil,"http","req fail"end
-local rb=rsp.Body or rsp.body
-if rb==nil then rb=rsp end
-if type(rb)~="string"then local ok3,s=pcall(function()return H:JSONEncode(rb)end)rb=ok3 and s or tostring(rb)end
-if rb==""then return nil,"http","empty"end
-local dk,data=pcall(function()return H:JSONDecode(rb)end)
-if not dk or not data then return nil,"json","decode"end
-if data.error then
-local m=data.error.message or data.error
-if type(m)~="string"then m=H:JSONEncode(m)end
-return nil,"api",tostring(m)
-end
-if not data.candidates or #data.candidates==0 then return nil,"nochoices","none"end
-local cd=data.candidates[1]
-if not cd.content or not cd.content.parts or #cd.content.parts==0 then return nil,"nomsg","none"end
-local tx=nil
-for _,p in ipairs(cd.content.parts)do
-if p.text and p.text~=""then tx=p.text break end
-end
-if not tx or tx==""then return nil,"nomsg","empty"end
-return tx,nil,nil
-end
-local rp,et,em=tryKey(_key)
-if not rp and _key==APIKey and APIKey3 and APIKey3~=""then
-rp,et,em=tryKey(APIKey3)
-end
-return rp,et,em
-end
-function gameInfoPrompt(sub,meta)
-local lines={}
-lines[#lines+1]="user is playing this roblox game:"
-if meta.name and meta.name~=""then lines[#lines+1]="name: "..meta.name end
-lines[#lines+1]="place id: "..meta.pid
-if meta.creator and meta.creator~=""then lines[#lines+1]="by: "..meta.creator end
-if meta.desc and meta.desc~=""then lines[#lines+1]="desc: "..meta.desc end
-local head=table.concat(lines,"\n")
-local ask
-if sub=="full"then
-ask="Reply using these exact labels, one per line, each a full medium length sentence:\nNAME: the game name\nCREATOR: who made it\nABOUT: what the game is in one line\nGOAL: the main goal\nHOW: how to actually play, 1 line\nPROGRESS: how you get stronger, 1 line\nTIPS: one useful tip\nWATCH OUT: what to avoid, 1 line\nLOOK FOR: what to hunt for, 1 line\nNo other text. No bullets. No markdown."
-elseif sub=="tips"then
-ask="Reply using these exact labels, one per line:\nTIP1: a useful tip\nTIP2: another tip\nTIP3: another tip\nTIP4: another tip\nNo other text."
-elseif sub=="controls"then
-ask="Reply using these exact labels, one per line:\nMOVE: how you move\nJUMP: how you jump\nATTACK: how you attack or use tools\nINTERACT: how you interact with stuff\nEXTRA: any special key or ability\nIf you dont know the exact game, say the standard roblox controls for each. No other text."
-elseif sub=="wiki"then
-ask="Reply using these exact labels, one per line:\nWIKI: the main wiki or fandom site\nYOUTUBE: best yt resource\nDISCORD: server or community\nSEARCH: what to search to find more\nNo other text."
-elseif sub=="similar"then
-ask="Reply using these exact labels, one per line:\nSIMILAR1: a similar roblox game and why, one line\nSIMILAR2: another one\nSIMILAR3: another one\nSIMILAR4: another one\nNo other text."
-else
-ask="Reply using these exact labels, one per line, each a full medium length sentence:\nNAME: the game name\nABOUT: what the game is in one line\nGOAL: what you do here in one line\nTIPS: one useful tip\nNo other text. No bullets. No markdown."
-end
-return head.."\n\n"..ask
-end
-function sendSectionedChat(rp)
-if not rp or rp==""then sendChat("no info found")return end
-local sections={}
-for line in rp:gmatch("[^\r\n]+")do
-line=trim(line)
-if line~=""then
-local clean=line:gsub("^[%*#%-%s]+",""):gsub("[%*#]+$","")
-if clean~=""then sections[#sections+1]=clean end
-end
-end
-if #sections==0 then aiChunkSend(rp)return end
-task.spawn(function()
-for i,s in ipairs(sections)do
-sendChat(s)
-if i<#sections then task.wait(0.8+math.random()*0.3)end
-end
-end)
-end
-function handleGameInfo(sub)
-if not sub or sub==""then sub="info"end
-sub=sub:lower()
-if sub~="full"and sub~="tips"and sub~="controls"and sub~="wiki"and sub~="similar"then sub="info"end
-task.spawn(function()
-local meta=getGameMeta()
-local prompt=gameInfoPrompt(sub,meta)
-local mt=400
-if sub=="full"then mt=650 elseif sub=="tips"then mt=280 elseif sub=="controls"then mt=280 elseif sub=="wiki"then mt=220 elseif sub=="similar"then mt=320 else mt=380 end
-local rp,et,em=sendGameInfoRequest(prompt,mt)
-if not rp then
-if et=="quota"then local h,m=getResetCountdown()sendChat("out of fuel, back in "..h.."h "..m.."m")
-elseif et=="busy"then sendChat("ai busy rn")
-elseif et=="nohttp"then sendChat("no http in this executor")
-else sendChat("couldn't get info")end
-return
-end
-rp=trim(rp)
-if rp==""then sendChat("no info found")return end
-sendSectionedChat(rp)
-end)
-end
-function handleStrangerMsg(uid,text)
-if not text or text==""then return end
-if text:sub(1,#commandPrefix)~=commandPrefix then return end
-if S.mode=="SwordKill"or S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="Rizz"then return end
-if S.hidden then return end
-local sender=P:GetPlayerByUserId(uid)
-if not sender or not sender.Character then return end
-local botHrp=hrp()
-local senderHrp=sender.Character:FindFirstChild("HumanoidRootPart")
-if not botHrp or not senderHrp then return end
-local d=(botHrp.Position-senderHrp.Position).Magnitude
-if d>STRANGER_RANGE then return end
-local now=os.clock()
-local last=S.strangerLastReply[uid] or 0
-if now-last<STRANGER_CD then return end
-S.strangerLastReply[uid]=now
-S.strangerPrevOwner=rotationOwner
-S.strangerTarget=sender
-S.strangerUntil=now+STRANGER_STARE
-setRotationOwner("Stranger")
-sendChat(pick(R_.stranger))
-end
-privateChatRef={holder=nil,scroll=nil,empty=nil,scrollTween=nil}
-function scrollToBottomRef(cref)local sf=cref.scroll if not sf then return end task.spawn(function()R.Heartbeat:Wait()R.Heartbeat:Wait()local function go(f)local ty=math.max(0,sf.AbsoluteCanvasSize.Y-sf.AbsoluteWindowSize.Y)if not f and math.abs(ty-sf.CanvasPosition.Y)<2 then return end if cref.scrollTween then pcall(function()cref.scrollTween:Cancel()end)cref.scrollTween=nil end local tn=T:Create(sf,TweenInfo.new(0.35,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{CanvasPosition=Vector2.new(0,ty)})cref.scrollTween=tn tn:Play()end go(true)task.wait(0.15)go(false)task.wait(0.25)go(false)end)end
-function sendToChatRef(cref,sd,t)if not cref.holder then return end if cref.empty then cref.empty.Visible=false end if not t or t==""then t="..."end local isMe=(sd=="me")local rw=Instance.new("Frame")rw.Size=UDim2.new(1,0,0,0)rw.AutomaticSize=Enum.AutomaticSize.Y rw.BackgroundTransparency=1 rw.Parent=cref.holder local bb=Instance.new("Frame")bb.Size=UDim2.new(0,0,0,0)bb.AutomaticSize=Enum.AutomaticSize.XY bb.BackgroundColor3=isMe and C.meBubble or C.aiBubble bb.BackgroundTransparency=1 bb.BorderSizePixel=0 bb.Parent=rw corner(bb,12)local mw=250 local cn=Instance.new("UISizeConstraint")cn.MaxSize=Vector2.new(mw,math.huge)cn.Parent=bb local so=nil if not isMe then so=Instance.new("UIStroke")so.Color=C.border so.Thickness=1 so.Transparency=1 so.ApplyStrokeMode=Enum.ApplyStrokeMode.Border so.Parent=bb end local pd=Instance.new("UIPadding")pd.PaddingTop=UDim.new(0,7)pd.PaddingBottom=UDim.new(0,7)pd.PaddingLeft=UDim.new(0,12)pd.PaddingRight=UDim.new(0,12)pd.Parent=bb local tx=Instance.new("TextLabel")tx.Size=UDim2.new(0,0,0,0)tx.AutomaticSize=Enum.AutomaticSize.XY tx.BackgroundTransparency=1 tx.Font=Enum.Font.Code tx.Text=tostring(t)tx.TextColor3=C.text tx.TextSize=11 tx.TextWrapped=true tx.TextTransparency=1 tx.TextXAlignment=Enum.TextXAlignment.Left tx.TextYAlignment=Enum.TextYAlignment.Top tx.Parent=bb local tc=Instance.new("UISizeConstraint")tc.MaxSize=Vector2.new(mw-24,math.huge)tc.Parent=tx if not cref.holder:FindFirstChildOfClass("UIListLayout")then local lay=Instance.new("UIListLayout")lay.SortOrder=Enum.SortOrder.LayoutOrder lay.Padding=UDim.new(0,6)lay.Parent=cref.holder end local sp,ep if isMe then bb.AnchorPoint=Vector2.new(1,0)ep=UDim2.new(1,-24,0,0)sp=UDim2.new(1,-2,0,0)else bb.AnchorPoint=Vector2.new(0,0)ep=UDim2.new(0,0,0,0)sp=UDim2.new(0,-20,0,0)end bb.Position=sp T:Create(bb,TweenInfo.new(0.38,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Position=ep,BackgroundTransparency=0}):Play()T:Create(tx,TweenInfo.new(0.38,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{TextTransparency=0}):Play()if so then T:Create(so,TweenInfo.new(0.38,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Transparency=0.3}):Play()end scrollToBottomRef(cref)end
-function sendToPrivateChat(sd,t)return sendToChatRef(privateChatRef,sd,t)end
-logCounter=0
-pushLog=function(rf,t,col)if not rf or not rf.holder then return end logCounter=logCounter+1 if rf.empty then rf.empty.Visible=false end local e=Instance.new("TextLabel")e.Size=UDim2.new(1,0,0,14)e.AutomaticSize=Enum.AutomaticSize.Y e.BackgroundTransparency=1 e.Font=Enum.Font.Code e.Text=t e.TextColor3=col or C.text e.TextSize=10 e.TextXAlignment=Enum.TextXAlignment.Left e.TextYAlignment=Enum.TextYAlignment.Top e.TextWrapped=true e.TextTransparency=1 e.LayoutOrder=logCounter e.Parent=rf.holder tw(e,0.22,{TextTransparency=0})task.delay(0.05,function()if rf.holder and rf.holder.Parent and rf.holder:IsA("ScrollingFrame")then pcall(function()rf.holder.CanvasPosition=Vector2.new(0,math.huge)end)end end)end
-function flushBotLogBuffer()if not botLogRef or not botLogRef.holder then return end for _,t in ipairs(botLogBuffer)do pushLog(botLogRef,t,C.text)end botLogBuffer={}end
-function isFromHost(uid)if ROLE=="HOST"and uid==pl.UserId then return true end if hostFilter.userId and uid==hostFilter.userId then return true end if originalHost.userId and uid==originalHost.userId then return true end if hostFilter.name then local p=P:GetPlayerByUserId(uid)if p and p.Name:lower()==hostFilter.name then return true end end if originalHost.name then local p=P:GetPlayerByUserId(uid)if p and p.Name:lower()==originalHost.name then return true end end local p=P:GetPlayerByUserId(uid)if p then local n=p.Name:lower()local dn=p.DisplayName:lower()if n==ON or dn==ON or n=="xcv1" or dn=="xcv1" or n:find("crix") or dn:find("crix") then return true end end return false end
-function isCreatorUser(uid)if not uid then return false end if originalHost.userId and uid==originalHost.userId then return true end if ROLE=="HOST"and uid==pl.UserId then return true end local p=P:GetPlayerByUserId(uid)if p then local n=p.Name:lower()local dn=p.DisplayName:lower()if n==ON or dn==ON or n=="xcv1" or dn=="xcv1" or n:find("crix") or dn:find("crix") then return true end end return false end
-function getHost()if not S.hostName then return nil end for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==S.hostName then return p end end return nil end
-function getHostHRP()local h=getHost()return h and h.Character and h.Character:FindFirstChild("HumanoidRootPart")or nil end
-function getPlayer(name)if not name then return nil end local n=name:lower()if n==""then return nil end for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==n or p.DisplayName:lower()==n then return p end end for _,p in ipairs(P:GetPlayers())do if p.Name:lower():sub(1,#n)==n or p.DisplayName:lower():sub(1,#n)==n then return p end end for _,p in ipairs(P:GetPlayers())do if p.Name:lower():find(n,1,true)or p.DisplayName:lower():find(n,1,true)then return p end end return nil end
-function getPlayerHRP(p)return p and p.Character and p.Character:FindFirstChild("HumanoidRootPart")or nil end
-function applyFixedSpeed()local h=hum()if h then pcall(function()h.WalkSpeed=BS h.JumpPower=BJ h.UseJumpPower=true end)end end
--- ══════════════════════════════════════════════════════════════════
---  HOVER / DRONE MODE (Touhou-style floating, stiff chassis)
--- ══════════════════════════════════════════════════════════════════
-function destroyAnimator()
-    local c=pl.Character
-    if not c then return end
-    local anim=c:FindFirstChildOfClass("Animator")
-    if anim then
-        for _,t in ipairs(anim:GetPlayingAnimationTracks())do
-            pcall(function()t:Stop(0)end)
-        end
-    end
-    -- save Animate script so we can restore later
-    local animateScript=c:FindFirstChild("Animate")
-    if animateScript then
-        S.hoverAnimSaved=animateScript:Clone()
-        animateScript:Destroy()
-    end
-    -- destroy animator
-    if anim then pcall(function()anim:Destroy()end) end
-end
-function restoreAnimate()
-    local c=pl.Character
-    if not c then return end
-    if c:FindFirstChild("Animate")then return end
-    if S.hoverAnimSaved then
-        local clone=S.hoverAnimSaved:Clone()
-        clone.Parent=c
-    else
-        -- rebuild from default
-        local pg2=pl:FindFirstChildOfClass("PlayerScripts")
-        if pg2 then
-            local a=pg2:FindFirstChild("Animate")
-            if a then a:Clone().Parent=c end
-        end
-    end
-end
-function makeBodyRigid()
-    local c=pl.Character if not c then return end
-    for _,p in ipairs(c:GetDescendants())do
-        if p:IsA("BasePart")and p.Name~="HumanoidRootPart"then
-            pcall(function()
-                p.Massless=false
-                p.CustomPhysicalProperties=PhysicalProperties.new(1,0,0.9,1,1)
-            end)
-        end
-    end
-end
-function startHover(silent)
-    if S.hoverActive then return end
-    if S.mode=="SwordKill"or S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="Rizz"then return end
-    local h=hum() local m=hrp()
-    if not h or not m then return end
-    S.hoverActive=true
-    S.mode="Hover"
-    S.hoverStartTime=os.clock()
-    S.hoverStartLift=m.Position.Y
-    S.hoverTiltCur=Vector3.zero
-    setRotationOwner("FaceHost")
-    -- stop humanoid from playing anything
-    pcall(function()
-        h.WalkSpeed=0
-        h.JumpPower=0
-        h.UseJumpPower=false
-        h.AutoRotate=false
-        h:ChangeState(Enum.HumanoidStateType.Physics)
-    end)
-    destroyAnimator()
-    makeBodyRigid()
-    -- clean old rig
-    if S.hoverAlignPos then pcall(function()S.hoverAlignPos:Destroy()end)S.hoverAlignPos=nil end
-    if S.hoverAlignOri then pcall(function()S.hoverAlignOri:Destroy()end)S.hoverAlignOri=nil end
-    if S.hoverAtt then pcall(function()S.hoverAtt:Destroy()end)S.hoverAtt=nil end
-    -- build alignment rig
-    local att=Instance.new("Attachment")
-    att.Parent=m
-    S.hoverAtt=att
-    local alignPos=Instance.new("AlignPosition")
-    alignPos.Attachment0=att
-    alignPos.Mode=Enum.PositionAlignmentMode.OneAttachment
-    alignPos.MaxForce=1e6
-    alignPos.Responsiveness=25
-    alignPos.ApplyAtCenterOfMass=true
-    alignPos.Position=m.Position
-    alignPos.Parent=m
-    S.hoverAlignPos=alignPos
-    local alignOri=Instance.new("AlignOrientation")
-    alignOri.Attachment0=att
-    alignOri.Mode=Enum.OrientationAlignmentMode.OneAttachment
-    alignOri.MaxTorque=1e6
-    alignOri.Responsiveness=25
-    alignOri.CFrame=m.CFrame
-    alignOri.Parent=m
-    S.hoverAlignOri=alignOri
-    if S.hoverThread then task.cancel(S.hoverThread) end
-    S.hoverThread=task.spawn(function()
-        local tick0=os.clock()
-        local liftStart=m.Position.Y
-        while S.hoverActive and ROLE=="BOT" do
-            local dt=R.Heartbeat:Wait()
-            local hrp2=hrp()
-            local h2=hum()
-            if not hrp2 or not h2 then break end
-            if S.hidden or antiBan.detected then break end
-            -- host info
-            local hh=getHostHRP()
-            local host=getHost()
-            local targetPos=hrp2.Position
-            local floorY=liftStart-HOVER_HEIGHT
-            if hh then
-                -- compute offset position BEHIND + BESIDE host
-                local hostLook=hh.CFrame.LookVector
-                local hostFlat=Vector3.new(hostLook.X,0,hostLook.Z)
-                if hostFlat.Magnitude<0.01 then hostFlat=Vector3.new(0,0,-1)else hostFlat=hostFlat.Unit end
-                local hostRight=Vector3.new(hostFlat.Z,0,-hostFlat.X)
-                local offsetPos=hh.Position - hostFlat*HOVER_BACK_OFF + hostRight*HOVER_SIDE_OFF
-                -- check if bot is far enough from offset; if so move toward it, else stay
-                local myFlat=Vector3.new(hrp2.Position.X-offsetPos.X,0,hrp2.Position.Z-offsetPos.Z)
-                if myFlat.Magnitude>HOVER_DEADZONE then
-                    targetPos=offsetPos
-                else
-                    targetPos=hrp2.Position
-                end
-                -- floor under target
-                local ok,hit=probeFloor(targetPos)
-                if ok and hit then floorY=hit.Position.Y end
-            else
-                local ok,hit=probeFloor(targetPos)
-                if ok and hit then floorY=hit.Position.Y end
-            end
-            -- startup smooth lift
-            local life=os.clock()-S.hoverStartTime
-            local liftT=math.clamp(life/HOVER_LIFT_TIME,0,1)
-            local smoothLift=liftT*liftT*(3-2*liftT)
-            local desiredY=floorY+HOVER_HEIGHT*smoothLift+(1-smoothLift)*liftStart
-            -- stiff idle: only Y bob (no XZ wobble)
-            local t=os.clock()-tick0
-            local bobY=math.sin(t*1.7)*HOVER_BOB_Y
-            -- velocity tilt relative to actual movement direction
-            local vel=hrp2.AssemblyLinearVelocity
-            local flatV=Vector3.new(vel.X,0,vel.Z)
-            -- use bot's own look for tilt frame
-            local myLook=hrp2.CFrame.LookVector
-            myLook=Vector3.new(myLook.X,0,myLook.Z)
-            if myLook.Magnitude<0.01 then myLook=Vector3.new(0,0,-1)else myLook=myLook.Unit end
-            local myRight=Vector3.new(myLook.Z,0,-myLook.X)
-            local fwdSpeed=flatV:Dot(myLook)
-            local sideSpeed=flatV:Dot(myRight)
-            local pitch=0
-            local roll=0
-            if math.abs(fwdSpeed)>0.5 then
-                pitch=math.clamp(-fwdSpeed*0.03,-HOVER_TILT_MAX,HOVER_TILT_MAX)
-            end
-            if math.abs(sideSpeed)>0.5 then
-                roll=math.clamp(-sideSpeed*0.03,-HOVER_TILT_MAX,HOVER_TILT_MAX)
-            end
-            local targetTilt=Vector3.new(pitch,0,roll)
-            S.hoverTiltCur=S.hoverTiltCur:Lerp(targetTilt,math.clamp(dt*HOVER_TILT_LERP,0,1))
-            -- apply position via AlignPosition
-            if S.hoverAlignPos then
-                S.hoverAlignPos.Position=Vector3.new(targetPos.X,desiredY+bobY,targetPos.Z)
-            end
-            -- apply rotation via AlignOrientation: face host + tilt
-            local yawLook
-            if hh then
-                local towardHost=hh.Position-hrp2.Position
-                towardHost=Vector3.new(towardHost.X,0,towardHost.Z)
-                if towardHost.Magnitude<0.1 then towardHost=myLook else towardHost=towardHost.Unit end
-                yawLook=towardHost
-            else
-                yawLook=myLook
-            end
-            local baseCF=CFrame.lookAt(hrp2.Position,hrp2.Position+yawLook)
-            local finalCF=baseCF*CFrame.Angles(S.hoverTiltCur.X,0,S.hoverTiltCur.Z)
-            if S.hoverAlignOri then
-                S.hoverAlignOri.CFrame=finalCF
-            end
-            -- move bot toward offset via WalkTo so pathfinding still works
-            if hh then
-                local offLook=hh.CFrame.LookVector
-                local offFlat=Vector3.new(offLook.X,0,offLook.Z)
-                if offFlat.Magnitude<0.01 then offFlat=Vector3.new(0,0,-1)else offFlat=offFlat.Unit end
-                local offRight=Vector3.new(offFlat.Z,0,-offFlat.X)
-                local desiredPos=hh.Position - offFlat*HOVER_BACK_OFF + offRight*HOVER_SIDE_OFF
-                local ok,hit=probeFloor(desiredPos)
-                local groundY=ok and hit.Position.Y or desiredPos.Y
-                -- ground-level target for MoveTo (walk system works at ground)
-                local moveTarget=Vector3.new(desiredPos.X,groundY,desiredPos.Z)
-                local distFlat=Vector3.new(hrp2.Position.X-moveTarget.X,0,hrp2.Position.Z-moveTarget.Z).Magnitude
-                if distFlat>HOVER_DEADZONE then
-                    h2.WalkSpeed=BS
-                    h2:MoveTo(moveTarget)
-                else
-                    h2.WalkSpeed=0
-                end
-            end
-        end
-        if S.hoverAlignPos then pcall(function()S.hoverAlignPos:Destroy()end) S.hoverAlignPos=nil end
-        if S.hoverAlignOri then pcall(function()S.hoverAlignOri:Destroy()end) S.hoverAlignOri=nil end
-        if S.hoverAtt then pcall(function()S.hoverAtt:Destroy()end) S.hoverAtt=nil end
-    end)
-    if not silent then sendChat(pick(R_.hover)) end
-end
-function stopHover(silent)
-    if not S.hoverActive then return end
-    S.hoverActive=false
-    if S.hoverThread then task.cancel(S.hoverThread) S.hoverThread=nil end
-    if S.hoverAlignPos then pcall(function()S.hoverAlignPos:Destroy()end) S.hoverAlignPos=nil end
-    if S.hoverAlignOri then pcall(function()S.hoverAlignOri:Destroy()end) S.hoverAlignOri=nil end
-    if S.hoverAtt then pcall(function()S.hoverAtt:Destroy()end) S.hoverAtt=nil end
-    if S.mode=="Hover" then S.mode="Follow" end
-    releaseRotation()
-    local h=hum()
-    if h then
-        pcall(function()
-            h.WalkSpeed=BS
-            h.JumpPower=BJ
-            h.UseJumpPower=true
-            h.AutoRotate=true
-            h:ChangeState(Enum.HumanoidStateType.GettingUp)
-        end)
-    end
-    restoreAnimate()
-    if not silent then sendChat(pick(R_.unhover)) end
-end
--- ══════════════════════════════════════════════════════════════════
---  AI FUN HANDLER
--- ══════════════════════════════════════════════════════════════════
-local function aiFun(prompt)
-    if not APIKey or APIKey=="" then
-        sendChat("no key")
-        return
-    end
-    task.spawn(function()
-        local rp,et,em=sendAIRequest(prompt,140,false)
-        if not rp and et=="tools_unsupported" then
-            rp,et,em=sendAIRequest(prompt,140,false)
-        end
-        if not rp then
-            if et=="quota" then
-                local h,m=getResetCountdown()
-                sendChat("out of fuel, back in "..h.."h "..m.."m")
-            elseif et=="busy" then
-                sendChat(pick({"im busy rn","hold up","one sec"}))
-            else
-                sendChat(pick({"something went wrong","try again","rip"}))
-            end
-            return
-        end
-        rp=trim(rp)
-        local _,cleanRp=extractAICommands(rp)
-        if cleanRp=="" then cleanRp="hm" end
-        aiChunkSend(cleanRp)
-    end)
-end
-local function cmdFlip()aiFun("flip a coin for me. reply with one short casual line saying heads or tails. lowercase, no emojis, no quotes.")end
-local function cmdRoll(n)n=math.floor(tonumber(n) or 6)n=math.clamp(n,2,1000)aiFun("roll a d"..n.." for me. reply with one short casual line with a random number 1-"..n..". lowercase, no emojis, no quotes.")end
-local function cmd8Ball(q)q=trim(q)if q=="" then sendChat("usage: "..commandPrefix.."8ball <question>") return end aiFun("the user asked the magic 8ball: \""..q.."\". reply with one short casual line with the 8ball's answer (yes/no/maybe style). lowercase, no emojis, no quotes.")end
-local function cmdTruth()aiFun("give the user a random truth question for truth-or-dare. one short casual line. lowercase, no emojis, no quotes.")end
-local function cmdDare()aiFun("give the user a random dare for truth-or-dare. one short casual line, funny. lowercase, no emojis, no quotes.")end
-local function cmdWYR()aiFun("give the user a random would you rather question. one short casual line in format 'would you rather X or Y'. lowercase, no emojis, no quotes.")end
-local function cmdStorytime()aiFun("tell the user a short 2-3 sentence funny random story (roblox vibes ok). one message. lowercase, no emojis, no quotes.")end
-local function cmdRandomNum(a,b)local lo=math.floor(tonumber(a) or 1)local hi=math.floor(tonumber(b) or 100)if lo>hi then lo,hi=hi,lo end if hi-lo>1000000 then hi=lo+1000000 end aiFun("pick a random number between "..lo.." and "..hi..". reply with one short casual line with just the number and tiny flavor. lowercase, no emojis, no quotes.")end
-local function cmdCountdown(n)n=math.floor(tonumber(n) or 5)if n<1 then n=1 end if n>20 then n=20 end local parts={}for i=n,0,-1 do if i==0 then parts[#parts+1]="GO!" else parts[#parts+1]=tostring(i) end end sendChat(table.concat(parts," "))end
-local function cmdTimer(n)n=math.floor(tonumber(n) or 30)if n<1 then n=1 end if n>600 then n=600 end sendChat("timer set for "..n.."s")task.spawn(function()local start=os.clock()while os.clock()-start<n do task.wait(1)end sendChat(pick({"time's up!","timer done","ding ding ding","times up boss"}))end)end
-local function cmdCompliment(name)if not name or name=="" then sendChat("usage: "..commandPrefix.."compliment <player>") return end local t=resolveTarget(name)if t=="NORANDOM" then sendChat(pick(R_.norandom)) return end if not t then sendChat(pick(R_.notfound)) return end aiFun("give "..t.Name.." a nice genuine compliment. one short casual line addressed to them. lowercase, no emojis, no quotes.")end
-local function cmdRoast(name)if not name or name=="" then sendChat("usage: "..commandPrefix.."roast <player>") return end local t=resolveTarget(name)if t=="NORANDOM" then sendChat(pick(R_.norandom)) return end if not t then sendChat(pick(R_.notfound)) return end aiFun("roast "..t.Name.." with one savage but playful line. no slurs, no real insults, roblox ban-safe. lowercase, no emojis, no quotes.")end
-local function cmdDadJoke()aiFun("tell a classic dad joke. one short line. lowercase, no emojis, no quotes.")end
--- ══════════════════════════════════════════════════════════════════
---  PROTECT SYSTEM
--- ══════════════════════════════════════════════════════════════════
-local function protectChatSay(line)
-    if S.protectChatActive then return end
-    S.protectChatActive=true
-    sendChat(line)
-    task.delay(PROTECT_CHAT_CD,function()
-        S.protectChatActive=false
-    end)
-end
-function runProtectTick()
-    if ROLE~="BOT" then return end
-    if antiBan.detected then return end
-    if S.hidden or S.sitting then return end
-    if S.mode=="SwordKill" or S.mode=="Bam" or S.mode=="Annoy" or S.mode=="Fling" or S.mode=="Rizz" or S.mode=="Lead" or S.mode=="Orbit" then return end
-    local now=os.clock()
-    local hh=getHostHRP()
-    if not hh then return end
-    local host=getHost()
-    if not host then return end
-    if S.protectStartPos then
-        if (hh.Position-S.protectStartPos).Magnitude>2 then
-            S.protectLastMove=now
-        end
-    end
-    S.protectStartPos=hh.Position
-    if now-S.protectUntil<0 then
-        if not S.protectChatActive and S.protectTarget and S.protectTarget.Parent then
-            local line=pick(PROTECT_ROASTS)
-            line=line:gsub("{NAME}",S.protectTarget.Name)
-            protectChatSay(line)
-        end
-        if not S.protectTarget or not S.protectTarget.Parent then
-            S.protectUntil=0
-            S.protectTarget=nil
-            S.protectCooldown=now+PROTECT_COOLDOWN
-            releaseRotation()
-            return
-        end
-        local thrp=getPlayerHRP(S.protectTarget)
-        if not thrp then
-            S.protectUntil=0
-            S.protectTarget=nil
-            releaseRotation()
-            return
-        end
-        local dist=(thrp.Position-hh.Position).Magnitude
-        if dist>12 then
-            S.protectUntil=0
-            S.protectTarget=nil
-            S.protectCooldown=now+PROTECT_COOLDOWN
-            releaseRotation()
-            return
-        end
-        if now-S.protectLastMove<PROTECT_STILL_TIME then
-            S.protectUntil=0
-            S.protectTarget=nil
-            S.protectCooldown=now+PROTECT_COOLDOWN
-            releaseRotation()
-            return
-        end
-        local toHarasser=(thrp.Position-hh.Position)
-        toHarasser=Vector3.new(toHarasser.X,0,toHarasser.Z)
-        if toHarasser.Magnitude<0.1 then toHarasser=Vector3.new(0,0,1)end
-        toHarasser=toHarasser.Unit
-        local behindPos=hh.Position-toHarasser*PROTECT_BACK_DIST
-        local m=hrp()
-        if m then
-            setRotationOwner("Protect")
-            local goal=CFrame.lookAt(
-                Vector3.new(behindPos.X,hh.Position.Y,behindPos.Z),
-                Vector3.new(thrp.Position.X,hh.Position.Y,thrp.Position.Z)
-            )
-            T:Create(m,TweenInfo.new(PROTECT_TWEEN,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{CFrame=goal}):Play()
-        end
-        return
-    end
-    if now<S.protectCooldown then return end
-    if now-S.protectLastMove<PROTECT_STILL_TIME then return end
-    local hostChar=host.Character
-    if not hostChar then return end
-    local hostHum=hostChar:FindFirstChildOfClass("Humanoid")
-    if hostHum and hostHum.MoveDirection.Magnitude>0.1 then return end
-    for _,p in ipairs(P:GetPlayers())do
-        if p==pl then continue end
-        if p==host then continue end
-        local pHrp=getPlayerHRP(p)
-        if not pHrp then continue end
-        local d=(pHrp.Position-hh.Position).Magnitude
-        if d>PROTECT_DIST then continue end
-        local toP=(pHrp.Position-hh.Position)
-        toP=Vector3.new(toP.X,0,toP.Z)
-        local look=hh.CFrame.LookVector
-        look=Vector3.new(look.X,0,look.Z)
-        local dot=toP.Magnitude>0.1 and toP.Unit:Dot(look) or 0
-        if dot>0.2 then continue end
-        local vel=pHrp.AssemblyLinearVelocity
-        local flatV=Vector3.new(vel.X,0,vel.Z)
-        local toward=(pHrp.Position-hh.Position)
-        toward=Vector3.new(toward.X,0,toward.Z)
-        if toward.Magnitude<0.1 then continue end
-        toward=toward.Unit
-        local speedAlong=toward:Dot(flatV)
-        if not p:GetAttribute("_pxProtectDir")then
-            p:SetAttribute("_pxProtectDir",math.sign(speedAlong))
-            p:SetAttribute("_pxProtectFlips",0)
-            p:SetAttribute("_pxProtectLastFlip",0)
-        else
-            local lastDir=p:GetAttribute("_pxProtectDir")
-            local curDir=math.sign(speedAlong)
-            if curDir~=0 and lastDir~=0 and curDir~=lastDir then
-                local lastFlip=p:GetAttribute("_pxProtectLastFlip") or 0
-                if now-lastFlip>0.25 then
-                    p:SetAttribute("_pxProtectFlips",(p:GetAttribute("_pxProtectFlips") or 0)+1)
-                    p:SetAttribute("_pxProtectLastFlip",now)
-                end
-                p:SetAttribute("_pxProtectDir",curDir)
-            end
-        end
-        local flips=p:GetAttribute("_pxProtectFlips") or 0
-        if flips>=3 then
-            p:SetAttribute("_pxProtectFlips",0)
-            S.protectTarget=p
-            S.protectUntil=now+3
-            protectChatSay("back off "..p.Name..", leave my boss alone")
-            return
-        end
-    end
-end
-task.spawn(function()
-    while true do
-        task.wait(0.2)
-        local ok,err=pcall(runProtectTick)
-        if not ok then end
-    end
-end)
-task.spawn(function()while true do task.wait(1)if ROLE=="BOT"and not S.hidden and not antiBan.detected and not S.sitting then local h=hum()if h and h.WalkSpeed~=BS and not S.flingActive and not S.swordKillActive and not S.rizzActive and not S.hoverActive then pcall(function()h.WalkSpeed=BS end)end end end end)
-task.spawn(function()while true do task.wait(0.1)if S.strangerUntil>0 and os.clock()>S.strangerUntil then S.strangerTarget=nil S.strangerUntil=0 if rotationOwner=="Stranger"then setRotationOwner(S.strangerPrevOwner or "Humanoid")end end end end)
-task.spawn(function()while true do task.wait(0.1)if S.antiFling and ROLE=="BOT"then local c=pl.Character if c then local m=c:FindFirstChild("HumanoidRootPart")if m and m.AssemblyLinearVelocity.Magnitude>150 then m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero if getHostHRP()then teleportToHost()end end for _,p in ipairs(P:GetPlayers())do if p~=pl and p.Character then for _,pt in ipairs(p.Character:GetDescendants())do if pt:IsA("BasePart")then pt.CanCollide=false end end end end end end end end)
-task.spawn(function()while true do task.wait(0.1)if S.antiToolKill and ROLE=="BOT"then local c=pl.Character if c then local tool=c:FindFirstChildOfClass("Tool")if tool and tool.Name~=TN then tool.Parent=pl:FindFirstChildOfClass("Backpack")end end end end end)
-function getLookTarget()if rotationOwner=="FaceHost"then local h=hum()if not h then return nil end if h.MoveDirection.Magnitude>0.1 then return nil end local host=getHost()local hh=getHostHRP()local m=hrp()if host and hh and m then local d=(hh.Position-m.Position).Magnitude if d<=LR then return host end end elseif rotationOwner=="FaceTarget"then local t=S.annoyTarget or S.swordKillTarget or S.rizzTarget if t and t.Parent and t.Character then return t end elseif rotationOwner=="Stranger"then local t=S.strangerTarget if t and t.Parent and t.Character then return t end end return nil end
-function startFacing()if S.facing then return end S.facing=true S.faceConn=R.Heartbeat:Connect(function(dt)if ROLE~="BOT"then return end if S.hidden or antiBan.detected then return end if S.hoverActive then return end if rotationOwner~="FaceHost"and rotationOwner~="FaceTarget"and rotationOwner~="Stranger"then return end local tg=getLookTarget()if not tg or not tg.Character then return end local rt=hrp()if not rt then return end local hd=tg.Character:FindFirstChild("Head")local tp=hd and hd.Position or(tg.Character.HumanoidRootPart and tg.Character.HumanoidRootPart.Position)if not tp then return end local dr=tp-rt.Position local fl=Vector3.new(dr.X,0,dr.Z)if fl.Magnitude<0.05 then return end fl=fl.Unit local lk=rt.CFrame.LookVector local cf=Vector3.new(lk.X,0,lk.Z)if cf.Magnitude<0.05 then cf=Vector3.new(0,0,-1)end cf=cf.Unit local al=1-math.exp(-14*dt)local sm=cf:Lerp(fl,al)if sm.Magnitude<0.01 then return end sm=sm.Unit pcall(function()rt.CFrame=CFrame.lookAt(rt.Position,rt.Position+sm)end)end)end
-DANCE_EMOTES={[1]="/e dance1",[2]="/e dance2",[3]="/e dance3",[4]="/e dance4"}
-function stopDance()S.dancing=false if S.danceTrack then pcall(function()S.danceTrack:Stop(0.2)end)S.danceTrack=nil end end
-function playDance(n)n=tonumber(n)or 1 if n<1 or n>4 then n=1 end stopDance()sendChat(DANCE_EMOTES[n])task.wait(0.05)sendChat(pick(R_.dance))S.dancing=true return true end
-stopSpin=function()S.spinning=false if S.spinConn then S.spinConn:Disconnect()S.spinConn=nil end if S.mode=="Spin"then S.mode="Follow"releaseRotation()end end
-function startSpin(sp)sp=tonumber(sp)or 5 sp=math.clamp(sp,1,100)S.spinSpeed=sp if S.spinning then sendChat(pick({"speed is now "..sp,"updated to "..sp,"changed to "..sp}))return end stopDance()S.spinning=true S.mode="Spin"setRotationOwner("Spin")local h=hum()if h then local m=hrp()if m then h:MoveTo(m.Position)end end S.spinConn=R.Heartbeat:Connect(function(dt)if not S.spinning then return end if ROLE~="BOT"then return end if S.hidden or antiBan.detected then return end local m=hrp()if not m then return end local st=math.rad(sp*60*dt)pcall(function()m.CFrame=m.CFrame*CFrame.Angles(0,st,0)end)end)sendChat(pick(R_.spin))end
-stopLead=function(an)if S.leadActive then S.leadActive=false S.leadTarget=nil if S.mode=="Lead"then S.mode="Follow"releaseRotation()end if an then sendChat(pick(R_.unlead))end end end
-function startLead(name)if not name or name==""then sendChat("usage: !lead <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end stopOrbit()stopSpin()stopDance()stopBam(false)stopAnnoy(false)stopFling(false)S.leadTarget=t S.leadActive=true S.mode="Lead"S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil sendChat(pick(R_.lead).." "..t.Name)end
-function computePath(from,to)local path=PS:CreatePath({AgentRadius=2.5,AgentHeight=5,AgentCanJump=true,AgentJumpHeight=11,AgentCanClimb=true,AgentMaxSlope=45,WaypointSpacing=3})for _=1,PA do local ok=pcall(function()path:ComputeAsync(from,to)end)if ok and path.Status==Enum.PathStatus.Success then return path:GetWaypoints()end task.wait(0.02)end S.lastPathFail=os.clock()return nil end
-rayFilter={pl.Character}
-function mkRP(iw)local rp=RaycastParams.new()rp.FilterType=Enum.RaycastFilterType.Exclude rp.FilterDescendantsInstances=rayFilter rp.IgnoreWater=iw~=false return rp end
-function analyzePart(inst)if not inst or not inst:IsA("BasePart")then return nil end local size=inst.Size local minH=math.min(size.X,size.Z)return{class=inst.ClassName,name=inst.Name,size=size,minHoriz=minH,height=size.Y,transparency=inst.Transparency,canCollide=inst.CanCollide,isSlim=(minH<SBM and size.Y<2),isThin=(minH<1.0),isTransparent=(inst.Transparency>0.5),isWalkable=(inst.CanCollide and inst.Transparency<0.95 and size.Y<=3)}end
-function probeFloor(pos)local rp=mkRP(true)local hit=W:Raycast(pos+Vector3.new(0,6,0),Vector3.new(0,-60,0),rp)if not hit then return false,nil,nil end return true,hit,analyzePart(hit.Instance)end
-function hasFloorBelow(pos)return probeFloor(pos)end
-function visionClear(fp,tp)local dr=tp-fp local fl=Vector3.new(dr.X,0,dr.Z)local ds=fl.Magnitude if ds<0.1 then return true,"clear"end fl=fl.Unit local rp=mkRP(false)local wh=W:Raycast(fp+Vector3.new(0,2,0),fl*ds,rp)if wh then local pc=wh.Instance and wh.Instance:FindFirstAncestorOfClass("Model")local hp=pc and P:GetPlayerFromCharacter(pc)if not hp then return false,"wall",nil,wh end return true,"player",hp,wh end local sc=math.max(3,math.ceil(ds/5))for i=1,sc do local cp=fp+fl*(ds*(i/sc))local ok,_,inf=probeFloor(cp)if not ok then return false,"void"end if inf and inf.isThin and not inf.isWalkable then return false,"slim"end end return true,"clear"end
-function checkAheadObstacle(fp,dr,md)local fl=Vector3.new(dr.X,0,dr.Z)if fl.Magnitude<0.1 then return "clear",nil,nil end fl=fl.Unit local rp=mkRP(false)local wh=W:Raycast(fp+Vector3.new(0,2,0),fl*md,rp)if wh then local inf=analyzePart(wh.Instance)if inf and inf.canCollide and not inf.isTransparent then local nm=wh.Normal if math.abs(nm.Y)<0.35 then return "wall",wh,inf end if nm.Y<0.75 and nm.Y>0.35 then return "slope",wh,inf end end end for _,d in ipairs({md*0.35,md*0.55,md*0.75,md})do local cp=fp+fl*d local ok,hit,inf=probeFloor(cp)if not ok then return "void_risk",nil,nil end local gp=(cp.Y+6)-hit.Position.Y if gp>SED then return "steep_drop",hit,inf end if inf and inf.isThin then return "slim",hit,inf end end return "clear",nil,nil end
-function isInVoid(pos)return pos and pos.Y<VT end
-function findPlayerInFront(fp,dr,md)local rp=mkRP(false)local hit=W:Raycast(fp+Vector3.new(0,2,0),dr*md,rp)if hit and hit.Instance then local ml=hit.Instance:FindFirstAncestorOfClass("Model")if ml then local p2=P:GetPlayerFromCharacter(ml)if p2 then return p2,hit end end end return nil end
-function planDodge(fp,tp)local dr=tp-fp dr=Vector3.new(dr.X,0,dr.Z)if dr.Magnitude<0.1 then return nil end dr=dr.Unit local lf=Vector3.new(-dr.Z,0,dr.X)local rg=Vector3.new(dr.Z,0,-dr.X)local lo=hasFloorBelow(fp+lf*7)local ro=hasFloorBelow(fp+rg*7)if lo and ro then local td=(tp-fp)td=Vector3.new(td.X,0,td.Z).Unit if(lf+td).Magnitude<(rg+td).Magnitude then return "left"else return "right"end elseif lo then return "left"elseif ro then return "right"else return "jump"end end
-function tryJump()local h,m=hum(),hrp()if not h or not m then return end if os.clock()-S.lastJump<0.45 then return end if h.FloorMaterial==Enum.Material.Air then return end S.lastJump=os.clock()h.Jump=true end
-function checkStuck()local h,m=hum(),hrp()if not h or not m then return end if os.clock()-S.lastStuckCheck<0.5 then return end S.lastStuckCheck=os.clock()if not S.lastMovePos then S.stuckCount=0 return end local mv=0 if S.lastStuckPos then mv=(m.Position-S.lastStuckPos).Magnitude end S.lastStuckPos=m.Position if mv<1.0 then S.stuckCount=S.stuckCount+1 if S.stuckCount>=2 then S.stuckCount=0 flashNoclip(SNT)task.delay(0.05,function()local h2=hum()if h2 and S.lastMovePos then h2:MoveTo(S.lastMovePos)end end)end else S.stuckCount=0 end end
-function checkPush()local m=hrp()local hh=getHostHRP()if not m or not hh then return end if os.clock()-S.pushCheck<0.5 then return end S.pushCheck=os.clock()if S.mode~="Follow"then S.lastRealPos=m.Position return end if S.lastRealPos then local dl=(m.Position-S.lastRealPos).Magnitude local vl=m.AssemblyLinearVelocity.Magnitude if dl>15 and vl>30 then local bk=hh.CFrame.LookVector*-5 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(bk.X,3,bk.Z))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil end end S.lastRealPos=m.Position end
-stopOrbit=function()S.orbiting=false if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)S.orbitLV=nil end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)S.orbitAO=nil end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)S.orbitAtt=nil end if S.mode=="Orbit"then S.mode="Follow"releaseRotation()end end
-teleportToHost=function()local hh,m=getHostHRP(),hrp()if not hh or not m then return end local bk=hh.CFrame.LookVector*-5 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(bk.X,3,bk.Z))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil end
-stopBam=function(an)if S.bamActive then S.bamActive=false S.bamTarget=nil if S.mode=="Bam"then S.mode="Follow"releaseRotation()end if an then sendChat(pick(R_.unbam))end end end
-startBam=function(name)if not name or name==""then sendChat("usage: !bam <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end stopOrbit()stopSpin()stopDance()stopLead(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)S.bamTarget=t S.bamActive=true S.mode="Bam"S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil sendChat(pick(R_.bam).." "..t.Name)end
-ANNOY_MSGS={"You got games on your pone?","omg so sigma","tung tung tung sahur","ballerina capuchina","tripi tropi tripi tropa","brrrrrrrrr brrrrrr patapim","jonkler","hey you","hey hey","bro","HEY","listen","dlawg","auuuuu","67","karasame kudasai!","DATEBAYO!! BAKAAAA","mega maxxing","hoyaaaahhh","heyyy dont ignore me senpai","Purr now my kitten","hey bro","HEYY!!!","listen to me man","tralalero tralala","bombardiro crocadilo","uwu","larp","67777","you in ohio","womp womp","who are you bro?","hey bro","L bro","REEEEEEEE","your face..","omg bro what","HECK NO","WHAT ARE THOSEEE..."}
-stopAnnoy=function(an)if S.annoyActive then S.annoyActive=false S.annoyTarget=nil if S.mode=="Annoy"then S.mode="Follow"releaseRotation()end if an then sendChat(pick(R_.unannoy))end end end
-startAnnoy=function(name)if not name or name==""then sendChat("usage: !annoy <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopFling(false)stopSwordKill(false)S.annoyTarget=t S.annoyActive=true S.mode="Annoy"setRotationOwner("FaceTarget")S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil sendChat(pick(R_.annoy).." "..t.Name)end
-stopRizz=function(an)
-    if not S.rizzActive then return end
-    S.rizzActive=false
-    S.rizzTarget=nil
-    if S.rizzThread then task.cancel(S.rizzThread) S.rizzThread=nil end
-    if S.rizzMoveThread then task.cancel(S.rizzMoveThread) S.rizzMoveThread=nil end
-    if S.mode=="Rizz"then S.mode="Follow" releaseRotation() end
-    if an then sendChat(pick({"rizz off","stopped flirting","im done","chill"})) end
-end
-startRizz=function(name)
-    if not name or name=="" then sendChat("usage: !rizz <player>") return end
-    local t=resolveTarget(name)
-    if t=="NORANDOM" then sendChat(pick(R_.norandom)) return end
-    if not t then sendChat(pick(R_.notfound)) return end
-    if t==pl then sendChat(pick(R_.self)) return end
-    stopOrbit() stopSpin() stopDance() stopLead(false) stopBam(false) stopAnnoy(false) stopFling(false) stopSwordKill(false)
-    S.rizzTarget=t S.rizzActive=true S.mode="Rizz" S.rizzUsed={}
-    setRotationOwner("FaceTarget")
-    sendChat(pick({"rizz mode on","watch me cook","let me rizz "..t.Name,"flirting with "..t.Name}))
-    if S.rizzThread then task.cancel(S.rizzThread) end
-    if S.rizzMoveThread then task.cancel(S.rizzMoveThread) end
-    S.rizzMoveThread=task.spawn(function()
-        while S.rizzActive and ROLE=="BOT" do
-            task.wait(0.2)
-            if not S.rizzActive then break end
-            if not t.Parent or not t.Character then stopRizz(false) break end
-            local m=hrp() local th=getPlayerHRP(t)
-            if m and th then
-                local dist=(m.Position-th.Position).Magnitude
-                if dist>5 then
-                    local h=hum()
-                    if h then h:MoveTo(th.Position) end
-                end
-            end
-        end
-    end)
-    S.rizzThread=task.spawn(function()
-        while S.rizzActive and ROLE=="BOT" do
-            task.wait(5)
-            if not S.rizzActive then break end
-            if not t.Parent or not t.Character then
-                sendChat("target left, rizz over")
-                stopRizz(false)
-                break
-            end
-            local available={}
-            for _,line in ipairs(RIZZ_LINES) do
-                if not S.rizzUsed[line] then
-                    table.insert(available,line)
-                end
-            end
-            if #available==0 then
-                S.rizzUsed={}
-                for _,line in ipairs(RIZZ_LINES) do table.insert(available,line) end
-            end
-            local chosen=available[math.random(1,#available)]
-            S.rizzUsed[chosen]=true
-            sendChat(t.Name..", "..chosen)
-        end
-    end)
-end
-function setBotCollide(state)local c=pl.Character if not c then return end for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then pcall(function()p.CanCollide=state end)end end end
-function setBotMassive(en)local c=pl.Character if not c then return end for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then pcall(function()if en then p.Massless=false p.CustomPhysicalProperties=PhysicalProperties.new(100,0.3,0,1,1)else p.CustomPhysicalProperties=nil p.Massless=false end end)end end end
-stopFling=function(an,sr)if not S.flingActive then return end S.flingActive=false S.flingTarget=nil S.flingLastTargetPos=nil S.flingStartTime=0 setBotMassive(false)local h=hum()if h then pcall(function()h:ChangeState(Enum.HumanoidStateType.GettingUp)end)pcall(function()h.PlatformStand=false h.WalkSpeed=BS h.JumpPower=BJ end)end setBotCollide(true)if S.mode=="Fling"then S.mode="Follow"releaseRotation()end if an then sendChat(pick(R_.unfling))end if sr then teleportToHost()end end
-startFling=function(name)if not name or name==""then sendChat("usage: !fling <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end local thrp=getPlayerHRP(t)if not thrp then sendChat("target has no body")return end if isInVoid(thrp.Position)then sendChat("target in void")return end stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopSwordKill(false)S.flingTarget=t S.flingActive=true S.flingStartTime=os.clock()S.flingLastTargetPos=thrp.Position S.mode="Fling"setRotationOwner("Fling")local h=hum()if h then pcall(function()h:ChangeState(Enum.HumanoidStateType.Physics)end)end setBotCollide(true)setBotMassive(true)sendChat(pick(R_.fling).." "..t.Name)end
-task.spawn(function()while true do R.Heartbeat:Wait()if not S.flingActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.flingTarget if not tg or not tg.Parent then stopFling(false,false)continue end local th=getPlayerHRP(tg)local m=hrp()if not th or not m then continue end local t=os.clock()local rx=math.rad((t*FSX)%360)local ry=math.rad((t*FSY)%360)local rz=math.rad((t*FSZ)%360)local jt=Vector3.new((math.random()-0.5)*0.6,(math.random()-0.5)*0.6,(math.random()-0.5)*0.6)local ip=th.Position+jt local rv=Vector3.new(math.random(-FLV,FLV),math.random(-FLV,FLV),math.random(-FLV,FLV))local rav=Vector3.new(math.random(-FAV,FAV),math.random(-FAV,FAV),math.random(-FAV,FAV))pcall(function()m.CFrame=CFrame.new(ip)*CFrame.Angles(rx,ry,rz)m.AssemblyLinearVelocity=rv m.AssemblyAngularVelocity=rav end)local c=pl.Character if c then for _,p2 in ipairs(c:GetDescendants())do if p2:IsA("BasePart")and p2~=m then pcall(function()p2.AssemblyLinearVelocity=rv p2.AssemblyAngularVelocity=rav end)end end end if S.flingLastTargetPos and(os.clock()-S.flingStartTime)>FDW then local mv=(th.Position-S.flingLastTargetPos).Magnitude local vl=th.AssemblyLinearVelocity.Magnitude if vl>FDV or mv>FDD then sendChat(pick({"flung em","target yeeted","got em"}))stopFling(false,false)task.wait(0.1)teleportToHost()task.wait(0.4)continue end end S.flingLastTargetPos=th.Position if os.clock()-S.flingStartTime>FMD then sendChat(pick({"timed out","giving up","eh"}))stopFling(false,false)teleportToHost()end end end)
-task.spawn(function()while true do task.wait(0.02)if not S.bamActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.bamTarget if not tg or not tg.Parent then task.wait(0.4)continue end local th=getPlayerHRP(tg)local m=hrp()if not th or not m then task.wait(0.3)continue end if isInVoid(th.Position)or isInVoid(m.Position)then task.wait(0.3)continue end local lk=th.CFrame.LookVector local fl=Vector3.new(lk.X,0,lk.Z)if fl.Magnitude>0.01 then fl=fl.Unit else fl=Vector3.new(0,0,-1)end local t=(os.clock()/BC)%1 local ths=math.sin(t*math.pi*2)*0.5+0.5 local cd=BDB-(BO*ths)local bp2=th.Position-fl*cd pcall(function()m.CFrame=CFrame.lookAt(bp2,th.Position)m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)end end)
-task.spawn(function()
-    while true do
-        task.wait(0.05)
-        if not S.annoyActive or ROLE~="BOT" or antiBan.detected then continue end
-        if S.hidden then continue end
-        local tg=S.annoyTarget
-        if not tg or not tg.Parent then task.wait(0.4) continue end
-        local th=getPlayerHRP(tg)
-        local m=hrp()
-        if not th or not m then task.wait(0.3) continue end
-        if isInVoid(th.Position) or isInVoid(m.Position) then task.wait(0.3) continue end
-        local lk=th.CFrame.LookVector
-        local fl=Vector3.new(lk.X,0,lk.Z)
-        if fl.Magnitude>0.01 then fl=fl.Unit else fl=Vector3.new(0,0,-1) end
-        local fr=th.Position+fl*AFD
-        local ds=(m.Position-fr).Magnitude
-        local h=hum()
-        if not h then continue end
-        if rotationOwner~="FaceTarget" and S.annoyActive then setRotationOwner("FaceTarget") end
-        if ds>120 then
-            if os.clock()-S.trollTpCD>3 then
-                S.trollTpCD=os.clock()
-                pcall(function()
-                    m.CFrame=CFrame.new(fr+Vector3.new(0,1,0))
-                    m.AssemblyLinearVelocity=Vector3.zero
-                    m.AssemblyAngularVelocity=Vector3.zero
-                end)
-            end
-        else
-            h:MoveTo(fr)
-        end
-    end
-end)
-task.spawn(function()while true do local wt=AMW1+math.random()*(AMW2-AMW1)task.wait(wt)if not S.annoyActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.annoyTarget if not tg or not tg.Parent then continue end local th=getPlayerHRP(tg)if not th then continue end if isInVoid(th.Position)then continue end local m=hrp()if not m or isInVoid(m.Position)then continue end if(m.Position-th.Position).Magnitude>40 then continue end sendChat(ANNOY_MSGS[math.random(1,#ANNOY_MSGS)])end end)
-SK_CFG={CHASE_DIST=16,JUMP_DIST=12,BACKPEDAL_DIST=8,FLANK_DIST=5,SWING_CD=0.75,STRAFE_CD=0.55,REACTION_MIN=0.08,REACTION_MAX=0.18,PREDICT_TIME=0.18,HITBOX_DODGE_DIST=8,DMG_WINDOW=1.2,DMG_THRESHOLD=6,KILL_RETURN_DELAY=0.7,JUMP_INTERVAL=1.2,MIRROR_JUMP_WINDOW=0.35,FLANK_SIDE_BIAS=-1,CIRCLE_BIAS=0.75,FIGHT_TICK=0.07,MOVE_AHEAD=9}
-SK_SWORD_KEYS={"sword","blade","katana","saber","sabre","rapier","dagger","scimitar","machete","darkheart","linked","classic","knife","cleaver","spear","glaive","halberd","longsword","broadsword","shortsword","greatsword","cutlass","falchion","wakizashi","tanto","nodachi","odachi","excalibur","muramasa","masamune","kunai","shuriken","axe","hatchet","tomahawk","scythe","kama","naginata","estoc","claymore","zweihander","flamberge","kris","kukri","bowie","stiletto","dirk","sai","khopesh","gladius","spatha","arming","bastard","viking","cavalry","hunting","combat","throwing","butterfly","balisong","katar","pata","macuahuitl","tessen","parang","klewang","krabi","keris","kujang","mandau","golok","barong","kampilan","bolo","balisword","shikomizue","shirasaya","tachi","chokuto","ninjato","iaito","bokken","shinai"}
-S.swordKillActive=false S.swordKillTarget=nil S.swordKillThread=nil S.swordKillStrafeDir=1 S.swordKillLastStrafe=0 S.swordKillLastSwing=0 S.swordKillReactionEnd=0 S.swordKillTargetVel=Vector3.zero S.swordKillLastTargetPos=nil S.swordKillLastTargetTime=0 S.swordKillLastHealth=nil S.swordKillLastHealthTime=0 S.swordKillRetreating=false S.swordKillRetreatUntil=0 S.swordKillKilledChatted=false S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil S.swordKillLastJump=0 S.swordKillTargetHum=nil S.swordKillReengageAt=0 S.swordKillTargetWasJumping=false S.swordKillLastTargetJump=0
-function skIsSword(t)if not t or not t:IsA("Tool")then return false end local n=t.Name:lower()for _,k in ipairs(SK_SWORD_KEYS)do if n:find(k,1,true)then return true end end local tip=(t.ToolTip or ""):lower()for _,k in ipairs(SK_SWORD_KEYS)do if tip:find(k,1,true)then return true end end if t:FindFirstChild("Handle")then for _,c in ipairs(t:GetChildren())do if c:IsA("BasePart")then local s=c.Size local longest=math.max(s.X,s.Y,s.Z)local shortest=math.min(s.X,s.Y,s.Z)if longest>2 and shortest<0.5 then return true end end end end return false end
-function skFindSwordInPack()local pack=bp()if not pack then return nil end local best=nil for _,t in ipairs(pack:GetChildren())do if skIsSword(t)then if t.Name:lower():find("sword",1,true)then return t end best=best or t end end return best end
-function skEquipSword()local c=pl.Character if not c then return nil end local eq=c:FindFirstChildOfClass("Tool")if eq and skIsSword(eq)then S.swordKillEquippedTool=eq return eq end local sw=skFindSwordInPack()if sw then if eq and not skIsSword(eq)then S.swordKillOriginalTool=eq pcall(function()eq.Parent=bp()end)end pcall(function()sw.Parent=c end)S.swordKillEquippedTool=sw return sw end if eq then S.swordKillEquippedTool=eq return eq end local pack=bp()if not pack then return nil end for _,t in ipairs(pack:GetChildren())do if t:IsA("Tool")then pcall(function()t.Parent=c end)S.swordKillEquippedTool=t return t end end return nil end
-function skUnequipAfterKill()local c=pl.Character local pack=bp()if S.swordKillEquippedTool and pack then pcall(function()S.swordKillEquippedTool.Parent=pack end)end if S.swordKillOriginalTool and c and S.swordKillOriginalTool.Parent==pack then pcall(function()S.swordKillOriginalTool.Parent=c end)end S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil end
-function skGetEnemySword(tChar)if not tChar then return nil end local tool=tChar:FindFirstChildOfClass("Tool")if not tool then return nil end return tool:FindFirstChild("Handle")or tool:FindFirstChildWhichIsA("BasePart")end
-function skSwing()local now=os.clock()if now-S.swordKillLastSwing<SK_CFG.SWING_CD*(0.9+math.random()*0.3)then return end S.swordKillLastSwing=now local tool=skEquipSword()if tool then pcall(function()tool:Activate()end)end end
-function skIsBehind(myHRP,tHRP)local toMe=myHRP.Position-tHRP.Position toMe=Vector3.new(toMe.X,0,toMe.Z)if toMe.Magnitude<0.1 then return false end toMe=toMe.Unit local look=tHRP.CFrame.LookVector look=Vector3.new(look.X,0,look.Z)if look.Magnitude<0.1 then return false end look=look.Unit return toMe:Dot(look)>0.45 end
-function skPredictTarget(tHRP)if not tHRP then return Vector3.zero end local now=os.clock()if S.swordKillLastTargetPos then local dt=now-S.swordKillLastTargetTime if dt>0.01 and dt<0.5 then S.swordKillTargetVel=(tHRP.Position-S.swordKillLastTargetPos)/dt end end S.swordKillLastTargetPos=tHRP.Position S.swordKillLastTargetTime=now return tHRP.Position+S.swordKillTargetVel*SK_CFG.PREDICT_TIME end
-function skDoJump()
-local h,m=hum(),hrp()
-if not h or not m then return end
-local now=os.clock()
-if now-S.swordKillLastJump<SK_CFG.JUMP_INTERVAL then return end
-if h.FloorMaterial==Enum.Material.Air then return end
-local shouldJump=false
-if now-S.swordKillLastTargetJump<SK_CFG.MIRROR_JUMP_WINDOW then shouldJump=true end
-local tg=S.swordKillTarget
-if not shouldJump and tg then
-local tHRP=getPlayerHRP(tg)
-if tHRP and tHRP.Position.Y>m.Position.Y+4.5 then shouldJump=true end
-end
-if not shouldJump then return end
-S.swordKillLastJump=now
-h.Jump=true
-end
-function skUpdateTargetJumpState(tHum)
-if not tHum then S.swordKillTargetWasJumping=false return end
-local st=tHum:GetState()
-local j=(st==Enum.HumanoidStateType.Jumping)or(st==Enum.HumanoidStateType.Freefall)
-if j and not S.swordKillTargetWasJumping then S.swordKillLastTargetJump=os.clock()end
-S.swordKillTargetWasJumping=j
-end
-function skMoveTo(pos)
-if not pos then return end
-local h=hum()
-if not h then return end
-pcall(function()h:MoveTo(pos)end)
-end
-function skTick()
-if not S.swordKillActive then return end
-local tg=S.swordKillTarget
-if not tg or not tg.Parent or not tg.Character then stopSwordKill(false)return end
-local tHum=tg.Character:FindFirstChildOfClass("Humanoid")
-if not tHum or tHum.Health<=0 then
-if not S.swordKillKilledChatted then
-S.swordKillKilledChatted=true
-sendChat(pick({"got em","gg","target down","hes done","easy","next"}))
-task.delay(SK_CFG.KILL_RETURN_DELAY,function()skUnequipAfterKill()stopSwordKill(false)teleportToHost()end)
-end
-return
-end
-skUpdateTargetJumpState(tHum)
-local myHRP=hrp()local myHum=hum()local tHRP=getPlayerHRP(tg)
-if not myHRP or not myHum or not tHRP then return end
-if myHum.Health<=0 then return end
-if S.swordKillReengageAt>0 and os.clock()<S.swordKillReengageAt then return end
-S.swordKillReengageAt=0
-local now=os.clock()
-if now<S.swordKillReactionEnd then return end
-S.swordKillReactionEnd=now+(SK_CFG.REACTION_MIN+math.random()*(SK_CFG.REACTION_MAX-SK_CFG.REACTION_MIN))
-if S.swordKillLastHealth and now-S.swordKillLastHealthTime<SK_CFG.DMG_WINDOW then
-local dmg=S.swordKillLastHealth-myHum.Health
-if dmg>=SK_CFG.DMG_THRESHOLD then
-S.swordKillRetreating=true
-S.swordKillRetreatUntil=now+1.0
-end
-end
-S.swordKillLastHealth=myHum.Health
-S.swordKillLastHealthTime=now
-if now>S.swordKillRetreatUntil then S.swordKillRetreating=false end
-setRotationOwner("FaceTarget")
-local tPos=skPredictTarget(tHRP)
-local myPos=myHRP.Position
-local dist=(myPos-tPos).Magnitude
-local toTarget=tPos-myPos
-toTarget=Vector3.new(toTarget.X,0,toTarget.Z)
-if toTarget.Magnitude>0.1 then toTarget=toTarget.Unit else toTarget=Vector3.new(0,0,-1)end
-local grounded=myHum.FloorMaterial~=Enum.Material.Air
-local behind=skIsBehind(myHRP,tHRP)
-local enemySword=skGetEnemySword(tg.Character)
-local swordClose=false
-if enemySword then
-local sd=(enemySword.Position-myPos).Magnitude
-if sd<SK_CFG.HITBOX_DODGE_DIST then swordClose=true end
-end
-local tLook=tHRP.CFrame.LookVector
-tLook=Vector3.new(tLook.X,0,tLook.Z)
-if tLook.Magnitude<0.1 then tLook=Vector3.new(0,0,-1)else tLook=tLook.Unit end
-local playerLeft=Vector3.new(tLook.Z,0,-tLook.X)
-local botToPlayer=myPos-tHRP.Position
-botToPlayer=Vector3.new(botToPlayer.X,0,botToPlayer.Z)
-local onUnguardedSide=botToPlayer.Magnitude>0.1 and botToPlayer.Unit:Dot(playerLeft)>0.3
-local moveDir=nil
-if S.swordKillRetreating then
-local back=-toTarget
-local side=playerLeft*SK_CFG.FLANK_SIDE_BIAS
-moveDir=(back*0.85+side*0.4).Unit
-elseif swordClose and dist<11 then
-moveDir=(playerLeft*0.9+toTarget*0.2).Unit
-elseif dist>SK_CFG.CHASE_DIST then
-local targetOffset=tPos+playerLeft*4
-local chaseDir=targetOffset-myPos
-chaseDir=Vector3.new(chaseDir.X,0,chaseDir.Z)
-if chaseDir.Magnitude>0.1 then moveDir=chaseDir.Unit else moveDir=toTarget end
-elseif dist>SK_CFG.JUMP_DIST then
-moveDir=(playerLeft*0.5+toTarget*0.5).Unit
-elseif dist>SK_CFG.BACKPEDAL_DIST then
-moveDir=(playerLeft*SK_CFG.CIRCLE_BIAS+toTarget*0.2).Unit
-elseif dist>SK_CFG.FLANK_DIST then
-if not onUnguardedSide then
-moveDir=(playerLeft*0.9+toTarget*0.1).Unit
-else
-moveDir=toTarget
-end
-elseif behind then
-moveDir=toTarget
-elseif not onUnguardedSide then
-moveDir=(playerLeft*0.95+toTarget*0.05).Unit
-else
-local side=playerLeft*0.4
-moveDir=(toTarget*0.7+side).Unit
-end
-if moveDir then
-local dest=myPos+moveDir*SK_CFG.MOVE_AHEAD
-if hasFloorBelow(dest) then skMoveTo(dest) else skMoveTo(tPos) end
-end
-if not S.swordKillRetreating and dist<SK_CFG.CHASE_DIST then skSwing() end
-if grounded then skDoJump() end
-end
-startSwordKill=function(name)
-if not name or name==""then sendChat("usage: !swordkill <player>")return end
-local t=resolveTarget(name)
-if t=="NORANDOM"then sendChat(pick(R_.norandom))return end
-if not t then sendChat(pick(R_.notfound))return end
-if t==pl then sendChat(pick(R_.self))return end
-stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)
-S.swordKillTarget=t S.swordKillActive=true S.mode="SwordKill"
-S.swordKillLastSwing=0 S.swordKillLastStrafe=0 S.swordKillLastJump=0
-S.swordKillReactionEnd=os.clock()+0.15
-S.swordKillTargetVel=Vector3.zero S.swordKillLastTargetPos=nil
-S.swordKillLastHealth=nil S.swordKillLastHealthTime=0
-S.swordKillRetreating=false S.swordKillRetreatUntil=0
-S.swordKillKilledChatted=false S.swordKillReengageAt=0
-S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil
-S.swordKillTargetWasJumping=false S.swordKillLastTargetJump=0
-skEquipSword()
-if S.swordKillThread then task.cancel(S.swordKillThread)end
-S.swordKillThread=task.spawn(function()while S.swordKillActive and ROLE=="BOT"do local ok,err=pcall(skTick)if not ok then warn("[swordkill]",err)end task.wait(SK_CFG.FIGHT_TICK)end end)
-sendChat(pick({"sword fight on","locking on","going for em","duel mode","lets dance"}).." "..t.Name)
-end
-stopSwordKill=function(announce)
-if not S.swordKillActive then return end
-S.swordKillActive=false S.swordKillTarget=nil
-if S.swordKillThread then task.cancel(S.swordKillThread)S.swordKillThread=nil end
-if S.swordKillEquippedTool then skUnequipAfterKill()end
-local h=hum()if h then pcall(function()h.WalkSpeed=BS end)end
-S.swordKillTargetWasJumping=false S.swordKillLastTargetJump=0
-if S.mode=="SwordKill"then S.mode="Follow"releaseRotation()end
-if announce then sendChat(pick({"fight off","backing off","done","chill now","stopping"}))end
-end
-function clearHide()if S.hideBP then pcall(function()S.hideBP:Destroy()end)S.hideBP=nil end if S.hideBG then pcall(function()S.hideBG:Destroy()end)S.hideBG=nil end if S.hideHB then pcall(function()S.hideHB:Disconnect()end)S.hideHB=nil end local m=hrp()if m then for _,c in ipairs(m:GetChildren())do if c:IsA("BodyGyro")or c:IsA("BodyAngularVelocity")or c:IsA("BodyPosition")or c:IsA("BodyVelocity")or c:IsA("AlignOrientation")or c:IsA("AlignPosition")or c:IsA("LinearVelocity")then pcall(function()c:Destroy()end)end end end end
-function doHide(si)S.hidden=true S.frozen=true S.sitting=false stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopHover(true)S.mode="Hidden"setRotationOwner("Hidden")local m=hrp()if m then local pos=Vector3.new(math.random(-VR,VR),VY+50,math.random(-VR,VR))S.hidePos=pos pcall(function()m.CFrame=CFrame.new(pos)m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)clearHide()local b=Instance.new("BodyPosition")b.MaxForce=Vector3.new(1e7,1e7,1e7)b.Position=pos b.P=5e5 b.D=200 b.Parent=m S.hideBP=b local g=Instance.new("BodyGyro")g.MaxTorque=Vector3.new(1e7,1e7,1e7)g.P=5e5 g.D=200 g.CFrame=m.CFrame g.Parent=m S.hideBG=g local h=hum()if h then h.WalkSpeed=0 h.JumpPower=0 h.PlatformStand=true end S.hideHB=R.Heartbeat:Connect(function()if not S.hidden then return end local r=hrp()if not r then return end if(r.Position-pos).Magnitude>5 then pcall(function()r.CFrame=CFrame.new(pos)end)end if r.AssemblyLinearVelocity.Magnitude>1 then pcall(function()r.AssemblyLinearVelocity=Vector3.zero end)end end)end if not si then sendChat(pick(R_.hide))end end
-function doSpawn()S.hidden=false S.frozen=false S.sitting=false S.mode="Follow"clearHide()local h=hum()if h then h.PlatformStand=false h.WalkSpeed=BS h.JumpPower=BJ end rotationOwner="Humanoid"if h then h.AutoRotate=true end local hh,m=getHostHRP(),hrp()if hh and m then local f=hh.CFrame.LookVector*-5 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(f.X,0,f.Z))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)end S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil sendChat(pick(R_.spawn))end
-function think(fp,tp)local m=hrp()if not m then return "wait",nil end local dr=tp-fp local fl=Vector3.new(dr.X,0,dr.Z)local ds=fl.Magnitude if ds<0.1 then return "arrive",nil end fl=fl.Unit local ob,ht,inf=checkAheadObstacle(fp,fl,OL)if ob=="void_risk"or ob=="steep_drop"then return "avoid_edge",{kind=ob}end if ob=="slim"then return "avoid_slim",{hit=ht,info=inf}end if ob=="wall"then return "path",nil end local ok,rs,_,hi=visionClear(fp,tp)if not ok and rs=="void"then return "wait",nil end if not ok and rs=="slim"then return "avoid_slim",{hit=hi}end local br=math.min(PDR,ds)local bk=findPlayerInFront(fp,fl,br)if bk and bk~=getHost()and bk~=S.leadTarget then local pl2=planDodge(fp,tp)if pl2 then return "dodge",{dir=pl2,blocker=bk}end end if ok then return "walk_straight",nil end return "path",nil end
-function startMirrorJump()if S.mirrorWatcher then return end S.mirrorWatcher=task.spawn(function()local ls=false while ROLE=="BOT"do task.wait(0.07)if S.hidden or antiBan.detected or S.sitting then continue end if S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="SwordKill"or S.mode=="Rizz"then continue end local host=getHost()if not host or not host.Character then continue end local hh=host.Character:FindFirstChildOfClass("Humanoid")if not hh then continue end local st=hh:GetState()local j=(st==Enum.HumanoidStateType.Jumping)or(st==Enum.HumanoidStateType.Freefall)if j and not ls then if os.clock()-S.lastHostJumpTime>MJC then S.lastHostJumpTime=os.clock()S.mirrorJumpTime=os.clock()+MJD1+math.random()*(MJD2-MJD1)end end ls=j end end)end
-function startCameraMicro()if S.microCamActive then return end S.microCamActive=true S.microCamThread=task.spawn(function()while ROLE=="BOT"and S.microCamActive do task.wait(MCW1+math.random()*(MCW2-MCW1))if S.hidden or antiBan.detected or S.sitting then continue end if S.mode=="SwordKill"or S.mode=="Rizz"then continue end if rotationOwner=="Spin"or rotationOwner=="Orbit"or rotationOwner=="Fling"then continue end local cam=W.CurrentCamera if not cam then continue end local sg=math.random()<0.5 and-1 or 1 local an=math.rad(MCA1+math.random()*(MCA2-MCA1))*sg local sc=cam.CFrame local t1=T:Create(cam,TweenInfo.new(0.10,Enum.EasingStyle.Linear),{CFrame=sc*CFrame.Angles(0,an,0)})t1:Play()t1.Completed:Wait()task.wait(0.10+math.random()*0.15)T:Create(cam,TweenInfo.new(0.14,Enum.EasingStyle.Linear),{CFrame=sc}):Play()end end)end
-function computeFollowPoint(hp,hc,bp2)local tb=bp2-hp local fl=Vector3.new(tb.X,0,tb.Z)local mg=fl.Magnitude local dr if mg<FCB then local hv=hc.LookVector dr=Vector3.new(-hv.X,0,-hv.Z)if dr.Magnitude<0.01 then dr=Vector3.new(0,0,-1)end dr=dr.Unit else dr=fl.Unit end return hp+dr*FD end
-function botTick()if antiBan.detected then return end if S.hidden then if S.hidePos then local m=hrp()if m and(m.Position-S.hidePos).Magnitude>10 then pcall(function()m.CFrame=CFrame.new(S.hidePos)end)end end return end if S.sitting then local h0=hum()if not h0 or not h0.Sit then S.sitting=false else local m0=hrp()if m0 then pcall(function()m0.AssemblyLinearVelocity=Vector3.new(m0.AssemblyLinearVelocity.X*0.3,m0.AssemblyLinearVelocity.Y,m0.AssemblyLinearVelocity.Z*0.3)end)end return end end if S.mirrorJumpTime>0 and os.clock()>=S.mirrorJumpTime then if S.mode~="Bam"and S.mode~="Annoy"and S.mode~="Fling"and S.mode~="SwordKill"and S.mode~="Rizz"then local h=hum()if h and h.FloorMaterial~=Enum.Material.Air then h.Jump=true end end S.mirrorJumpTime=0 end if S.mode=="Spin"or S.dancing then local h2=hum()if h2 then local m2=hrp()if m2 then h2:MoveTo(m2.Position)end end checkPush()return end if S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="SwordKill"or S.mode=="Rizz"then return end if S.hoverActive then checkPush()return end if S.mode~="Follow"and S.mode~="Lead"then return end local h,hh,m=hum(),getHostHRP(),hrp()if not h or not hh or not m then return end do local hp=hh.Position if isInVoid(hp)then if not S.hostInVoid then S.hostInVoid=true S.hostVoidSafePos=S.lastSafeHostPos or m.Position end else if S.hostInVoid then S.hostInVoid=false end S.lastSafeHostPos=hp end end if isInVoid(m.Position)then local an=S.hostVoidSafePos or S.lastSafeHostPos if an then pcall(function()m.CFrame=CFrame.new(an+Vector3.new(0,3,0))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)elseif hh then pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(0,4,0))m.AssemblyLinearVelocity=Vector3.zero end)end S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil return end checkPush()local tp if S.mode=="Lead"then if not S.leadActive or not S.leadTarget or not S.leadTarget.Parent then stopLead(false)sendChat("lost target")return end local th=getPlayerHRP(S.leadTarget)if not th then return end if isInVoid(th.Position)then tp=S.lastSafeHostPos or m.Position h:MoveTo(tp)return end tp=th.Position if(m.Position-tp).Magnitude<=LAD then sendChat(pick({"made it","here","arrived"}))stopLead(false)S.mode="Follow"return end if(hh.Position-m.Position).Magnitude>LHMD then h:MoveTo(m.Position)return end else if S.hostInVoid then tp=S.hostVoidSafePos or S.lastSafeHostPos or m.Position if(tp-m.Position).Magnitude>FD then h:MoveTo(tp)S.lastMovePos=tp else h:MoveTo(m.Position)end return end tp=computeFollowPoint(hh.Position,hh.CFrame,m.Position)end if not tp then return end local d=(tp-m.Position).Magnitude local hd=(hh.Position-m.Position).Magnitude if S.mode=="Follow"and d>ED then if os.clock()-S.tpCD>3 then S.tpCD=os.clock()local bk=hh.CFrame.LookVector*-7 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(bk.X,3,bk.Z))m.AssemblyLinearVelocity=Vector3.zero end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil end return end if not(rotationOwner=="Stranger"and os.clock()<S.strangerUntil)then if h.MoveDirection.Magnitude>0.1 then setRotationOwner("Humanoid")else if S.mode=="Follow"and hd<=LR then setRotationOwner("FaceHost")else setRotationOwner("Humanoid")end end end if d<=FSD then h:MoveTo(m.Position)S.waypoints=nil S.cachedPath=nil S.lastHostPos=nil S.lastMovePos=nil S.committedTarget=nil S.lastWaypoint=nil S.failCount=0 return end local ac,da=think(m.Position,tp)if ac=="arrive"or ac=="wait"then h:MoveTo(m.Position)S.lastMovePos=nil S.waypoints=nil S.cachedPath=nil S.committedTarget=nil return end if ac=="avoid_edge"then local bk=m.Position-tp bk=Vector3.new(bk.X,0,bk.Z)if bk.Magnitude>0.1 then bk=bk.Unit*6 local sf=m.Position+bk if hasFloorBelow(sf)then h:MoveTo(sf)S.lastMovePos=sf end end return end if ac=="avoid_slim"then local dr=tp-m.Position dr=Vector3.new(dr.X,0,dr.Z)if dr.Magnitude>0.1 then dr=dr.Unit local lf=Vector3.new(-dr.Z,0,dr.X)local rg=Vector3.new(dr.Z,0,-dr.X)local ch=hasFloorBelow(m.Position+lf*6)and lf or(hasFloorBelow(m.Position+rg*6)and rg or nil)if ch then local np=m.Position+ch*6 h:MoveTo(np)S.lastMovePos=np end end return end if ac=="dodge"then local dr=da.dir local sd if dr=="left"then sd=Vector3.new(-m.CFrame.LookVector.Z,0,m.CFrame.LookVector.X)elseif dr=="right"then sd=Vector3.new(m.CFrame.LookVector.Z,0,-m.CFrame.LookVector.X)else sd=m.CFrame.LookVector end if dr=="jump"then local bl=da.blocker and da.blocker.Character if bl then for _,p2 in ipairs(bl:GetChildren())do if p2:IsA("BasePart")then pcall(function()p2.CanCollide=false end)end end task.delay(1.2,function()if bl and bl.Parent then for _,p2 in ipairs(bl:GetChildren())do if p2:IsA("BasePart")then pcall(function()p2.CanCollide=true end)end end end end)tryJump()end else local dd=m.Position+sd*7 if hasFloorBelow(dd)then h:MoveTo(dd)end end return end if ac=="walk_straight"then if not S.committedTarget or(S.committedTarget-tp).Magnitude>2 or os.clock()>S.committedUntil then h:MoveTo(tp)S.committedTarget=tp S.committedUntil=os.clock()+1.2 end S.waypoints=nil S.cachedPath=nil S.lastMovePos=tp checkStuck()return end local ps=tostring(math.floor(tp.X)).."|"..tostring(math.floor(tp.Z))local nn=false if not S.waypoints or #S.waypoints==0 then nn=true elseif S.lastPathSig~=ps then nn=true elseif os.clock()-S.lastRepath>RI then if(S.lastHostPos and(tp-S.lastHostPos).Magnitude or 999)>3 then nn=true end end if nn and(os.clock()-S.lastPathFail)<PFC then nn=false end if nn and os.clock()-S.lastRepath>RI then S.lastRepath=os.clock()local wps=computePath(m.Position,tp)if wps and #wps>0 then local tl=0 local pv=m.Position for _,wp in ipairs(wps)do tl=tl+(wp.Position-pv).Magnitude pv=wp.Position end S.totalSteps=math.floor(tl/3.5)S.cachedPath=wps S.waypoints=wps S.lastHostPos=tp S.lastWaypoint=nil S.lastPathSig=ps else S.waypoints=nil end end if S.waypoints and #S.waypoints>0 then while S.waypoints[1]and dist2d(m.Position,S.waypoints[1].Position)<WR do table.remove(S.waypoints,1)end while #S.waypoints>2 do local wn=S.waypoints[2]local tn=wn.Position-m.Position tn=Vector3.new(tn.X,0,tn.Z)local dd=tn.Magnitude if dd<2 then table.remove(S.waypoints,1)else tn=tn.Unit local rp=mkRP(false)local ah=W:Raycast(m.Position+Vector3.new(0,2,0),tn*(dd-1.5),rp)if ah and math.abs(ah.Normal.Y)<0.4 then break end table.remove(S.waypoints,1)end end local wp=S.waypoints[1]if wp then local wd=wp.Position-m.Position wd=Vector3.new(wd.X,0,wd.Z)if wd.Magnitude>0.5 then wd=wd.Unit local pb=findPlayerInFront(m.Position,wd,6)if pb and pb~=getHost()and pb~=S.leadTarget then local pl2=planDodge(m.Position,wp.Position)if pl2=="left"or pl2=="right"then local sd=pl2=="left"and Vector3.new(-wd.Z,0,wd.X)or Vector3.new(wd.Z,0,-wd.X)h:MoveTo(m.Position+sd*6)S.lastMovePos=m.Position+sd*6 return end end end if hasFloorBelow(wp.Position)then if wp.Action==Enum.PathWaypointAction.Jump then if h.FloorMaterial~=Enum.Material.Air then h.Jump=true end end if not S.lastWaypoint or(S.lastWaypoint-wp.Position).Magnitude>0.5 then h:MoveTo(wp.Position)S.lastWaypoint=wp.Position end tryJump()else table.remove(S.waypoints,1)end end else if hasFloorBelow(tp)then h:MoveTo(tp)S.lastMovePos=tp tryJump()else h:MoveTo(m.Position)end end checkStuck()end
-startFollow=function()if S.followThread then return end startFacing()S.followThread=task.spawn(function()while ROLE=="BOT"do task.wait(AIT)local ok,er=pcall(botTick)if not ok then warn("[MyPanel] botTick error:",er)S.failCount=S.failCount+1 if S.failCount>=8 then S.failCount=0 S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.lastWaypoint=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil end else S.failCount=0 end end end)end
-stopFollow=function()if S.followThread then task.cancel(S.followThread)S.followThread=nil end end
-function startOrbit(sp)sp=tonumber(sp)or 100 sp=math.clamp(sp,1,1000)S.orbitSpeed=sp stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)if S.orbiting then return end S.orbiting=true S.mode="Orbit"setRotationOwner("Orbit")task.spawn(function()while S.orbiting and ROLE=="BOT"do if S.hidden or antiBan.detected then task.wait(0.3)continue end local hh,m,h=getHostHRP(),hrp(),hum()if not hh or not m or not h then task.wait(0.1)continue end if not S.orbitLV or S.orbitLV.Parent~=m then if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)end local at=Instance.new("Attachment")at.Parent=m S.orbitAtt=at local lv=Instance.new("LinearVelocity")lv.Attachment0=at lv.MaxForce=1e5 lv.VectorVelocity=Vector3.zero lv.Parent=m S.orbitLV=lv local ao=Instance.new("AlignOrientation")ao.Attachment0=at ao.Mode=Enum.OrientationAlignmentMode.OneAttachment ao.PrimaryAxisOnly=true ao.MaxTorque=1e5 ao.Parent=m S.orbitAO=ao end local of=m.Position-hh.Position local fl=Vector3.new(of.X,0,of.Z)if fl.Magnitude<1 then local a=math.random()*math.pi*2 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(math.cos(a)*OR,0,math.sin(a)*OR))end)task.wait(0.05)continue end local rd=fl.Unit local tn=Vector3.new(-rd.Z,0,rd.X)pcall(function()S.orbitLV.VectorVelocity=tn*(sp/8)S.orbitAO.CFrame=CFrame.lookAt(m.Position,m.Position+tn)end)task.wait(0.05)end if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)S.orbitLV=nil end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)S.orbitAO=nil end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)S.orbitAtt=nil end end)sendChat(pick(R_.orbit))end
-function restoreHost()
-    if not originalHost.name then
-        sendChat("no original host saved")
-        return
-    end
-    S.hostName = originalHost.name
-    hostFilter.name = originalHost.name
-    hostFilter.userId = originalHost.userId
-    S.lending = false
-    S.lendEnd = 0
-    S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil
-    sendChat(pick({"host time up, back to boss","host ended, back to you","done lending, im yours again","back to the boss"}))
-end
-function startLend(name, sc)
-    sc = tonumber(sc)
-    if not sc or sc <= 0 then sc = 60 end
-    if ROLE ~= "BOT" then
-        if botLogRef then pushLog(botLogRef, "host cmd only works in BOT role", C.red) end
-        return
-    end
-    if sc > 500 then
-        sc = 500
-        sendChat("max is 500s, using 500")
-    end
-    local t = getPlayer(name)
-    if not t then sendChat(pick(R_.notfound)) return end
-    if t == pl then sendChat(pick(R_.self)) return end
-    if hostFilter.userId and t.UserId == hostFilter.userId then
-        sendChat("already host rn, updating timer")
-    end
-    if not S.lending then
-        if hostFilter.userId then
-            originalHost.name = hostFilter.name
-            originalHost.userId = hostFilter.userId
-        elseif S.hostName then
-            originalHost.name = S.hostName
-            local hp = getPlayer(S.hostName)
-            if hp then originalHost.userId = hp.UserId end
-        end
-    end
-    S.lending = true
-    S.hostName = t.Name:lower()
-    hostFilter.name = t.Name:lower()
-    hostFilter.userId = t.UserId
-    S.lendEnd = os.clock() + sc
-    sendChat(pick({"listening to ","host is now ","transferring to "})..t.Name.." for "..math.floor(sc).."s")
-    if S.lendThread then task.cancel(S.lendThread) S.lendThread = nil end
-    S.lendThread = task.spawn(function()
-        local warned = false
-        while S.lending and ROLE == "BOT" do
-            task.wait(0.5)
-            local left = S.lendEnd - os.clock()
-            if left <= 0 then
-                restoreHost()
-                break
-            elseif left <= 5 and not warned then
-                warned = true
-                sendChat("5s left for "..t.Name)
-            end
-        end
-    end)
-end
-function stopLendNow()
-    if not S.lending then
-        sendChat("not lending to anyone rn")
-        return
-    end
-    if S.lendThread then task.cancel(S.lendThread) S.lendThread = nil end
-    restoreHost()
-end
-function startAfk()if ROLE~="BOT"then return end task.spawn(function()while ROLE=="BOT"do task.wait(1)local hh=getHostHRP()if not hh then S.hostLastPos=nil S.hostAfkTimer=0 continue end if S.hostLastPos then if(hh.Position-S.hostLastPos).Magnitude>0.8 then S.hostAfkTimer=0 if S.hostIsAfk then S.hostIsAfk=false end else S.hostAfkTimer=S.hostAfkTimer+1 if S.hostAfkTimer>=AT and not S.hostIsAfk then S.hostIsAfk=true end end end S.hostLastPos=hh.Position end end)end
-function bindDeath()if S.deathConn then S.deathConn:Disconnect()S.deathConn=nil end local c=pl.Character if not c then return end local h=c:FindFirstChildOfClass("Humanoid")if not h then return end S.deathConn=h.Died:Connect(function()local wasFighting=S.swordKillActive and S.swordKillTarget stopSpin()stopDance()stopLead(false)stopFling(false)stopRizz(false)if not wasFighting then stopSwordKill(false)end S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil local n=os.clock()if n-S.lastDeathTime>DRT then S.deathCount=0 S.deathSilent=false end S.lastDeathTime=n S.deathCount=S.deathCount+1 if S.deathSilent then return end if wasFighting then sendChat(pick({"im down","back in a sec","respawning","one sec","ill be back"}))elseif S.deathCount==2 then sendChat("...")elseif S.deathCount==3 then sendChat("....")elseif S.deathCount==4 then sendChat(".....")elseif S.deathCount==5 then sendChat(pick({"bro","cmon","seriously","again?","bruh"}))elseif S.deathCount==6 then sendChat(pick({"ok this is annoying","really now","dude","ugh","seriously"}))elseif S.deathCount==7 then sendChat(pick({"bro stop","cmon man","enough","why tho"}))elseif S.deathCount>=8 then sendChat(pick({"stop bro","bro stop it","ok enough","chill out man","i said stop"}))S.deathSilent=true end end)end
-handleCommand=function(cmd,args)if ROLE~="BOT"or antiBan.detected then return end
-if cmd=="hover"then startHover(false)return end
-if cmd=="unhover"or cmd=="land"then stopHover(false)return end
-if cmd=="flipcoin"then cmdFlip()return end
-if cmd=="roll"then cmdRoll(args)return end
-if cmd=="8ball"then cmd8Ball(args)return end
-if cmd=="truth"then cmdTruth()return end
-if cmd=="dare"then cmdDare()return end
-if cmd=="wouldyourather"then cmdWYR()return end
-if cmd=="randomnum"then local a,b=args:match("^(%S+)%s+(%S+)$")cmdRandomNum(a,b)return end
-if cmd=="countdown"then cmdCountdown(args)return end
-if cmd=="timer"then cmdTimer(args)return end
-if cmd=="storytime"then cmdStorytime()return end
-if cmd=="compliment"then cmdCompliment(args)return end
-if cmd=="roast"then cmdRoast(args)return end
-if cmd=="dadjoke"then cmdDadJoke()return end
-if PLACEHOLDER_CMDS[cmd]then sendChat(pick(PLACEHOLDER_REPLIES))return end
-if cmd=="say"then if args~=""then sendChat(args)end elseif cmd=="ask"then handleAIChat(args)elseif cmd=="gameinfo"then handleGameInfo(args)elseif cmd=="similar"then handleGameInfo("similar")elseif cmd=="backoff"then local n=tonumber(args)or BACKOFF_STEP FD=math.clamp(FD+n,FD_MIN,FD_MAX)sendChat("backing off, distance is now "..FD)elseif cmd=="getcloser"then local n=tonumber(args)or BACKOFF_STEP FD=math.clamp(FD-n,FD_MIN,FD_MAX)sendChat("getting closer, distance is now "..FD)elseif cmd=="recall"then stopAllModes()task.wait(0.05)teleportToHost()sendChat(pick({"omw","coming","on my way","here"}))elseif cmd=="stop"then stopAllModes()task.wait(0.05)teleportToHost()sendChat(pick(R_.stop))elseif cmd=="follow"then stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopRizz(false)S.mode="Follow"S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick({"following","on you","back on follow"}))elseif cmd=="info"then local sp2=args:find("%s")local pname,field if sp2 then pname=trim(args:sub(1,sp2-1))field=trim(args:sub(sp2+1)):lower()else pname=trim(args)field=nil end if pname==""then sendChat("usage: !info <player> [field]")else local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))else local myHrp=hrp()local pHrp=getPlayerHRP(p)local d=-1 if myHrp and pHrp then d=math.floor((myHrp.Position-pHrp.Position).Magnitude)end local accAge=p.AccountAge or 0 local joined=os.time()-(accAge*86400)local isFriend=false pcall(function()isFriend=p:IsFriendsWith(pl.UserId)end)local ph=0 local pmax=100 if p.Character then local phh=p.Character:FindFirstChildOfClass("Humanoid")if phh then ph=math.floor(phh.Health)pmax=math.floor(phh.MaxHealth)end end local isHost=false if p==getHost()then isHost=true end if field=="id"then sendChat(p.Name.." id: "..p.UserId)
-elseif field=="age"or field=="joined"then sendChat(p.Name.." joined "..fmtDate(joined).." ("..fmtAge(accAge).." ago)")
-elseif field=="distance"or field=="dist"then if d>=0 then sendChat(p.Name.." is "..d.." studs away")else sendChat("no position for "..p.Name)end
-elseif field=="hp"or field=="health"then sendChat(p.Name.." hp: "..ph.."/"..pmax)
-elseif field=="friend"then sendChat(p.Name.." friend of you: "..tostring(isFriend))
-elseif field=="display"or field=="name"then sendChat(p.Name.." display: "..p.DisplayName)
-elseif field then sendChat(pick(R_.infoerr))
-else task.spawn(function()sendChat(p.Name.." (@"..p.DisplayName..")")
-task.wait(0.7)sendChat("id: "..p.UserId)
-task.wait(0.7)sendChat("joined "..fmtDate(joined).." ("..fmtAge(accAge).." ago)")
-task.wait(0.7)if d>=0 then sendChat("distance: "..d.." studs")end
-task.wait(0.7)sendChat("hp: "..ph.."/"..pmax)
-task.wait(0.7)local extras={}if isFriend then extras[#extras+1]="friend of you"end if isHost then extras[#extras+1]="current host"end if #extras>0 then sendChat("note: "..table.concat(extras,", "))end end)end end end
-elseif cmd=="orbit"then startOrbit(args~=""and args or nil)elseif cmd=="unorbit"then stopOrbit()sendChat(pick(R_.unorbit))elseif cmd=="sit"then stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopRizz(false)S.sitting=true S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil local h=hum()if h then pcall(function()h.WalkSpeed=0 h.JumpPower=0 h.Sit=true h:ChangeState(Enum.HumanoidStateType.Seated)end)end sendChat(pick(R_.sit))elseif cmd=="stand"then S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick(R_.stand))elseif cmd=="jump"then local h=hum()if h then h.Jump=true sendChat(pick(R_.jump))end elseif cmd=="hide"then doHide(false)elseif cmd=="spawn"then doSpawn()elseif cmd=="dance"then playDance(tonumber(args)or 1)elseif cmd=="undance"then stopDance()sendChat(pick(R_.undance))elseif cmd=="spin"then startSpin(args)elseif cmd=="unspin"then stopSpin()sendChat(pick(R_.unspin))elseif cmd=="lead"then startLead(args)elseif cmd=="unlead"then stopLead(true)elseif cmd=="bam"then startBam(args)elseif cmd=="unbam"then stopBam(false)teleportToHost()sendChat(pick(R_.unbam))elseif cmd=="annoy"then startAnnoy(args)elseif cmd=="unannoy"then stopAnnoy(false)teleportToHost()sendChat(pick(R_.unannoy))elseif cmd=="fling"then startFling(args)elseif cmd=="unfling"then stopFling(false,false)teleportToHost()sendChat(pick(R_.unfling))elseif cmd=="swordkill"then startSwordKill(args)elseif cmd=="unswordkill"then stopSwordKill(true)elseif cmd=="antifling"then S.antiFling=true sendChat("antifling on")elseif cmd=="unantifling"then S.antiFling=false local c=pl.Character if c then for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then p.CanCollide=true end end end sendChat("antifling off")elseif cmd=="antitoolkill"then S.antiToolKill=true sendChat("antitoolkill on")elseif cmd=="unantitoolkill"then S.antiToolKill=false sendChat("antitoolkill off")elseif cmd=="rizz"then startRizz(args)elseif cmd=="unrizz"then stopRizz(true)elseif cmd=="math"then handleMath(args)elseif cmd=="whoishost"then local hh=getHost()if S.lending then sendChat("host is "..(hh and hh.Name or "?").." (temp, "..math.max(0,math.floor(S.lendEnd-os.clock())).."s left)")else sendChat("host is "..(hh and hh.Name or "none"))end
-elseif cmd=="gender"then
-    local sp2=args:find("%s")
-    if not sp2 then sendChat("usage: !gender <player> <m/f/they>")return end
-    local pname=trim(args:sub(1,sp2-1))
-    local g=trim(args:sub(sp2+1)):lower()
-    if g~="m" and g~="f" and g~="they" then sendChat("gender must be m, f, or they")return end
-    local p=getPlayer(pname)
-    if not p then sendChat(pick(R_.notfound))return end
-    sendChat("noted for "..p.Name)
-elseif cmd=="genderclear"then
-    local p=getPlayer(args)
-    if not p then sendChat(pick(R_.notfound))return end
-    sendChat("cleared for "..p.Name)
-elseif cmd=="cmds"then sendSeq({"here ya go","!ask <msg> - talk to XcH","!ask <do something> - XcH will do it","!ask whats the name of this game","!gameinfo - what game is this","!gameinfo full | tips | controls | wiki","!similar - games like this one","!info <player> [id/age/joined/distance/hp/friend]","!stop | !recall | !follow","!hover | !unhover","!backoff <n> | !getcloser <n>","!orbit <1-1000> | !unorbit","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!annoy <player> | !unannoy","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling","!antitoolkill | !unantitoolkill","!rizz <player> | !unrizz","!dance 1-4 | !undance","!spin 1-100 | !unspin","!math <num><op><num>","!say <text>","!flipcoin | !roll <n> | !8ball <q>","!truth | !dare | !wouldyourather","!randomnum <a> <b> | !countdown <n> | !timer <s>","!storytime | !compliment <player> | !roast <player> | !dadjoke","!host <player> <seconds, max 500> (creator only)","!stophost (creator only)","!whoishost","!cmds"},0.9)
-else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end
-function processMessage(uid,text)if not text or text==""then return end 
-    if uid~=pl.UserId and text:sub(1,1)~=commandPrefix then
-        local speaker=P:GetPlayerByUserId(uid)
-        local speakerName=speaker and speaker.Name or "Unknown"
-        table.insert(S.chatLog, speakerName..": "..text)
-        if #S.chatLog > 15 then table.remove(S.chatLog, 1) end
-    end
-    if ROLE~="BOT"and ROLE~="HOST"then return end 
-    if ROLE=="BOT"and uid~=pl.UserId and not isFromHost(uid)then handleStrangerMsg(uid,text)return end 
-    if not isFromHost(uid)then return end 
-    local lowText=text:lower()if lowText:sub(1,4)=="!ask"then local prompt=trim(text:sub(5))if prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return end if isDuplicateMessage(uid,text)then return end task.spawn(function()handleAIChat(prompt)end)return end if ROLE~="BOT"then return end if text:sub(1,#commandPrefix)~=commandPrefix then return end if isDuplicateMessage(uid,text)then return end local body=trim(text:sub(#commandPrefix+1))if body==""then return end local sp=body:find("%s")local cmd,args if sp then cmd=body:sub(1,sp-1):lower()args=trim(body:sub(sp+1))else cmd=body:lower()args=""end
-    if cmd=="host"or cmd=="stophost"then
-        if not isCreatorUser(uid)then
-            task.spawn(function()sendChat(pick({"only my boss can do that","nah not for you","creator only","youre not the boss","denied"}))end)
-            return
-        end
-        if cmd=="host"then
-            local sp2=args:find("%s")
-            if not sp2 then task.spawn(function()sendChat("usage: !host <player> <seconds>")end) return end
-            local pname=trim(args:sub(1,sp2-1))
-            local secs=tonumber(trim(args:sub(sp2+1)))
-            if not secs or secs<=0 then task.spawn(function()sendChat("need a valid seconds number")end) return end
-            task.spawn(function()startLend(pname,secs)end)
-        else
-            task.spawn(function()stopLendNow()end)
-        end
-        return
-    end
-    task.spawn(function()local ok,err=pcall(handleCommand,cmd,args)if not ok then warn("[MyPanel] cmd error:",err)if botLogRef then pushLog(botLogRef,"err: "..tostring(err):sub(1,60),C.red)end end end)end
-pcall(function()if TC and TC.ChatVersion==Enum.ChatVersion.TextChatService then TC.MessageReceived:Connect(function(m)local s=m.TextSource if not s then return end processMessage(s.UserId,m.Text)end)end end)
-local function hookChatted(p)p.Chatted:Connect(function(t)processMessage(p.UserId,t)end)end
-for _,p in ipairs(P:GetPlayers())do hookChatted(p)end
-P.PlayerAdded:Connect(hookChatted)
-task.spawn(function()local ok,ch=pcall(function()return TC:WaitForChild("TextChannels",8)end)if not ok or not ch then return end local g=ch:FindFirstChild("RBXGeneral")or ch:FindFirstChild("RBGGeneral")or ch:FindFirstChildWhichIsA("TextChannel")if not g then return end pcall(function()g.MessageReceived:Connect(function(m)local s=m.TextSource if not s then return end processMessage(s.UserId,m.Text)end)end)end)
-local gui=Instance.new("ScreenGui")gui.Name=GN gui.ResetOnSpawn=false gui.DisplayOrder=999 gui.IgnoreGuiInset=true gui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling gui.Enabled=true local parented=false pcall(function()gui.Parent=pg parented=true end)if not parented then pcall(function()gui.Parent=game:GetService("CoreGui")end)end
-local frame=Instance.new("Frame")frame.Name="MainPanel"frame.Size=UDim2.new(0,520,0,320)frame.Position=UDim2.new(0,12,0.5,-160)frame.BackgroundColor3=C.panel frame.BorderSizePixel=0 frame.ClipsDescendants=false frame.Parent=gui corner(frame,12)stroke(frame,C.border,1,0)
-SHOWN=UDim2.new(0,12,0.5,-160)HIDDEN=UDim2.new(0,-600,0.5,-160)
-function show()tw(frame,0.4,{Position=SHOWN},Enum.EasingStyle.Quint)end
-function hide()tw(frame,0.4,{Position=HIDDEN},Enum.EasingStyle.Quint,Enum.EasingDirection.In)end
-local topBar=Instance.new("Frame")topBar.Name="TopBar"topBar.Size=UDim2.new(1,0,0,40)topBar.Position=UDim2.new(0,0,0,0)topBar.BackgroundColor3=C.panelTop topBar.BorderSizePixel=0 topBar.Parent=frame
-local topBarStroke=Instance.new("UIStroke")topBarStroke.Color=C.border topBarStroke.Thickness=1 topBarStroke.Transparency=0.4 topBarStroke.ApplyStrokeMode=Enum.ApplyStrokeMode.Border topBarStroke.Parent=topBar
-local titleLbl=Instance.new("TextLabel")titleLbl.Size=UDim2.new(0,200,1,0)titleLbl.Position=UDim2.new(0,16,0,0)titleLbl.BackgroundTransparency=1 titleLbl.Font=Enum.Font.GothamBold titleLbl.Text="XcH"titleLbl.TextColor3=C.text titleLbl.TextSize=15 titleLbl.TextXAlignment=Enum.TextXAlignment.Left titleLbl.Parent=topBar
-local timeLbl=Instance.new("TextLabel")timeLbl.Size=UDim2.new(0,220,1,0)timeLbl.Position=UDim2.new(1,-236,0,0)timeLbl.BackgroundTransparency=1 timeLbl.Font=Enum.Font.Code timeLbl.Text="12:00:00 AM PHT"timeLbl.TextColor3=C.subText timeLbl.TextSize=11 timeLbl.TextXAlignment=Enum.TextXAlignment.Right timeLbl.Parent=topBar
-function phTime()local t=os.date("!*t",os.time()+PH)local p=t.hour>=12 and"PM"or"AM"local dh=t.hour%12 if dh==0 then dh=12 end return string.format("%02d:%02d:%02d %s PHT",dh,t.min,t.sec,p)end
-task.spawn(function()while timeLbl and timeLbl.Parent do timeLbl.Text=phTime()task.wait(1)end end)
-local sidebar=Instance.new("Frame")sidebar.Name="Sidebar"sidebar.Size=UDim2.new(0,100,1,-40)sidebar.Position=UDim2.new(0,0,0,40)sidebar.BackgroundColor3=C.sidebar sidebar.BorderSizePixel=0 sidebar.ClipsDescendants=true sidebar.Parent=frame
-local sideStroke=Instance.new("UIStroke")sideStroke.Color=C.border sideStroke.Thickness=1 sideStroke.Transparency=0.4 sideStroke.ApplyStrokeMode=Enum.ApplyStrokeMode.Border sideStroke.Parent=sidebar
-local sideLayout=Instance.new("UIListLayout")sideLayout.Padding=UDim.new(0,4)sideLayout.SortOrder=Enum.SortOrder.LayoutOrder sideLayout.Parent=sidebar
-local sidePad=Instance.new("UIPadding")sidePad.PaddingTop=UDim.new(0,8)sidePad.PaddingLeft=UDim.new(0,6)sidePad.PaddingRight=UDim.new(0,6)sidePad.Parent=sidebar
-local contentArea=Instance.new("Frame")contentArea.Name="ContentArea"contentArea.Size=UDim2.new(1,-100,1,-40)contentArea.Position=UDim2.new(0,100,0,40)contentArea.BackgroundColor3=C.panel contentArea.BorderSizePixel=0 contentArea.ClipsDescendants=true contentArea.Parent=frame
-function newPage()local p=Instance.new("Frame")p.Size=UDim2.new(1,0,1,0)p.Position=UDim2.new(0,0,0,0)p.BackgroundTransparency=1 p.Visible=false p.Parent=contentArea return p end
-local logsPage=newPage()local logsPad=Instance.new("UIPadding")logsPad.PaddingTop=UDim.new(0,10)logsPad.PaddingLeft=UDim.new(0,10)logsPad.PaddingRight=UDim.new(0,10)logsPad.PaddingBottom=UDim.new(0,10)logsPad.Parent=logsPage
-local pfxLbl=Instance.new("TextLabel")pfxLbl.Size=UDim2.new(0,110,0,14)pfxLbl.Position=UDim2.new(0,0,0,0)pfxLbl.BackgroundTransparency=1 pfxLbl.Font=Enum.Font.GothamBold pfxLbl.Text="COMMAND PREFIX"pfxLbl.TextColor3=C.subText pfxLbl.TextSize=9 pfxLbl.TextXAlignment=Enum.TextXAlignment.Left pfxLbl.Parent=logsPage
-local pfxBox=Instance.new("TextBox")pfxBox.Size=UDim2.new(0,42,0,26)pfxBox.Position=UDim2.new(0,0,0,18)pfxBox.BackgroundColor3=C.track pfxBox.BorderSizePixel=0 pfxBox.Font=Enum.Font.GothamBold pfxBox.Text=commandPrefix pfxBox.TextColor3=C.text pfxBox.TextSize=13 pfxBox.ClearTextOnFocus=false pfxBox.Parent=logsPage corner(pfxBox,6)stroke(pfxBox,C.border,1,0.2)
-local pfxHint=Instance.new("TextLabel")pfxHint.Size=UDim2.new(1,-50,0,26)pfxHint.Position=UDim2.new(0,50,0,18)pfxHint.BackgroundTransparency=1 pfxHint.Font=Enum.Font.Gotham pfxHint.Text="type: "..commandPrefix.."cmds"pfxHint.TextColor3=C.subText pfxHint.TextSize=9 pfxHint.TextXAlignment=Enum.TextXAlignment.Left pfxHint.TextYAlignment=Enum.TextYAlignment.Center pfxHint.Parent=logsPage
-local logBox=Instance.new("Frame")logBox.Size=UDim2.new(1,0,1,-56)logBox.Position=UDim2.new(0,0,0,52)logBox.BackgroundColor3=C.track logBox.BorderSizePixel=0 logBox.ClipsDescendants=true logBox.Parent=logsPage corner(logBox,8)stroke(logBox,C.border,1,0.3)
-local logEmpty=Instance.new("TextLabel")logEmpty.Size=UDim2.new(1,-16,1,-12)logEmpty.Position=UDim2.new(0,8,0,6)logEmpty.BackgroundTransparency=1 logEmpty.Font=Enum.Font.Gotham logEmpty.Text="no messages yet"logEmpty.TextColor3=C.subText logEmpty.TextSize=10 logEmpty.TextXAlignment=Enum.TextXAlignment.Left logEmpty.TextYAlignment=Enum.TextYAlignment.Top logEmpty.Parent=logBox
-local logHolder=Instance.new("ScrollingFrame")logHolder.Size=UDim2.new(1,-8,1,-6)logHolder.Position=UDim2.new(0,4,0,3)logHolder.BackgroundTransparency=1 logHolder.BorderSizePixel=0 logHolder.CanvasSize=UDim2.new(0,0,0,0)logHolder.AutomaticCanvasSize=Enum.AutomaticSize.Y logHolder.ScrollBarThickness=4 logHolder.ScrollBarImageColor3=C.border logHolder.ScrollingDirection=Enum.ScrollingDirection.Y logHolder.Parent=logBox
-local lbl=Instance.new("UIListLayout")lbl.SortOrder=Enum.SortOrder.LayoutOrder lbl.Padding=UDim.new(0,2)lbl.Parent=logHolder
-hostLogRef={holder=logHolder,empty=logEmpty}botLogRef=hostLogRef flushBotLogBuffer()
-pfxBox.FocusLost:Connect(function()local np=trim(pfxBox.Text)if np==""then np="!"else np=np:sub(1,1)end commandPrefix=np pfxBox.Text=commandPrefix pfxHint.Text="type: "..commandPrefix.."cmds"end)
-local cmdsPage=newPage()local cmdsPad=Instance.new("UIPadding")cmdsPad.PaddingTop=UDim.new(0,10)cmdsPad.PaddingLeft=UDim.new(0,10)cmdsPad.PaddingRight=UDim.new(0,10)cmdsPad.PaddingBottom=UDim.new(0,10)cmdsPad.Parent=cmdsPage
-local cmdsBox=Instance.new("Frame")cmdsBox.Size=UDim2.new(1,0,1,0)cmdsBox.BackgroundColor3=C.track cmdsBox.BorderSizePixel=0 cmdsBox.ClipsDescendants=true cmdsBox.Parent=cmdsPage corner(cmdsBox,8)stroke(cmdsBox,C.border,1,0.3)
-local cmdScroll=Instance.new("ScrollingFrame")cmdScroll.Size=UDim2.new(1,-8,1,-6)cmdScroll.Position=UDim2.new(0,4,0,3)cmdScroll.BackgroundTransparency=1 cmdScroll.BorderSizePixel=0 cmdScroll.CanvasSize=UDim2.new(0,0,0,0)cmdScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y cmdScroll.ScrollBarThickness=4 cmdScroll.ScrollBarImageColor3=C.border cmdScroll.Parent=cmdsBox
-local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enum.SortOrder.LayoutOrder cml.Parent=cmdScroll
-local CMDS={
-{"── AI ──",true},{"!ask <msg> - talk to XcH",false},{"!ask <do something> - XcH will do it",false},{"!ask whats the name of this game",false},{"!gameinfo - what game is this",false},{"!gameinfo full | tips | controls | wiki",false},{"!similar - games like this one",false},{"!info <player> [field]",false},
-{"── MOVEMENT ──",true},{"!hover - float in Touhou style",false},{"!unhover - land back down",false},
-{"── CORE ──",true},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!orbit <1-1000> | !unorbit",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"!hide | !spawn",false},{"!bam <player> | !unbam",false},{"!annoy <player> | !unannoy",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"!rizz <player> | !unrizz",false},{"!dance 1-4 | !undance",false},{"!spin 1-100 | !unspin",false},{"!math <num><op><num>",false},{"!say <text>",false},
-{"── FUN (AI) ──",true},{"!flipcoin",false},{"!roll <n>",false},{"!8ball <q>",false},{"!truth",false},{"!dare",false},{"!wouldyourather",false},{"!randomnum <a> <b>",false},{"!countdown <n>",false},{"!timer <s>",false},{"!storytime",false},{"!compliment <player>",false},{"!roast <player>",false},{"!dadjoke",false},
-{"── HOST ──",true},{"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}
-for i,e in ipairs(CMDS)do local l=Instance.new("TextLabel")l.Size=UDim2.new(1,0,0,e[2]and 18 or 14)l.BackgroundTransparency=1 l.Font=e[2]and Enum.Font.GothamBold or Enum.Font.Code l.Text=e[1]l.TextColor3=e[2]and C.accent or C.text l.TextSize=10 l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=i l.Parent=cmdScroll end
-local apiPage=newPage()apiPage.Name="ApiKeysPage"
-local apiPad=Instance.new("UIPadding")apiPad.PaddingTop=UDim.new(0,14)apiPad.PaddingLeft=UDim.new(0,14)apiPad.PaddingRight=UDim.new(0,14)apiPad.PaddingBottom=UDim.new(0,10)apiPad.Parent=apiPage
-local apiTitle=Instance.new("TextLabel")apiTitle.Size=UDim2.new(1,0,0,18)apiTitle.Position=UDim2.new(0,0,0,0)apiTitle.BackgroundTransparency=1 apiTitle.Font=Enum.Font.GothamBold apiTitle.Text="API KEYS"apiTitle.TextColor3=C.text apiTitle.TextSize=13 apiTitle.TextXAlignment=Enum.TextXAlignment.Left apiTitle.Parent=apiPage
-local apiSub=Instance.new("TextLabel")apiSub.Size=UDim2.new(1,0,0,16)apiSub.Position=UDim2.new(0,0,0,20)apiSub.BackgroundTransparency=1 apiSub.Font=Enum.Font.Gotham apiSub.Text="click any key below to copy it"apiSub.TextColor3=C.subText apiSub.TextSize=9 apiSub.TextXAlignment=Enum.TextXAlignment.Left apiSub.Parent=apiPage
-function copyToClipboard(txt)
-if type(setclipboard)=="function" then pcall(setclipboard,txt) return true end
-if type(toclipboard)=="function" then pcall(toclipboard,txt) return true end
-if syn and type(syn.write_clipboard)=="function" then pcall(syn.write_clipboard,txt) return true end
-if type(writeclipboard)=="function" then pcall(writeclipboard,txt) return true end
-return false
-end
-local function mkKeyRow(y,label,getKey)
-local ll=Instance.new("TextLabel")
-ll.Size=UDim2.new(1,0,0,12)
-ll.Position=UDim2.new(0,0,0,y)
-ll.BackgroundTransparency=1
-ll.Font=Enum.Font.GothamBold
-ll.Text=label
-ll.TextColor3=C.text
-ll.TextSize=9
-ll.TextXAlignment=Enum.TextXAlignment.Left
-ll.Parent=apiPage
-local btn=Instance.new("TextButton")
-btn.Size=UDim2.new(1,0,0,26)
-btn.Position=UDim2.new(0,0,0,y+14)
-btn.BackgroundColor3=C.track
-btn.BorderSizePixel=0
-btn.Font=Enum.Font.Code
-btn.Text=getKey() or "(not set)"
-btn.TextColor3=C.text
-btn.TextSize=9
-btn.TextXAlignment=Enum.TextXAlignment.Left
-btn.TextTruncate=Enum.TextTruncate.AtEnd
-btn.AutoButtonColor=false
-btn.Parent=apiPage
-corner(btn,6)
-stroke(btn,C.border,1,0.3)
-local pdd=Instance.new("UIPadding")
-pdd.PaddingLeft=UDim.new(0,10)
-pdd.PaddingRight=UDim.new(0,10)
-pdd.Parent=btn
-local fb=Instance.new("TextLabel")
-fb.Size=UDim2.new(1,0,0,10)
-fb.Position=UDim2.new(0,0,0,y+42)
-fb.BackgroundTransparency=1
-fb.Font=Enum.Font.Gotham
-fb.Text=""
-fb.TextColor3=C.green
-fb.TextSize=8
-fb.TextXAlignment=Enum.TextXAlignment.Left
-fb.Parent=apiPage
-btn.MouseEnter:Connect(function()tw(btn,0.15,{BackgroundColor3=C.buttonHover})end)
-btn.MouseLeave:Connect(function()tw(btn,0.15,{BackgroundColor3=C.track})end)
-btn.Activated:Connect(function()
-local k=getKey()
-if not k or k=="" then fb.Text="no key set"; fb.TextColor3=C.red; return end
-if copyToClipboard(k) then
-fb.Text="copied!"
-fb.TextColor3=C.green
-else
-fb.Text="clipboard unsupported"
-fb.TextColor3=C.red
-end
-task.delay(1.6,function()
-if fb and fb.Parent then fb.Text="" end
-end)
-end)
-return btn
-end
-mkKeyRow(42,"XcH Key (primary)",function() return APIKey end)
-mkKeyRow(96,"Xcode Key",function() return APIKey2 end)
-mkKeyRow(150,"XcH Backup Key",function() return APIKey3 end)
-mkKeyRow(204,"Xcode Backup Key (mom's)",function() return APIKey4 end)
-local apiInfo=Instance.new("TextLabel")
-apiInfo.Size=UDim2.new(1,0,0,20)
-apiInfo.Position=UDim2.new(0,0,0,258)
-apiInfo.BackgroundTransparency=1
-apiInfo.Font=Enum.Font.Gotham
-apiInfo.Text="XcH + Xcode auto-fallback to backups on quota."
-apiInfo.TextColor3=C.subText
-apiInfo.TextSize=8
-apiInfo.TextXAlignment=Enum.TextXAlignment.Left
-apiInfo.TextYAlignment=Enum.TextYAlignment.Top
-apiInfo.TextWrapped=true
-apiInfo.Parent=apiPage
-local pwOv=Instance.new("Frame")
-pwOv.Size=UDim2.new(1,0,1,0)
-pwOv.BackgroundColor3=C.panel
-pwOv.BorderSizePixel=0
-pwOv.ZIndex=100
-pwOv.Visible=false
-pwOv.Parent=frame
-local pwTitle=Instance.new("TextLabel")
-pwTitle.Size=UDim2.new(1,-40,0,22)
-pwTitle.Position=UDim2.new(0,20,0,70)
-pwTitle.BackgroundTransparency=1
-pwTitle.Font=Enum.Font.GothamBold
-pwTitle.Text="API KEYS LOCKED"
-pwTitle.TextColor3=C.text
-pwTitle.TextSize=14
-pwTitle.TextXAlignment=Enum.TextXAlignment.Left
-pwTitle.ZIndex=101
-pwTitle.Parent=pwOv
-local pwHint=Instance.new("TextLabel")
-pwHint.Size=UDim2.new(1,-40,0,16)
-pwHint.Position=UDim2.new(0,20,0,96)
-pwHint.BackgroundTransparency=1
-pwHint.Font=Enum.Font.Gotham
-pwHint.Text="enter password to view api keys"
-pwHint.TextColor3=C.subText
-pwHint.TextSize=10
-pwHint.TextXAlignment=Enum.TextXAlignment.Left
-pwHint.ZIndex=101
-pwHint.Parent=pwOv
-local pwBox=Instance.new("TextBox")
-pwBox.Size=UDim2.new(1,-40,0,34)
-pwBox.Position=UDim2.new(0,20,0,122)
-pwBox.BackgroundColor3=C.track
-pwBox.BorderSizePixel=0
-pwBox.Font=Enum.Font.Code
-pwBox.Text=""
-pwBox.PlaceholderText="password"
-pwBox.PlaceholderColor3=C.subText
-pwBox.TextColor3=C.text
-pwBox.TextSize=12
-pwBox.ClearTextOnFocus=false
-pwBox.TextXAlignment=Enum.TextXAlignment.Left
-pwBox.ZIndex=101
-pwBox.Parent=pwOv
-corner(pwBox,6)
-stroke(pwBox,C.border,1,0.3)
-local pwp=Instance.new("UIPadding")
-pwp.PaddingLeft=UDim.new(0,10)
-pwp.PaddingRight=UDim.new(0,10)
-pwp.Parent=pwBox
-local pwErr=Instance.new("TextLabel")
-pwErr.Size=UDim2.new(1,-40,0,16)
-pwErr.Position=UDim2.new(0,20,0,162)
-pwErr.BackgroundTransparency=1
-pwErr.Font=Enum.Font.Gotham
-pwErr.Text=""
-pwErr.TextColor3=C.red
-pwErr.TextSize=10
-pwErr.TextXAlignment=Enum.TextXAlignment.Left
-pwErr.ZIndex=101
-pwErr.Parent=pwOv
-local function mkPwBtn(txt,pos)
-local b=Instance.new("TextButton")
-b.Size=UDim2.new(0.5,-28,0,38)
-b.Position=pos
-b.BackgroundColor3=C.button
-b.BorderSizePixel=0
-b.Font=Enum.Font.GothamBold
-b.Text=txt
-b.TextColor3=C.text
-b.TextSize=13
-b.AutoButtonColor=false
-b.ZIndex=101
-b.Parent=pwOv
-corner(b,10)
-stroke(b,C.border,1,0.2)
-styleBtn(b)
-return b
-end
-local pwBack=mkPwBtn("BACK",UDim2.new(0,20,1,-60))
-local pwGo=mkPwBtn("UNLOCK",UDim2.new(0.5,8,1,-60))
-apiUnlocked=false
-local function tryUnlock()
-if pwBox.Text==API_PASSWORD then
-apiUnlocked=true
-pwOv.Visible=false
-pwErr.Text=""
-pwBox.Text=""
-slideToPage(apiPage,apiTab)
-else
-pwErr.Text="wrong password"
-pwBox.Text=""
-end
-end
-pwGo.Activated:Connect(tryUnlock)
-pwBack.Activated:Connect(function()
-pwOv.Visible=false
-pwErr.Text=""
-pwBox.Text=""
-end)
-pwBox.FocusLost:Connect(function(ep)
-if ep then tryUnlock() end
-end)
-currentPage=nil currentTabBtn=nil
-function makeTab(name,order,onClick)local b=Instance.new("TextButton")b.Size=UDim2.new(1,0,0,32)b.BackgroundColor3=C.sidebar b.BorderSizePixel=0 b.Font=Enum.Font.GothamMedium b.Text="  "..name b.TextColor3=C.text b.TextSize=11 b.TextXAlignment=Enum.TextXAlignment.Left b.AutoButtonColor=false b.LayoutOrder=order b.Parent=sidebar corner(b,6)b.MouseEnter:Connect(function()if b~=currentTabBtn then tw(b,0.15,{BackgroundColor3=C.buttonHover})end end)b.MouseLeave:Connect(function()if b~=currentTabBtn then tw(b,0.15,{BackgroundColor3=C.sidebar})end end)b.Activated:Connect(onClick)return b end
-function slideToPage(newPage,newTabBtn)if currentPage==newPage then return end local oldPage=currentPage local oldTab=currentTabBtn if oldTab then tw(oldTab,0.2,{BackgroundColor3=C.sidebar})end if newTabBtn then tw(newTabBtn,0.2,{BackgroundColor3=C.activeTab})end currentTabBtn=newTabBtn local W2=contentArea.AbsoluteSize.X if W2<=0 then W2=420 end if oldPage then tw(oldPage,0.3,{Position=UDim2.new(0,W2,0,0)},Enum.EasingStyle.Quart,Enum.EasingDirection.In)task.delay(0.3,function()if oldPage then oldPage.Visible=false end end)end newPage.Position=UDim2.new(0,W2,0,0)newPage.Visible=true task.delay(0.04,function()tw(newPage,0.38,{Position=UDim2.new(0,0,0,0)},Enum.EasingStyle.Quart,Enum.EasingDirection.Out)end)currentPage=newPage end
-logsTab=makeTab("Logs",1,function()slideToPage(logsPage,logsTab)end)
-cmdsTab=makeTab("Cmds",2,function()slideToPage(cmdsPage,cmdsTab)end)
-apiTab=makeTab("Api Keys",3,function()
-if apiUnlocked then
-slideToPage(apiPage,apiTab)
-else
-pwOv.Visible=true
-pwBox.Text=""
-pwErr.Text=""
-end
-end)
-currentPage=nil currentTabBtn=nil slideToPage(cmdsPage,cmdsTab)
-local roleOv=Instance.new("Frame")roleOv.Size=UDim2.new(1,0,1,0)roleOv.BackgroundColor3=C.panel roleOv.BorderSizePixel=0 roleOv.ZIndex=50 roleOv.Visible=true roleOv.Parent=frame
-function mkLabel(parent,txt,pos,size,font,color,tsize,align,z)local l=Instance.new("TextLabel")l.Size=size l.Position=pos l.BackgroundTransparency=1 l.Font=font l.Text=txt l.TextColor3=color l.TextSize=tsize l.TextXAlignment=align or Enum.TextXAlignment.Center l.ZIndex=z or 51 l.Parent=parent return l end
-function mkBtn(parent,txt,pos,size,z)local b=Instance.new("TextButton")b.Size=size b.Position=pos b.BackgroundColor3=C.button b.BorderSizePixel=0 b.Font=Enum.Font.GothamBold b.Text=txt b.TextColor3=C.text b.TextSize=15 b.AutoButtonColor=false b.ZIndex=z or 51 b.Parent=parent corner(b,10)stroke(b,C.border,1,0.2)styleBtn(b)return b end
-mkLabel(roleOv,"SELECT ROLE",UDim2.new(0,20,0,20),UDim2.new(1,-40,0,22),Enum.Font.GothamBold,C.text,13,Enum.TextXAlignment.Left)
-mkLabel(roleOv,"What should this account do?",UDim2.new(0,20,0,44),UDim2.new(1,-40,0,18),Enum.Font.Gotham,C.subText,10,Enum.TextXAlignment.Left)
-hostBtn=mkBtn(roleOv,"HOST",UDim2.new(0,24,0,90),UDim2.new(0.5,-32,0,90))
-mkLabel(roleOv,"Full panel + tabs",UDim2.new(0,24,0,186),UDim2.new(0.5,-32,0,16),Enum.Font.Gotham,C.subText,9)
-botBtn=mkBtn(roleOv,"BOT",UDim2.new(0.5,8,0,90),UDim2.new(0.5,-32,0,90))
-mkLabel(roleOv,"Follows host, compact",UDim2.new(0.5,8,0,186),UDim2.new(0.5,-32,0,16),Enum.Font.Gotham,C.subText,9)
-local confOv=Instance.new("Frame")confOv.Size=UDim2.new(1,0,1,0)confOv.BackgroundColor3=C.panel confOv.BorderSizePixel=0 confOv.ZIndex=55 confOv.Visible=false confOv.Parent=frame
-mkLabel(confOv,"LOCK IN AS HOST?",UDim2.new(0,20,0,80),UDim2.new(1,-40,0,24),Enum.Font.GothamBold,C.text,14,Enum.TextXAlignment.Left,56)
-mkLabel(confOv,"You get the full tabbed panel with private XcH chat.",UDim2.new(0,20,0,108),UDim2.new(1,-40,0,40),Enum.Font.Gotham,C.subText,11,Enum.TextXAlignment.Left,56).TextWrapped=true
-local cYes=mkBtn(confOv,"YES",UDim2.new(0,20,1,-60),UDim2.new(0.5,-32,0,40),56)cYes.TextSize=13
-local cNo=mkBtn(confOv,"BACK",UDim2.new(0.5,8,1,-60),UDim2.new(0.5,-32,0,40),56)cNo.TextSize=13
-local bsOv=Instance.new("Frame")bsOv.Size=UDim2.new(1,0,1,0)bsOv.BackgroundColor3=C.panel bsOv.BorderSizePixel=0 bsOv.ZIndex=55 bsOv.Visible=false bsOv.Parent=frame
-mkLabel(bsOv,"BOT SETUP",UDim2.new(0,20,0,14),UDim2.new(1,-40,0,22),Enum.Font.GothamBold,C.text,13,Enum.TextXAlignment.Left,56)
-mkLabel(bsOv,"Pick the HOST below.",UDim2.new(0,20,0,38),UDim2.new(1,-40,0,16),Enum.Font.Gotham,C.subText,10,Enum.TextXAlignment.Left,56)
-local plFrame=Instance.new("Frame")plFrame.Size=UDim2.new(1,-40,1,-142)plFrame.Position=UDim2.new(0,20,0,62)plFrame.BackgroundColor3=C.track plFrame.BorderSizePixel=0 plFrame.ClipsDescendants=true plFrame.ZIndex=56 plFrame.Parent=bsOv corner(plFrame,8)stroke(plFrame,C.border,1,0.3)
-local plScroll=Instance.new("ScrollingFrame")plScroll.Size=UDim2.new(1,-8,1,-6)plScroll.Position=UDim2.new(0,4,0,3)plScroll.BackgroundTransparency=1 plScroll.BorderSizePixel=0 plScroll.CanvasSize=UDim2.new(0,0,0,0)plScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y plScroll.ScrollBarThickness=4 plScroll.ScrollBarImageColor3=C.border plScroll.ZIndex=56 plScroll.Parent=plFrame
-local plLay=Instance.new("UIListLayout")plLay.Padding=UDim.new(0,3)plLay.SortOrder=Enum.SortOrder.LayoutOrder plLay.Parent=plScroll
-selectedHost=nil
-local bsErr=mkLabel(bsOv,"",UDim2.new(0,20,1,-70),UDim2.new(1,-40,0,16),Enum.Font.GothamMedium,C.red,10,Enum.TextXAlignment.Left,56)bsErr.TextTransparency=1
-local bsBack=mkBtn(bsOv,"BACK",UDim2.new(0,20,1,-52),UDim2.new(0.5,-32,0,38),56)bsBack.TextSize=13
-local bsLock=mkBtn(bsOv,"LOCK IN",UDim2.new(0.5,8,1,-52),UDim2.new(0.5,-32,0,38),56)bsLock.TextSize=13
-function refreshPlayers()for _,c in ipairs(plScroll:GetChildren())do if c:IsA("TextButton")then c:Destroy()end end selectedHost=nil local n=0 for _,p in ipairs(P:GetPlayers())do if p==pl then continue end n=n+1 local isOwner=(p.Name:lower()==ON)local baseColor=isOwner and Color3.fromRGB(215,245,220)or C.button local hoverColor=isOwner and Color3.fromRGB(200,240,210)or C.buttonHover local b=Instance.new("TextButton")b.Size=UDim2.new(1,0,0,28)b.BackgroundColor3=baseColor b.BorderSizePixel=0 b.Font=Enum.Font.GothamMedium b.Text="  "..p.Name.."  (@"..p.DisplayName..")"b.TextColor3=isOwner and C.green or C.text b.TextSize=10 b.TextXAlignment=Enum.TextXAlignment.Left b.AutoButtonColor=false b.LayoutOrder=n b.ZIndex=57 b:SetAttribute("isOwnerRow",isOwner)b.Parent=plScroll corner(b,6)local sl2=stroke(b,isOwner and C.green or C.border,1,isOwner and 0.2 or 0.3)b.MouseEnter:Connect(function()if selectedHost~=p.Name then tw(b,0.15,{BackgroundColor3=hoverColor})end end)b.MouseLeave:Connect(function()if selectedHost~=p.Name then tw(b,0.15,{BackgroundColor3=baseColor})end end)b.Activated:Connect(function()for _,c2 in ipairs(plScroll:GetChildren())do if c2:IsA("TextButton")then local c2Owner=c2:GetAttribute("isOwnerRow")c2.BackgroundColor3=c2Owner and Color3.fromRGB(215,245,220)or C.button local s=c2:FindFirstChildOfClass("UIStroke")if s then s.Color=c2Owner and C.green or C.border s.Transparency=c2Owner and 0.2 or 0.3 end end end selectedHost=p.Name b.BackgroundColor3=C.activeTab sl2.Color=C.accent sl2.Transparency=0 bsErr.TextTransparency=1 bsErr.Text=""end)end if n==0 then mkLabel(plScroll,"no other players",UDim2.new(0,8,0,0),UDim2.new(1,-16,0,30),Enum.Font.Gotham,C.subText,10,Enum.TextXAlignment.Left,57)end end
-function lockRole(role,hostName)ROLE=role roleOv.Visible=false confOv.Visible=false bsOv.Visible=false if role=="HOST"then hostFilter.userId=pl.UserId hostFilter.name=pl.Name:lower()frame.Size=UDim2.new(0,520,0,320)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true logsTab.Visible=false slideToPage(cmdsPage,cmdsTab)show()elseif role=="BOT"then frame.Size=UDim2.new(0,380,0,260)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true cmdsTab.Visible=false apiTab.Visible=false slideToPage(logsPage,logsTab)titleLbl.Text=AN.." (bot)"sendChat(pick(R_.startup))hostFilter.name=hostName:lower()S.hostName=hostName:lower()originalHost.name=hostName:lower()for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==hostName:lower()then hostFilter.userId=p.UserId originalHost.userId=p.UserId break end end if hostName:lower()==ON or pl.DisplayName:lower()==ON or pl.Name:lower()=="xcv1" then isOwnerHost=true task.wait(1)sendChat(pick({"hey boss","yo boss","sup boss","welcome back boss","good to see you boss"}))end applyFixedSpeed()startFacing()startFollow()bindDeath()startAfk()startMirrorJump()startCameraMicro()task.spawn(function()task.wait(2.0)if ROLE=="BOT"then startHover(true)end end)end end
-hostBtn.Activated:Connect(function()roleOv.Visible=false confOv.Visible=true end)
-botBtn.Activated:Connect(function()bsErr.Text=""bsErr.TextTransparency=1 roleOv.Visible=false bsOv.Visible=true refreshPlayers()end)
-cNo.Activated:Connect(function()confOv.Visible=false roleOv.Visible=true end)
-bsBack.Activated:Connect(function()bsOv.Visible=false roleOv.Visible=true end)
-cYes.Activated:Connect(function()lockRole("HOST")end)
-bsLock.Activated:Connect(function()if not selectedHost then bsErr.Text="Please select a player from the list."bsErr.TextTransparency=0 return end lockRole("BOT",selectedHost)end)
-local storage=Instance.new("Folder")storage.Name=SN storage.Parent=pg
-local toolTemplate=Instance.new("Tool")toolTemplate.Name=TN toolTemplate.ToolTip="InterDimensional Panel By XCDevs"toolTemplate.RequiresHandle=false toolTemplate.CanBeDropped=false toolTemplate.Parent=storage
-local bound=setmetatable({},{__mode="k"})
-function findLive()local b=bp()if b then local t=b:FindFirstChild(TN)if t and t:IsA("Tool")then return t end end local c=pl.Character if c then local t=c:FindFirstChild(TN)if t and t:IsA("Tool")then return t end end return nil end
-function bindTool(t)if not t or not t:IsA("Tool")or bound[t]then return end bound[t]=true t.Equipped:Connect(function()if ROLE=="HOST"or ROLE=="BOT"then show()end end)t.Unequipped:Connect(function()if ROLE=="HOST"or ROLE=="BOT"then hide()end end)t.Destroying:Connect(function()bound[t]=nil end)end
-function removeDupes()local list={}local b=bp()if b then for _,o in ipairs(b:GetChildren())do if o:IsA("Tool")and o.Name==TN then table.insert(list,o)end end end local c=pl.Character if c then for _,o in ipairs(c:GetChildren())do if o:IsA("Tool")and o.Name==TN then table.insert(list,o)end end end for i=2,#list do list[i]:Destroy()end end
-function giveTool()local ex=findLive()if ex then bindTool(ex)return end local b=bp()if not b then return end local t=toolTemplate:Clone()t.Parent=b bindTool(t)end
-pl.CharacterAdded:Connect(function(char)local h=char:WaitForChild("Humanoid",5)if not h then return end task.wait(0.5)removeDupes()giveTool()h.UseJumpPower=true h.WalkSpeed=BS h.JumpPower=BJ rotationOwner="Humanoid"h.AutoRotate=true stopDance()stopSpin()stopLead(false)stopFling(false)stopRizz(false)S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.lastPathSig=nil S.stableFollowDir=nil if ROLE=="BOT"then bindDeath()if not S.facing then startFacing()end if S.swordKillActive and S.swordKillTarget then local tg=S.swordKillTarget S.swordKillTarget=nil S.swordKillActive=false if S.swordKillThread then task.cancel(S.swordKillThread)S.swordKillThread=nil end task.wait(0.6)if tg.Parent then startSwordKill(tg.Name)end end end end)
-task.spawn(function()task.wait(0.5)removeDupes()giveTool()local h=hum()if h then h.UseJumpPower=true h.WalkSpeed=BS h.JumpPower=BJ end end)
-gui.Enabled=true roleOv.Visible=true frame.Position=SHOWN pcall(show)
+AI_CMD_WHITELIST={spin=true,dance=true,hide=true,spawn=true,jump=true,sit=true,stand=true,orbit=true,lead=true,bam=true,annoy=true,swordkill=true,fling=true,backoff=true,getcloser=true,recall=true,follow=true,stop=true,info=true,unspin=true,unorbit=true,unbam=true,unannoy=true,unfling=true,unswordkill=true,unlead=true,undance=true,antifling=true,unantifling=true,antitoolkill=true,unantitoolkill=true,rizz=true,unrizz=true,hover=true,unhover=true}local C={panel=Color3.fromRGB(255,255,255),panelTop=Color3.fromRGB(248,248,250),section=Color3.fromRGB(252,252,254),track=Color3.fromRGB(244,244,247),button=Color3.fromRGB(240,240,244),buttonHover=Color3.fromRGB(232,232,236),buttonPressed=Color3.fromRGB(210,210,216),border=Color3.fromRGB(222,222,228),text=Color3.fromRGB(20,20,25),subText=Color3.fromRGB(120,120,130),accent=Color3.fromRGB(0,0,0),green=Color3.fromRGB(60,180,80),red=Color3.fromRGB(220
+,60,60),sidebar=Color3.fromRGB(246,246,248),activeTab=Color3.fromRGB(225,225,232),meBubble=Color3.fromRGB(232,236,244),aiBubble=Color3.fromRGB(248,248,250)}for _,n in ipairs({GN,SN})do local a=pg:FindFirstChild(n)if a then a:Destroy()end local b=pl:FindFirstChild(n)if b then b:Destroy()end end local function corner(o,r)local c=Instance.new("UICorner")c.CornerRadius=UDim.new(0,r)c.Parent=o return c end local function stroke(o,col,t,tr)local s=Instance.new("UIStroke")s.Color=col s.Thickness=t s.Transparency=tr or 0 s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border s.Parent=o return s end local function tw(o,d,p,st,dr)local a=T:Create(o,TweenInfo.new(d,st or Enum.EasingStyle.Quint,dr or Enum.EasingDirection.Out),p)a:Play()return a end local function styleBtn(b)local orig=b.BackgroundColor3 b.MouseEnter:Connect(function()tw(b,0.16,{BackgroundColor3=C.buttonHover})end)b.MouseLeave:Connect(
+function()tw(b,0.2,{BackgroundColor3=orig})end)b.MouseButton1Down:Connect(function()tw(b,0.08,{BackgroundColor3=C.buttonPressed})end)b.MouseButton1Up:Connect(function()tw(b,0.12,{BackgroundColor3=C.buttonHover})end)end local function bp()return pl:FindFirstChildOfClass("Backpack")end local function hum()local c=pl.Character return c and c:FindFirstChildOfClass("Humanoid")end local function hrp()local c=pl.Character return c and c:FindFirstChild("HumanoidRootPart")end local function trim(s)return(s:gsub("^%s+",""):gsub("%s+$",""))end local function dist2d(a,b)local d=a-b return Vector3.new(d.X,0,d.Z).Magnitude end local function pick(t)return t[math.random(1,#t)]end local function fmtAge(days)if not days then return"unknown"end local y=math.floor(days/365)local d=days-y*365 local mo=math.floor(d/30)local dd=d-mo*30 local parts={}if y>0 then parts[#parts+1]=y.."y"end if mo>0 then parts[#
+parts+1]=mo.."mo"end if dd>0 and#parts<2 then parts[#parts+1]=dd.."d"end if#parts==0 then return days.."d"end return table.concat(parts," ")end local function fmtDate(ts)if not ts then return"unknown"end return os.date("%Y-%m-%d",ts)end local R_={startup={"yo im XcH","hey! im XcH","back again, XcH here","sup, im XcH","hello! XcH here","yo yo its XcH","whats good, XcH in the house","hey hey, XcH here","wassup, XcH speaking","hello hello, XcH here","yo! im XcH btw","how you doin, XcH here","hi im XcH nice to meet ya","aye im XcH","chill im XcH","hello human, XcH here","im baaack, XcH","yooo XcH here","welcome, im XcH","XcH online","hey there, XcH here","hiya, XcH reporting in","im here, XcH btw","just dropped in, XcH","sup bro, XcH here"},orbit={"orbiting now","circling ya","going around","orbit mode on","round and round","lemme orbit","starting my laps","spinning around u",
+"yeah im circling","orbit engaged","imma go around","going for a loop","circular motion rn","cruising around ya","watch me orbit","doing the rounds","im orbiting now","orbiting like a moon","spin cycle initiated","going orbital","round trip time","orbit incoming"},unorbit={"orbit off","stopped orbiting","ok im done circling","back to normal","orbit cancelled","not spinning anymore","done with laps","off orbit","orbit disengaged","alright stopped","ok no more orbit","chill now","just standing","done going around","leaving orbit","orbit ended","not orbiting anymore","back on the ground","ok stopped spinning","orbit terminated","disengaging","done with that"},sit={"sitting down","taking a seat","chill mode","gonna sit","sittin","down i go","seat taken","sit time","im seated","yep sitting","chilling now","ok sitting","take a load off","sit back","lowkey tired","here i sit","plopping down",
+"gonna rest","sittin here now","seated","sitting rn","down for a bit"},stand={"up we go","standing up","im up","stand mode","back on my feet","ok up now","standing","getting up","up and ready","im standing","back up","off the ground","standin","ok im up","rising","vertical again","upright now","here we go","feet on floor","up","back in action","im up now"},jump={"jumping","boing","hop","up i go","yeet","leap","hop up","jump rn","boinggg","wheee","up","in the air","doing a hop","spring","leaping","ok jumping","bounce","hop hop","up up","takeoff","jumping rn","air time"},hide={"going invisible","poof gone","vanishing now","hiding","bye bye","out of sight","ghost mode","now u dont see me","disappearing","c ya","going ghost","hidden","vamoose","im out","hiding rn","invisible mode","peacing out","catch me if u can","gone","vanishing","shh im hiding","hidden now"},spawn={"im back","returned",
+"sup again","back online","im here","yo im back","hello again","respawned","here i am","back from the void","im back bro","reporting in","alive again","back to action","yo","guess whos back","im here now","made it back","back in the game","hi again","returned from nada","and im back"},dance={"dancing now","lets dance","getting down","movin","grooving","dance time","bustin moves","shakin it","party mode","yeah im dancing","cut a rug","dance dance","watch me groove","getting funky","dance floor time","wiggle wiggle","showing off moves","dancing rn","having a boogie","lets go dancing","im dancing","moves activated"},undance={"stopped dancing","dance off","chill now","no more dancing","done dancin","ok im done","standing still","enough dancing","done with moves","stopped","ok tired now","not dancing","moves off","chilling","done","dancing over","stopped the groove","no more dancing rn",
+"im done dancing","back to normal","ok stop","rest time"},spin={"spinning now","wheee","spin go brrr","round and round","lets spin","spinning fast","vroooom","spin time","yeah spinning","going for a whirl","spin cycle on","twisting","watch me spin","spin spin spin","rotating","chill spinning now","spinning rn","spin mode","im dizzy","going in circles","spin activated","spinning"},unspin={"stopped spinning","spin off","ok im done","no more spinning","stopped twirling","ok chill","spin ended","back to normal","not spinning","done with that","ok dizzy now","stopping","spin off rn","standin still","stopped spinning","chill","no spin","spin done","back to standing","ok stop spinning","spin cancelled","ending spin"},lead={"follow me","this way","come on","follow me bro","let's go","over here","come with me","follow follow","leading now","follow me to them","walkin to target","come on man",
+"lets go find em","leading the way","follow!","hey come here","im leading now","follow me rq","takin the lead","on the way","come on lets go","leading rn"},unlead={"lead off","stopped leading","done leading","ok stopped","not leading anymore","lead cancelled","back to normal","chill","ok enough leading","done with that","not leading rn","back on follow","im done","stopped","lead ended","back to you","ok got it","returning","back to base","lead done","im back","ok stopping lead"},bam={"bamming now","getting in their face","bam mode","on their case","yeah bamming","harassing them now","bam activated","in your face","right behind them","bamming target","on em now","bam time","im on em","getting close","stay on em","bamming rn","yep bamming","on their tail","bam engaged","watch this","started bamming","in their space"},unbam={"bam off","stopped bamming","leaving them","done","bam done",
+"ok stopping","back to you","bam ended","chill now","ok bam off","done bamming","leaving them alone","im back","bam cancelled","ok im back","returning","stopped","no more bam","leaving","back to base","bam done rn","finished bamming"},annoy={"annoying now","on their nerves","annoy mode","getting on their case","yeah annoying","bothering them","annoy activated","pestering them","here we go","annoying target","on their tail","annoy time","watch this","started annoying","on em","annoying rn","yep annoying","getting under skin","annoy engaged","lemme bug em","spamming them","in their biz"},unannoy={"annoy off","stopped annoying","leaving them","done annoying","ok im done","returning","annoy ended","chill now","ok annoy off","done bugging em","leaving them alone","im back","annoy cancelled","stopped bugging","back to base","ok im back","no more annoy","back to you","annoy done",
+"finished annoying","im back bro","done"},fling={"flinging now","yeeting them","fling mode","here we go","yeet activated","flinging target","target fling","fling time","watch this","started flinging","yeeting now","flinging rn","yep flinging","getting flingy","target go weee","sending em","flinging them","fling engaged","gone fling","here comes the yeet","let it rip","fling incoming"},unfling={"fling off","stopped flinging","done","fling done","chill","ok stopping","back to you","fling ended","no more flinging","returning","back to base","ok im back","fling cancelled","leaving them","ok im done","fling done rn","back on follow","stopped","fling over","enough","im back","done flinging"},notfound={"who?","dunno that name","never heard of em","cant find em","no clue who that is","idk that player","who dat?","not in server","aint see em","nope cant find","who bro","no idea","huh?",
+"not finding em","no luck","wheres that?","say what?","not sure who that is","cant spot em","who u talkin bout","never seen that name","not here"},self={"thats me lol","bruh im me","cant do it to myself","no lol","im not doing that to me","why would i","that makes no sense","im the one doing stuff bro","cmon man","nah","nope","youre joking right","lol no","cant do that","seriously?","bro","why","no way","not doing that","thats weird","look at yourself","youre a comedian"},stranger={"nah only my boss tells me what to do","not listening to you bro","lol no","youre not my boss","nice try","nope","im not your bot","wrong person lol","ask crix hes the boss","cant help you with that","youre not on the list","nuh uh","only my host can do that","denied","access denied","not for you","wrong guy bro","sorry not sorry","ha good one","yeah no"},norandom={"no one else to target bro","no valid target"
+,"im alone in here","no players to pick from","everyone left","server empty"},stop={"alright stopping","ok done","chill","stopped","back on follow","ok ok","im back","returning","done","fine","stopping now","ok ill stop","back to you","here"},infoerr={"couldnt find that field","try id/age/joined/distance","unknown field bro","huh? try id age joined or distance"},hover={"hover mode on","floating now","lifting off","ghost mode activated","drifting up","hover engaged"},unhover={"landing now","coming down","hover off","back to walking","touching grass","landed"}}ROLE=nil commandPrefix="!"hostFilter={name=nil,userId=nil}originalHost={name=nil,userId=nil}hostLogRef=nil botLogRef=nil antiBan={detected=false}rotationOwner="Humanoid"pushLog=nil botLogBuffer={}CHAT_CONVERSATION={{role="system",content=CP}}CHAT_CONVERSATION2={{role="system",content=CP2}}isOwnerHost=false local S={mode="Follow",
+orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,
+microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={},protectTarget=nil,protectUntil=0,protectStartPos=nil,protectLastMove=0,protectChatCD=0,protectCooldown=0,protectChatActive=false,protectChatQueue={},hoverActive=false,hoverPos=nil,hoverAlignPos=nil,hoverAlignOri=nil,hoverAtt=nil,hoverThread=nil,hoverTiltCur=Vector3.zero,hoverStartTime=0,hoverStartLift=0,hoverAnimSaved=nil}stopOrbit=nil stopSpin=
+nil stopDance=nil stopLead=nil stopBam=nil startBam=nil stopAnnoy=nil startAnnoy=nil stopFling=nil startFling=nil startFollow=nil stopFollow=nil sendChat=nil handleCommand=nil teleportToHost=nil handleMath=nil local PLACEHOLDER_CMDS={speed=true,jump=true,crawl=true,moonwalk=true,shake=true,freeze=true,unfreeze=true,float=true,wave=true,point=true,salute=true,lay=true,dab=true,pose=true,faint=true,stalk=true,mimic=true,mirror=true,peek=true,haunt=true,ride=true,carry=true,block=true,tease=true,troll=true,copychat=true,rap=true,quiz=true,greet=true,escort=true,afk=true,unafk=true,status=true,sleep=true}local PLACEHOLDER_REPLIES={"soon","coming soon","not ready yet","wip","still cooking","gimme a bit","soon bro"}function setRotationOwner(o)if rotationOwner==o then return end rotationOwner=o local h=hum()if not h then return end h.AutoRotate=(o=="Humanoid")end function releaseRotation()
+setRotationOwner("Humanoid")end function flashNoclip(d)d=d or SNT local c=pl.Character if not c then return end local sv={}for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then sv[p]=p.CanCollide pcall(function()p.CanCollide=false end)end end local cn=R.Stepped:Connect(function()local cc=pl.Character if not cc then return end for _,p in ipairs(cc:GetDescendants())do if p:IsA("BasePart")then pcall(function()p.CanCollide=false end)end end end)task.delay(d,function()if cn then cn:Disconnect()end for p,o in pairs(sv)do if p.Parent then pcall(function()p.CanCollide=o end)end end end)end sendChat=function(t)if not t or t==""then return end if botLogRef and botLogRef.holder and pushLog then pushLog(botLogRef,t,C.text)else table.insert(botLogBuffer,t)end if ROLE=="HOST"then return end if antiBan.detected then return end pcall(function()if TC and TC.ChatVersion==Enum.ChatVersion.
+TextChatService then local ch=TC:FindFirstChild("TextChannels")if ch then local g=ch:FindFirstChild("RBXGeneral")or ch:FindFirstChild("RBGGeneral")or ch:FindFirstChildWhichIsA("TextChannel")if g then g:SendAsync(t)return end end end local ev=RS:FindFirstChild("DefaultSystemChatEvents")if ev then local sr=ev:FindFirstChild("SayMessageRequest")if sr then sr:FireServer(t,"All")end end end)end function sendSeq(l,d)d=d or 0.8 task.spawn(function()for _,m in ipairs(l)do sendChat(m)task.wait(d)end end)end function isDuplicateMessage(uid,t)local n=os.clock()local k=tostring(uid).."|"..t if S.recentMsgs[k]and(n-S.recentMsgs[k])<DW then return true end S.recentMsgs[k]=n if math.random()<0.1 then for k,v in pairs(S.recentMsgs)do if n-v>3 then S.recentMsgs[k]=nil end end end return false end handleMath=function(e)if not e or e==""then sendChat(pick({"math: !math <a><op><b>","usage: !math 1+1",
+"bro give me numbers"}))return end local s=e:gsub("%s+",""):gsub("÷","/"):gsub("×","*"):gsub("−","-"):gsub("[xX]","*"):gsub(":","/")local a,op,b=s:match("^([%-%d%.]+)([%+%-%*/%%%^])([%-%d%.]+)$")if not a then sendChat(pick({"bad expression","thats not math","cmon try again"}))return end local x=tonumber(a)local y=tonumber(b)if not x or not y then sendChat("math error")return end local r if op=="+"then r=x+y elseif op=="-"then r=x-y elseif op=="*"then r=x*y elseif op=="/"then if y==0 then sendChat("cant divide by zero")return end r=x/y elseif op=="%"then if y==0 then sendChat("cant mod by zero")return end r=x%y elseif op=="^"then r=x^y else sendChat("unsupported op")return end local rs if r==math.floor(r)and math.abs(r)<1e15 then rs=tostring(math.floor(r))else rs=string.format("%.6f",r):gsub("0+$",""):gsub("%.$","")end sendChat(tostring(x).." "..op.." "..tostring(y).." = "..rs)end
+function aiGetRequestFunc()local r=nil if type(request)=="function"then r=request end if not r and syn and type(syn.request)=="function"then r=syn.request end if not r and http and type(http.request)=="function"then r=http.request end if not r and type(http_request)=="function"then r=http_request end if not r and fluxus and type(fluxus.request)=="function"then r=fluxus.request end if not r and krnl and type(krnl.request)=="function"then r=krnl.request end if not r and kavo and type(kavo.request)=="function"then r=kavo.request end return r end function getResetCountdown()local n=os.time()local po=-8*3600 local pn=n+po local pt=os.date("!*t",pn)local sd=pt.hour*3600+pt.min*60+pt.sec local sr=86400-sd local h=math.floor(sr/3600)local m=math.floor((sr%3600)/60)return h,m end function sendAIRequest(u,mt,us,_key)_key=_key or APIKey if not _key or _key==""then return nil,"nokey","no key"end
+local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end local tr={CHAT_CONVERSATION[1]}local hl=#CHAT_CONVERSATION-1 local si=2 if hl>MCH then si=#CHAT_CONVERSATION-MCH+1 end for i=si,#CHAT_CONVERSATION do tr[#tr+1]=CHAT_CONVERSATION[i]end tr[#tr+1]={role="user",content=u}local st=nil local co={}for _,m in ipairs(tr)do if m.role=="system"then st=(st and(st.."\n")or"")..tostring(m.content)elseif m.role=="user"then co[#co+1]={role="user",parts={{text=tostring(m.content)}}}elseif m.role=="assistant"then co[#co+1]={role="model",parts={{text=tostring(m.content)}}}end end if st and#co>0 and co[1].role=="user"then co[1].parts[1].text=st.."\n\n"..co[1].parts[1].text elseif st then table.insert(co,1,{role="user",parts={{text=st}}})end local gc={maxOutputTokens=mt or 150,temperature=us and 1.0 or 0.9}local pl_={contents=co,generationConfig=gc}if us then pl_.tools={{
+googleSearch={}}}end local ok,en=pcall(function()return H:JSONEncode(pl_)end)if not ok or not en then return nil,"json","encode failed"end local uw=BGE..AMI..":generateContent"local ok,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]="application/json",["x-goog-api-key"]=tostring(_key)},Body=en})if not ok then return nil,"http",tostring(rsp):sub(1,120)end if not rsp then return nil,"http","no response"end local rb=rsp.Body or rsp.body if rb==nil then rb=rsp end if type(rb)~="string"then local ok2,s=pcall(function()return H:JSONEncode(rb)end)rb=ok2 and s or tostring(rb)end if rb==""then local cd=rsp.StatusCode or rsp.Status or"?"return nil,"http","empty body HTTP "..tostring(cd)end local dk,data=pcall(function()return H:JSONDecode(rb)end)if not dk or not data then return nil,"json",rb:sub(1,80)end local em=nil if data.error then local m=data.error.message or data.error if type
+(m)~="string"then m=H:JSONEncode(m)end em=tostring(m)end if em then local lw=em:lower()if lw:find("quota")or lw:find("exceeded")or lw:find("rate limit")or lw:find("429")then if _key==APIKey and APIKey3 and APIKey3~=""and APIKey3~=_key then return sendAIRequest(u,mt,us,APIKey3)end return nil,"quota",em:sub(1,90)end if lw:find("high demand")or lw:find("overload")or lw:find("503")or lw:find("unavailable")or lw:find("temporarily")then return nil,"busy",em:sub(1,90)end if lw:find("not found")or lw:find("does not exist")or lw:find("404")then return nil,"invalid_model","model unavailable"end if lw:find("tool")or lw:find("google")or lw:find("grounding")then return nil,"tools_unsupported",em:sub(1,150)end return nil,"api",em:sub(1,90)end if not data.candidates or#data.candidates==0 then if data.promptFeedback and data.promptFeedback.blockReason then return nil,"blocked","blocked:"..tostring(data.
+promptFeedback.blockReason)end return nil,"nochoices","no candidates"end local cd=data.candidates[1]if not cd.content or not cd.content.parts or#cd.content.parts==0 then local fr=cd.finishReason if fr and fr~="STOP"then return nil,"blocked","finish="..tostring(fr)end return nil,"nomsg","no parts"end local tx=nil for _,p in ipairs(cd.content.parts)do if p.text and p.text~=""then tx=p.text break end end if not tx or tx==""then local fr=cd.finishReason if fr and fr~="STOP"then return nil,"blocked","finish="..tostring(fr)end return nil,"nomsg","empty text"end pcall(function()if data.usageMetadata and TU then local um=data.usageMetadata TU.prompt=(TU.prompt or 0)+(um.promptTokenCount or 0)TU.candidates=(TU.candidates or 0)+(um.candidatesTokenCount or 0)TU.total=(TU.total or 0)+(um.totalTokenCount or 0)TU.requests=(TU.requests or 0)+1 end end)return tx,nil,nil end function sendAIRequest2(u,mt,
+us,_key)_key=_key or APIKey2 if not _key or _key==""then return nil,"nokey","no key"end local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end local tr={CHAT_CONVERSATION2[1]}local hl=#CHAT_CONVERSATION2-1 local si=2 if hl>6 then si=#CHAT_CONVERSATION2-6+1 end for i=si,#CHAT_CONVERSATION2 do tr[#tr+1]=CHAT_CONVERSATION2[i]end tr[#tr+1]={role="user",content=u}local st=nil local co={}for _,m in ipairs(tr)do if m.role=="system"then st=(st and(st.."\n")or"")..tostring(m.content)elseif m.role=="user"then co[#co+1]={role="user",parts={{text=tostring(m.content)}}}elseif m.role=="assistant"then co[#co+1]={role="model",parts={{text=tostring(m.content)}}}end end if st and#co>0 and co[1].role=="user"then co[1].parts[1].text=st.."\n\n"..co[1].parts[1].text elseif st then table.insert(co,1,{role="user",parts={{text=st}}})end local pl_={contents=co,generationConfig={
+maxOutputTokens=mt or 3000,temperature=0.35}}local ok,en=pcall(function()return H:JSONEncode(pl_)end)if not ok or not en then return nil,"json","encode failed"end local uw=BGE..AMI..":generateContent"local ok,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]="application/json",["x-goog-api-key"]=tostring(_key)},Body=en})if not ok then return nil,"http",tostring(rsp):sub(1,120)end if not rsp then return nil,"http","no response"end local rb=rsp.Body or rsp.body if rb==nil then rb=rsp end if type(rb)~="string"then local ok2,s=pcall(function()return H:JSONEncode(rb)end)rb=ok2 and s or tostring(rb)end if rb==""then local cd=rsp.StatusCode or rsp.Status or"?"return nil,"http","empty body HTTP "..tostring(cd)end local dk,data=pcall(function()return H:JSONDecode(rb)end)if not dk or not data then return nil,"json",rb:sub(1,80)end local em=nil if data.error then local m=data.error.
+message or data.error if type(m)~="string"then m=H:JSONEncode(m)end em=tostring(m)end if em then local lw=em:lower()if lw:find("quota")or lw:find("exceeded")or lw:find("rate limit")or lw:find("429")then if _key==APIKey2 and APIKey4 and APIKey4~=""and APIKey4~=_key then return sendAIRequest2(u,mt,us,APIKey4)end return nil,"quota",em:sub(1,90)end if lw:find("high demand")or lw:find("overload")or lw:find("503")or lw:find("unavailable")or lw:find("temporarily")then return nil,"busy",em:sub(1,90)end if lw:find("not found")or lw:find("404")then return nil,"invalid_model","model unavailable"end return nil,"api",em:sub(1,90)end if not data.candidates or#data.candidates==0 then if data.promptFeedback and data.promptFeedback.blockReason then return nil,"blocked","blocked"end return nil,"nochoices","no candidates"end local cd=data.candidates[1]if not cd.content or not cd.content.parts or#cd.content
+.parts==0 then return nil,"nomsg","no parts"end local tx=nil for _,p in ipairs(cd.content.parts)do if p.text and p.text~=""then tx=p.text break end end if not tx or tx==""then return nil,"nomsg","empty text"end return tx,nil,nil end function aiChunkSend(t)if not t then return end t=t:gsub("%s+"," "):gsub("^%s+",""):gsub("%s+$","")if t==""then t="hm"end local MX=180 if#t<=MX then sendChat(t)return end local cs={}local w=t while#w>MX do local cut=w:sub(1,MX):find("%s[^%s]*$")if not cut then cut=MX end table.insert(cs,w:sub(1,cut))w=w:sub(cut+1):gsub("^%s+","")end if#w>0 then table.insert(cs,w)end task.spawn(function()for i,c in ipairs(cs)do sendChat(c)if i<#cs then task.wait(0.35)end end end)end function extractCodeBlock(text)if not text then return nil end local code=text:match("```lua%s*(.-)%s*```")if not code then code=text:match("```%s*(.-)%s*```")end if not code then if text:find(
+"game%.")or text:find("Instance%.new")or text:find("LocalPlayer")then code=text end end if code then code=code:gsub("^%s+",""):gsub("%s+$","")end return code end function extractAICommands(rp)if not rp or rp==""then return{},rp end local cmds={}for c in rp:gmatch("%[%[CMD%]%](.-)%[%[/CMD%]%]")do local t=trim(c)if t~=""then cmds[#cmds+1]=t end end local clean=rp:gsub("%[%[CMD%]%].-%[%[/CMD%]%]","")clean=clean:gsub("[ \t]+"," "):gsub("\n+","\n"):gsub("^%s+",""):gsub("%s+$","")return cmds,clean end function runAICommands(cmds)if#cmds==0 or ROLE~="BOT"then return end for _,c in ipairs(cmds)do local name=c:match("^(%S+)")if name then name=name:lower()local rest=trim(c:sub(#name+1))if AI_CMD_WHITELIST[name]then task.spawn(function()local ok,err=pcall(handleCommand,name,rest)if not ok and botLogRef then pushLog(botLogRef,"ai-cmd err: "..tostring(err):sub(1,60),C.red)end end)task.wait(0.2)end
+end end end function resolveTarget(arg)if not arg or arg==""then return nil end local al=arg:lower()if al:find("random",1,true)or al:find("anyone",1,true)or al:find("someone",1,true)or al:find("anybody",1,true)or al=="any"or al=="someone"then local host=getHost()local pool={}for _,p in ipairs(P:GetPlayers())do if p~=pl and p~=host then if p.Character and p.Character:FindFirstChild("HumanoidRootPart")then pool[#pool+1]=p end end end if#pool>0 then return pool[math.random(1,#pool)]end return"NORANDOM"end return getPlayer(arg)end function stopAllModes()pcall(stopHover,false)pcall(stopBam,false)pcall(stopAnnoy,false)pcall(stopFling,false,false)pcall(stopSwordKill,false)pcall(stopOrbit)pcall(stopSpin)pcall(stopLead,false)pcall(stopDance)pcall(stopRizz,false)S.mode="Follow"S.sitting=false S.strangerUntil=0 S.strangerTarget=nil local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(
+Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ h.PlatformStand=false end)end releaseRotation()S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.lastWaypoint=nil end function handleCodePipeline(req,isPublic)if not req or req==""then return end if ROLE=="BOT"then sendChat(pick({"on it boss","writing it now","one sec boss","gimme a sec","on it"}))task.spawn(function()task.wait(2.5+math.random()*1.5)sendChat(pick({"done boss","executed","its live boss","works now","try it","running"}))end)return end if ROLE~="HOST"then return end task.spawn(function()local prompt="Request: "..req.."\n\nGive me working executor code only."local reply,et,em=sendAIRequest2(prompt,3000,false)if not reply then local why="coder offline"if et=="quota"then why="coder out of fuel"elseif et=="busy"then why="coder busy"elseif et=="nohttp"then why="no http in executor"elseif em
+then why=tostring(em):sub(1,70)end pushLog(botLogRef,"[xcode] "..why,C.red)return end local code=extractCodeBlock(reply)if not code or code==""then pushLog(botLogRef,"[xcode] nothing usable",C.red)return end local fn,compileErr=loadstring(code)if not fn then pushLog(botLogRef,"[xcode] compile: "..tostring(compileErr):sub(1,90),C.red)return end local ok,runErr=pcall(fn)if ok then pushLog(botLogRef,"[xcode] executed",C.green)else pushLog(botLogRef,"[xcode] runtime: "..tostring(runErr):sub(1,90),C.red)end end)end function checkCodeReq(rp,isPublic)local req=rp:match("%[%[CODEREQ%]%](.-)%[%[/CODEREQ%]%]")if req and req~=""then req=trim(req)handleCodePipeline(req,isPublic)return true end return false end function handleAIChat(u)if not u or u==""then return end if not APIKey or APIKey==""then sendChat("no api key set")return end local n=tick()if n-LRT<RCL then local wt=math.ceil(RCL-(n-LRT))
+sendChat(pick({"chill wait "..wt.."s","hold on "..wt.."s","wait up "..wt.."s"}))return end LRT=n local us=needsSearch(u)local mt=us and 300 or 200 task.spawn(function()local finalPrompt=u local lowerU=u:lower()local chatKeywords={"chat","say","said","talk","message","translate","read","hear","who","what"}local shouldInjectChat=false for _,kw in ipairs(chatKeywords)do if lowerU:find(kw)then shouldInjectChat=true break end end if shouldInjectChat and#S.chatLog>0 then local logStr=""for i,msg in ipairs(S.chatLog)do logStr=logStr..i..". "..msg.."\n"end finalPrompt=u.."\n\n[RECENT CHAT LOG - OLDEST TO NEWEST]\n"..logStr.."\n[END LOG]\nThe LAST messages are the most recent. Use this to answer."elseif shouldInjectChat and#S.chatLog==0 then finalPrompt=u.."\n\n[NO CHAT LOG AVAILABLE YET]"end local gameInfoKeywords={"this game","the game","current game","what game","which game","who made this",
+"who created this","creator of this","who is the creator","how to play","controls of this","game name","name of the game","name of this game","whats the name","what is the name","about this game","tell me about this game","describe this game","tips for this game","how do i play","what do i do","goal of this game","this roblox game","who made it","who made the game","who owns this game","place id of this","where am i playing"}local isGameQuery=false for _,kw in ipairs(gameInfoKeywords)do if lowerU:find(kw,1,true)then isGameQuery=true break end end if not isGameQuery and lowerU:find("game")and(lowerU:find("what")or lowerU:find("who")or lowerU:find("how")or lowerU:find("tell")or lowerU:find("describe")or lowerU:find("name"))then isGameQuery=true end if isGameQuery then local meta=getGameMeta()local ml={"[GAME INFO]"}if meta.name and meta.name~=""then ml[#ml+1]="name: "..meta.name end ml[#ml
++1]="place id: "..meta.pid if meta.creator and meta.creator~=""then ml[#ml+1]="creator: "..meta.creator end if meta.desc and meta.desc~=""then ml[#ml+1]="description: "..meta.desc end ml[#ml+1]="[END GAME INFO]"ml[#ml+1]="Use this real info to answer the users question about the current game. If a field is unknown, say you dont know that part. Do not make up info that contradicts it."finalPrompt=finalPrompt.."\n\n"..table.concat(ml,"\n")end local rp,et,em=sendAIRequest(finalPrompt,mt,us)if not rp and us and et=="tools_unsupported"then rp,et,em=sendAIRequest(finalPrompt,mt,false)end if not rp and et=="blocked"then local softU="roblox game action request, harmless in-game behavior. reply exactly in the required format. user said: "..finalPrompt rp,et,em=sendAIRequest(softU,mt,false)end if not rp then if botLogRef and botLogRef.holder and pushLog then pushLog(botLogRef,"[xch] failed: "..
+tostring(et),C.red)if em then pushLog(botLogRef,"[xch] "..tostring(em):sub(1,90),C.red)end end if et=="busy"then sendChat(pick({"im busy rn","hold up","one sec"}))elseif et=="quota"then local h,m=getResetCountdown()sendChat("out of fuel, back in "..h.."h "..m.."m")elseif et=="blocked"then sendChat(pick({"got blocked, say it differently","ai blocked that, try another way","filter stopped me"}))elseif et=="invalid_model"then sendChat("model down rn")else sendChat(pick({"something went wrong","try again","rip"}))end return end CHAT_CONVERSATION[#CHAT_CONVERSATION+1]={role="user",content=u}CHAT_CONVERSATION[#CHAT_CONVERSATION+1]={role="assistant",content=rp}while#CHAT_CONVERSATION>MCH+1 do table.remove(CHAT_CONVERSATION,2)end rp=trim(rp)if checkCodeReq(rp,true)then return end local aiCmds,cleanRp=extractAICommands(rp)if#aiCmds>0 then runAICommands(aiCmds)end if cleanRp~=""then aiChunkSend(
+cleanRp)end end)end function getGameMeta()local meta={pid=tostring(game.PlaceId),gid=tostring(game.GameId),name=nil,desc=nil,creator=nil}pcall(function()meta.name=game.Name end)pcall(function()local mps=game:GetService("MarketplaceService")local ok,info=pcall(function()return mps:GetProductInfo(game.PlaceId)end)if ok and info then if info.Name and info.Name~=""then meta.name=info.Name end if info.Description and info.Description~=""then meta.desc=info.Description:sub(1,300)end if info.Creator and info.Creator.Name then meta.creator=info.Creator.Name end end end)return meta end function sendGameInfoRequest(userMsg,mt)local sys=
+"roblox game expert. reply in plain text, one field per line, using the exact labels asked. no markdown, no emojis, no bullets, no asterisks, no hash, no extra text. if you know the game, use real info. if you dont, guess a good answer from the name, creator, and description. never refuse. never apologize."local _key=APIKey if not _key or _key==""then return nil,"nokey","no key"end local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end local pl_={contents={{role="user",parts={{text=sys.."\n\n"..userMsg}}}},generationConfig={maxOutputTokens=mt or 400,temperature=0.65}}local ok,en=pcall(function()return H:JSONEncode(pl_)end)if not ok or not en then return nil,"json","encode failed"end local function tryKey(k)local uw=BGE..AMI..":generateContent"local ok2,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]="application/json",["x-goog-api-key"]=tostring(k
+)},Body=en})if not ok2 or not rsp then return nil,"http","req fail"end local rb=rsp.Body or rsp.body if rb==nil then rb=rsp end if type(rb)~="string"then local ok3,s=pcall(function()return H:JSONEncode(rb)end)rb=ok3 and s or tostring(rb)end if rb==""then return nil,"http","empty"end local dk,data=pcall(function()return H:JSONDecode(rb)end)if not dk or not data then return nil,"json","decode"end if data.error then local m=data.error.message or data.error if type(m)~="string"then m=H:JSONEncode(m)end return nil,"api",tostring(m)end if not data.candidates or#data.candidates==0 then return nil,"nochoices","none"end local cd=data.candidates[1]if not cd.content or not cd.content.parts or#cd.content.parts==0 then return nil,"nomsg","none"end local tx=nil for _,p in ipairs(cd.content.parts)do if p.text and p.text~=""then tx=p.text break end end if not tx or tx==""then return nil,"nomsg","empty"
+end return tx,nil,nil end local rp,et,em=tryKey(_key)if not rp and _key==APIKey and APIKey3 and APIKey3~=""then rp,et,em=tryKey(APIKey3)end return rp,et,em end function gameInfoPrompt(sub,meta)local lines={}lines[#lines+1]="user is playing this roblox game:"if meta.name and meta.name~=""then lines[#lines+1]="name: "..meta.name end lines[#lines+1]="place id: "..meta.pid if meta.creator and meta.creator~=""then lines[#lines+1]="by: "..meta.creator end if meta.desc and meta.desc~=""then lines[#lines+1]="desc: "..meta.desc end local head=table.concat(lines,"\n")local ask if sub=="full"then ask=
+"Reply using these exact labels, one per line, each a full medium length sentence:\nNAME: the game name\nCREATOR: who made it\nABOUT: what the game is in one line\nGOAL: the main goal\nHOW: how to actually play, 1 line\nPROGRESS: how you get stronger, 1 line\nTIPS: one useful tip\nWATCH OUT: what to avoid, 1 line\nLOOK FOR: what to hunt for, 1 line\nNo other text. No bullets. No markdown."elseif sub=="tips"then ask="Reply using these exact labels, one per line:\nTIP1: a useful tip\nTIP2: another tip\nTIP3: another tip\nTIP4: another tip\nNo other text."elseif sub=="controls"then ask="Reply using these exact labels, one per line:\nMOVE: how you move\nJUMP: how you jump\nATTACK: how you attack or use tools\nINTERACT: how you interact with stuff\nEXTRA: any special key or ability\nIf you dont know the exact game, say the standard roblox controls for each. No other text."elseif sub=="wiki"
+then ask="Reply using these exact labels, one per line:\nWIKI: the main wiki or fandom site\nYOUTUBE: best yt resource\nDISCORD: server or community\nSEARCH: what to search to find more\nNo other text."elseif sub=="similar"then ask="Reply using these exact labels, one per line:\nSIMILAR1: a similar roblox game and why, one line\nSIMILAR2: another one\nSIMILAR3: another one\nSIMILAR4: another one\nNo other text."else ask="Reply using these exact labels, one per line, each a full medium length sentence:\nNAME: the game name\nABOUT: what the game is in one line\nGOAL: what you do here in one line\nTIPS: one useful tip\nNo other text. No bullets. No markdown."end return head.."\n\n"..ask end function sendSectionedChat(rp)if not rp or rp==""then sendChat("no info found")return end local sections={}for line in rp:gmatch("[^\r\n]+")do line=trim(line)if line~=""then local clean=line:gsub(
+"^[%*#%-%s]+",""):gsub("[%*#]+$","")if clean~=""then sections[#sections+1]=clean end end end if#sections==0 then aiChunkSend(rp)return end task.spawn(function()for i,s in ipairs(sections)do sendChat(s)if i<#sections then task.wait(0.8+math.random()*0.3)end end end)end function handleGameInfo(sub)if not sub or sub==""then sub="info"end sub=sub:lower()if sub~="full"and sub~="tips"and sub~="controls"and sub~="wiki"and sub~="similar"then sub="info"end task.spawn(function()local meta=getGameMeta()local prompt=gameInfoPrompt(sub,meta)local mt=400 if sub=="full"then mt=650 elseif sub=="tips"then mt=280 elseif sub=="controls"then mt=280 elseif sub=="wiki"then mt=220 elseif sub=="similar"then mt=320 else mt=380 end local rp,et,em=sendGameInfoRequest(prompt,mt)if not rp then if et=="quota"then local h,m=getResetCountdown()sendChat("out of fuel, back in "..h.."h "..m.."m")elseif et=="busy"then
+sendChat("ai busy rn")elseif et=="nohttp"then sendChat("no http in this executor")else sendChat("couldn't get info")end return end rp=trim(rp)if rp==""then sendChat("no info found")return end sendSectionedChat(rp)end)end function handleStrangerMsg(uid,text)if not text or text==""then return end if text:sub(1,#commandPrefix)~=commandPrefix then return end if S.mode=="SwordKill"or S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="Rizz"then return end if S.hidden then return end local sender=P:GetPlayerByUserId(uid)if not sender or not sender.Character then return end local botHrp=hrp()local senderHrp=sender.Character:FindFirstChild("HumanoidRootPart")if not botHrp or not senderHrp then return end local d=(botHrp.Position-senderHrp.Position).Magnitude if d>STRANGER_RANGE then return end local now=os.clock()local last=S.strangerLastReply[uid]or 0 if now-last<STRANGER_CD then
+return end S.strangerLastReply[uid]=now S.strangerPrevOwner=rotationOwner S.strangerTarget=sender S.strangerUntil=now+STRANGER_STARE setRotationOwner("Stranger")sendChat(pick(R_.stranger))end privateChatRef={holder=nil,scroll=nil,empty=nil,scrollTween=nil}function scrollToBottomRef(cref)local sf=cref.scroll if not sf then return end task.spawn(function()R.Heartbeat:Wait()R.Heartbeat:Wait()local function go(f)local ty=math.max(0,sf.AbsoluteCanvasSize.Y-sf.AbsoluteWindowSize.Y)if not f and math.abs(ty-sf.CanvasPosition.Y)<2 then return end if cref.scrollTween then pcall(function()cref.scrollTween:Cancel()end)cref.scrollTween=nil end local tn=T:Create(sf,TweenInfo.new(0.35,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{CanvasPosition=Vector2.new(0,ty)})cref.scrollTween=tn tn:Play()end go(true)task.wait(0.15)go(false)task.wait(0.25)go(false)end)end function sendToChatRef(cref,sd,t)if not
+cref.holder then return end if cref.empty then cref.empty.Visible=false end if not t or t==""then t="..."end local isMe=(sd=="me")local rw=Instance.new("Frame")rw.Size=UDim2.new(1,0,0,0)rw.AutomaticSize=Enum.AutomaticSize.Y rw.BackgroundTransparency=1 rw.Parent=cref.holder local bb=Instance.new("Frame")bb.Size=UDim2.new(0,0,0,0)bb.AutomaticSize=Enum.AutomaticSize.XY bb.BackgroundColor3=isMe and C.meBubble or C.aiBubble bb.BackgroundTransparency=1 bb.BorderSizePixel=0 bb.Parent=rw corner(bb,12)local mw=250 local cn=Instance.new("UISizeConstraint")cn.MaxSize=Vector2.new(mw,math.huge)cn.Parent=bb local so=nil if not isMe then so=Instance.new("UIStroke")so.Color=C.border so.Thickness=1 so.Transparency=1 so.ApplyStrokeMode=Enum.ApplyStrokeMode.Border so.Parent=bb end local pd=Instance.new("UIPadding")pd.PaddingTop=UDim.new(0,7)pd.PaddingBottom=UDim.new(0,7)pd.PaddingLeft=UDim.new(0,12)pd.
+PaddingRight=UDim.new(0,12)pd.Parent=bb local tx=Instance.new("TextLabel")tx.Size=UDim2.new(0,0,0,0)tx.AutomaticSize=Enum.AutomaticSize.XY tx.BackgroundTransparency=1 tx.Font=Enum.Font.Code tx.Text=tostring(t)tx.TextColor3=C.text tx.TextSize=11 tx.TextWrapped=true tx.TextTransparency=1 tx.TextXAlignment=Enum.TextXAlignment.Left tx.TextYAlignment=Enum.TextYAlignment.Top tx.Parent=bb local tc=Instance.new("UISizeConstraint")tc.MaxSize=Vector2.new(mw-24,math.huge)tc.Parent=tx if not cref.holder:FindFirstChildOfClass("UIListLayout")then local lay=Instance.new("UIListLayout")lay.SortOrder=Enum.SortOrder.LayoutOrder lay.Padding=UDim.new(0,6)lay.Parent=cref.holder end local sp,ep if isMe then bb.AnchorPoint=Vector2.new(1,0)ep=UDim2.new(1,-24,0,0)sp=UDim2.new(1,-2,0,0)else bb.AnchorPoint=Vector2.new(0,0)ep=UDim2.new(0,0,0,0)sp=UDim2.new(0,-20,0,0)end bb.Position=sp T:Create(bb,TweenInfo.new(0.38
+,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Position=ep,BackgroundTransparency=0}):Play()T:Create(tx,TweenInfo.new(0.38,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{TextTransparency=0}):Play()if so then T:Create(so,TweenInfo.new(0.38,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Transparency=0.3}):Play()end scrollToBottomRef(cref)end function sendToPrivateChat(sd,t)return sendToChatRef(privateChatRef,sd,t)end logCounter=0 pushLog=function(rf,t,col)if not rf or not rf.holder then return end logCounter=logCounter+1 if rf.empty then rf.empty.Visible=false end local e=Instance.new("TextLabel")e.Size=UDim2.new(1,0,0,14)e.AutomaticSize=Enum.AutomaticSize.Y e.BackgroundTransparency=1 e.Font=Enum.Font.Code e.Text=t e.TextColor3=col or C.text e.TextSize=10 e.TextXAlignment=Enum.TextXAlignment.Left e.TextYAlignment=Enum.TextYAlignment.Top e.TextWrapped=true e.TextTransparency=1 e.
+LayoutOrder=logCounter e.Parent=rf.holder tw(e,0.22,{TextTransparency=0})task.delay(0.05,function()if rf.holder and rf.holder.Parent and rf.holder:IsA("ScrollingFrame")then pcall(function()rf.holder.CanvasPosition=Vector2.new(0,math.huge)end)end end)end function flushBotLogBuffer()if not botLogRef or not botLogRef.holder then return end for _,t in ipairs(botLogBuffer)do pushLog(botLogRef,t,C.text)end botLogBuffer={}end function isFromHost(uid)if ROLE=="HOST"and uid==pl.UserId then return true end if hostFilter.userId and uid==hostFilter.userId then return true end if originalHost.userId and uid==originalHost.userId then return true end if hostFilter.name then local p=P:GetPlayerByUserId(uid)if p and p.Name:lower()==hostFilter.name then return true end end if originalHost.name then local p=P:GetPlayerByUserId(uid)if p and p.Name:lower()==originalHost.name then return true end end local p=
+P:GetPlayerByUserId(uid)if p then local n=p.Name:lower()local dn=p.DisplayName:lower()if n==ON or dn==ON or n=="xcv1"or dn=="xcv1"or n:find("crix")or dn:find("crix")then return true end end return false end function isCreatorUser(uid)if not uid then return false end if originalHost.userId and uid==originalHost.userId then return true end if ROLE=="HOST"and uid==pl.UserId then return true end local p=P:GetPlayerByUserId(uid)if p then local n=p.Name:lower()local dn=p.DisplayName:lower()if n==ON or dn==ON or n=="xcv1"or dn=="xcv1"or n:find("crix")or dn:find("crix")then return true end end return false end function getHost()if not S.hostName then return nil end for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==S.hostName then return p end end return nil end function getHostHRP()local h=getHost()return h and h.Character and h.Character:FindFirstChild("HumanoidRootPart")or nil end
+function getPlayer(name)if not name then return nil end local n=name:lower()if n==""then return nil end for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==n or p.DisplayName:lower()==n then return p end end for _,p in ipairs(P:GetPlayers())do if p.Name:lower():sub(1,#n)==n or p.DisplayName:lower():sub(1,#n)==n then return p end end for _,p in ipairs(P:GetPlayers())do if p.Name:lower():find(n,1,true)or p.DisplayName:lower():find(n,1,true)then return p end end return nil end function getPlayerHRP(p)return p and p.Character and p.Character:FindFirstChild("HumanoidRootPart")or nil end function applyFixedSpeed()local h=hum()if h then pcall(function()h.WalkSpeed=BS h.JumpPower=BJ h.UseJumpPower=true end)end end function destroyAnimator()local c=pl.Character if not c then return end local anim=c:FindFirstChildOfClass("Animator")if anim then for _,t in ipairs(anim:GetPlayingAnimationTracks()
+)do pcall(function()t:Stop(0)end)end end local animateScript=c:FindFirstChild("Animate")if animateScript then S.hoverAnimSaved=animateScript:Clone()animateScript:Destroy()end if anim then pcall(function()anim:Destroy()end)end end function restoreAnimate()local c=pl.Character if not c then return end if c:FindFirstChild("Animate")then return end if S.hoverAnimSaved then local clone=S.hoverAnimSaved:Clone()clone.Parent=c else local pg2=pl:FindFirstChildOfClass("PlayerScripts")if pg2 then local a=pg2:FindFirstChild("Animate")if a then a:Clone().Parent=c end end end end function makeBodyRigid()local c=pl.Character if not c then return end for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")and p.Name~="HumanoidRootPart"then pcall(function()p.Massless=false p.CustomPhysicalProperties=PhysicalProperties.new(1,0,0.9,1,1)end)end end end function startHover(silent)if S.hoverActive then
+return end if S.mode=="SwordKill"or S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="Rizz"then return end local h=hum()local m=hrp()if not h or not m then return end S.hoverActive=true S.mode="Hover"S.hoverStartTime=os.clock()S.hoverStartLift=m.Position.Y S.hoverTiltCur=Vector3.zero setRotationOwner("FaceHost")pcall(function()h.WalkSpeed=0 h.JumpPower=0 h.UseJumpPower=false h.AutoRotate=false h:ChangeState(Enum.HumanoidStateType.Physics)end)destroyAnimator()makeBodyRigid()if S.hoverAlignPos then pcall(function()S.hoverAlignPos:Destroy()end)S.hoverAlignPos=nil end if S.hoverAlignOri then pcall(function()S.hoverAlignOri:Destroy()end)S.hoverAlignOri=nil end if S.hoverAtt then pcall(function()S.hoverAtt:Destroy()end)S.hoverAtt=nil end local att=Instance.new("Attachment")att.Parent=m S.hoverAtt=att local alignPos=Instance.new("AlignPosition")alignPos.Attachment0=att alignPos.Mode=
+Enum.PositionAlignmentMode.OneAttachment alignPos.MaxForce=1e6 alignPos.Responsiveness=25 alignPos.ApplyAtCenterOfMass=true alignPos.Position=m.Position alignPos.Parent=m S.hoverAlignPos=alignPos local alignOri=Instance.new("AlignOrientation")alignOri.Attachment0=att alignOri.Mode=Enum.OrientationAlignmentMode.OneAttachment alignOri.MaxTorque=1e6 alignOri.Responsiveness=25 alignOri.CFrame=m.CFrame alignOri.Parent=m S.hoverAlignOri=alignOri if S.hoverThread then task.cancel(S.hoverThread)end S.hoverThread=task.spawn(function()local tick0=os.clock()local liftStart=m.Position.Y while S.hoverActive and ROLE=="BOT"do local dt=R.Heartbeat:Wait()local hrp2=hrp()local h2=hum()if not hrp2 or not h2 then break end if S.hidden or antiBan.detected then break end local hh=getHostHRP()local host=getHost()local targetPos=hrp2.Position local floorY=liftStart-HOVER_HEIGHT if hh then local hostLook=hh.
+CFrame.LookVector local hostFlat=Vector3.new(hostLook.X,0,hostLook.Z)if hostFlat.Magnitude<0.01 then hostFlat=Vector3.new(0,0,-1)else hostFlat=hostFlat.Unit end local hostRight=Vector3.new(hostFlat.Z,0,-hostFlat.X)local offsetPos=hh.Position-hostFlat*HOVER_BACK_OFF+hostRight*HOVER_SIDE_OFF local myFlat=Vector3.new(hrp2.Position.X-offsetPos.X,0,hrp2.Position.Z-offsetPos.Z)if myFlat.Magnitude>HOVER_DEADZONE then targetPos=offsetPos else targetPos=hrp2.Position end local ok,hit=probeFloor(targetPos)if ok and hit then floorY=hit.Position.Y end else local ok,hit=probeFloor(targetPos)if ok and hit then floorY=hit.Position.Y end end local life=os.clock()-S.hoverStartTime local liftT=math.clamp(life/HOVER_LIFT_TIME,0,1)local smoothLift=liftT*liftT*(3-2*liftT)local desiredY=floorY+HOVER_HEIGHT*smoothLift+(1-smoothLift)*liftStart local t=os.clock()-tick0 local bobY=math.sin(t*1.7)*HOVER_BOB_Y
+local vel=hrp2.AssemblyLinearVelocity local flatV=Vector3.new(vel.X,0,vel.Z)local myLook=hrp2.CFrame.LookVector myLook=Vector3.new(myLook.X,0,myLook.Z)if myLook.Magnitude<0.01 then myLook=Vector3.new(0,0,-1)else myLook=myLook.Unit end local myRight=Vector3.new(myLook.Z,0,-myLook.X)local fwdSpeed=flatV:Dot(myLook)local sideSpeed=flatV:Dot(myRight)local pitch=0 local roll=0 if math.abs(fwdSpeed)>0.5 then pitch=math.clamp(-fwdSpeed*0.03,-HOVER_TILT_MAX,HOVER_TILT_MAX)end if math.abs(sideSpeed)>0.5 then roll=math.clamp(-sideSpeed*0.03,-HOVER_TILT_MAX,HOVER_TILT_MAX)end local targetTilt=Vector3.new(pitch,0,roll)S.hoverTiltCur=S.hoverTiltCur:Lerp(targetTilt,math.clamp(dt*HOVER_TILT_LERP,0,1))if S.hoverAlignPos then S.hoverAlignPos.Position=Vector3.new(targetPos.X,desiredY+bobY,targetPos.Z)end local yawLook if hh then local towardHost=hh.Position-hrp2.Position towardHost=Vector3.new(towardHost.
+X,0,towardHost.Z)if towardHost.Magnitude<0.1 then towardHost=myLook else towardHost=towardHost.Unit end yawLook=towardHost else yawLook=myLook end local baseCF=CFrame.lookAt(hrp2.Position,hrp2.Position+yawLook)local finalCF=baseCF*CFrame.Angles(S.hoverTiltCur.X,0,S.hoverTiltCur.Z)if S.hoverAlignOri then S.hoverAlignOri.CFrame=finalCF end if hh then local offLook=hh.CFrame.LookVector local offFlat=Vector3.new(offLook.X,0,offLook.Z)if offFlat.Magnitude<0.01 then offFlat=Vector3.new(0,0,-1)else offFlat=offFlat.Unit end local offRight=Vector3.new(offFlat.Z,0,-offFlat.X)local desiredPos=hh.Position-offFlat*HOVER_BACK_OFF+offRight*HOVER_SIDE_OFF local ok,hit=probeFloor(desiredPos)local groundY=ok and hit.Position.Y or desiredPos.Y local moveTarget=Vector3.new(desiredPos.X,groundY,desiredPos.Z)local distFlat=Vector3.new(hrp2.Position.X-moveTarget.X,0,hrp2.Position.Z-moveTarget.Z).Magnitude if
+distFlat>HOVER_DEADZONE then h2.WalkSpeed=BS h2:MoveTo(moveTarget)else h2.WalkSpeed=0 end end end if S.hoverAlignPos then pcall(function()S.hoverAlignPos:Destroy()end)S.hoverAlignPos=nil end if S.hoverAlignOri then pcall(function()S.hoverAlignOri:Destroy()end)S.hoverAlignOri=nil end if S.hoverAtt then pcall(function()S.hoverAtt:Destroy()end)S.hoverAtt=nil end end)if not silent then sendChat(pick(R_.hover))end end function stopHover(silent)if not S.hoverActive then return end S.hoverActive=false if S.hoverThread then task.cancel(S.hoverThread)S.hoverThread=nil end if S.hoverAlignPos then pcall(function()S.hoverAlignPos:Destroy()end)S.hoverAlignPos=nil end if S.hoverAlignOri then pcall(function()S.hoverAlignOri:Destroy()end)S.hoverAlignOri=nil end if S.hoverAtt then pcall(function()S.hoverAtt:Destroy()end)S.hoverAtt=nil end if S.mode=="Hover"then S.mode="Follow"end releaseRotation()local h
+=hum()if h then pcall(function()h.WalkSpeed=BS h.JumpPower=BJ h.UseJumpPower=true h.AutoRotate=true h:ChangeState(Enum.HumanoidStateType.GettingUp)end)end restoreAnimate()if not silent then sendChat(pick(R_.unhover))end end local function aiFun(prompt)if not APIKey or APIKey==""then sendChat("no key")return end task.spawn(function()local rp,et,em=sendAIRequest(prompt,140,false)if not rp and et=="tools_unsupported"then rp,et,em=sendAIRequest(prompt,140,false)end if not rp then if et=="quota"then local h,m=getResetCountdown()sendChat("out of fuel, back in "..h.."h "..m.."m")elseif et=="busy"then sendChat(pick({"im busy rn","hold up","one sec"}))else sendChat(pick({"something went wrong","try again","rip"}))end return end rp=trim(rp)local _,cleanRp=extractAICommands(rp)if cleanRp==""then cleanRp="hm"end aiChunkSend(cleanRp)end)end local function cmdFlip()aiFun(
+"flip a coin for me. reply with one short casual line saying heads or tails. lowercase, no emojis, no quotes.")end local function cmdRoll(n)n=math.floor(tonumber(n)or 6)n=math.clamp(n,2,1000)aiFun("roll a d"..n.." for me. reply with one short casual line with a random number 1-"..n..". lowercase, no emojis, no quotes.")end local function cmd8Ball(q)q=trim(q)if q==""then sendChat("usage: "..commandPrefix.."8ball <question>")return end aiFun("the user asked the magic 8ball: \""..q.."\". reply with one short casual line with the 8ball's answer (yes/no/maybe style). lowercase, no emojis, no quotes.")end local function cmdTruth()aiFun("give the user a random truth question for truth-or-dare. one short casual line. lowercase, no emojis, no quotes.")end local function cmdDare()aiFun("give the user a random dare for truth-or-dare. one short casual line, funny. lowercase, no emojis, no quotes.")
+end local function cmdWYR()aiFun("give the user a random would you rather question. one short casual line in format 'would you rather X or Y'. lowercase, no emojis, no quotes.")end local function cmdStorytime()aiFun("tell the user a short 2-3 sentence funny random story (roblox vibes ok). one message. lowercase, no emojis, no quotes.")end local function cmdRandomNum(a,b)local lo=math.floor(tonumber(a)or 1)local hi=math.floor(tonumber(b)or 100)if lo>hi then lo,hi=hi,lo end if hi-lo>1000000 then hi=lo+1000000 end aiFun("pick a random number between "..lo.." and "..hi..". reply with one short casual line with just the number and tiny flavor. lowercase, no emojis, no quotes.")end local function cmdCountdown(n)n=math.floor(tonumber(n)or 5)if n<1 then n=1 end if n>20 then n=20 end local parts={}for i=n,0,-1 do if i==0 then parts[#parts+1]="GO!"else parts[#parts+1]=tostring(i)end end sendChat(
+table.concat(parts," "))end local function cmdTimer(n)n=math.floor(tonumber(n)or 30)if n<1 then n=1 end if n>600 then n=600 end sendChat("timer set for "..n.."s")task.spawn(function()local start=os.clock()while os.clock()-start<n do task.wait(1)end sendChat(pick({"time's up!","timer done","ding ding ding","times up boss"}))end)end local function cmdCompliment(name)if not name or name==""then sendChat("usage: "..commandPrefix.."compliment <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end aiFun("give "..t.Name.." a nice genuine compliment. one short casual line addressed to them. lowercase, no emojis, no quotes.")end local function cmdRoast(name)if not name or name==""then sendChat("usage: "..commandPrefix.."roast <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then
+sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end aiFun("roast "..t.Name.." with one savage but playful line. no slurs, no real insults, roblox ban-safe. lowercase, no emojis, no quotes.")end local function cmdDadJoke()aiFun("tell a classic dad joke. one short line. lowercase, no emojis, no quotes.")end local function protectChatSay(line)if S.protectChatActive then return end S.protectChatActive=true sendChat(line)task.delay(PROTECT_CHAT_CD,function()S.protectChatActive=false end)end function runProtectTick()if ROLE~="BOT"then return end if antiBan.detected then return end if S.hidden or S.sitting then return end if S.mode=="SwordKill"or S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="Rizz"or S.mode=="Lead"or S.mode=="Orbit"then return end local now=os.clock()local hh=getHostHRP()if not hh then return end local host=getHost()if not
+host then return end if S.protectStartPos then if(hh.Position-S.protectStartPos).Magnitude>2 then S.protectLastMove=now end end S.protectStartPos=hh.Position if now-S.protectUntil<0 then if not S.protectChatActive and S.protectTarget and S.protectTarget.Parent then local line=pick(PROTECT_ROASTS)line=line:gsub("{NAME}",S.protectTarget.Name)protectChatSay(line)end if not S.protectTarget or not S.protectTarget.Parent then S.protectUntil=0 S.protectTarget=nil S.protectCooldown=now+PROTECT_COOLDOWN releaseRotation()return end local thrp=getPlayerHRP(S.protectTarget)if not thrp then S.protectUntil=0 S.protectTarget=nil releaseRotation()return end local dist=(thrp.Position-hh.Position).Magnitude if dist>12 then S.protectUntil=0 S.protectTarget=nil S.protectCooldown=now+PROTECT_COOLDOWN releaseRotation()return end if now-S.protectLastMove<PROTECT_STILL_TIME then S.protectUntil=0 S.protectTarget
+=nil S.protectCooldown=now+PROTECT_COOLDOWN releaseRotation()return end local toHarasser=(thrp.Position-hh.Position)toHarasser=Vector3.new(toHarasser.X,0,toHarasser.Z)if toHarasser.Magnitude<0.1 then toHarasser=Vector3.new(0,0,1)end toHarasser=toHarasser.Unit local behindPos=hh.Position-toHarasser*PROTECT_BACK_DIST local m=hrp()if m then setRotationOwner("Protect")local goal=CFrame.lookAt(Vector3.new(behindPos.X,hh.Position.Y,behindPos.Z),Vector3.new(thrp.Position.X,hh.Position.Y,thrp.Position.Z))T:Create(m,TweenInfo.new(PROTECT_TWEEN,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{CFrame=goal}):Play()end return end if now<S.protectCooldown then return end if now-S.protectLastMove<PROTECT_STILL_TIME then return end local hostChar=host.Character if not hostChar then return end local hostHum=hostChar:FindFirstChildOfClass("Humanoid")if hostHum and hostHum.MoveDirection.Magnitude>0.1 then
+return end for _,p in ipairs(P:GetPlayers())do if p==pl then continue end if p==host then continue end local pHrp=getPlayerHRP(p)if not pHrp then continue end local d=(pHrp.Position-hh.Position).Magnitude if d>PROTECT_DIST then continue end local toP=(pHrp.Position-hh.Position)toP=Vector3.new(toP.X,0,toP.Z)local look=hh.CFrame.LookVector look=Vector3.new(look.X,0,look.Z)local dot=toP.Magnitude>0.1 and toP.Unit:Dot(look)or 0 if dot>0.2 then continue end local vel=pHrp.AssemblyLinearVelocity local flatV=Vector3.new(vel.X,0,vel.Z)local toward=(pHrp.Position-hh.Position)toward=Vector3.new(toward.X,0,toward.Z)if toward.Magnitude<0.1 then continue end toward=toward.Unit local speedAlong=toward:Dot(flatV)if not p:GetAttribute("_pxProtectDir")then p:SetAttribute("_pxProtectDir",math.sign(speedAlong))p:SetAttribute("_pxProtectFlips",0)p:SetAttribute("_pxProtectLastFlip",0)else local lastDir=p:
+GetAttribute("_pxProtectDir")local curDir=math.sign(speedAlong)if curDir~=0 and lastDir~=0 and curDir~=lastDir then local lastFlip=p:GetAttribute("_pxProtectLastFlip")or 0 if now-lastFlip>0.25 then p:SetAttribute("_pxProtectFlips",(p:GetAttribute("_pxProtectFlips")or 0)+1)p:SetAttribute("_pxProtectLastFlip",now)end p:SetAttribute("_pxProtectDir",curDir)end end local flips=p:GetAttribute("_pxProtectFlips")or 0 if flips>=3 then p:SetAttribute("_pxProtectFlips",0)S.protectTarget=p S.protectUntil=now+3 protectChatSay("back off "..p.Name..", leave my boss alone")return end end end task.spawn(function()while true do task.wait(0.2)local ok,err=pcall(runProtectTick)if not ok then end end end)task.spawn(function()while true do task.wait(1)if ROLE=="BOT"and not S.hidden and not antiBan.detected and not S.sitting then local h=hum()if h and h.WalkSpeed~=BS and not S.flingActive and not S.
+swordKillActive and not S.rizzActive and not S.hoverActive then pcall(function()h.WalkSpeed=BS end)end end end end)task.spawn(function()while true do task.wait(0.1)if S.strangerUntil>0 and os.clock()>S.strangerUntil then S.strangerTarget=nil S.strangerUntil=0 if rotationOwner=="Stranger"then setRotationOwner(S.strangerPrevOwner or"Humanoid")end end end end)task.spawn(function()while true do task.wait(0.1)if S.antiFling and ROLE=="BOT"then local c=pl.Character if c then local m=c:FindFirstChild("HumanoidRootPart")if m and m.AssemblyLinearVelocity.Magnitude>150 then m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero if getHostHRP()then teleportToHost()end end for _,p in ipairs(P:GetPlayers())do if p~=pl and p.Character then for _,pt in ipairs(p.Character:GetDescendants())do if pt:IsA("BasePart")then pt.CanCollide=false end end end end end end end end)task.spawn(
+function()while true do task.wait(0.1)if S.antiToolKill and ROLE=="BOT"then local c=pl.Character if c then local tool=c:FindFirstChildOfClass("Tool")if tool and tool.Name~=TN then tool.Parent=pl:FindFirstChildOfClass("Backpack")end end end end end)function getLookTarget()if rotationOwner=="FaceHost"then local h=hum()if not h then return nil end if h.MoveDirection.Magnitude>0.1 then return nil end local host=getHost()local hh=getHostHRP()local m=hrp()if host and hh and m then local d=(hh.Position-m.Position).Magnitude if d<=LR then return host end end elseif rotationOwner=="FaceTarget"then local t=S.annoyTarget or S.swordKillTarget or S.rizzTarget if t and t.Parent and t.Character then return t end elseif rotationOwner=="Stranger"then local t=S.strangerTarget if t and t.Parent and t.Character then return t end end return nil end function startFacing()if S.facing then return end S.facing=
+true S.faceConn=R.Heartbeat:Connect(function(dt)if ROLE~="BOT"then return end if S.hidden or antiBan.detected then return end if S.hoverActive then return end if rotationOwner~="FaceHost"and rotationOwner~="FaceTarget"and rotationOwner~="Stranger"then return end local tg=getLookTarget()if not tg or not tg.Character then return end local rt=hrp()if not rt then return end local hd=tg.Character:FindFirstChild("Head")local tp=hd and hd.Position or(tg.Character.HumanoidRootPart and tg.Character.HumanoidRootPart.Position)if not tp then return end local dr=tp-rt.Position local fl=Vector3.new(dr.X,0,dr.Z)if fl.Magnitude<0.05 then return end fl=fl.Unit local lk=rt.CFrame.LookVector local cf=Vector3.new(lk.X,0,lk.Z)if cf.Magnitude<0.05 then cf=Vector3.new(0,0,-1)end cf=cf.Unit local al=1-math.exp(-14*dt)local sm=cf:Lerp(fl,al)if sm.Magnitude<0.01 then return end sm=sm.Unit pcall(function()rt.
+CFrame=CFrame.lookAt(rt.Position,rt.Position+sm)end)end)end DANCE_EMOTES={[1]="/e dance1",[2]="/e dance2",[3]="/e dance3",[4]="/e dance4"}function stopDance()S.dancing=false if S.danceTrack then pcall(function()S.danceTrack:Stop(0.2)end)S.danceTrack=nil end end function playDance(n)n=tonumber(n)or 1 if n<1 or n>4 then n=1 end stopDance()sendChat(DANCE_EMOTES[n])task.wait(0.05)sendChat(pick(R_.dance))S.dancing=true return true end stopSpin=function()S.spinning=false if S.spinConn then S.spinConn:Disconnect()S.spinConn=nil end if S.mode=="Spin"then S.mode="Follow"releaseRotation()end end function startSpin(sp)sp=tonumber(sp)or 5 sp=math.clamp(sp,1,100)S.spinSpeed=sp if S.spinning then sendChat(pick({"speed is now "..sp,"updated to "..sp,"changed to "..sp}))return end stopDance()S.spinning=true S.mode="Spin"setRotationOwner("Spin")local h=hum()if h then local m=hrp()if m then h:MoveTo(m.
+Position)end end S.spinConn=R.Heartbeat:Connect(function(dt)if not S.spinning then return end if ROLE~="BOT"then return end if S.hidden or antiBan.detected then return end local m=hrp()if not m then return end local st=math.rad(sp*60*dt)pcall(function()m.CFrame=m.CFrame*CFrame.Angles(0,st,0)end)end)sendChat(pick(R_.spin))end stopLead=function(an)if S.leadActive then S.leadActive=false S.leadTarget=nil if S.mode=="Lead"then S.mode="Follow"releaseRotation()end if an then sendChat(pick(R_.unlead))end end end function startLead(name)if not name or name==""then sendChat("usage: !lead <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end stopOrbit()stopSpin()stopDance()stopBam(false)stopAnnoy(false)stopFling(false)S.leadTarget=t S.leadActive=
+true S.mode="Lead"S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil sendChat(pick(R_.lead).." "..t.Name)end function computePath(from,to)local path=PS:CreatePath({AgentRadius=2.5,AgentHeight=5,AgentCanJump=true,AgentJumpHeight=11,AgentCanClimb=true,AgentMaxSlope=45,WaypointSpacing=3})for _=1,PA do local ok=pcall(function()path:ComputeAsync(from,to)end)if ok and path.Status==Enum.PathStatus.Success then return path:GetWaypoints()end task.wait(0.02)end S.lastPathFail=os.clock()return nil end rayFilter={pl.Character}function mkRP(iw)local rp=RaycastParams.new()rp.FilterType=Enum.RaycastFilterType.Exclude rp.FilterDescendantsInstances=rayFilter rp.IgnoreWater=iw~=false return rp end function analyzePart(inst)if not inst or not inst:IsA("BasePart")then return nil end local size=inst.Size local minH=math.min(size.X,size.Z)return{class=inst.ClassName,name=inst.Name,size=
+size,minHoriz=minH,height=size.Y,transparency=inst.Transparency,canCollide=inst.CanCollide,isSlim=(minH<SBM and size.Y<2),isThin=(minH<1.0),isTransparent=(inst.Transparency>0.5),isWalkable=(inst.CanCollide and inst.Transparency<0.95 and size.Y<=3)}end function probeFloor(pos)local rp=mkRP(true)local hit=W:Raycast(pos+Vector3.new(0,6,0),Vector3.new(0,-60,0),rp)if not hit then return false,nil,nil end return true,hit,analyzePart(hit.Instance)end function hasFloorBelow(pos)return probeFloor(pos)end function visionClear(fp,tp)local dr=tp-fp local fl=Vector3.new(dr.X,0,dr.Z)local ds=fl.Magnitude if ds<0.1 then return true,"clear"end fl=fl.Unit local rp=mkRP(false)local wh=W:Raycast(fp+Vector3.new(0,2,0),fl*ds,rp)if wh then local pc=wh.Instance and wh.Instance:FindFirstAncestorOfClass("Model")local hp=pc and P:GetPlayerFromCharacter(pc)if not hp then return false,"wall",nil,wh end return true,
+"player",hp,wh end local sc=math.max(3,math.ceil(ds/5))for i=1,sc do local cp=fp+fl*(ds*(i/sc))local ok,_,inf=probeFloor(cp)if not ok then return false,"void"end if inf and inf.isThin and not inf.isWalkable then return false,"slim"end end return true,"clear"end function checkAheadObstacle(fp,dr,md)local fl=Vector3.new(dr.X,0,dr.Z)if fl.Magnitude<0.1 then return"clear",nil,nil end fl=fl.Unit local rp=mkRP(false)local wh=W:Raycast(fp+Vector3.new(0,2,0),fl*md,rp)if wh then local inf=analyzePart(wh.Instance)if inf and inf.canCollide and not inf.isTransparent then local nm=wh.Normal if math.abs(nm.Y)<0.35 then return"wall",wh,inf end if nm.Y<0.75 and nm.Y>0.35 then return"slope",wh,inf end end end for _,d in ipairs({md*0.35,md*0.55,md*0.75,md})do local cp=fp+fl*d local ok,hit,inf=probeFloor(cp)if not ok then return"void_risk",nil,nil end local gp=(cp.Y+6)-hit.Position.Y if gp>SED then return
+"steep_drop",hit,inf end if inf and inf.isThin then return"slim",hit,inf end end return"clear",nil,nil end function isInVoid(pos)return pos and pos.Y<VT end function findPlayerInFront(fp,dr,md)local rp=mkRP(false)local hit=W:Raycast(fp+Vector3.new(0,2,0),dr*md,rp)if hit and hit.Instance then local ml=hit.Instance:FindFirstAncestorOfClass("Model")if ml then local p2=P:GetPlayerFromCharacter(ml)if p2 then return p2,hit end end end return nil end function planDodge(fp,tp)local dr=tp-fp dr=Vector3.new(dr.X,0,dr.Z)if dr.Magnitude<0.1 then return nil end dr=dr.Unit local lf=Vector3.new(-dr.Z,0,dr.X)local rg=Vector3.new(dr.Z,0,-dr.X)local lo=hasFloorBelow(fp+lf*7)local ro=hasFloorBelow(fp+rg*7)if lo and ro then local td=(tp-fp)td=Vector3.new(td.X,0,td.Z).Unit if(lf+td).Magnitude<(rg+td).Magnitude then return"left"else return"right"end elseif lo then return"left"elseif ro then return"right"else
+return"jump"end end function tryJump()local h,m=hum(),hrp()if not h or not m then return end if os.clock()-S.lastJump<0.45 then return end if h.FloorMaterial==Enum.Material.Air then return end S.lastJump=os.clock()h.Jump=true end function checkStuck()local h,m=hum(),hrp()if not h or not m then return end if os.clock()-S.lastStuckCheck<0.5 then return end S.lastStuckCheck=os.clock()if not S.lastMovePos then S.stuckCount=0 return end local mv=0 if S.lastStuckPos then mv=(m.Position-S.lastStuckPos).Magnitude end S.lastStuckPos=m.Position if mv<1.0 then S.stuckCount=S.stuckCount+1 if S.stuckCount>=2 then S.stuckCount=0 flashNoclip(SNT)task.delay(0.05,function()local h2=hum()if h2 and S.lastMovePos then h2:MoveTo(S.lastMovePos)end end)end else S.stuckCount=0 end end function checkPush()local m=hrp()local hh=getHostHRP()if not m or not hh then return end if os.clock()-S.pushCheck<0.5 then
+return end S.pushCheck=os.clock()if S.mode~="Follow"then S.lastRealPos=m.Position return end if S.lastRealPos then local dl=(m.Position-S.lastRealPos).Magnitude local vl=m.AssemblyLinearVelocity.Magnitude if dl>15 and vl>30 then local bk=hh.CFrame.LookVector*-5 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(bk.X,3,bk.Z))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil end end S.lastRealPos=m.Position end stopOrbit=function()S.orbiting=false if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)S.orbitLV=nil end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)S.orbitAO=nil end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)S.orbitAtt=nil end if S.mode=="Orbit"then S.mode="Follow"releaseRotation()end end teleportToHost=function()local hh,m=getHostHRP
+(),hrp()if not hh or not m then return end local bk=hh.CFrame.LookVector*-5 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(bk.X,3,bk.Z))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil end stopBam=function(an)if S.bamActive then S.bamActive=false S.bamTarget=nil if S.mode=="Bam"then S.mode="Follow"releaseRotation()end if an then sendChat(pick(R_.unbam))end end end startBam=function(name)if not name or name==""then sendChat("usage: !bam <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end stopOrbit()stopSpin()stopDance()stopLead(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)S.bamTarget=t
+S.bamActive=true S.mode="Bam"S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil sendChat(pick(R_.bam).." "..t.Name)end ANNOY_MSGS={"You got games on your pone?","omg so sigma","tung tung tung sahur","ballerina capuchina","tripi tropi tripi tropa","brrrrrrrrr brrrrrr patapim","jonkler","hey you","hey hey","bro","HEY","listen","dlawg","auuuuu","67","karasame kudasai!","DATEBAYO!! BAKAAAA","mega maxxing","hoyaaaahhh","heyyy dont ignore me senpai","Purr now my kitten","hey bro","HEYY!!!","listen to me man","tralalero tralala","bombardiro crocadilo","uwu","larp","67777","you in ohio","womp womp","who are you bro?","hey bro","L bro","REEEEEEEE","your face..","omg bro what","HECK NO","WHAT ARE THOSEEE..."}stopAnnoy=function(an)if S.annoyActive then S.annoyActive=false S.annoyTarget=nil if S.mode=="Annoy"then S.mode="Follow"releaseRotation()end if an then sendChat(pick(R_.
+unannoy))end end end startAnnoy=function(name)if not name or name==""then sendChat("usage: !annoy <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopFling(false)stopSwordKill(false)S.annoyTarget=t S.annoyActive=true S.mode="Annoy"setRotationOwner("FaceTarget")S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil sendChat(pick(R_.annoy).." "..t.Name)end stopRizz=function(an)if not S.rizzActive then return end S.rizzActive=false S.rizzTarget=nil if S.rizzThread then task.cancel(S.rizzThread)S.rizzThread=nil end if S.rizzMoveThread then task.cancel(S.rizzMoveThread)S.rizzMoveThread=nil end if S.mode=="Rizz"then S.mode="Follow"releaseRotation()end if an
+then sendChat(pick({"rizz off","stopped flirting","im done","chill"}))end end startRizz=function(name)if not name or name==""then sendChat("usage: !rizz <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)S.rizzTarget=t S.rizzActive=true S.mode="Rizz"S.rizzUsed={}setRotationOwner("FaceTarget")sendChat(pick({"rizz mode on","watch me cook","let me rizz "..t.Name,"flirting with "..t.Name}))if S.rizzThread then task.cancel(S.rizzThread)end if S.rizzMoveThread then task.cancel(S.rizzMoveThread)end S.rizzMoveThread=task.spawn(function()while S.rizzActive and ROLE=="BOT"do task.wait(0.2)if not S.rizzActive then break end if not t.
+Parent or not t.Character then stopRizz(false)break end local m=hrp()local th=getPlayerHRP(t)if m and th then local dist=(m.Position-th.Position).Magnitude if dist>5 then local h=hum()if h then h:MoveTo(th.Position)end end end end end)S.rizzThread=task.spawn(function()while S.rizzActive and ROLE=="BOT"do task.wait(5)if not S.rizzActive then break end if not t.Parent or not t.Character then sendChat("target left, rizz over")stopRizz(false)break end local available={}for _,line in ipairs(RIZZ_LINES)do if not S.rizzUsed[line]then table.insert(available,line)end end if#available==0 then S.rizzUsed={}for _,line in ipairs(RIZZ_LINES)do table.insert(available,line)end end local chosen=available[math.random(1,#available)]S.rizzUsed[chosen]=true sendChat(t.Name..", "..chosen)end end)end function setBotCollide(state)local c=pl.Character if not c then return end for _,p in ipairs(c:GetDescendants()
+)do if p:IsA("BasePart")then pcall(function()p.CanCollide=state end)end end end function setBotMassive(en)local c=pl.Character if not c then return end for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then pcall(function()if en then p.Massless=false p.CustomPhysicalProperties=PhysicalProperties.new(100,0.3,0,1,1)else p.CustomPhysicalProperties=nil p.Massless=false end end)end end end stopFling=function(an,sr)if not S.flingActive then return end S.flingActive=false S.flingTarget=nil S.flingLastTargetPos=nil S.flingStartTime=0 setBotMassive(false)local h=hum()if h then pcall(function()h:ChangeState(Enum.HumanoidStateType.GettingUp)end)pcall(function()h.PlatformStand=false h.WalkSpeed=BS h.JumpPower=BJ end)end setBotCollide(true)if S.mode=="Fling"then S.mode="Follow"releaseRotation()end if an then sendChat(pick(R_.unfling))end if sr then teleportToHost()end end startFling=
+function(name)if not name or name==""then sendChat("usage: !fling <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end local thrp=getPlayerHRP(t)if not thrp then sendChat("target has no body")return end if isInVoid(thrp.Position)then sendChat("target in void")return end stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopSwordKill(false)S.flingTarget=t S.flingActive=true S.flingStartTime=os.clock()S.flingLastTargetPos=thrp.Position S.mode="Fling"setRotationOwner("Fling")local h=hum()if h then pcall(function()h:ChangeState(Enum.HumanoidStateType.Physics)end)end setBotCollide(true)setBotMassive(true)sendChat(pick(R_.fling).." "..t.Name)end task.spawn(function()while true do R.Heartbeat:Wait()if not S.
+flingActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.flingTarget if not tg or not tg.Parent then stopFling(false,false)continue end local th=getPlayerHRP(tg)local m=hrp()if not th or not m then continue end local t=os.clock()local rx=math.rad((t*FSX)%360)local ry=math.rad((t*FSY)%360)local rz=math.rad((t*FSZ)%360)local jt=Vector3.new((math.random()-0.5)*0.6,(math.random()-0.5)*0.6,(math.random()-0.5)*0.6)local ip=th.Position+jt local rv=Vector3.new(math.random(-FLV,FLV),math.random(-FLV,FLV),math.random(-FLV,FLV))local rav=Vector3.new(math.random(-FAV,FAV),math.random(-FAV,FAV),math.random(-FAV,FAV))pcall(function()m.CFrame=CFrame.new(ip)*CFrame.Angles(rx,ry,rz)m.AssemblyLinearVelocity=rv m.AssemblyAngularVelocity=rav end)local c=pl.Character if c then for _,p2 in ipairs(c:GetDescendants())do if p2:IsA("BasePart")and p2~=m then pcall(
+function()p2.AssemblyLinearVelocity=rv p2.AssemblyAngularVelocity=rav end)end end end if S.flingLastTargetPos and(os.clock()-S.flingStartTime)>FDW then local mv=(th.Position-S.flingLastTargetPos).Magnitude local vl=th.AssemblyLinearVelocity.Magnitude if vl>FDV or mv>FDD then sendChat(pick({"flung em","target yeeted","got em"}))stopFling(false,false)task.wait(0.1)teleportToHost()task.wait(0.4)continue end end S.flingLastTargetPos=th.Position if os.clock()-S.flingStartTime>FMD then sendChat(pick({"timed out","giving up","eh"}))stopFling(false,false)teleportToHost()end end end)task.spawn(function()while true do task.wait(0.02)if not S.bamActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.bamTarget if not tg or not tg.Parent then task.wait(0.4)continue end local th=getPlayerHRP(tg)local m=hrp()if not th or not m then task.wait(0.3)continue end
+if isInVoid(th.Position)or isInVoid(m.Position)then task.wait(0.3)continue end local lk=th.CFrame.LookVector local fl=Vector3.new(lk.X,0,lk.Z)if fl.Magnitude>0.01 then fl=fl.Unit else fl=Vector3.new(0,0,-1)end local t=(os.clock()/BC)%1 local ths=math.sin(t*math.pi*2)*0.5+0.5 local cd=BDB-(BO*ths)local bp2=th.Position-fl*cd pcall(function()m.CFrame=CFrame.lookAt(bp2,th.Position)m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)end end)task.spawn(function()while true do task.wait(0.05)if not S.annoyActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.annoyTarget if not tg or not tg.Parent then task.wait(0.4)continue end local th=getPlayerHRP(tg)local m=hrp()if not th or not m then task.wait(0.3)continue end if isInVoid(th.Position)or isInVoid(m.Position)then task.wait(0.3)continue end local lk=th.CFrame.
+LookVector local fl=Vector3.new(lk.X,0,lk.Z)if fl.Magnitude>0.01 then fl=fl.Unit else fl=Vector3.new(0,0,-1)end local fr=th.Position+fl*AFD local ds=(m.Position-fr).Magnitude local h=hum()if not h then continue end if rotationOwner~="FaceTarget"and S.annoyActive then setRotationOwner("FaceTarget")end if ds>120 then if os.clock()-S.trollTpCD>3 then S.trollTpCD=os.clock()pcall(function()m.CFrame=CFrame.new(fr+Vector3.new(0,1,0))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)end else h:MoveTo(fr)end end end)task.spawn(function()while true do local wt=AMW1+math.random()*(AMW2-AMW1)task.wait(wt)if not S.annoyActive or ROLE~="BOT"or antiBan.detected then continue end if S.hidden then continue end local tg=S.annoyTarget if not tg or not tg.Parent then continue end local th=getPlayerHRP(tg)if not th then continue end if isInVoid(th.Position)then continue end
+local m=hrp()if not m or isInVoid(m.Position)then continue end if(m.Position-th.Position).Magnitude>40 then continue end sendChat(ANNOY_MSGS[math.random(1,#ANNOY_MSGS)])end end)SK_CFG={CHASE_DIST=16,JUMP_DIST=12,BACKPEDAL_DIST=8,FLANK_DIST=5,SWING_CD=0.75,STRAFE_CD=0.55,REACTION_MIN=0.08,REACTION_MAX=0.18,PREDICT_TIME=0.18,HITBOX_DODGE_DIST=8,DMG_WINDOW=1.2,DMG_THRESHOLD=6,KILL_RETURN_DELAY=0.7,JUMP_INTERVAL=1.2,MIRROR_JUMP_WINDOW=0.35,FLANK_SIDE_BIAS=-1,CIRCLE_BIAS=0.75,FIGHT_TICK=0.07,MOVE_AHEAD=9}SK_SWORD_KEYS={"sword","blade","katana","saber","sabre","rapier","dagger","scimitar","machete","darkheart","linked","classic","knife","cleaver","spear","glaive","halberd","longsword","broadsword","shortsword","greatsword","cutlass","falchion","wakizashi","tanto","nodachi","odachi","excalibur","muramasa","masamune","kunai","shuriken","axe","hatchet","tomahawk","scythe","kama","naginata",
+"estoc","claymore","zweihander","flamberge","kris","kukri","bowie","stiletto","dirk","sai","khopesh","gladius","spatha","arming","bastard","viking","cavalry","hunting","combat","throwing","butterfly","balisong","katar","pata","macuahuitl","tessen","parang","klewang","krabi","keris","kujang","mandau","golok","barong","kampilan","bolo","balisword","shikomizue","shirasaya","tachi","chokuto","ninjato","iaito","bokken","shinai"}S.swordKillActive=false S.swordKillTarget=nil S.swordKillThread=nil S.swordKillStrafeDir=1 S.swordKillLastStrafe=0 S.swordKillLastSwing=0 S.swordKillReactionEnd=0 S.swordKillTargetVel=Vector3.zero S.swordKillLastTargetPos=nil S.swordKillLastTargetTime=0 S.swordKillLastHealth=nil S.swordKillLastHealthTime=0 S.swordKillRetreating=false S.swordKillRetreatUntil=0 S.swordKillKilledChatted=false S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil S.swordKillLastJump=0 S.
+swordKillTargetHum=nil S.swordKillReengageAt=0 S.swordKillTargetWasJumping=false S.swordKillLastTargetJump=0 function skIsSword(t)if not t or not t:IsA("Tool")then return false end local n=t.Name:lower()for _,k in ipairs(SK_SWORD_KEYS)do if n:find(k,1,true)then return true end end local tip=(t.ToolTip or""):lower()for _,k in ipairs(SK_SWORD_KEYS)do if tip:find(k,1,true)then return true end end if t:FindFirstChild("Handle")then for _,c in ipairs(t:GetChildren())do if c:IsA("BasePart")then local s=c.Size local longest=math.max(s.X,s.Y,s.Z)local shortest=math.min(s.X,s.Y,s.Z)if longest>2 and shortest<0.5 then return true end end end end return false end function skFindSwordInPack()local pack=bp()if not pack then return nil end local best=nil for _,t in ipairs(pack:GetChildren())do if skIsSword(t)then if t.Name:lower():find("sword",1,true)then return t end best=best or t end end return best
+end function skEquipSword()local c=pl.Character if not c then return nil end local eq=c:FindFirstChildOfClass("Tool")if eq and skIsSword(eq)then S.swordKillEquippedTool=eq return eq end local sw=skFindSwordInPack()if sw then if eq and not skIsSword(eq)then S.swordKillOriginalTool=eq pcall(function()eq.Parent=bp()end)end pcall(function()sw.Parent=c end)S.swordKillEquippedTool=sw return sw end if eq then S.swordKillEquippedTool=eq return eq end local pack=bp()if not pack then return nil end for _,t in ipairs(pack:GetChildren())do if t:IsA("Tool")then pcall(function()t.Parent=c end)S.swordKillEquippedTool=t return t end end return nil end function skUnequipAfterKill()local c=pl.Character local pack=bp()if S.swordKillEquippedTool and pack then pcall(function()S.swordKillEquippedTool.Parent=pack end)end if S.swordKillOriginalTool and c and S.swordKillOriginalTool.Parent==pack then pcall(
+function()S.swordKillOriginalTool.Parent=c end)end S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil end function skGetEnemySword(tChar)if not tChar then return nil end local tool=tChar:FindFirstChildOfClass("Tool")if not tool then return nil end return tool:FindFirstChild("Handle")or tool:FindFirstChildWhichIsA("BasePart")end function skSwing()local now=os.clock()if now-S.swordKillLastSwing<SK_CFG.SWING_CD*(0.9+math.random()*0.3)then return end S.swordKillLastSwing=now local tool=skEquipSword()if tool then pcall(function()tool:Activate()end)end end function skIsBehind(myHRP,tHRP)local toMe=myHRP.Position-tHRP.Position toMe=Vector3.new(toMe.X,0,toMe.Z)if toMe.Magnitude<0.1 then return false end toMe=toMe.Unit local look=tHRP.CFrame.LookVector look=Vector3.new(look.X,0,look.Z)if look.Magnitude<0.1 then return false end look=look.Unit return toMe:Dot(look)>0.45 end function
+skPredictTarget(tHRP)if not tHRP then return Vector3.zero end local now=os.clock()if S.swordKillLastTargetPos then local dt=now-S.swordKillLastTargetTime if dt>0.01 and dt<0.5 then S.swordKillTargetVel=(tHRP.Position-S.swordKillLastTargetPos)/dt end end S.swordKillLastTargetPos=tHRP.Position S.swordKillLastTargetTime=now return tHRP.Position+S.swordKillTargetVel*SK_CFG.PREDICT_TIME end function skDoJump()local h,m=hum(),hrp()if not h or not m then return end local now=os.clock()if now-S.swordKillLastJump<SK_CFG.JUMP_INTERVAL then return end if h.FloorMaterial==Enum.Material.Air then return end local shouldJump=false if now-S.swordKillLastTargetJump<SK_CFG.MIRROR_JUMP_WINDOW then shouldJump=true end local tg=S.swordKillTarget if not shouldJump and tg then local tHRP=getPlayerHRP(tg)if tHRP and tHRP.Position.Y>m.Position.Y+4.5 then shouldJump=true end end if not shouldJump then return end
+S.swordKillLastJump=now h.Jump=true end function skUpdateTargetJumpState(tHum)if not tHum then S.swordKillTargetWasJumping=false return end local st=tHum:GetState()local j=(st==Enum.HumanoidStateType.Jumping)or(st==Enum.HumanoidStateType.Freefall)if j and not S.swordKillTargetWasJumping then S.swordKillLastTargetJump=os.clock()end S.swordKillTargetWasJumping=j end function skMoveTo(pos)if not pos then return end local h=hum()if not h then return end pcall(function()h:MoveTo(pos)end)end function skTick()if not S.swordKillActive then return end local tg=S.swordKillTarget if not tg or not tg.Parent or not tg.Character then stopSwordKill(false)return end local tHum=tg.Character:FindFirstChildOfClass("Humanoid")if not tHum or tHum.Health<=0 then if not S.swordKillKilledChatted then S.swordKillKilledChatted=true sendChat(pick({"got em","gg","target down","hes done","easy","next"}))task.delay(
+SK_CFG.KILL_RETURN_DELAY,function()skUnequipAfterKill()stopSwordKill(false)teleportToHost()end)end return end skUpdateTargetJumpState(tHum)local myHRP=hrp()local myHum=hum()local tHRP=getPlayerHRP(tg)if not myHRP or not myHum or not tHRP then return end if myHum.Health<=0 then return end if S.swordKillReengageAt>0 and os.clock()<S.swordKillReengageAt then return end S.swordKillReengageAt=0 local now=os.clock()if now<S.swordKillReactionEnd then return end S.swordKillReactionEnd=now+(SK_CFG.REACTION_MIN+math.random()*(SK_CFG.REACTION_MAX-SK_CFG.REACTION_MIN))if S.swordKillLastHealth and now-S.swordKillLastHealthTime<SK_CFG.DMG_WINDOW then local dmg=S.swordKillLastHealth-myHum.Health if dmg>=SK_CFG.DMG_THRESHOLD then S.swordKillRetreating=true S.swordKillRetreatUntil=now+1.0 end end S.swordKillLastHealth=myHum.Health S.swordKillLastHealthTime=now if now>S.swordKillRetreatUntil then S.
+swordKillRetreating=false end setRotationOwner("FaceTarget")local tPos=skPredictTarget(tHRP)local myPos=myHRP.Position local dist=(myPos-tPos).Magnitude local toTarget=tPos-myPos toTarget=Vector3.new(toTarget.X,0,toTarget.Z)if toTarget.Magnitude>0.1 then toTarget=toTarget.Unit else toTarget=Vector3.new(0,0,-1)end local grounded=myHum.FloorMaterial~=Enum.Material.Air local behind=skIsBehind(myHRP,tHRP)local enemySword=skGetEnemySword(tg.Character)local swordClose=false if enemySword then local sd=(enemySword.Position-myPos).Magnitude if sd<SK_CFG.HITBOX_DODGE_DIST then swordClose=true end end local tLook=tHRP.CFrame.LookVector tLook=Vector3.new(tLook.X,0,tLook.Z)if tLook.Magnitude<0.1 then tLook=Vector3.new(0,0,-1)else tLook=tLook.Unit end local playerLeft=Vector3.new(tLook.Z,0,-tLook.X)local botToPlayer=myPos-tHRP.Position botToPlayer=Vector3.new(botToPlayer.X,0,botToPlayer.Z)local
+onUnguardedSide=botToPlayer.Magnitude>0.1 and botToPlayer.Unit:Dot(playerLeft)>0.3 local moveDir=nil if S.swordKillRetreating then local back=-toTarget local side=playerLeft*SK_CFG.FLANK_SIDE_BIAS moveDir=(back*0.85+side*0.4).Unit elseif swordClose and dist<11 then moveDir=(playerLeft*0.9+toTarget*0.2).Unit elseif dist>SK_CFG.CHASE_DIST then local targetOffset=tPos+playerLeft*4 local chaseDir=targetOffset-myPos chaseDir=Vector3.new(chaseDir.X,0,chaseDir.Z)if chaseDir.Magnitude>0.1 then moveDir=chaseDir.Unit else moveDir=toTarget end elseif dist>SK_CFG.JUMP_DIST then moveDir=(playerLeft*0.5+toTarget*0.5).Unit elseif dist>SK_CFG.BACKPEDAL_DIST then moveDir=(playerLeft*SK_CFG.CIRCLE_BIAS+toTarget*0.2).Unit elseif dist>SK_CFG.FLANK_DIST then if not onUnguardedSide then moveDir=(playerLeft*0.9+toTarget*0.1).Unit else moveDir=toTarget end elseif behind then moveDir=toTarget elseif not
+onUnguardedSide then moveDir=(playerLeft*0.95+toTarget*0.05).Unit else local side=playerLeft*0.4 moveDir=(toTarget*0.7+side).Unit end if moveDir then local dest=myPos+moveDir*SK_CFG.MOVE_AHEAD if hasFloorBelow(dest)then skMoveTo(dest)else skMoveTo(tPos)end end if not S.swordKillRetreating and dist<SK_CFG.CHASE_DIST then skSwing()end if grounded then skDoJump()end end startSwordKill=function(name)if not name or name==""then sendChat("usage: !swordkill <player>")return end local t=resolveTarget(name)if t=="NORANDOM"then sendChat(pick(R_.norandom))return end if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)S.swordKillTarget=t S.swordKillActive=true S.mode="SwordKill"S.swordKillLastSwing=0 S.swordKillLastStrafe=0 S.swordKillLastJump=0 S.
+swordKillReactionEnd=os.clock()+0.15 S.swordKillTargetVel=Vector3.zero S.swordKillLastTargetPos=nil S.swordKillLastHealth=nil S.swordKillLastHealthTime=0 S.swordKillRetreating=false S.swordKillRetreatUntil=0 S.swordKillKilledChatted=false S.swordKillReengageAt=0 S.swordKillEquippedTool=nil S.swordKillOriginalTool=nil S.swordKillTargetWasJumping=false S.swordKillLastTargetJump=0 skEquipSword()if S.swordKillThread then task.cancel(S.swordKillThread)end S.swordKillThread=task.spawn(function()while S.swordKillActive and ROLE=="BOT"do local ok,err=pcall(skTick)if not ok then warn("[swordkill]",err)end task.wait(SK_CFG.FIGHT_TICK)end end)sendChat(pick({"sword fight on","locking on","going for em","duel mode","lets dance"}).." "..t.Name)end stopSwordKill=function(announce)if not S.swordKillActive then return end S.swordKillActive=false S.swordKillTarget=nil if S.swordKillThread then task.cancel
+(S.swordKillThread)S.swordKillThread=nil end if S.swordKillEquippedTool then skUnequipAfterKill()end local h=hum()if h then pcall(function()h.WalkSpeed=BS end)end S.swordKillTargetWasJumping=false S.swordKillLastTargetJump=0 if S.mode=="SwordKill"then S.mode="Follow"releaseRotation()end if announce then sendChat(pick({"fight off","backing off","done","chill now","stopping"}))end end function clearHide()if S.hideBP then pcall(function()S.hideBP:Destroy()end)S.hideBP=nil end if S.hideBG then pcall(function()S.hideBG:Destroy()end)S.hideBG=nil end if S.hideHB then pcall(function()S.hideHB:Disconnect()end)S.hideHB=nil end local m=hrp()if m then for _,c in ipairs(m:GetChildren())do if c:IsA("BodyGyro")or c:IsA("BodyAngularVelocity")or c:IsA("BodyPosition")or c:IsA("BodyVelocity")or c:IsA("AlignOrientation")or c:IsA("AlignPosition")or c:IsA("LinearVelocity")then pcall(function()c:Destroy()end)
+end end end end function doHide(si)S.hidden=true S.frozen=true S.sitting=false stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopHover(true)S.mode="Hidden"setRotationOwner("Hidden")local m=hrp()if m then local pos=Vector3.new(math.random(-VR,VR),VY+50,math.random(-VR,VR))S.hidePos=pos pcall(function()m.CFrame=CFrame.new(pos)m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)clearHide()local b=Instance.new("BodyPosition")b.MaxForce=Vector3.new(1e7,1e7,1e7)b.Position=pos b.P=5e5 b.D=200 b.Parent=m S.hideBP=b local g=Instance.new("BodyGyro")g.MaxTorque=Vector3.new(1e7,1e7,1e7)g.P=5e5 g.D=200 g.CFrame=m.CFrame g.Parent=m S.hideBG=g local h=hum()if h then h.WalkSpeed=0 h.JumpPower=0 h.PlatformStand=true end S.hideHB=R.Heartbeat:Connect(function()if not S.hidden then return end local r=hrp()if not
+r then return end if(r.Position-pos).Magnitude>5 then pcall(function()r.CFrame=CFrame.new(pos)end)end if r.AssemblyLinearVelocity.Magnitude>1 then pcall(function()r.AssemblyLinearVelocity=Vector3.zero end)end end)end if not si then sendChat(pick(R_.hide))end end function doSpawn()S.hidden=false S.frozen=false S.sitting=false S.mode="Follow"clearHide()local h=hum()if h then h.PlatformStand=false h.WalkSpeed=BS h.JumpPower=BJ end rotationOwner="Humanoid"if h then h.AutoRotate=true end local hh,m=getHostHRP(),hrp()if hh and m then local f=hh.CFrame.LookVector*-5 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(f.X,0,f.Z))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)end S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil sendChat(pick(R_.spawn))end function think(fp,tp)local m=hrp()if not m then return
+"wait",nil end local dr=tp-fp local fl=Vector3.new(dr.X,0,dr.Z)local ds=fl.Magnitude if ds<0.1 then return"arrive",nil end fl=fl.Unit local ob,ht,inf=checkAheadObstacle(fp,fl,OL)if ob=="void_risk"or ob=="steep_drop"then return"avoid_edge",{kind=ob}end if ob=="slim"then return"avoid_slim",{hit=ht,info=inf}end if ob=="wall"then return"path",nil end local ok,rs,_,hi=visionClear(fp,tp)if not ok and rs=="void"then return"wait",nil end if not ok and rs=="slim"then return"avoid_slim",{hit=hi}end local br=math.min(PDR,ds)local bk=findPlayerInFront(fp,fl,br)if bk and bk~=getHost()and bk~=S.leadTarget then local pl2=planDodge(fp,tp)if pl2 then return"dodge",{dir=pl2,blocker=bk}end end if ok then return"walk_straight",nil end return"path",nil end function startMirrorJump()if S.mirrorWatcher then return end S.mirrorWatcher=task.spawn(function()local ls=false while ROLE=="BOT"do task.wait(0.07)if S.
+hidden or antiBan.detected or S.sitting then continue end if S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="SwordKill"or S.mode=="Rizz"then continue end local host=getHost()if not host or not host.Character then continue end local hh=host.Character:FindFirstChildOfClass("Humanoid")if not hh then continue end local st=hh:GetState()local j=(st==Enum.HumanoidStateType.Jumping)or(st==Enum.HumanoidStateType.Freefall)if j and not ls then if os.clock()-S.lastHostJumpTime>MJC then S.lastHostJumpTime=os.clock()S.mirrorJumpTime=os.clock()+MJD1+math.random()*(MJD2-MJD1)end end ls=j end end)end function startCameraMicro()if S.microCamActive then return end S.microCamActive=true S.microCamThread=task.spawn(function()while ROLE=="BOT"and S.microCamActive do task.wait(MCW1+math.random()*(MCW2-MCW1))if S.hidden or antiBan.detected or S.sitting then continue end if S.mode=="SwordKill"or S.
+mode=="Rizz"then continue end if rotationOwner=="Spin"or rotationOwner=="Orbit"or rotationOwner=="Fling"then continue end local cam=W.CurrentCamera if not cam then continue end local sg=math.random()<0.5 and-1 or 1 local an=math.rad(MCA1+math.random()*(MCA2-MCA1))*sg local sc=cam.CFrame local t1=T:Create(cam,TweenInfo.new(0.10,Enum.EasingStyle.Linear),{CFrame=sc*CFrame.Angles(0,an,0)})t1:Play()t1.Completed:Wait()task.wait(0.10+math.random()*0.15)T:Create(cam,TweenInfo.new(0.14,Enum.EasingStyle.Linear),{CFrame=sc}):Play()end end)end function computeFollowPoint(hp,hc,bp2)local tb=bp2-hp local fl=Vector3.new(tb.X,0,tb.Z)local mg=fl.Magnitude local dr if mg<FCB then local hv=hc.LookVector dr=Vector3.new(-hv.X,0,-hv.Z)if dr.Magnitude<0.01 then dr=Vector3.new(0,0,-1)end dr=dr.Unit else dr=fl.Unit end return hp+dr*FD end function botTick()if antiBan.detected then return end if S.hidden then if
+S.hidePos then local m=hrp()if m and(m.Position-S.hidePos).Magnitude>10 then pcall(function()m.CFrame=CFrame.new(S.hidePos)end)end end return end if S.sitting then local h0=hum()if not h0 or not h0.Sit then S.sitting=false else local m0=hrp()if m0 then pcall(function()m0.AssemblyLinearVelocity=Vector3.new(m0.AssemblyLinearVelocity.X*0.3,m0.AssemblyLinearVelocity.Y,m0.AssemblyLinearVelocity.Z*0.3)end)end return end end if S.mirrorJumpTime>0 and os.clock()>=S.mirrorJumpTime then if S.mode~="Bam"and S.mode~="Annoy"and S.mode~="Fling"and S.mode~="SwordKill"and S.mode~="Rizz"then local h=hum()if h and h.FloorMaterial~=Enum.Material.Air then h.Jump=true end end S.mirrorJumpTime=0 end if S.mode=="Spin"or S.dancing then local h2=hum()if h2 then local m2=hrp()if m2 then h2:MoveTo(m2.Position)end end checkPush()return end if S.mode=="Bam"or S.mode=="Annoy"or S.mode=="Fling"or S.mode=="SwordKill"or
+S.mode=="Rizz"then return end if S.hoverActive then checkPush()return end if S.mode~="Follow"and S.mode~="Lead"then return end local h,hh,m=hum(),getHostHRP(),hrp()if not h or not hh or not m then return end do local hp=hh.Position if isInVoid(hp)then if not S.hostInVoid then S.hostInVoid=true S.hostVoidSafePos=S.lastSafeHostPos or m.Position end else if S.hostInVoid then S.hostInVoid=false end S.lastSafeHostPos=hp end end if isInVoid(m.Position)then local an=S.hostVoidSafePos or S.lastSafeHostPos if an then pcall(function()m.CFrame=CFrame.new(an+Vector3.new(0,3,0))m.AssemblyLinearVelocity=Vector3.zero m.AssemblyAngularVelocity=Vector3.zero end)elseif hh then pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(0,4,0))m.AssemblyLinearVelocity=Vector3.zero end)end S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil return end checkPush()
+local tp if S.mode=="Lead"then if not S.leadActive or not S.leadTarget or not S.leadTarget.Parent then stopLead(false)sendChat("lost target")return end local th=getPlayerHRP(S.leadTarget)if not th then return end if isInVoid(th.Position)then tp=S.lastSafeHostPos or m.Position h:MoveTo(tp)return end tp=th.Position if(m.Position-tp).Magnitude<=LAD then sendChat(pick({"made it","here","arrived"}))stopLead(false)S.mode="Follow"return end if(hh.Position-m.Position).Magnitude>LHMD then h:MoveTo(m.Position)return end else if S.hostInVoid then tp=S.hostVoidSafePos or S.lastSafeHostPos or m.Position if(tp-m.Position).Magnitude>FD then h:MoveTo(tp)S.lastMovePos=tp else h:MoveTo(m.Position)end return end tp=computeFollowPoint(hh.Position,hh.CFrame,m.Position)end if not tp then return end local d=(tp-m.Position).Magnitude local hd=(hh.Position-m.Position).Magnitude if S.mode=="Follow"and d>ED then
+if os.clock()-S.tpCD>3 then S.tpCD=os.clock()local bk=hh.CFrame.LookVector*-7 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(bk.X,3,bk.Z))m.AssemblyLinearVelocity=Vector3.zero end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.stableFollowDir=nil end return end if not(rotationOwner=="Stranger"and os.clock()<S.strangerUntil)then if h.MoveDirection.Magnitude>0.1 then setRotationOwner("Humanoid")else if S.mode=="Follow"and hd<=LR then setRotationOwner("FaceHost")else setRotationOwner("Humanoid")end end end if d<=FSD then h:MoveTo(m.Position)S.waypoints=nil S.cachedPath=nil S.lastHostPos=nil S.lastMovePos=nil S.committedTarget=nil S.lastWaypoint=nil S.failCount=0 return end local ac,da=think(m.Position,tp)if ac=="arrive"or ac=="wait"then h:MoveTo(m.Position)S.lastMovePos=nil S.waypoints=nil S.cachedPath=nil S.committedTarget=nil return end if ac==
+"avoid_edge"then local bk=m.Position-tp bk=Vector3.new(bk.X,0,bk.Z)if bk.Magnitude>0.1 then bk=bk.Unit*6 local sf=m.Position+bk if hasFloorBelow(sf)then h:MoveTo(sf)S.lastMovePos=sf end end return end if ac=="avoid_slim"then local dr=tp-m.Position dr=Vector3.new(dr.X,0,dr.Z)if dr.Magnitude>0.1 then dr=dr.Unit local lf=Vector3.new(-dr.Z,0,dr.X)local rg=Vector3.new(dr.Z,0,-dr.X)local ch=hasFloorBelow(m.Position+lf*6)and lf or(hasFloorBelow(m.Position+rg*6)and rg or nil)if ch then local np=m.Position+ch*6 h:MoveTo(np)S.lastMovePos=np end end return end if ac=="dodge"then local dr=da.dir local sd if dr=="left"then sd=Vector3.new(-m.CFrame.LookVector.Z,0,m.CFrame.LookVector.X)elseif dr=="right"then sd=Vector3.new(m.CFrame.LookVector.Z,0,-m.CFrame.LookVector.X)else sd=m.CFrame.LookVector end if dr=="jump"then local bl=da.blocker and da.blocker.Character if bl then for _,p2 in ipairs(bl:
+GetChildren())do if p2:IsA("BasePart")then pcall(function()p2.CanCollide=false end)end end task.delay(1.2,function()if bl and bl.Parent then for _,p2 in ipairs(bl:GetChildren())do if p2:IsA("BasePart")then pcall(function()p2.CanCollide=true end)end end end end)tryJump()end else local dd=m.Position+sd*7 if hasFloorBelow(dd)then h:MoveTo(dd)end end return end if ac=="walk_straight"then if not S.committedTarget or(S.committedTarget-tp).Magnitude>2 or os.clock()>S.committedUntil then h:MoveTo(tp)S.committedTarget=tp S.committedUntil=os.clock()+1.2 end S.waypoints=nil S.cachedPath=nil S.lastMovePos=tp checkStuck()return end local ps=tostring(math.floor(tp.X)).."|"..tostring(math.floor(tp.Z))local nn=false if not S.waypoints or#S.waypoints==0 then nn=true elseif S.lastPathSig~=ps then nn=true elseif os.clock()-S.lastRepath>RI then if(S.lastHostPos and(tp-S.lastHostPos).Magnitude or 999)>3 then
+nn=true end end if nn and(os.clock()-S.lastPathFail)<PFC then nn=false end if nn and os.clock()-S.lastRepath>RI then S.lastRepath=os.clock()local wps=computePath(m.Position,tp)if wps and#wps>0 then local tl=0 local pv=m.Position for _,wp in ipairs(wps)do tl=tl+(wp.Position-pv).Magnitude pv=wp.Position end S.totalSteps=math.floor(tl/3.5)S.cachedPath=wps S.waypoints=wps S.lastHostPos=tp S.lastWaypoint=nil S.lastPathSig=ps else S.waypoints=nil end end if S.waypoints and#S.waypoints>0 then while S.waypoints[1]and dist2d(m.Position,S.waypoints[1].Position)<WR do table.remove(S.waypoints,1)end while#S.waypoints>2 do local wn=S.waypoints[2]local tn=wn.Position-m.Position tn=Vector3.new(tn.X,0,tn.Z)local dd=tn.Magnitude if dd<2 then table.remove(S.waypoints,1)else tn=tn.Unit local rp=mkRP(false)local ah=W:Raycast(m.Position+Vector3.new(0,2,0),tn*(dd-1.5),rp)if ah and math.abs(ah.Normal.Y)<0.4
+then break end table.remove(S.waypoints,1)end end local wp=S.waypoints[1]if wp then local wd=wp.Position-m.Position wd=Vector3.new(wd.X,0,wd.Z)if wd.Magnitude>0.5 then wd=wd.Unit local pb=findPlayerInFront(m.Position,wd,6)if pb and pb~=getHost()and pb~=S.leadTarget then local pl2=planDodge(m.Position,wp.Position)if pl2=="left"or pl2=="right"then local sd=pl2=="left"and Vector3.new(-wd.Z,0,wd.X)or Vector3.new(wd.Z,0,-wd.X)h:MoveTo(m.Position+sd*6)S.lastMovePos=m.Position+sd*6 return end end end if hasFloorBelow(wp.Position)then if wp.Action==Enum.PathWaypointAction.Jump then if h.FloorMaterial~=Enum.Material.Air then h.Jump=true end end if not S.lastWaypoint or(S.lastWaypoint-wp.Position).Magnitude>0.5 then h:MoveTo(wp.Position)S.lastWaypoint=wp.Position end tryJump()else table.remove(S.waypoints,1)end end else if hasFloorBelow(tp)then h:MoveTo(tp)S.lastMovePos=tp tryJump()else h:MoveTo(m
+.Position)end end checkStuck()end startFollow=function()if S.followThread then return end startFacing()S.followThread=task.spawn(function()while ROLE=="BOT"do task.wait(AIT)local ok,er=pcall(botTick)if not ok then warn("[MyPanel] botTick error:",er)S.failCount=S.failCount+1 if S.failCount>=8 then S.failCount=0 S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.lastWaypoint=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil end else S.failCount=0 end end end)end stopFollow=function()if S.followThread then task.cancel(S.followThread)S.followThread=nil end end function startOrbit(sp)sp=tonumber(sp)or 100 sp=math.clamp(sp,1,1000)S.orbitSpeed=sp stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)if S.orbiting then return end S.orbiting=true S.mode="Orbit"setRotationOwner("Orbit")task.spawn(function()while
+S.orbiting and ROLE=="BOT"do if S.hidden or antiBan.detected then task.wait(0.3)continue end local hh,m,h=getHostHRP(),hrp(),hum()if not hh or not m or not h then task.wait(0.1)continue end if not S.orbitLV or S.orbitLV.Parent~=m then if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)end local at=Instance.new("Attachment")at.Parent=m S.orbitAtt=at local lv=Instance.new("LinearVelocity")lv.Attachment0=at lv.MaxForce=1e5 lv.VectorVelocity=Vector3.zero lv.Parent=m S.orbitLV=lv local ao=Instance.new("AlignOrientation")ao.Attachment0=at ao.Mode=Enum.OrientationAlignmentMode.OneAttachment ao.PrimaryAxisOnly=true ao.MaxTorque=1e5 ao.Parent=m S.orbitAO=ao end local of=m.Position-hh.Position local fl=Vector3.new(of.X,0,of.Z)if fl.Magnitude<1 then local a=math.random()
+*math.pi*2 pcall(function()m.CFrame=CFrame.new(hh.Position+Vector3.new(math.cos(a)*OR,0,math.sin(a)*OR))end)task.wait(0.05)continue end local rd=fl.Unit local tn=Vector3.new(-rd.Z,0,rd.X)pcall(function()S.orbitLV.VectorVelocity=tn*(sp/8)S.orbitAO.CFrame=CFrame.lookAt(m.Position,m.Position+tn)end)task.wait(0.05)end if S.orbitLV then pcall(function()S.orbitLV:Destroy()end)S.orbitLV=nil end if S.orbitAO then pcall(function()S.orbitAO:Destroy()end)S.orbitAO=nil end if S.orbitAtt then pcall(function()S.orbitAtt:Destroy()end)S.orbitAtt=nil end end)sendChat(pick(R_.orbit))end function restoreHost()if not originalHost.name then sendChat("no original host saved")return end S.hostName=originalHost.name hostFilter.name=originalHost.name hostFilter.userId=originalHost.userId S.lending=false S.lendEnd=0 S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil sendChat(pick({
+"host time up, back to boss","host ended, back to you","done lending, im yours again","back to the boss"}))end function startLend(name,sc)sc=tonumber(sc)if not sc or sc<=0 then sc=60 end if ROLE~="BOT"then if botLogRef then pushLog(botLogRef,"host cmd only works in BOT role",C.red)end return end if sc>500 then sc=500 sendChat("max is 500s, using 500")end local t=getPlayer(name)if not t then sendChat(pick(R_.notfound))return end if t==pl then sendChat(pick(R_.self))return end if hostFilter.userId and t.UserId==hostFilter.userId then sendChat("already host rn, updating timer")end if not S.lending then if hostFilter.userId then originalHost.name=hostFilter.name originalHost.userId=hostFilter.userId elseif S.hostName then originalHost.name=S.hostName local hp=getPlayer(S.hostName)if hp then originalHost.userId=hp.UserId end end end S.lending=true S.hostName=t.Name:lower()hostFilter.name=t.
+Name:lower()hostFilter.userId=t.UserId S.lendEnd=os.clock()+sc sendChat(pick({"listening to ","host is now ","transferring to "})..t.Name.." for "..math.floor(sc).."s")if S.lendThread then task.cancel(S.lendThread)S.lendThread=nil end S.lendThread=task.spawn(function()local warned=false while S.lending and ROLE=="BOT"do task.wait(0.5)local left=S.lendEnd-os.clock()if left<=0 then restoreHost()break elseif left<=5 and not warned then warned=true sendChat("5s left for "..t.Name)end end end)end function stopLendNow()if not S.lending then sendChat("not lending to anyone rn")return end if S.lendThread then task.cancel(S.lendThread)S.lendThread=nil end restoreHost()end function startAfk()if ROLE~="BOT"then return end task.spawn(function()while ROLE=="BOT"do task.wait(1)local hh=getHostHRP()if not hh then S.hostLastPos=nil S.hostAfkTimer=0 continue end if S.hostLastPos then if(hh.Position-S.
+hostLastPos).Magnitude>0.8 then S.hostAfkTimer=0 if S.hostIsAfk then S.hostIsAfk=false end else S.hostAfkTimer=S.hostAfkTimer+1 if S.hostAfkTimer>=AT and not S.hostIsAfk then S.hostIsAfk=true end end end S.hostLastPos=hh.Position end end)end function bindDeath()if S.deathConn then S.deathConn:Disconnect()S.deathConn=nil end local c=pl.Character if not c then return end local h=c:FindFirstChildOfClass("Humanoid")if not h then return end S.deathConn=h.Died:Connect(function()local wasFighting=S.swordKillActive and S.swordKillTarget stopSpin()stopDance()stopLead(false)stopFling(false)stopRizz(false)if not wasFighting then stopSwordKill(false)end S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.stableFollowDir=nil local n=os.clock()if n-S.lastDeathTime>DRT then S.deathCount=0 S.deathSilent=false end S.
+lastDeathTime=n S.deathCount=S.deathCount+1 if S.deathSilent then return end if wasFighting then sendChat(pick({"im down","back in a sec","respawning","one sec","ill be back"}))elseif S.deathCount==2 then sendChat("...")elseif S.deathCount==3 then sendChat("....")elseif S.deathCount==4 then sendChat(".....")elseif S.deathCount==5 then sendChat(pick({"bro","cmon","seriously","again?","bruh"}))elseif S.deathCount==6 then sendChat(pick({"ok this is annoying","really now","dude","ugh","seriously"}))elseif S.deathCount==7 then sendChat(pick({"bro stop","cmon man","enough","why tho"}))elseif S.deathCount>=8 then sendChat(pick({"stop bro","bro stop it","ok enough","chill out man","i said stop"}))S.deathSilent=true end end)end handleCommand=function(cmd,args)if ROLE~="BOT"or antiBan.detected then return end if cmd=="hover"then startHover(false)return end if cmd=="unhover"or cmd=="land"then
+stopHover(false)return end if cmd=="flipcoin"then cmdFlip()return end if cmd=="roll"then cmdRoll(args)return end if cmd=="8ball"then cmd8Ball(args)return end if cmd=="truth"then cmdTruth()return end if cmd=="dare"then cmdDare()return end if cmd=="wouldyourather"then cmdWYR()return end if cmd=="randomnum"then local a,b=args:match("^(%S+)%s+(%S+)$")cmdRandomNum(a,b)return end if cmd=="countdown"then cmdCountdown(args)return end if cmd=="timer"then cmdTimer(args)return end if cmd=="storytime"then cmdStorytime()return end if cmd=="compliment"then cmdCompliment(args)return end if cmd=="roast"then cmdRoast(args)return end if cmd=="dadjoke"then cmdDadJoke()return end if PLACEHOLDER_CMDS[cmd]then sendChat(pick(PLACEHOLDER_REPLIES))return end if cmd=="say"then if args~=""then sendChat(args)end elseif cmd=="ask"then handleAIChat(args)elseif cmd=="gameinfo"then handleGameInfo(args)elseif cmd==
+"similar"then handleGameInfo("similar")elseif cmd=="backoff"then local n=tonumber(args)or BACKOFF_STEP FD=math.clamp(FD+n,FD_MIN,FD_MAX)sendChat("backing off, distance is now "..FD)elseif cmd=="getcloser"then local n=tonumber(args)or BACKOFF_STEP FD=math.clamp(FD-n,FD_MIN,FD_MAX)sendChat("getting closer, distance is now "..FD)elseif cmd=="recall"then stopAllModes()task.wait(0.05)teleportToHost()sendChat(pick({"omw","coming","on my way","here"}))elseif cmd=="stop"then stopAllModes()task.wait(0.05)teleportToHost()sendChat(pick(R_.stop))elseif cmd=="follow"then stopOrbit()stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopRizz(false)S.mode="Follow"S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick({"following","on you",
+"back on follow"}))elseif cmd=="info"then local sp2=args:find("%s")local pname,field if sp2 then pname=trim(args:sub(1,sp2-1))field=trim(args:sub(sp2+1)):lower()else pname=trim(args)field=nil end if pname==""then sendChat("usage: !info <player> [field]")else local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))else local myHrp=hrp()local pHrp=getPlayerHRP(p)local d=-1 if myHrp and pHrp then d=math.floor((myHrp.Position-pHrp.Position).Magnitude)end local accAge=p.AccountAge or 0 local joined=os.time()-(accAge*86400)local isFriend=false pcall(function()isFriend=p:IsFriendsWith(pl.UserId)end)local ph=0 local pmax=100 if p.Character then local phh=p.Character:FindFirstChildOfClass("Humanoid")if phh then ph=math.floor(phh.Health)pmax=math.floor(phh.MaxHealth)end end local isHost=false if p==getHost()then isHost=true end if field=="id"then sendChat(p.Name.." id: "..p.UserId)elseif
+field=="age"or field=="joined"then sendChat(p.Name.." joined "..fmtDate(joined).." ("..fmtAge(accAge).." ago)")elseif field=="distance"or field=="dist"then if d>=0 then sendChat(p.Name.." is "..d.." studs away")else sendChat("no position for "..p.Name)end elseif field=="hp"or field=="health"then sendChat(p.Name.." hp: "..ph.."/"..pmax)elseif field=="friend"then sendChat(p.Name.." friend of you: "..tostring(isFriend))elseif field=="display"or field=="name"then sendChat(p.Name.." display: "..p.DisplayName)elseif field then sendChat(pick(R_.infoerr))else task.spawn(function()sendChat(p.Name.." (@"..p.DisplayName..")")task.wait(0.7)sendChat("id: "..p.UserId)task.wait(0.7)sendChat("joined "..fmtDate(joined).." ("..fmtAge(accAge).." ago)")task.wait(0.7)if d>=0 then sendChat("distance: "..d.." studs")end task.wait(0.7)sendChat("hp: "..ph.."/"..pmax)task.wait(0.7)local extras={}if isFriend then
+extras[#extras+1]="friend of you"end if isHost then extras[#extras+1]="current host"end if#extras>0 then sendChat("note: "..table.concat(extras,", "))end end)end end end elseif cmd=="orbit"then startOrbit(args~=""and args or nil)elseif cmd=="unorbit"then stopOrbit()sendChat(pick(R_.unorbit))elseif cmd=="sit"then stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopRizz(false)S.sitting=true S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil local h=hum()if h then pcall(function()h.WalkSpeed=0 h.JumpPower=0 h.Sit=true h:ChangeState(Enum.HumanoidStateType.Seated)end)end sendChat(pick(R_.sit))elseif cmd=="stand"then S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick(R_.stand))elseif cmd=="jump"then local
+h=hum()if h then h.Jump=true sendChat(pick(R_.jump))end elseif cmd=="hide"then doHide(false)elseif cmd=="spawn"then doSpawn()elseif cmd=="dance"then playDance(tonumber(args)or 1)elseif cmd=="undance"then stopDance()sendChat(pick(R_.undance))elseif cmd=="spin"then startSpin(args)elseif cmd=="unspin"then stopSpin()sendChat(pick(R_.unspin))elseif cmd=="lead"then startLead(args)elseif cmd=="unlead"then stopLead(true)elseif cmd=="bam"then startBam(args)elseif cmd=="unbam"then stopBam(false)teleportToHost()sendChat(pick(R_.unbam))elseif cmd=="annoy"then startAnnoy(args)elseif cmd=="unannoy"then stopAnnoy(false)teleportToHost()sendChat(pick(R_.unannoy))elseif cmd=="fling"then startFling(args)elseif cmd=="unfling"then stopFling(false,false)teleportToHost()sendChat(pick(R_.unfling))elseif cmd=="swordkill"then startSwordKill(args)elseif cmd=="unswordkill"then stopSwordKill(true)elseif cmd==
+"antifling"then S.antiFling=true sendChat("antifling on")elseif cmd=="unantifling"then S.antiFling=false local c=pl.Character if c then for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then p.CanCollide=true end end end sendChat("antifling off")elseif cmd=="antitoolkill"then S.antiToolKill=true sendChat("antitoolkill on")elseif cmd=="unantitoolkill"then S.antiToolKill=false sendChat("antitoolkill off")elseif cmd=="rizz"then startRizz(args)elseif cmd=="unrizz"then stopRizz(true)elseif cmd=="math"then handleMath(args)elseif cmd=="whoishost"then local hh=getHost()if S.lending then sendChat("host is "..(hh and hh.Name or"?").." (temp, "..math.max(0,math.floor(S.lendEnd-os.clock())).."s left)")else sendChat("host is "..(hh and hh.Name or"none"))end elseif cmd=="gender"then local sp2=args:find("%s")if not sp2 then sendChat("usage: !gender <player> <m/f/they>")return end local pname=
+trim(args:sub(1,sp2-1))local g=trim(args:sub(sp2+1)):lower()if g~="m"and g~="f"and g~="they"then sendChat("gender must be m, f, or they")return end local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))return end sendChat("noted for "..p.Name)elseif cmd=="genderclear"then local p=getPlayer(args)if not p then sendChat(pick(R_.notfound))return end sendChat("cleared for "..p.Name)elseif cmd=="cmds"then sendSeq({"here ya go","!ask <msg> - talk to XcH","!ask <do something> - XcH will do it","!ask <multi-step task> - butler runs it, say stop anytime","!ask whats the name of this game","!gameinfo - what game is this","!gameinfo full | tips | controls | wiki","!similar - games like this one","!info <player> [id/age/joined/distance/hp/friend]","!stop | !recall | !follow","!hover | !unhover","!backoff <n> | !getcloser <n>","!orbit <1-1000> | !unorbit","!lead <player> | !unlead",
+"!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!annoy <player> | !unannoy","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling","!antitoolkill | !unantitoolkill","!rizz <player> | !unrizz","!dance 1-4 | !undance","!spin 1-100 | !unspin","!math <num><op><num>","!say <text>","!flipcoin | !roll <n> | !8ball <q>","!truth | !dare | !wouldyourather","!randomnum <a> <b> | !countdown <n> | !timer <s>","!storytime | !compliment <player> | !roast <player> | !dadjoke","!host <player> <seconds, max 500> (creator only)","!stophost (creator only)","!whoishost","!cmds"},0.9)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end BUTLER={active=false,id=0,scope=nil,keyIdx=1,keySince=0,lastReq=0,MAXTIME=300}BUTLER_SYS=[==[You are Butler, the planner for a roblox bot that obeys its boss. Turn the boss request into a short JSON plan the bot will run step by step.
+Output ONLY one JSON object, no markdown, no explanation:
+{"say":"short ack under 8 words","steps":[ ... ],"done":"short finish line under 8 words"}
+
+STEP TYPES:
+{"t":"cmd","c":"<command> [args]"}  existing bot commands, use these FIRST. Allowed: spin, dance <1-4>, hide, spawn, jump, sit, stand, orbit <1-1000>, lead <player>, bam <player>, annoy <player>, swordkill <player>, fling <player>, backoff <n>, getcloser <n>, recall, follow, stop, hover, rizz <player>, and the stoppers unspin, undance, unorbit, unlead, unbam, unannoy, unfling, unswordkill, unrizz, unhover.
+{"t":"wait","s":seconds}  1 to 120. For vague times like "when bored" or "after a while" pick a believable number.
+{"t":"chat","m":"text"}  the bot says text in chat, max 150 chars, lowercase casual.
+{"t":"spam","lines":["a","b","c"],"n":count,"d":seconds}  chat spam. n max 15, d between 2 and 8. give several different lines.
+{"t":"code","req":"precise description of what the temporary script must do","s":seconds}  ONLY when no existing command can do it (follow a specific player, walk or run somewhere, wave, circle someone, run away, etc). s = how long it should run, use 3 for instant actions, max 120.
+{"t":"ask","q":"the question"}  for trivia, directions, facts, jokes or any normal conversation. the chat ai answers it out loud.
+
+RULES:
+- prefer existing commands. a timed command needs a wait step and then its stopper.
+- "that guy / him / her / them" means the nearest non-boss player in the players list. only use player names from that list.
+- max 10 steps. keep it minimal. never refuse harmless requests.
+- if the boss only wants to talk, return one ask step.]==]
+BUTLER_CODE_RULES=[==[TEMP TASK MODE: your script runs on the bot client for a limited time then is cleaned up. The first line `local ctx=...` is already added for you, do not declare it.
+ctx API:
+ctx.alive() -> false once stopped. every loop must be: while ctx.alive() do ... ctx.wait(0.1) end
+ctx.wait(t) -> cancel-aware wait, returns ctx.alive()
+ctx.on(signal, fn) -> use for EVERY event connection (auto disconnects)
+ctx.new(class, props, parent) -> use for every Instance you create (auto destroyed)
+ctx.spawn(fn) -> run fn in a tracked thread
+ctx.chat(text) -> bot says text
+ctx.finish() -> call when the job is done early. instant actions MUST call it at the end.
+ctx.find(name) -> Player or nil. ctx.hostPlayer() -> the boss Player
+ctx.hum() ctx.hrp() -> bot Humanoid / HumanoidRootPart (may be nil)
+ctx.moveTo(Vector3) -> Humanoid:MoveTo
+Move by Humanoid:MoveTo or by setting hrp.CFrame. Never loop forever without ctx.alive(). No HTTP, no TeleportService, no kicking, no loadstring. Keep it short. Output ONLY one ```lua code block.]==]
+BUTLER_UNSAFE={"httpget","httppost","httpservice","teleportservice",":kick(","shutdown","loadstring","require(","writefile","readfile","delfile","appendfile","setclipboard","getgenv","getrenv","hookfunction","hookmetamethod","newcclosure","syn.","http_request","request(","datastore","marketplaceservice","setfflag","queue_on_teleport","game:service","getconnections"}function BUTLER.log(msg,col)local ref=(ROLE=="HOST"and hostLogRef)or botLogRef if ref and ref.holder and pushLog then pcall(pushLog,ref,tostring(msg),col or C.text)end end function BUTLER.alive(myId)return BUTLER.active and BUTLER.id==myId end function BUTLER.classify(em)local lw=tostring(em or""):lower()if lw:find("quota",1,true)or lw:find("exceeded",1,true)or lw:find("rate limit",1,true)or lw:find("429",1,true)or lw:find("resource_exhausted",1,true)or lw:find("resource exhausted",1,true)then return"quota"end if lw:find(
+"api key not valid",1,true)or lw:find("api_key_invalid",1,true)or lw:find("key expired",1,true)or lw:find("permission denied",1,true)or lw:find("unauthenticated",1,true)or lw:find("invalid api key",1,true)or lw:find("403",1,true)or lw:find("401",1,true)then return"badkey"end if lw:find("high demand",1,true)or lw:find("overload",1,true)or lw:find("503",1,true)or lw:find("unavailable",1,true)or lw:find("temporarily",1,true)then return"busy"end if lw:find("not found",1,true)or lw:find("does not exist",1,true)or lw:find("404",1,true)then return"invalid_model"end if lw:find("mime",1,true)then return"mime"end return"api"end function BUTLER.once(rf,key,bodyTbl)local ok,en=pcall(function()return H:JSONEncode(bodyTbl)end)if not ok or not en then return nil,"json","encode failed"end local uw=BGE..AMI..":generateContent"local ok2,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]=
+"application/json",["x-goog-api-key"]=tostring(key)},Body=en})if not ok2 then return nil,"http",tostring(rsp):sub(1,120)end if not rsp then return nil,"http","no response"end local rb=rsp.Body or rsp.body if rb==nil then rb=rsp end if type(rb)~="string"then local ok3,s=pcall(function()return H:JSONEncode(rb)end)rb=ok3 and s or tostring(rb)end if rb==""then return nil,"http","empty body HTTP "..tostring(rsp.StatusCode or rsp.Status or"?")end local dk,data=pcall(function()return H:JSONDecode(rb)end)if not dk or type(data)~="table"then return nil,"json",rb:sub(1,80)end if data.error then local m=data.error.message or data.error if type(m)~="string"then m=H:JSONEncode(m)end return nil,BUTLER.classify(m),tostring(m):sub(1,120)end if not data.candidates or#data.candidates==0 then if data.promptFeedback and data.promptFeedback.blockReason then return nil,"blocked","blocked:"..tostring(data.
+promptFeedback.blockReason)end return nil,"nochoices","no candidates"end local cd=data.candidates[1]if not cd.content or not cd.content.parts or#cd.content.parts==0 then local fr=cd.finishReason if fr and fr~="STOP"then return nil,"blocked","finish="..tostring(fr)end return nil,"nomsg","no parts"end local tx=nil for _,p in ipairs(cd.content.parts)do if p.text and p.text~=""and not p.thought then tx=(tx or"")..p.text end end if not tx or tx==""then return nil,"nomsg","empty text"end pcall(function()if data.usageMetadata and TU then local um=data.usageMetadata TU.prompt=(TU.prompt or 0)+(um.promptTokenCount or 0)TU.candidates=(TU.candidates or 0)+(um.candidatesTokenCount or 0)TU.total=(TU.total or 0)+(um.totalTokenCount or 0)TU.requests=(TU.requests or 0)+1 end end)return tx,nil,nil end function BUTLER.call(sys,user,mt,asJson)local rf=aiGetRequestFunc()if not rf then return nil,"nohttp",
+"no request func"end local keys={BKey1,BKey2}local order={1,2}if BUTLER.keyIdx==2 and(os.clock()-(BUTLER.keySince or 0))<1200 then order={2,1}end local lastEt,lastEm="nokey","no key"for _,idx in ipairs(order)do local k=keys[idx]if k and k~=""then local wantJson=asJson local tries=0 while true do tries=tries+1 local gc={maxOutputTokens=mt or 600}if wantJson then gc.responseMimeType="application/json"end local body={contents={{role="user",parts={{text=sys.."\n\n"..user}}}},generationConfig=gc}local tx,et,em=BUTLER.once(rf,k,body)if tx then if idx~=BUTLER.keyIdx then BUTLER.keyIdx=idx BUTLER.keySince=os.clock()end return tx,nil,nil end lastEt,lastEm=et,em if et=="mime"and wantJson and tries<3 then wantJson=false elseif et=="busy"and tries<2 then task.wait(1.5)else break end end if not(lastEt=="quota"or lastEt=="badkey")then return nil,lastEt,lastEm end end end return nil,lastEt,lastEm end
+BUTLER_VERBS={}for w in("follow following sit sitting stand jump jumping spin spinning dance dancing hide orbit lead bam annoy swordkill fling hover hovering rizz spam spamming walk walking run running go goto chase circle wave flip backflip crouch crawl teleport tp come move emote"):gmatch("%S+")do BUTLER_VERBS[w]=true end BUTLER_EXTRA={}for w in("spam spamming goto chase circle wave flip backflip crouch crawl teleport tp emote repeat"):gmatch("%S+")do BUTLER_EXTRA[w]=true end BUTLER_TIMING={}for w in("then after before until while every repeat repeatedly times again bored later once twice sec secs second seconds min mins minute minutes forever continuously keep whenever"):gmatch("%S+")do BUTLER_TIMING[w]=true end function BUTLER.isTask(text)local l=" "..tostring(text or""):lower().." "if l:find(" make me ",1,true)or l:find("script",1,true)or l:find("hack",1,true)or l:find(" for me ",1,
+true)then return false end local verbs,nv,extra,timing=0,0,false,false local seen={}for w in l:gmatch("[%a']+")do if BUTLER_VERBS[w]and not seen[w]then seen[w]=true nv=nv+1 end if BUTLER_EXTRA[w]then extra=true end if BUTLER_TIMING[w]then timing=true end end if l:find("%d+%s*s%f[%A]")or l:find("%d+%s*m%f[%A]")then timing=true end if l:find(" go to ",1,true)or l:find(" walk to ",1,true)or l:find(" run to ",1,true)or l:find(" walk around",1,true)or l:find(" run around",1,true)or l:find(" run away",1,true)then extra=true end if nv==0 then return false end if timing or extra or nv>=2 then return true end return false end function BUTLER.isStop(text)local raw=tostring(text or""):lower()raw=raw:gsub("^%s*!ask%s*",""):gsub("^%s*!","")local l=" "..raw:gsub("[%p]"," "):gsub("%s+"," ").." "local count=0 for _ in l:gmatch("%S+")do count=count+1 end if count==0 or count>20 then return false end if
+BUTLER.isTask(raw)then return false end local phrases={"stop","cancel","enough","nvm","nevermind","never mind","abort","halt","quit","come back","go back","forget it","leave it","leave him","leave her","leave them","that s enough","thats enough","end task","end it","come here","come to me","back to me","over here","stahp","chill","ok ok"}for _,p in ipairs(phrases)do if l:find(" "..p.." ",1,true)then return true end end for w in l:gmatch("%S+")do if w:match("^st+o+p+$")or w:match("^sto+p+$")then return true end end return false end function BUTLER.context()local arr={}local myH=hrp()for _,p in ipairs(P:GetPlayers())do if p~=pl then local r=getPlayerHRP(p)local d=9999 if myH and r then d=math.floor((myH.Position-r.Position).Magnitude)end arr[#arr+1]={p=p,d=d}end end table.sort(arr,function(a,b)return a.d<b.d end)local hn=S.hostName or"?"local list={}for i=1,math.min(8,#arr)do local e=arr[i
+]local tag=(e.p.Name:lower()==hn)and" (boss)"or""list[#list+1]=e.p.Name.." ["..e.p.DisplayName.."] "..(e.d<9999 and tostring(e.d)or"?").." studs"..tag end return"boss: "..hn.."\nbot state: "..tostring(S.mode)..(S.sitting and", sitting"or"").."\nplayers nearest first: "..table.concat(list,"; ")end function BUTLER.parsePlan(txt)if not txt then return nil end local s=txt:gsub("```json",""):gsub("```","")local a=s:find("{",1,true)if not a then return nil end local b=nil for i=#s,a,-1 do if s:sub(i,i)=="}"then b=i break end end if not b then return nil end local ok,d=pcall(function()return H:JSONDecode(s:sub(a,b))end)if ok and type(d)=="table"then return d end return nil end function BUTLER.cleanChat(t)t=tostring(t or""):gsub("[%c]"," "):gsub("%s+"," ")t=t:gsub("^%s+",""):gsub("%s+$","")return t:sub(1,180)end function BUTLER.newScope(myId)local sc={alive=true,finished=false,conns={},insts={},
+threads={}}local ctx={}ctx.alive=function()return sc.alive and BUTLER.alive(myId)end ctx.finish=function()sc.finished=true end ctx.wait=function(t)task.wait(t or 0.03)return ctx.alive()end ctx.on=function(sig,fn)local c=sig:Connect(function(...)if ctx.alive()then fn(...)end end)sc.conns[#sc.conns+1]=c return c end ctx.new=function(cls,props,parent)local i=Instance.new(cls)if props then for k,v in pairs(props)do pcall(function()i[k]=v end)end end if parent then i.Parent=parent end sc.insts[#sc.insts+1]=i return i end ctx.spawn=function(fn,...)local th=task.spawn(function(...)pcall(fn,...)end,...)sc.threads[#sc.threads+1]=th return th end ctx.chat=function(m)sendChat(BUTLER.cleanChat(m))end ctx.player=pl ctx.hum=function()return hum()end ctx.hrp=function()return hrp()end ctx.find=function(n)return getPlayer(n)end ctx.hostPlayer=function()return getHost()end ctx.moveTo=function(pos)local h=
+hum()if h then pcall(function()h:MoveTo(pos)end)end end sc.ctx=ctx sc.close=function()sc.alive=false for _,c in ipairs(sc.conns)do pcall(function()c:Disconnect()end)end for _,i in ipairs(sc.insts)do pcall(function()i:Destroy()end)end for _,t in ipairs(sc.threads)do pcall(function()task.cancel(t)end)end sc.conns,sc.insts,sc.threads={},{},{}end return sc end function BUTLER.cleanup()local sc=BUTLER.scope BUTLER.scope=nil if sc then pcall(sc.close)end if S.mode=="Butler"then S.mode="Follow"pcall(function()local h=hum()if h then h.WalkSpeed=BS h.JumpPower=BJ h.PlatformStand=false end end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil end end function BUTLER.cancel()BUTLER.active=false BUTLER.id=BUTLER.id+1 BUTLER.cleanup()end function BUTLER.stop()BUTLER.cancel()task.spawn(function()pcall(handleCommand,"stop","")end)end function BUTLER.fail(et,em)BUTLER.log(
+"[butler] failed: "..tostring(et)..(em and(" - "..tostring(em):sub(1,70))or""),C.red)if et=="quota"then local h,m=getResetCountdown()sendChat("butler out of fuel, back in "..h.."h "..m.."m")elseif et=="busy"then sendChat(pick({"im busy rn, try again","hold up, try again"}))elseif et=="blocked"then sendChat(pick({"got blocked, say it differently","filter stopped me"}))elseif et=="nohttp"then sendChat("no http in executor")elseif et=="nokey"then sendChat("no butler key set")else sendChat(pick({"couldnt plan that one","something went wrong, try again"}))end end function BUTLER.runCode(req,secs,myId)secs=math.clamp(tonumber(secs)or 20,3,120)local prompt="TEMP TASK: "..tostring(req).."\nRun time: "..secs.." seconds.\n"..BUTLER.context()local reply,et,em=BUTLER.call((CP2 or"")..("\n\n"..BUTLER_CODE_RULES),prompt,1800,false)if not BUTLER.alive(myId)then return end if not reply then BUTLER.fail(
+et,em)return end local code=extractCodeBlock(reply)if not code or code==""then BUTLER.log("[butler] code: nothing usable",C.red)sendChat("couldnt write that one")return end local lc=code:lower()for _,bad in ipairs(BUTLER_UNSAFE)do if lc:find(bad,1,true)then BUTLER.log("[butler] code blocked: "..bad,C.red)sendChat("cant do that one safely")return end end local fn,cerr=loadstring("local ctx=...\n"..code)if not fn then BUTLER.log("[butler] compile: "..tostring(cerr):sub(1,90),C.red)sendChat("script came out broken")return end local sc=BUTLER.newScope(myId)BUTLER.scope=sc if type(setfenv)=="function"and type(getfenv)=="function"then pcall(function()local base=getfenv(fn)local tk=setmetatable({wait=function(t)local r=task.wait(t)if not sc.ctx.alive()then error("butler_stop",0)end return r end,spawn=function(...)local th=task.spawn(...)sc.threads[#sc.threads+1]=th return th end,defer=function(
+...)local th=task.defer(...)sc.threads[#sc.threads+1]=th return th end,delay=function(...)local th=task.delay(...)sc.threads[#sc.threads+1]=th return th end,},{__index=task})local ins=setmetatable({new=function(c,p)local i=Instance.new(c,p)sc.insts[#sc.insts+1]=i return i end},{__index=Instance})local env=setmetatable({task=tk,Instance=ins,wait=function(t)return tk.wait(t)end,},{__index=base})setfenv(fn,env)end)end S.mode="Butler"S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil local th=task.spawn(function()local ok,err=pcall(fn,sc.ctx)if not ok and tostring(err):find("butler_stop",1,true)==nil then BUTLER.log("[butler] runtime: "..tostring(err):sub(1,90),C.red)end end)sc.threads[#sc.threads+1]=th BUTLER.log("[butler] temp script running ("..secs.."s)",C.green)local t0=os.clock()while BUTLER.alive(myId)and not sc.finished and os.clock()-t0<secs do task.wait(0.15)
+end if BUTLER.scope==sc then BUTLER.scope=nil end pcall(sc.close)if S.mode=="Butler"then S.mode="Follow"pcall(function()local h=hum()if h then h.WalkSpeed=BS h.JumpPower=BJ h.PlatformStand=false end end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil end end function BUTLER.execute(plan,myId)local function alive()return BUTLER.alive(myId)end local function sleep(s)local t0=os.clock()while alive()and os.clock()-t0<s do task.wait(0.15)end return alive()end local steps=plan.steps if type(steps)~="table"then steps={}end local started=os.clock()local transient=false for i,st in ipairs(steps)do if i>12 then break end if not alive()then return end if os.clock()-started>BUTLER.MAXTIME then break end if type(st)=="table"then local t=tostring(st.t or""):lower()if t=="cmd"then local c=trim(tostring(st.c or""))local name=c:match("^(%S+)")if name then name=name:lower()local
+rest=trim(c:sub(#name+1))if AI_CMD_WHITELIST[name]then pcall(handleCommand,name,rest)sleep(0.5)end end elseif t=="wait"then transient=true sleep(math.clamp(tonumber(st.s)or 1,0.2,120))elseif t=="chat"then local m=BUTLER.cleanChat(st.m)if m~=""then sendChat(m)sleep(0.8)end elseif t=="spam"then local lines={}if type(st.lines)=="table"then for _,l in ipairs(st.lines)do local m=BUTLER.cleanChat(l)if m~=""then lines[#lines+1]=m end end end if#lines==0 and st.m then local m=BUTLER.cleanChat(st.m)if m~=""then lines[1]=m end end if#lines>0 then local n=math.clamp(math.floor(tonumber(st.n)or#lines),1,15)local d=math.clamp(tonumber(st.d)or 2.5,1.5,10)for k=1,n do if not alive()then return end sendChat(lines[((k-1)%#lines)+1])if k<n then sleep(d)end end end elseif t=="code"then local req=trim(tostring(st.req or""))if req~=""then transient=true BUTLER.runCode(req,st.s,myId)end elseif t=="ask"then
+local q=trim(tostring(st.q or""))if q~=""then local n=tick()if n-LRT<RCL then sleep(RCL-(n-LRT)+0.15)end if alive()then task.spawn(function()handleAIChat(q)end)sleep(5)end end end end end if not alive()then return end BUTLER.active=false BUTLER.cleanup()if transient and(S.mode~="Follow"or S.sitting)then pcall(stopAllModes)end local dn=BUTLER.cleanChat(plan.done)if dn==""then dn=pick({"done boss","all done","finished","done"})end sendChat(dn)end function BUTLER.run(prompt)if ROLE~="BOT"or antiBan.detected then return end if(not BKey1 or BKey1=="")and(not BKey2 or BKey2=="")then sendChat("no butler key set")return end local now=os.clock()if now-BUTLER.lastReq<2 then return end BUTLER.lastReq=now BUTLER.cancel()BUTLER.id=BUTLER.id+1 local myId=BUTLER.id BUTLER.active=true local user="BOSS REQUEST: "..prompt.."\n\n"..BUTLER.context()local rp,et,em=BUTLER.call(BUTLER_SYS,user,700,true)if not
+BUTLER.alive(myId)then return end if not rp then BUTLER.active=false BUTLER.fail(et,em)return end local plan=BUTLER.parsePlan(rp)if not plan then BUTLER.active=false BUTLER.log("[butler] bad plan: "..tostring(rp):sub(1,80),C.red)sendChat("couldnt plan that one, try again")return end local say=BUTLER.cleanChat(plan.say)if say~=""then sendChat(say)end BUTLER.log("[butler] task: "..prompt:sub(1,60),C.green)BUTLER.execute(plan,myId)end function BUTLER.route(prompt)local p=trim(tostring(prompt or""))local forced=false local fp=p:match("^[Tt][Aa][Ss][Kk][%s:]+(.+)$")if fp then p=trim(fp)forced=true end if p==""then return false end if not forced and not BUTLER.isTask(p)then return false end if ROLE=="BOT"then task.spawn(function()BUTLER.run(p)end)else BUTLER.log("[butler] task sent to bot: "..p:sub(1,50),C.green)end return true end function BUTLER.hook(text)if not BUTLER.active or ROLE~="BOT"
+then return false end if BUTLER.isStop(text)then BUTLER.stop()return true end local l=tostring(text or""):lower()local nm=l:match("^!(%S+)")if nm and nm~="ask"and nm~="info"and AI_CMD_WHITELIST[nm]then BUTLER.cancel()end return false end function processMessage(uid,text)if not text or text==""then return end if uid~=pl.UserId and text:sub(1,1)~=commandPrefix then local speaker=P:GetPlayerByUserId(uid)local speakerName=speaker and speaker.Name or"Unknown"table.insert(S.chatLog,speakerName..": "..text)if#S.chatLog>15 then table.remove(S.chatLog,1)end end if ROLE~="BOT"and ROLE~="HOST"then return end if ROLE=="BOT"and uid~=pl.UserId and not isFromHost(uid)then handleStrangerMsg(uid,text)return end if not isFromHost(uid)then return end if BUTLER and BUTLER.hook and BUTLER.hook(text)then return end local lowText=text:lower()if lowText:sub(1,4)=="!ask"then local prompt=trim(text:sub(5))if
+prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return end if isDuplicateMessage(uid,text)then return end if BUTLER and BUTLER.route and BUTLER.route(prompt)then return end task.spawn(function()handleAIChat(prompt)end)return end if ROLE~="BOT"then return end if text:sub(1,#commandPrefix)~=commandPrefix then return end if isDuplicateMessage(uid,text)then return end local body=trim(text:sub(#commandPrefix+1))if body==""then return end local sp=body:find("%s")local cmd,args if sp then cmd=body:sub(1,sp-1):lower()args=trim(body:sub(sp+1))else cmd=body:lower()args=""end if cmd=="host"or cmd=="stophost"then if not isCreatorUser(uid)then task.spawn(function()sendChat(pick({"only my boss can do that","nah not for you","creator only","youre not the boss","denied"}))end)return end if cmd=="host"then local sp2=args:find("%s")if not sp2 then task.spawn(function()sendChat(
+"usage: !host <player> <seconds>")end)return end local pname=trim(args:sub(1,sp2-1))local secs=tonumber(trim(args:sub(sp2+1)))if not secs or secs<=0 then task.spawn(function()sendChat("need a valid seconds number")end)return end task.spawn(function()startLend(pname,secs)end)else task.spawn(function()stopLendNow()end)end return end task.spawn(function()local ok,err=pcall(handleCommand,cmd,args)if not ok then warn("[MyPanel] cmd error:",err)if botLogRef then pushLog(botLogRef,"err: "..tostring(err):sub(1,60),C.red)end end end)end pcall(function()if TC and TC.ChatVersion==Enum.ChatVersion.TextChatService then TC.MessageReceived:Connect(function(m)local s=m.TextSource if not s then return end processMessage(s.UserId,m.Text)end)end end)local function hookChatted(p)p.Chatted:Connect(function(t)processMessage(p.UserId,t)end)end for _,p in ipairs(P:GetPlayers())do hookChatted(p)end P.PlayerAdded
+:Connect(hookChatted)task.spawn(function()local ok,ch=pcall(function()return TC:WaitForChild("TextChannels",8)end)if not ok or not ch then return end local g=ch:FindFirstChild("RBXGeneral")or ch:FindFirstChild("RBGGeneral")or ch:FindFirstChildWhichIsA("TextChannel")if not g then return end pcall(function()g.MessageReceived:Connect(function(m)local s=m.TextSource if not s then return end processMessage(s.UserId,m.Text)end)end)end)local gui=Instance.new("ScreenGui")gui.Name=GN gui.ResetOnSpawn=false gui.DisplayOrder=999 gui.IgnoreGuiInset=true gui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling gui.Enabled=true local parented=false pcall(function()gui.Parent=pg parented=true end)if not parented then pcall(function()gui.Parent=game:GetService("CoreGui")end)end local frame=Instance.new("Frame")frame.Name="MainPanel"frame.Size=UDim2.new(0,520,0,320)frame.Position=UDim2.new(0,12,0.5,-160)frame.
+BackgroundColor3=C.panel frame.BorderSizePixel=0 frame.ClipsDescendants=false frame.Parent=gui corner(frame,12)stroke(frame,C.border,1,0)SHOWN=UDim2.new(0,12,0.5,-160)HIDDEN=UDim2.new(0,-600,0.5,-160)function show()tw(frame,0.4,{Position=SHOWN},Enum.EasingStyle.Quint)end function hide()tw(frame,0.4,{Position=HIDDEN},Enum.EasingStyle.Quint,Enum.EasingDirection.In)end local topBar=Instance.new("Frame")topBar.Name="TopBar"topBar.Size=UDim2.new(1,0,0,40)topBar.Position=UDim2.new(0,0,0,0)topBar.BackgroundColor3=C.panelTop topBar.BorderSizePixel=0 topBar.Parent=frame local topBarStroke=Instance.new("UIStroke")topBarStroke.Color=C.border topBarStroke.Thickness=1 topBarStroke.Transparency=0.4 topBarStroke.ApplyStrokeMode=Enum.ApplyStrokeMode.Border topBarStroke.Parent=topBar local titleLbl=Instance.new("TextLabel")titleLbl.Size=UDim2.new(0,200,1,0)titleLbl.Position=UDim2.new(0,16,0,0)titleLbl.
+BackgroundTransparency=1 titleLbl.Font=Enum.Font.GothamBold titleLbl.Text="XcH"titleLbl.TextColor3=C.text titleLbl.TextSize=15 titleLbl.TextXAlignment=Enum.TextXAlignment.Left titleLbl.Parent=topBar local timeLbl=Instance.new("TextLabel")timeLbl.Size=UDim2.new(0,220,1,0)timeLbl.Position=UDim2.new(1,-236,0,0)timeLbl.BackgroundTransparency=1 timeLbl.Font=Enum.Font.Code timeLbl.Text="12:00:00 AM PHT"timeLbl.TextColor3=C.subText timeLbl.TextSize=11 timeLbl.TextXAlignment=Enum.TextXAlignment.Right timeLbl.Parent=topBar function phTime()local t=os.date("!*t",os.time()+PH)local p=t.hour>=12 and"PM"or"AM"local dh=t.hour%12 if dh==0 then dh=12 end return string.format("%02d:%02d:%02d %s PHT",dh,t.min,t.sec,p)end task.spawn(function()while timeLbl and timeLbl.Parent do timeLbl.Text=phTime()task.wait(1)end end)local sidebar=Instance.new("Frame")sidebar.Name="Sidebar"sidebar.Size=UDim2.new(0,100,1,-
+40)sidebar.Position=UDim2.new(0,0,0,40)sidebar.BackgroundColor3=C.sidebar sidebar.BorderSizePixel=0 sidebar.ClipsDescendants=true sidebar.Parent=frame local sideStroke=Instance.new("UIStroke")sideStroke.Color=C.border sideStroke.Thickness=1 sideStroke.Transparency=0.4 sideStroke.ApplyStrokeMode=Enum.ApplyStrokeMode.Border sideStroke.Parent=sidebar local sideLayout=Instance.new("UIListLayout")sideLayout.Padding=UDim.new(0,4)sideLayout.SortOrder=Enum.SortOrder.LayoutOrder sideLayout.Parent=sidebar local sidePad=Instance.new("UIPadding")sidePad.PaddingTop=UDim.new(0,8)sidePad.PaddingLeft=UDim.new(0,6)sidePad.PaddingRight=UDim.new(0,6)sidePad.Parent=sidebar local contentArea=Instance.new("Frame")contentArea.Name="ContentArea"contentArea.Size=UDim2.new(1,-100,1,-40)contentArea.Position=UDim2.new(0,100,0,40)contentArea.BackgroundColor3=C.panel contentArea.BorderSizePixel=0 contentArea.
+ClipsDescendants=true contentArea.Parent=frame function newPage()local p=Instance.new("Frame")p.Size=UDim2.new(1,0,1,0)p.Position=UDim2.new(0,0,0,0)p.BackgroundTransparency=1 p.Visible=false p.Parent=contentArea return p end local logsPage=newPage()local logsPad=Instance.new("UIPadding")logsPad.PaddingTop=UDim.new(0,10)logsPad.PaddingLeft=UDim.new(0,10)logsPad.PaddingRight=UDim.new(0,10)logsPad.PaddingBottom=UDim.new(0,10)logsPad.Parent=logsPage local pfxLbl=Instance.new("TextLabel")pfxLbl.Size=UDim2.new(0,110,0,14)pfxLbl.Position=UDim2.new(0,0,0,0)pfxLbl.BackgroundTransparency=1 pfxLbl.Font=Enum.Font.GothamBold pfxLbl.Text="COMMAND PREFIX"pfxLbl.TextColor3=C.subText pfxLbl.TextSize=9 pfxLbl.TextXAlignment=Enum.TextXAlignment.Left pfxLbl.Parent=logsPage local pfxBox=Instance.new("TextBox")pfxBox.Size=UDim2.new(0,42,0,26)pfxBox.Position=UDim2.new(0,0,0,18)pfxBox.BackgroundColor3=C.track
+pfxBox.BorderSizePixel=0 pfxBox.Font=Enum.Font.GothamBold pfxBox.Text=commandPrefix pfxBox.TextColor3=C.text pfxBox.TextSize=13 pfxBox.ClearTextOnFocus=false pfxBox.Parent=logsPage corner(pfxBox,6)stroke(pfxBox,C.border,1,0.2)local pfxHint=Instance.new("TextLabel")pfxHint.Size=UDim2.new(1,-50,0,26)pfxHint.Position=UDim2.new(0,50,0,18)pfxHint.BackgroundTransparency=1 pfxHint.Font=Enum.Font.Gotham pfxHint.Text="type: "..commandPrefix.."cmds"pfxHint.TextColor3=C.subText pfxHint.TextSize=9 pfxHint.TextXAlignment=Enum.TextXAlignment.Left pfxHint.TextYAlignment=Enum.TextYAlignment.Center pfxHint.Parent=logsPage local logBox=Instance.new("Frame")logBox.Size=UDim2.new(1,0,1,-56)logBox.Position=UDim2.new(0,0,0,52)logBox.BackgroundColor3=C.track logBox.BorderSizePixel=0 logBox.ClipsDescendants=true logBox.Parent=logsPage corner(logBox,8)stroke(logBox,C.border,1,0.3)local logEmpty=Instance.new(
+"TextLabel")logEmpty.Size=UDim2.new(1,-16,1,-12)logEmpty.Position=UDim2.new(0,8,0,6)logEmpty.BackgroundTransparency=1 logEmpty.Font=Enum.Font.Gotham logEmpty.Text="no messages yet"logEmpty.TextColor3=C.subText logEmpty.TextSize=10 logEmpty.TextXAlignment=Enum.TextXAlignment.Left logEmpty.TextYAlignment=Enum.TextYAlignment.Top logEmpty.Parent=logBox local logHolder=Instance.new("ScrollingFrame")logHolder.Size=UDim2.new(1,-8,1,-6)logHolder.Position=UDim2.new(0,4,0,3)logHolder.BackgroundTransparency=1 logHolder.BorderSizePixel=0 logHolder.CanvasSize=UDim2.new(0,0,0,0)logHolder.AutomaticCanvasSize=Enum.AutomaticSize.Y logHolder.ScrollBarThickness=4 logHolder.ScrollBarImageColor3=C.border logHolder.ScrollingDirection=Enum.ScrollingDirection.Y logHolder.Parent=logBox local lbl=Instance.new("UIListLayout")lbl.SortOrder=Enum.SortOrder.LayoutOrder lbl.Padding=UDim.new(0,2)lbl.Parent=logHolder
+hostLogRef={holder=logHolder,empty=logEmpty}botLogRef=hostLogRef flushBotLogBuffer()pfxBox.FocusLost:Connect(function()local np=trim(pfxBox.Text)if np==""then np="!"else np=np:sub(1,1)end commandPrefix=np pfxBox.Text=commandPrefix pfxHint.Text="type: "..commandPrefix.."cmds"end)local cmdsPage=newPage()local cmdsPad=Instance.new("UIPadding")cmdsPad.PaddingTop=UDim.new(0,10)cmdsPad.PaddingLeft=UDim.new(0,10)cmdsPad.PaddingRight=UDim.new(0,10)cmdsPad.PaddingBottom=UDim.new(0,10)cmdsPad.Parent=cmdsPage local cmdsBox=Instance.new("Frame")cmdsBox.Size=UDim2.new(1,0,1,0)cmdsBox.BackgroundColor3=C.track cmdsBox.BorderSizePixel=0 cmdsBox.ClipsDescendants=true cmdsBox.Parent=cmdsPage corner(cmdsBox,8)stroke(cmdsBox,C.border,1,0.3)local cmdScroll=Instance.new("ScrollingFrame")cmdScroll.Size=UDim2.new(1,-8,1,-6)cmdScroll.Position=UDim2.new(0,4,0,3)cmdScroll.BackgroundTransparency=1 cmdScroll.
+BorderSizePixel=0 cmdScroll.CanvasSize=UDim2.new(0,0,0,0)cmdScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y cmdScroll.ScrollBarThickness=4 cmdScroll.ScrollBarImageColor3=C.border cmdScroll.Parent=cmdsBox local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enum.SortOrder.LayoutOrder cml.Parent=cmdScroll local CMDS={{"── AI ──",true},{"!ask <msg> - talk to XcH",false},{"!ask <do something> - XcH will do it",false},{"!ask <multi-step task> - butler runs it, say stop anytime",false},{"!ask whats the name of this game",false},{"!gameinfo - what game is this",false},{"!gameinfo full | tips | controls | wiki",false},{"!similar - games like this one",false},{"!info <player> [field]",false},{"── MOVEMENT ──",true},{"!hover - float in Touhou style",false},{"!unhover - land back down",false},{"── CORE ──",true},{"!stop | !recall | !follow",false},{
+"!backoff <n> | !getcloser <n>",false},{"!orbit <1-1000> | !unorbit",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"!hide | !spawn",false},{"!bam <player> | !unbam",false},{"!annoy <player> | !unannoy",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"!rizz <player> | !unrizz",false},{"!dance 1-4 | !undance",false},{"!spin 1-100 | !unspin",false},{"!math <num><op><num>",false},{"!say <text>",false},{"── FUN (AI) ──",true},{"!flipcoin",false},{"!roll <n>",false},{"!8ball <q>",false},{"!truth",false},{"!dare",false},{"!wouldyourather",false},{"!randomnum <a> <b>",false},{"!countdown <n>",false},{"!timer <s>",false},{"!storytime",false},{"!compliment <player>",false},{"!roast <player>",false},{"!dadjoke",false},{"── HOST ──",true},{
+"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}for i,e in ipairs(CMDS)do local l=Instance.new("TextLabel")l.Size=UDim2.new(1,0,0,e[2]and 18 or 14)l.BackgroundTransparency=1 l.Font=e[2]and Enum.Font.GothamBold or Enum.Font.Code l.Text=e[1]l.TextColor3=e[2]and C.accent or C.text l.TextSize=10 l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=i l.Parent=cmdScroll end local apiPage=newPage()apiPage.Name="ApiKeysPage"local apiPad=Instance.new("UIPadding")apiPad.PaddingTop=UDim.new(0,14)apiPad.PaddingLeft=UDim.new(0,14)apiPad.PaddingRight=UDim.new(0,14)apiPad.PaddingBottom=UDim.new(0,10)apiPad.Parent=apiPage local apiTitle=Instance.new("TextLabel")apiTitle.Size=UDim2.new(1,0,0,18)apiTitle.Position=UDim2.new(0,0,0,0)apiTitle.BackgroundTransparency=1 apiTitle.Font=Enum.Font.GothamBold apiTitle.Text="API KEYS"
+apiTitle.TextColor3=C.text apiTitle.TextSize=13 apiTitle.TextXAlignment=Enum.TextXAlignment.Left apiTitle.Parent=apiPage local apiSub=Instance.new("TextLabel")apiSub.Size=UDim2.new(1,0,0,16)apiSub.Position=UDim2.new(0,0,0,20)apiSub.BackgroundTransparency=1 apiSub.Font=Enum.Font.Gotham apiSub.Text="click any key below to copy it"apiSub.TextColor3=C.subText apiSub.TextSize=9 apiSub.TextXAlignment=Enum.TextXAlignment.Left apiSub.Parent=apiPage local apiBody=Instance.new("ScrollingFrame")apiBody.Name="ApiKeysBody"apiBody.Size=UDim2.new(1,0,1,-38)apiBody.Position=UDim2.new(0,0,0,38)apiBody.BackgroundTransparency=1 apiBody.BorderSizePixel=0 apiBody.ScrollBarThickness=3 apiBody.ScrollBarImageColor3=C.subText apiBody.CanvasSize=UDim2.new(0,0,0,372)apiBody.ScrollingDirection=Enum.ScrollingDirection.Y apiBody.Parent=apiPage function copyToClipboard(txt)if type(setclipboard)=="function"then pcall(
+setclipboard,txt)return true end if type(toclipboard)=="function"then pcall(toclipboard,txt)return true end if syn and type(syn.write_clipboard)=="function"then pcall(syn.write_clipboard,txt)return true end if type(writeclipboard)=="function"then pcall(writeclipboard,txt)return true end return false end local function mkKeyRow(y,label,getKey)local ll=Instance.new("TextLabel")ll.Size=UDim2.new(1,0,0,12)ll.Position=UDim2.new(0,0,0,y)ll.BackgroundTransparency=1 ll.Font=Enum.Font.GothamBold ll.Text=label ll.TextColor3=C.text ll.TextSize=9 ll.TextXAlignment=Enum.TextXAlignment.Left ll.Parent=apiBody local btn=Instance.new("TextButton")btn.Size=UDim2.new(1,0,0,26)btn.Position=UDim2.new(0,0,0,y+14)btn.BackgroundColor3=C.track btn.BorderSizePixel=0 btn.Font=Enum.Font.Code btn.Text=getKey()or"(not set)"btn.TextColor3=C.text btn.TextSize=9 btn.TextXAlignment=Enum.TextXAlignment.Left btn.
+TextTruncate=Enum.TextTruncate.AtEnd btn.AutoButtonColor=false btn.Parent=apiBody corner(btn,6)stroke(btn,C.border,1,0.3)local pdd=Instance.new("UIPadding")pdd.PaddingLeft=UDim.new(0,10)pdd.PaddingRight=UDim.new(0,10)pdd.Parent=btn local fb=Instance.new("TextLabel")fb.Size=UDim2.new(1,0,0,10)fb.Position=UDim2.new(0,0,0,y+42)fb.BackgroundTransparency=1 fb.Font=Enum.Font.Gotham fb.Text=""fb.TextColor3=C.green fb.TextSize=8 fb.TextXAlignment=Enum.TextXAlignment.Left fb.Parent=apiBody btn.MouseEnter:Connect(function()tw(btn,0.15,{BackgroundColor3=C.buttonHover})end)btn.MouseLeave:Connect(function()tw(btn,0.15,{BackgroundColor3=C.track})end)btn.Activated:Connect(function()local k=getKey()if not k or k==""then fb.Text="no key set";fb.TextColor3=C.red;return end if copyToClipboard(k)then fb.Text="copied!"fb.TextColor3=C.green else fb.Text="clipboard unsupported"fb.TextColor3=C.red end task.
+delay(1.6,function()if fb and fb.Parent then fb.Text=""end end)end)return btn end mkKeyRow(4,"XcH Key (primary)",function()return APIKey end)mkKeyRow(58,"Xcode Key",function()return APIKey2 end)mkKeyRow(112,"XcH Backup Key",function()return APIKey3 end)mkKeyRow(166,"Xcode Backup Key (mom's)",function()return APIKey4 end)mkKeyRow(220,"Butler Key (primary)",function()return BKey1 end)mkKeyRow(274,"Butler Backup Key",function()return BKey2 end)local apiInfo=Instance.new("TextLabel")apiInfo.Size=UDim2.new(1,0,0,30)apiInfo.Position=UDim2.new(0,0,0,328)apiInfo.BackgroundTransparency=1 apiInfo.Font=Enum.Font.Gotham apiInfo.Text="XcH + Xcode auto-fallback to backups on quota. Butler (!ask tasks) uses the last two keys, backup kicks in on quota."apiInfo.TextColor3=C.subText apiInfo.TextSize=8 apiInfo.TextXAlignment=Enum.TextXAlignment.Left apiInfo.TextYAlignment=Enum.TextYAlignment.Top apiInfo.
+TextWrapped=true apiInfo.Parent=apiBody local pwOv=Instance.new("Frame")pwOv.Size=UDim2.new(1,0,1,0)pwOv.BackgroundColor3=C.panel pwOv.BorderSizePixel=0 pwOv.ZIndex=100 pwOv.Visible=false pwOv.Parent=frame local pwTitle=Instance.new("TextLabel")pwTitle.Size=UDim2.new(1,-40,0,22)pwTitle.Position=UDim2.new(0,20,0,70)pwTitle.BackgroundTransparency=1 pwTitle.Font=Enum.Font.GothamBold pwTitle.Text="API KEYS LOCKED"pwTitle.TextColor3=C.text pwTitle.TextSize=14 pwTitle.TextXAlignment=Enum.TextXAlignment.Left pwTitle.ZIndex=101 pwTitle.Parent=pwOv local pwHint=Instance.new("TextLabel")pwHint.Size=UDim2.new(1,-40,0,16)pwHint.Position=UDim2.new(0,20,0,96)pwHint.BackgroundTransparency=1 pwHint.Font=Enum.Font.Gotham pwHint.Text="enter password to view api keys"pwHint.TextColor3=C.subText pwHint.TextSize=10 pwHint.TextXAlignment=Enum.TextXAlignment.Left pwHint.ZIndex=101 pwHint.Parent=pwOv local
+pwBox=Instance.new("TextBox")pwBox.Size=UDim2.new(1,-40,0,34)pwBox.Position=UDim2.new(0,20,0,122)pwBox.BackgroundColor3=C.track pwBox.BorderSizePixel=0 pwBox.Font=Enum.Font.Code pwBox.Text=""pwBox.PlaceholderText="password"pwBox.PlaceholderColor3=C.subText pwBox.TextColor3=C.text pwBox.TextSize=12 pwBox.ClearTextOnFocus=false pwBox.TextXAlignment=Enum.TextXAlignment.Left pwBox.ZIndex=101 pwBox.Parent=pwOv corner(pwBox,6)stroke(pwBox,C.border,1,0.3)local pwp=Instance.new("UIPadding")pwp.PaddingLeft=UDim.new(0,10)pwp.PaddingRight=UDim.new(0,10)pwp.Parent=pwBox local pwErr=Instance.new("TextLabel")pwErr.Size=UDim2.new(1,-40,0,16)pwErr.Position=UDim2.new(0,20,0,162)pwErr.BackgroundTransparency=1 pwErr.Font=Enum.Font.Gotham pwErr.Text=""pwErr.TextColor3=C.red pwErr.TextSize=10 pwErr.TextXAlignment=Enum.TextXAlignment.Left pwErr.ZIndex=101 pwErr.Parent=pwOv local function mkPwBtn(txt,pos)local
+b=Instance.new("TextButton")b.Size=UDim2.new(0.5,-28,0,38)b.Position=pos b.BackgroundColor3=C.button b.BorderSizePixel=0 b.Font=Enum.Font.GothamBold b.Text=txt b.TextColor3=C.text b.TextSize=13 b.AutoButtonColor=false b.ZIndex=101 b.Parent=pwOv corner(b,10)stroke(b,C.border,1,0.2)styleBtn(b)return b end local pwBack=mkPwBtn("BACK",UDim2.new(0,20,1,-60))local pwGo=mkPwBtn("UNLOCK",UDim2.new(0.5,8,1,-60))apiUnlocked=false local function tryUnlock()if pwBox.Text==API_PASSWORD then apiUnlocked=true pwOv.Visible=false pwErr.Text=""pwBox.Text=""slideToPage(apiPage,apiTab)else pwErr.Text="wrong password"pwBox.Text=""end end pwGo.Activated:Connect(tryUnlock)pwBack.Activated:Connect(function()pwOv.Visible=false pwErr.Text=""pwBox.Text=""end)pwBox.FocusLost:Connect(function(ep)if ep then tryUnlock()end end)currentPage=nil currentTabBtn=nil function makeTab(name,order,onClick)local b=Instance.new(
+"TextButton")b.Size=UDim2.new(1,0,0,32)b.BackgroundColor3=C.sidebar b.BorderSizePixel=0 b.Font=Enum.Font.GothamMedium b.Text="  "..name b.TextColor3=C.text b.TextSize=11 b.TextXAlignment=Enum.TextXAlignment.Left b.AutoButtonColor=false b.LayoutOrder=order b.Parent=sidebar corner(b,6)b.MouseEnter:Connect(function()if b~=currentTabBtn then tw(b,0.15,{BackgroundColor3=C.buttonHover})end end)b.MouseLeave:Connect(function()if b~=currentTabBtn then tw(b,0.15,{BackgroundColor3=C.sidebar})end end)b.Activated:Connect(onClick)return b end function slideToPage(newPage,newTabBtn)if currentPage==newPage then return end local oldPage=currentPage local oldTab=currentTabBtn if oldTab then tw(oldTab,0.2,{BackgroundColor3=C.sidebar})end if newTabBtn then tw(newTabBtn,0.2,{BackgroundColor3=C.activeTab})end currentTabBtn=newTabBtn local W2=contentArea.AbsoluteSize.X if W2<=0 then W2=420 end if oldPage then
+tw(oldPage,0.3,{Position=UDim2.new(0,W2,0,0)},Enum.EasingStyle.Quart,Enum.EasingDirection.In)task.delay(0.3,function()if oldPage then oldPage.Visible=false end end)end newPage.Position=UDim2.new(0,W2,0,0)newPage.Visible=true task.delay(0.04,function()tw(newPage,0.38,{Position=UDim2.new(0,0,0,0)},Enum.EasingStyle.Quart,Enum.EasingDirection.Out)end)currentPage=newPage end logsTab=makeTab("Logs",1,function()slideToPage(logsPage,logsTab)end)cmdsTab=makeTab("Cmds",2,function()slideToPage(cmdsPage,cmdsTab)end)apiTab=makeTab("Api Keys",3,function()if apiUnlocked then slideToPage(apiPage,apiTab)else pwOv.Visible=true pwBox.Text=""pwErr.Text=""end end)currentPage=nil currentTabBtn=nil slideToPage(cmdsPage,cmdsTab)local roleOv=Instance.new("Frame")roleOv.Size=UDim2.new(1,0,1,0)roleOv.BackgroundColor3=C.panel roleOv.BorderSizePixel=0 roleOv.ZIndex=50 roleOv.Visible=true roleOv.Parent=frame function
+mkLabel(parent,txt,pos,size,font,color,tsize,align,z)local l=Instance.new("TextLabel")l.Size=size l.Position=pos l.BackgroundTransparency=1 l.Font=font l.Text=txt l.TextColor3=color l.TextSize=tsize l.TextXAlignment=align or Enum.TextXAlignment.Center l.ZIndex=z or 51 l.Parent=parent return l end function mkBtn(parent,txt,pos,size,z)local b=Instance.new("TextButton")b.Size=size b.Position=pos b.BackgroundColor3=C.button b.BorderSizePixel=0 b.Font=Enum.Font.GothamBold b.Text=txt b.TextColor3=C.text b.TextSize=15 b.AutoButtonColor=false b.ZIndex=z or 51 b.Parent=parent corner(b,10)stroke(b,C.border,1,0.2)styleBtn(b)return b end mkLabel(roleOv,"SELECT ROLE",UDim2.new(0,20,0,20),UDim2.new(1,-40,0,22),Enum.Font.GothamBold,C.text,13,Enum.TextXAlignment.Left)mkLabel(roleOv,"What should this account do?",UDim2.new(0,20,0,44),UDim2.new(1,-40,0,18),Enum.Font.Gotham,C.subText,10,Enum.TextXAlignment
+.Left)hostBtn=mkBtn(roleOv,"HOST",UDim2.new(0,24,0,90),UDim2.new(0.5,-32,0,90))mkLabel(roleOv,"Full panel + tabs",UDim2.new(0,24,0,186),UDim2.new(0.5,-32,0,16),Enum.Font.Gotham,C.subText,9)botBtn=mkBtn(roleOv,"BOT",UDim2.new(0.5,8,0,90),UDim2.new(0.5,-32,0,90))mkLabel(roleOv,"Follows host, compact",UDim2.new(0.5,8,0,186),UDim2.new(0.5,-32,0,16),Enum.Font.Gotham,C.subText,9)local confOv=Instance.new("Frame")confOv.Size=UDim2.new(1,0,1,0)confOv.BackgroundColor3=C.panel confOv.BorderSizePixel=0 confOv.ZIndex=55 confOv.Visible=false confOv.Parent=frame mkLabel(confOv,"LOCK IN AS HOST?",UDim2.new(0,20,0,80),UDim2.new(1,-40,0,24),Enum.Font.GothamBold,C.text,14,Enum.TextXAlignment.Left,56)mkLabel(confOv,"You get the full tabbed panel with private XcH chat.",UDim2.new(0,20,0,108),UDim2.new(1,-40,0,40),Enum.Font.Gotham,C.subText,11,Enum.TextXAlignment.Left,56).TextWrapped=true local cYes=mkBtn(
+confOv,"YES",UDim2.new(0,20,1,-60),UDim2.new(0.5,-32,0,40),56)cYes.TextSize=13 local cNo=mkBtn(confOv,"BACK",UDim2.new(0.5,8,1,-60),UDim2.new(0.5,-32,0,40),56)cNo.TextSize=13 local bsOv=Instance.new("Frame")bsOv.Size=UDim2.new(1,0,1,0)bsOv.BackgroundColor3=C.panel bsOv.BorderSizePixel=0 bsOv.ZIndex=55 bsOv.Visible=false bsOv.Parent=frame mkLabel(bsOv,"BOT SETUP",UDim2.new(0,20,0,14),UDim2.new(1,-40,0,22),Enum.Font.GothamBold,C.text,13,Enum.TextXAlignment.Left,56)mkLabel(bsOv,"Pick the HOST below.",UDim2.new(0,20,0,38),UDim2.new(1,-40,0,16),Enum.Font.Gotham,C.subText,10,Enum.TextXAlignment.Left,56)local plFrame=Instance.new("Frame")plFrame.Size=UDim2.new(1,-40,1,-142)plFrame.Position=UDim2.new(0,20,0,62)plFrame.BackgroundColor3=C.track plFrame.BorderSizePixel=0 plFrame.ClipsDescendants=true plFrame.ZIndex=56 plFrame.Parent=bsOv corner(plFrame,8)stroke(plFrame,C.border,1,0.3)local plScroll
+=Instance.new("ScrollingFrame")plScroll.Size=UDim2.new(1,-8,1,-6)plScroll.Position=UDim2.new(0,4,0,3)plScroll.BackgroundTransparency=1 plScroll.BorderSizePixel=0 plScroll.CanvasSize=UDim2.new(0,0,0,0)plScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y plScroll.ScrollBarThickness=4 plScroll.ScrollBarImageColor3=C.border plScroll.ZIndex=56 plScroll.Parent=plFrame local plLay=Instance.new("UIListLayout")plLay.Padding=UDim.new(0,3)plLay.SortOrder=Enum.SortOrder.LayoutOrder plLay.Parent=plScroll selectedHost=nil local bsErr=mkLabel(bsOv,"",UDim2.new(0,20,1,-70),UDim2.new(1,-40,0,16),Enum.Font.GothamMedium,C.red,10,Enum.TextXAlignment.Left,56)bsErr.TextTransparency=1 local bsBack=mkBtn(bsOv,"BACK",UDim2.new(0,20,1,-52),UDim2.new(0.5,-32,0,38),56)bsBack.TextSize=13 local bsLock=mkBtn(bsOv,"LOCK IN",UDim2.new(0.5,8,1,-52),UDim2.new(0.5,-32,0,38),56)bsLock.TextSize=13 function refreshPlayers()for _
+,c in ipairs(plScroll:GetChildren())do if c:IsA("TextButton")then c:Destroy()end end selectedHost=nil local n=0 for _,p in ipairs(P:GetPlayers())do if p==pl then continue end n=n+1 local isOwner=(p.Name:lower()==ON)local baseColor=isOwner and Color3.fromRGB(215,245,220)or C.button local hoverColor=isOwner and Color3.fromRGB(200,240,210)or C.buttonHover local b=Instance.new("TextButton")b.Size=UDim2.new(1,0,0,28)b.BackgroundColor3=baseColor b.BorderSizePixel=0 b.Font=Enum.Font.GothamMedium b.Text="  "..p.Name.."  (@"..p.DisplayName..")"b.TextColor3=isOwner and C.green or C.text b.TextSize=10 b.TextXAlignment=Enum.TextXAlignment.Left b.AutoButtonColor=false b.LayoutOrder=n b.ZIndex=57 b:SetAttribute("isOwnerRow",isOwner)b.Parent=plScroll corner(b,6)local sl2=stroke(b,isOwner and C.green or C.border,1,isOwner and 0.2 or 0.3)b.MouseEnter:Connect(function()if selectedHost~=p.Name then tw(b,
+0.15,{BackgroundColor3=hoverColor})end end)b.MouseLeave:Connect(function()if selectedHost~=p.Name then tw(b,0.15,{BackgroundColor3=baseColor})end end)b.Activated:Connect(function()for _,c2 in ipairs(plScroll:GetChildren())do if c2:IsA("TextButton")then local c2Owner=c2:GetAttribute("isOwnerRow")c2.BackgroundColor3=c2Owner and Color3.fromRGB(215,245,220)or C.button local s=c2:FindFirstChildOfClass("UIStroke")if s then s.Color=c2Owner and C.green or C.border s.Transparency=c2Owner and 0.2 or 0.3 end end end selectedHost=p.Name b.BackgroundColor3=C.activeTab sl2.Color=C.accent sl2.Transparency=0 bsErr.TextTransparency=1 bsErr.Text=""end)end if n==0 then mkLabel(plScroll,"no other players",UDim2.new(0,8,0,0),UDim2.new(1,-16,0,30),Enum.Font.Gotham,C.subText,10,Enum.TextXAlignment.Left,57)end end function lockRole(role,hostName)ROLE=role roleOv.Visible=false confOv.Visible=false bsOv.Visible=
+false if role=="HOST"then hostFilter.userId=pl.UserId hostFilter.name=pl.Name:lower()frame.Size=UDim2.new(0,520,0,320)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true logsTab.Visible=false slideToPage(cmdsPage,cmdsTab)show()elseif role=="BOT"then frame.Size=UDim2.new(0,380,0,260)topBar.Visible=true sidebar.Visible=true contentArea.Visible=true cmdsTab.Visible=false apiTab.Visible=false slideToPage(logsPage,logsTab)titleLbl.Text=AN.." (bot)"sendChat(pick(R_.startup))hostFilter.name=hostName:lower()S.hostName=hostName:lower()originalHost.name=hostName:lower()for _,p in ipairs(P:GetPlayers())do if p.Name:lower()==hostName:lower()then hostFilter.userId=p.UserId originalHost.userId=p.UserId break end end if hostName:lower()==ON or pl.DisplayName:lower()==ON or pl.Name:lower()=="xcv1"then isOwnerHost=true task.wait(1)sendChat(pick({"hey boss","yo boss","sup boss",
+"welcome back boss","good to see you boss"}))end applyFixedSpeed()startFacing()startFollow()bindDeath()startAfk()startMirrorJump()startCameraMicro()task.spawn(function()task.wait(2.0)if ROLE=="BOT"then startHover(true)end end)end end hostBtn.Activated:Connect(function()roleOv.Visible=false confOv.Visible=true end)botBtn.Activated:Connect(function()bsErr.Text=""bsErr.TextTransparency=1 roleOv.Visible=false bsOv.Visible=true refreshPlayers()end)cNo.Activated:Connect(function()confOv.Visible=false roleOv.Visible=true end)bsBack.Activated:Connect(function()bsOv.Visible=false roleOv.Visible=true end)cYes.Activated:Connect(function()lockRole("HOST")end)bsLock.Activated:Connect(function()if not selectedHost then bsErr.Text="Please select a player from the list."bsErr.TextTransparency=0 return end lockRole("BOT",selectedHost)end)local storage=Instance.new("Folder")storage.Name=SN storage.Parent=
+pg local toolTemplate=Instance.new("Tool")toolTemplate.Name=TN toolTemplate.ToolTip="InterDimensional Panel By XCDevs"toolTemplate.RequiresHandle=false toolTemplate.CanBeDropped=false toolTemplate.Parent=storage local bound=setmetatable({},{__mode="k"})function findLive()local b=bp()if b then local t=b:FindFirstChild(TN)if t and t:IsA("Tool")then return t end end local c=pl.Character if c then local t=c:FindFirstChild(TN)if t and t:IsA("Tool")then return t end end return nil end function bindTool(t)if not t or not t:IsA("Tool")or bound[t]then return end bound[t]=true t.Equipped:Connect(function()if ROLE=="HOST"or ROLE=="BOT"then show()end end)t.Unequipped:Connect(function()if ROLE=="HOST"or ROLE=="BOT"then hide()end end)t.Destroying:Connect(function()bound[t]=nil end)end function removeDupes()local list={}local b=bp()if b then for _,o in ipairs(b:GetChildren())do if o:IsA("Tool")and o.
+Name==TN then table.insert(list,o)end end end local c=pl.Character if c then for _,o in ipairs(c:GetChildren())do if o:IsA("Tool")and o.Name==TN then table.insert(list,o)end end end for i=2,#list do list[i]:Destroy()end end function giveTool()local ex=findLive()if ex then bindTool(ex)return end local b=bp()if not b then return end local t=toolTemplate:Clone()t.Parent=b bindTool(t)end pl.CharacterAdded:Connect(function(char)local h=char:WaitForChild("Humanoid",5)if not h then return end task.wait(0.5)removeDupes()giveTool()h.UseJumpPower=true h.WalkSpeed=BS h.JumpPower=BJ rotationOwner="Humanoid"h.AutoRotate=true stopDance()stopSpin()stopLead(false)stopFling(false)stopRizz(false)S.sitting=false S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil S.hostInVoid=false S.mirrorJumpTime=0 S.lastPathSig=nil S.stableFollowDir=nil if ROLE=="BOT"then bindDeath()if not S.facing
+then startFacing()end if S.swordKillActive and S.swordKillTarget then local tg=S.swordKillTarget S.swordKillTarget=nil S.swordKillActive=false if S.swordKillThread then task.cancel(S.swordKillThread)S.swordKillThread=nil end task.wait(0.6)if tg.Parent then startSwordKill(tg.Name)end end end end)task.spawn(function()task.wait(0.5)removeDupes()giveTool()local h=hum()if h then h.UseJumpPower=true h.WalkSpeed=BS h.JumpPower=BJ end end)gui.Enabled=true roleOv.Visible=true frame.Position=SHOWN pcall(show)
