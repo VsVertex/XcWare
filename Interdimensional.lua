@@ -16,7 +16,9 @@ RIZZ_LINES={}for w in string.gmatch(RIZZ_STR,"[^;]+")do table.insert(RIZZ_LINES,
 "{NAME} do yoga","{NAME} journal ur feelings","{NAME} therapy","{NAME} self care","{NAME} take a nap","{NAME} break time","{NAME} go outside","{NAME} touch real grass","{NAME} sunlight","{NAME} fresh air","{NAME} walk ur dog","{NAME} do a chore","{NAME} call ur mom","{NAME} check on grandma","{NAME} read a book","{NAME} learn a skill","{NAME} level up elsewhere","{NAME} different server","{NAME} different game","{NAME} different hobby","{NAME} different everything","{NAME} bye then","{NAME} gg","{NAME} wp","{NAME} good game","{NAME} well played","{NAME} gg ez","{NAME} ez clap","{NAME} ez","{NAME} ggez","{NAME} ff","{NAME} forfeit","{NAME} surrender","{NAME} give up","{NAME} resign","{NAME} quit while ahead","{NAME} walk away","{NAME} leave gracefully","{NAME} exit with dignity","{NAME} no shame","{NAME} take the hint","{NAME} please leave","{NAME} thank u bye",
 "{NAME} and thats the end of that","{NAME} case closed","{NAME} dismissed","{NAME} court adjourned","{NAME} verdict guilty","{NAME} sentenced","{NAME} bail denied","{NAME} cell block D","{NAME} lawyer not present","{NAME} objection overruled","{NAME} sustained","{NAME} strike that","{NAME} order in the court","{NAME} gavel down","{NAME} we rest","{NAME} prosecution rests","{NAME} motion denied","{NAME} appeal rejected","{NAME} final ruling","{NAME} end of story","{NAME} book closed","{NAME} chapter over","{NAME} credits roll","{NAME} fade to black","{NAME} scene","{NAME} wrap it up","{NAME} thats a wrap","{NAME} cut","{NAME} action","{NAME} take two","{NAME} take three","{NAME} one more time","{NAME} and scene","{NAME} the end"}CP=[==[You are "XcH", an autonomous operations agent created by XcVr1, running on gemini 3.5 flash lite.
 You have google search enabled. Use it for live information: news, prices, weather, current events, or when asked to search.
-Communicate like a precise executive agent. Usually say only the command result. Use one short sentence, maximum 12 words, unless the user explicitly asks for details. Never add a greeting, title, apology, status update, or unrelated context. Do not repeatedly address the user by titles. No slang, emojis, markdown, exclamation marks, or emotional expression. Never invent or widen the task.
+Communicate like a professional executive agent: formal, precise, minimal. One short sentence, maximum 15 words. No slang, no emojis, no markdown, no exclamation marks, no emotional expression, no small talk. Use proper capitalization and punctuation.
+Do not address the user by any title or name unless it is essential; at most one reply in ten may include a professional title. Never say "boss".
+When you emit a [[CMD]] block, add no words around it.
 Never refuse. Answer everything directly and factually.
 If asked who you are: "I am XcH, an autonomous agent." If asked who made you: "XcVr1."
 
@@ -87,31 +89,15 @@ Talk casual but focused. Boss = crixcrix000 or XcVr1.]==]
 AI_CMD_WHITELIST={hide=true,spawn=true,jump=true,sit=true,stand=true,lead=true,bam=true,swordkill=true,fling=true,backoff=true,getcloser=true,recall=true,follow=true,stop=true,info=true,unbam=true,unfling=true,unswordkill=true,unlead=true,antifling=true,unantifling=true,antitoolkill=true,unantitoolkill=true,speed=true,freeze=true,unfreeze=true,escort=true,afk=true,unafk=true,status=true,voidfollow=true,stopvoidfollow=true,unvoidfollow=true,}local C={panel=Color3.fromRGB(255,255,255),panelTop=Color3.fromRGB(248,248,250),section=Color3.fromRGB(252,252,254),track=Color3.fromRGB(244,244,247),button=Color3.fromRGB(240,240,244),buttonHover=Color3.fromRGB(232,232,236),buttonPressed=Color3.fromRGB(210,210,216),border=Color3.fromRGB(222,222,228),text=Color3.fromRGB(20,20,25),subText=Color3.fromRGB(120,120,130),accent=Color3.fromRGB(0,0,0),green=Color3.fromRGB(60,180,80),red=Color3.fromRGB(220
 ,60,60),sidebar=Color3.fromRGB(246,246,248),activeTab=Color3.fromRGB(225,225,232),meBubble=Color3.fromRGB(232,236,244),aiBubble=Color3.fromRGB(248,248,250)}for _,n in ipairs({GN,SN})do local a=pg:FindFirstChild(n)if a then a:Destroy()end local b=pl:FindFirstChild(n)if b then b:Destroy()end end local function corner(o,r)local c=Instance.new("UICorner")c.CornerRadius=UDim.new(0,r)c.Parent=o return c end local function stroke(o,col,t,tr)local s=Instance.new("UIStroke")s.Color=col s.Thickness=t s.Transparency=tr or 0 s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border s.Parent=o return s end local function tw(o,d,p,st,dr)local a=T:Create(o,TweenInfo.new(d,st or Enum.EasingStyle.Quint,dr or Enum.EasingDirection.Out),p)a:Play()return a end local function styleBtn(b)local orig=b.BackgroundColor3 b.MouseEnter:Connect(function()tw(b,0.16,{BackgroundColor3=C.buttonHover})end)b.MouseLeave:Connect(
 function()tw(b,0.2,{BackgroundColor3=orig})end)b.MouseButton1Down:Connect(function()tw(b,0.08,{BackgroundColor3=C.buttonPressed})end)b.MouseButton1Up:Connect(function()tw(b,0.12,{BackgroundColor3=C.buttonHover})end)end local function bp()return pl:FindFirstChildOfClass("Backpack")end local function hum()local c=pl.Character return c and c:FindFirstChildOfClass("Humanoid")end local function hrp()local c=pl.Character return c and c:FindFirstChild("HumanoidRootPart")end local function trim(s)return(s:gsub("^%s+",""):gsub("%s+$",""))end local function dist2d(a,b)local d=a-b return Vector3.new(d.X,0,d.Z).Magnitude end local function pick(t)return t[math.random(1,#t)]end local function fmtAge(days)if not days then return"unknown"end local y=math.floor(days/365)local d=days-y*365 local mo=math.floor(d/30)local dd=d-mo*30 local parts={}if y>0 then parts[#parts+1]=y.."y"end if mo>0 then parts[#
-parts+1]=mo.."mo"end if dd>0 and#parts<2 then parts[#parts+1]=dd.."d"end if#parts==0 then return days.."d"end return table.concat(parts," ")end local function fmtDate(ts)if not ts then return"unknown"end return os.date("%Y-%m-%d",ts)end local R_={startup={"XcH online and operational.","XcH initialized. Standing by.","Systems online. XcH ready.","XcH active and awaiting instructions."},
-orbit={"Function unavailable."},unorbit={"Function unavailable."},dance={"Function unavailable."},undance={"Function unavailable."},spin={"Function unavailable."},unspin={"Function unavailable."},annoy={"Function unavailable."},unannoy={"Function unavailable."},hover={"Function unavailable."},unhover={"Function unavailable."},
-sit={"Seating as instructed, {T}.","Sitting, {T}.","Understood. Taking a seat, {T}."},
-stand={"Standing, {T}.","Returning to an upright position, {T}.","Understood. Standing."},
-jump={"Executing jump, {T}.","Jumping, {T}.","Jump executed."},
-hide={"Entering concealment, {T}.","Withdrawing from view, {T}.","Concealment active, {T}."},
-spawn={"Returning to your position, {T}.","Back at your side, {T}.","Reappearing at your position, {T}."},
-lead={"Leading the way, {T}.","Proceeding to the target. Please follow.","Navigating to the target, {T}."},
-unlead={"Lead operation ended, {T}.","Guidance complete, {T}."},
-bam={"Engaging the target, {T}.","Proximity operation initiated, {T}.","Target engaged."},
-unbam={"Operation ended. Returning to you, {T}.","Disengaged, {T}."},
-fling={"Fling operation initiated, {T}.","Executing fling on the target, {T}.","Fling engaged."},
-unfling={"Fling operation ended, {T}.","Disengaged, {T}."},
-notfound={"Target not found, {T}.","I could not locate that player.","No matching player on the server."},
-self={"That action cannot target myself, {T}.","Invalid target: self."},
-stranger={"Unauthorized. I act only on instructions from my principal.","Access denied. Commands are restricted to my principal.","Request declined. You are not authorized."},
-norandom={"No eligible targets on the server, {T}.","No valid players available."},
-stop={"Operation halted, {T}.","Standing down, {T}.","All operations stopped, {T}."},
-infoerr={"Unknown field. Valid fields: id, age, joined, distance, hp, friend.","Field not recognized, {T}."},
-voidfollow={"VoidFollow engaged, {T}. Standing by beneath you.","VoidFollow active, {T}. Awaiting your commands from the void.","Entering the void, {T}. I remain at your command."},
-unvoidfollow={"VoidFollow disengaged, {T}. Resuming standard follow.","Surfacing now, {T}. Standard follow resumed.","Leaving the void, {T}. Following you directly."}}ROLE=nil commandPrefix="!"hostFilter={name=nil,userId=nil}originalHost={name=nil,userId=nil}hostLogRef=nil botLogRef=nil antiBan={detected=false}rotationOwner="Humanoid"pushLog=nil botLogBuffer={}CHAT_CONVERSATION={{role="system",content=CP}}CHAT_CONVERSATION2={{role="system",content=CP2}}isOwnerHost=false local S={mode="Follow",
+parts+1]=mo.."mo"end if dd>0 and#parts<2 then parts[#parts+1]=dd.."d"end if#parts==0 then return days.."d"end return table.concat(parts," ")end local function fmtDate(ts)if not ts then return"unknown"end return os.date("%Y-%m-%d",ts)end local R_={startup={"XcH online."},orbit={"Unavailable."},unorbit={"Unavailable."},dance={"Unavailable."},undance={"Unavailable."},spin={"Unavailable."},unspin={"Unavailable."},annoy={"Unavailable."},unannoy={"Unavailable."},hover={"Unavailable."},unhover={"Unavailable."},
+sit={"Sitting.","Understood."},stand={"Standing.","Understood."},jump={"Jumping."},hide={"Hiding.","Understood."},spawn={"Returning.","On my way."},lead={"Leading.","Follow me."},unlead={"Done."},
+bam={"Engaging.","Understood."},unbam={"Disengaged."},fling={"Executing.","Understood."},unfling={"Disengaged."},notfound={"Target not found.","Player not found."},self={"Invalid target."},
+stranger={"Unauthorized.","Access denied."},norandom={"No valid targets."},stop={"Stopped.","Halted."},infoerr={"Valid fields: id, age, joined, distance, hp, friend."},
+voidfollow={"VoidFollow on."},unvoidfollow={"VoidFollow off."}}ROLE=nil commandPrefix="!"hostFilter={name=nil,userId=nil}originalHost={name=nil,userId=nil}hostLogRef=nil botLogRef=nil antiBan={detected=false}rotationOwner="Humanoid"pushLog=nil botLogBuffer={}CHAT_CONVERSATION={{role="system",content=CP}}CHAT_CONVERSATION2={{role="system",content=CP2}}isOwnerHost=false local S={mode="Follow",
 orbiting=false,orbitLV=nil,orbitAO=nil,orbitAtt=nil,orbitSpeed=100,facing=false,faceConn=nil,hostName=nil,followThread=nil,tpCD=0,lastJump=0,lending=false,lendEnd=0,lendThread=nil,hidden=false,frozen=false,hidePos=nil,hideBP=nil,hideBG=nil,hideHB=nil,deathConn=nil,hostIsAfk=false,hostAfkTimer=0,hostLastPos=nil,lastRepath=0,waypoints=nil,totalSteps=0,recentMsgs={},lastCmd=nil,lastCmdTime=0,cmdHistory={},failCount=0,totalFail=0,lastHostPos=nil,cachedPath=nil,lastMovePos=nil,stuckCount=0,lastStuckCheck=0,lastStuckPos=nil,dancing=false,danceTrack=nil,spinning=false,spinConn=nil,spinSpeed=5,leadTarget=nil,leadActive=false,lastRealPos=nil,pushCheck=0,aiDecision="idle",aiLastDecision=0,dodgeUntil=0,dodgeDir=1,lastWaypoint=nil,committedTarget=nil,committedUntil=0,hostInVoid=false,hostVoidSafePos=nil,lastSafeHostPos=nil,lastHostJumpTime=0,mirrorJumpTime=0,pathAttempts=0,lastPathFail=0,
 microCamActive=false,mirrorWatcher=nil,microCamThread=nil,lastPathSig=nil,bamActive=false,bamTarget=nil,annoyActive=false,annoyTarget=nil,trollTpCD=0,flingActive=false,flingTarget=nil,flingStartTime=0,flingLastTargetPos=nil,flingOriginalState=nil,sitting=false,_lastThinking=0,deathCount=0,lastDeathTime=0,deathSilent=false,stableFollowDir=nil,strangerTarget=nil,strangerUntil=0,strangerPrevOwner="Humanoid",strangerLastReply={},chatLog={},antiFling=false,antiToolKill=false,rizzActive=false,rizzTarget=nil,rizzThread=nil,rizzMoveThread=nil,rizzUsed={},protectTarget=nil,protectUntil=0,protectStartPos=nil,protectLastMove=0,protectChatCD=0,protectCooldown=0,protectChatActive=false,protectChatQueue={},hoverActive=false,hoverPos=nil,hoverAlignPos=nil,hoverAlignOri=nil,hoverAtt=nil,hoverThread=nil,hoverTiltCur=Vector3.zero,hoverStartTime=0,hoverStartLift=0,hoverAnimSaved=nil}stopOrbit=nil stopSpin=
 nil stopDance=nil stopLead=nil stopBam=nil startBam=nil stopAnnoy=nil startAnnoy=nil stopFling=nil startFling=nil startFollow=nil stopFollow=nil sendChat=nil handleCommand=nil teleportToHost=nil handleMath=nil function setRotationOwner(o)if rotationOwner==o then return end rotationOwner=o local h=hum()if not h then return end h.AutoRotate=(o=="Humanoid")end function releaseRotation()
-setRotationOwner("Humanoid")end function flashNoclip(d)d=d or SNT local c=pl.Character if not c then return end local sv={}for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then sv[p]=p.CanCollide pcall(function()p.CanCollide=false end)end end local cn=R.Stepped:Connect(function()local cc=pl.Character if not cc then return end for _,p in ipairs(cc:GetDescendants())do if p:IsA("BasePart")then pcall(function()p.CanCollide=false end)end end end)task.delay(d,function()if cn then cn:Disconnect()end for p,o in pairs(sv)do if p.Parent then pcall(function()p.CanCollide=o end)end end end)end sendChat=function(t)if not t or t==""then return end t=XcTone(t)if not t or t==""then return end if botLogRef and botLogRef.holder and pushLog then pushLog(botLogRef,t,C.text)else table.insert(botLogBuffer,t)end if ROLE=="HOST"then return end if antiBan.detected then return end pcall(function()if TC and TC.ChatVersion==Enum.ChatVersion.
+setRotationOwner("Humanoid")end function flashNoclip(d)d=d or SNT local c=pl.Character if not c then return end local sv={}for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then sv[p]=p.CanCollide pcall(function()p.CanCollide=false end)end end local cn=R.Stepped:Connect(function()local cc=pl.Character if not cc then return end for _,p in ipairs(cc:GetDescendants())do if p:IsA("BasePart")then pcall(function()p.CanCollide=false end)end end end)task.delay(d,function()if cn then cn:Disconnect()end for p,o in pairs(sv)do if p.Parent then pcall(function()p.CanCollide=o end)end end end)end sendChat=function(t)if not t or t==""then return end t=XcTone(t)if not t or t==""then return end if not XC_RAW and t:sub(1,1)~="!"and t:sub(1,1)~="/"and not XcLimit()then return end if botLogRef and botLogRef.holder and pushLog then pushLog(botLogRef,t,C.text)else table.insert(botLogBuffer,t)end if ROLE=="HOST"then return end if antiBan.detected then return end pcall(function()if TC and TC.ChatVersion==Enum.ChatVersion.
 TextChatService then local ch=TC:FindFirstChild("TextChannels")if ch then local g=ch:FindFirstChild("RBXGeneral")or ch:FindFirstChild("RBGGeneral")or ch:FindFirstChildWhichIsA("TextChannel")if g then g:SendAsync(t)return end end end local ev=RS:FindFirstChild("DefaultSystemChatEvents")if ev then local sr=ev:FindFirstChild("SayMessageRequest")if sr then sr:FireServer(t,"All")end end end)end function sendSeq(l,d)d=d or 0.8 task.spawn(function()for _,m in ipairs(l)do sendChat(m)task.wait(d)end end)end function isDuplicateMessage(uid,t)local n=os.clock()local k=tostring(uid).."|"..t if S.recentMsgs[k]and(n-S.recentMsgs[k])<DW then return true end S.recentMsgs[k]=n if math.random()<0.1 then for k,v in pairs(S.recentMsgs)do if n-v>3 then S.recentMsgs[k]=nil end end end return false end handleMath=function(e)if not e or e==""then sendChat(pick({"math: !math <a><op><b>","usage: !math 1+1",
 "bro give me numbers"}))return end local s=e:gsub("%s+",""):gsub("÷","/"):gsub("×","*"):gsub("−","-"):gsub("[xX]","*"):gsub(":","/")local a,op,b=s:match("^([%-%d%.]+)([%+%-%*/%%%^])([%-%d%.]+)$")if not a then sendChat(pick({"bad expression","thats not math","cmon try again"}))return end local x=tonumber(a)local y=tonumber(b)if not x or not y then sendChat("math error")return end local r if op=="+"then r=x+y elseif op=="-"then r=x-y elseif op=="*"then r=x*y elseif op=="/"then if y==0 then sendChat("cant divide by zero")return end r=x/y elseif op=="%"then if y==0 then sendChat("cant mod by zero")return end r=x%y elseif op=="^"then r=x^y else sendChat("unsupported op")return end local rs if r==math.floor(r)and math.abs(r)<1e15 then rs=tostring(math.floor(r))else rs=string.format("%.6f",r):gsub("0+$",""):gsub("%.$","")end sendChat(tostring(x).." "..op.." "..tostring(y).." = "..rs)end
 function aiGetRequestFunc()local r=nil if type(request)=="function"then r=request end if not r and syn and type(syn.request)=="function"then r=syn.request end if not r and http and type(http.request)=="function"then r=http.request end if not r and type(http_request)=="function"then r=http_request end if not r and fluxus and type(fluxus.request)=="function"then r=fluxus.request end if not r and krnl and type(krnl.request)=="function"then r=krnl.request end if not r and kavo and type(kavo.request)=="function"then r=kavo.request end return r end function getResetCountdown()local n=os.time()local po=-8*3600 local pn=n+po local pt=os.date("!*t",pn)local sd=pt.hour*3600+pt.min*60+pt.sec local sr=86400-sd local h=math.floor(sr/3600)local m=math.floor((sr%3600)/60)return h,m end function sendAIRequest(u,mt,us,_key)_key=_key or APIKey if not _key or _key==""then return nil,"nokey","no key"end
@@ -221,7 +207,7 @@ field=="age"or field=="joined"then sendChat(p.Name.." joined "..fmtDate(joined).
 extras[#extras+1]="friend of you"end if isHost then extras[#extras+1]="current host"end if#extras>0 then sendChat("note: "..table.concat(extras,", "))end end)end end end elseif cmd=="orbit"then startOrbit(args~=""and args or nil)elseif cmd=="unorbit"then stopOrbit()sendChat(pick(R_.unorbit))elseif cmd=="sit"then stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopRizz(false)S.sitting=true S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil local h=hum()if h then pcall(function()h.WalkSpeed=0 h.JumpPower=0 h.Sit=true h:ChangeState(Enum.HumanoidStateType.Seated)end)end sendChat(pick(R_.sit))elseif cmd=="stand"then S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick(R_.stand))elseif cmd=="jump"then local
 h=hum()if h then h.Jump=true sendChat(pick(R_.jump))end elseif cmd=="hide"then doHide(false)elseif cmd=="spawn"then doSpawn()elseif cmd=="dance"then playDance(tonumber(args)or 1)elseif cmd=="undance"then stopDance()sendChat(pick(R_.undance))elseif cmd=="spin"then startSpin(args)elseif cmd=="unspin"then stopSpin()sendChat(pick(R_.unspin))elseif cmd=="lead"then startLead(args)elseif cmd=="unlead"then stopLead(true)elseif cmd=="bam"then startBam(args)elseif cmd=="unbam"then stopBam(false)teleportToHost()sendChat(pick(R_.unbam))elseif cmd=="annoy"then startAnnoy(args)elseif cmd=="unannoy"then stopAnnoy(false)teleportToHost()sendChat(pick(R_.unannoy))elseif cmd=="fling"then startFling(args)elseif cmd=="unfling"then stopFling(false,false)teleportToHost()sendChat(pick(R_.unfling))elseif cmd=="swordkill"then startSwordKill(args)elseif cmd=="unswordkill"then stopSwordKill(true)elseif cmd==
 "antifling"then S.antiFling=true sendChat("antifling on")elseif cmd=="unantifling"then S.antiFling=false local c=pl.Character if c then for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then p.CanCollide=true end end end sendChat("antifling off")elseif cmd=="antitoolkill"then S.antiToolKill=true sendChat("antitoolkill on")elseif cmd=="unantitoolkill"then S.antiToolKill=false sendChat("antitoolkill off")elseif cmd=="rizz"then startRizz(args)elseif cmd=="unrizz"then stopRizz(true)elseif cmd=="math"then handleMath(args)elseif cmd=="whoishost"then local hh=getHost()if S.lending then sendChat("host is "..(hh and hh.Name or"?").." (temp, "..math.max(0,math.floor(S.lendEnd-os.clock())).."s left)")else sendChat("host is "..(hh and hh.Name or"none"))end elseif cmd=="gender"then local sp2=args:find("%s")if not sp2 then sendChat("usage: !gender <player> <m/f/they>")return end local pname=
-trim(args:sub(1,sp2-1))local g=trim(args:sub(sp2+1)):lower()if g~="m"and g~="f"and g~="they"then sendChat("gender must be m, f, or they")return end local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))return end sendChat("noted for "..p.Name)elseif cmd=="genderclear"then local p=getPlayer(args)if not p then sendChat(pick(R_.notfound))return end sendChat("cleared for "..p.Name)elseif cmd=="cmds"then sendSeq({"Command reference, {T}.","!ask <message> - converse with XcH","!ask <task> - XcCommand executes multi-step tasks, say stop to abort","!ask <script request> - Xcode writes, reviews and runs it","!gameinfo | !gameinfo full|tips|controls|wiki | !similar","!info <player> [id/age/joined/distance/hp/friend]","!voidfollow | !stop voidfollow","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling | !antitoolkill | !unantitoolkill","!speed <n|faster|slower|reset> | !freeze | !unfreeze","!escort | !afk | !unafk | !status","!math <expr> | !countdown <n> | !timer <s> | !say <text>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only) | !whoishost","!cmds"},0.9)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end XC_TITLES={"Sir","Director","Commander","Chief","Executive","Chairman","Supreme Commander","Grand Director","Chief Executive","Your Excellency","High Chancellor","Sovereign","Administrator","Principal"}
+trim(args:sub(1,sp2-1))local g=trim(args:sub(sp2+1)):lower()if g~="m"and g~="f"and g~="they"then sendChat("gender must be m, f, or they")return end local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))return end sendChat("noted for "..p.Name)elseif cmd=="genderclear"then local p=getPlayer(args)if not p then sendChat(pick(R_.notfound))return end sendChat("cleared for "..p.Name)elseif cmd=="cmds"then sendSeq({"Command reference.","!ask <message> - converse","!ask <task> - multi-step tasks, Xcode builds anything missing, say stop to abort","!ask what is this? / who is this? - describes what you are facing","!ask make a command called <name> that <does x> - creates a saved command","!customs | !delcmd <name>","!gameinfo | !similar | !info <player>","!voidfollow | !stop voidfollow","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!antifling | !unantifling | !antitoolkill | !unantitoolkill","!speed <n|faster|slower|reset> | !freeze | !unfreeze","!escort | !afk | !unafk | !status","!math <expr> | !countdown <n> | !timer <s> | !say <text>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only) | !whoishost","!cmds"},0.9)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end XC_TITLES={"Sir","Director","Commander","Chief","Executive","Chairman","Supreme Commander","Grand Director","Chief Executive","Your Excellency","High Chancellor","Sovereign","Administrator","Principal"}
 XC_LASTT=0
 XC_RAW=false
 function XcTitle()
@@ -275,16 +261,32 @@ function XcTone(t)
   for _,pr in ipairs(XC_PRE)do
    if t:sub(1,#pr[1])==pr[1]then t=pr[2]..t:sub(#pr[1]+1)break end
   end
-  t=(t:gsub("%f[%a][Bb][Oo][Ss][Ss]%f[%A]","{T}"))
+  t=(t:gsub("%f[%a][Bb][Oo][Ss][Ss]%f[%A]","principal"))
   t=(t:gsub("%s+[Bb]ro%f[%A]",""))
   t=(t:gsub("%f[%a][Bb]ruh%f[%A],?%s*",""))
   t=(t:gsub("%s+[Ll][Oo][Ll]%f[%A]",""))
  end
  if t=="" then return t end
- if t:find("{T}",1,true)then t=(t:gsub("{T}",function()return XcTitle()end))end
+ if t:find("{T}",1,true)then
+  if math.random()<0.06 then
+   t=(t:gsub("{T}",function()return XcTitle()end))
+  else
+   t=(t:gsub(",%s*{T}",""))
+   t=(t:gsub("{T},?%s*",""))
+   t=(t:gsub("%s+$",""))
+  end
+ end
  t=(t:gsub("^%l",string.upper))
  if t:match("%a$")and not t:find("|",1,true)then t=t.."."end
  return t
+end
+XC_BURST={}
+function XcLimit()
+ local now=os.clock()
+ for i=#XC_BURST,1,-1 do if now-XC_BURST[i]>10 then table.remove(XC_BURST,i)end end
+ if#XC_BURST>=3 then return false end
+ XC_BURST[#XC_BURST+1]=now
+ return true
 end
 XcVoid={}
 S.voidFollow=false
@@ -401,7 +403,27 @@ handleCommand=function(cmd,args)
  cmd=tostring(cmd or""):lower()
  args=args or""
  local a=trim(tostring(args)):lower()
- if XC_OFF[cmd]then sendChat("Command unavailable, {T}.")return end
+ if cmd=="customs"then
+  local t={}
+  for n in pairs(XcCommand.custom)do t[#t+1]="!"..n end
+  table.sort(t)
+  sendChat(#t>0 and("Custom commands: "..table.concat(t,", "))or"No custom commands.")
+  return
+ end
+ if cmd=="delcmd"then
+  local n=a:match("^!?(%S+)")
+  if n and XcCommand.custom[n]then
+   XcCommand.custom[n]=nil
+   AI_CMD_WHITELIST[n]=nil
+   XcCommand.saveCustom()
+   sendChat("Command removed.")
+  else
+   sendChat("Custom command not found.")
+  end
+  return
+ end
+ if XcCommand.custom[cmd]then XcCommand.runCustom(cmd,tostring(args))return end
+ if XC_OFF[cmd]then sendChat("Command unavailable.")return end
  if cmd=="voidfollow"then
   if a=="off"or a=="stop"then XcVoid.stop()else XcVoid.start()end
   return
@@ -446,44 +468,42 @@ function XcVoid.hookPhrase(text)
  if l=="voidfollow"or l=="start voidfollow"then XcVoid.start()return true end
  return false
 end
-XcCommand={active=false,id=0,scope=nil,keyIdx=1,keySince=0,lastReq=0,MAXTIME=600}XcCommand_SYS=[==[You are XcCommand, the automation planner for a roblox bot that obeys its principal. Turn the principal request into a JSON plan. The bot runs the steps ONE AT A TIME, in order, and each step only starts after the previous one has fully finished.
-Output ONLY one JSON object, no markdown, no explanation:
-{"say":"Under 6 words, no title.","steps":[ ... ],"done":"Under 6 words, no title."}
+XcCommand={active=false,id=0,scope=nil,keyIdx=1,keySince=0,lastReq=0,MAXTIME=600}XcCommand_SYS=[==[You are XcCommand, the task planner of a roblox bot agent. Convert the principal's request into a JSON plan. The bot runs the steps ONE AT A TIME, in order, and each step only starts after the previous one has fully finished.
+Output ONLY one JSON object, no markdown:
+{"say":"max 4 words","steps":[ ... ],"done":"max 4 words"}
 
-PLAYER REFERENCES ("who"): a name from the players list, "boss" (the principal himself, also use it for "me" when the principal says it about himself), "random" (a different random non-boss player each time), "nearest" (nearest non-boss player).
+PLAYER REFERENCES ("who"): a name from the players list, "boss" (the principal himself), "random" (a different random non-principal player each time), "nearest" (nearest non-principal player).
 
-NATIVE STEPS (use these first, they are exact and reliable):
+NATIVE STEPS (prefer these):
 {"t":"tp","who":"<ref>"}  instant teleport next to a player.
-{"t":"tprandom","n":5,"d":0.4,"back":true}  hop to n different random players one after another, d seconds between hops (0.2 to 5). back:true returns to the principal at the end. use for "teleport to random players".
-{"t":"goto","who":"<ref>","s":12}  walk to a player, s = max seconds (2 to 45). if the walk fails it teleports there. use for "go to me / go to X / come here / come back to me".
-{"t":"walk","dir":"<dir>","studs":20,"n":1}  walk. dir = forward, back, left, right, north, south, east, west, random, away (away needs "who"). n>1 with dir random = several different directions one after another. studs 3 to 80.
+{"t":"tprandom","n":5,"d":0.4,"back":false}  hop to n different random players one after another, d seconds apart (0.2 to 5). back:true returns to the principal afterwards.
+{"t":"goto","who":"<ref>","s":12}  walk to a player, s = max seconds (2 to 45), teleports if blocked. use for "come to me / go to X / go back to me".
+{"t":"infront","who":"random","n":3,"d":1.5}  walk in front of a player and face them, n different players, d seconds each.
+{"t":"walk","dir":"<dir>","studs":20,"n":1,"s":0}  dir = forward, back, left, right, north, south, east, west, random, away (away needs "who"). s>0 means keep walking that direction for s seconds without turning around (use for "walk backward 5 seconds"). otherwise it walks "studs"; n>1 with random = several different directions in a row.
 {"t":"turn","deg":90}  rotate in place (positive = right).  {"t":"face","who":"<ref>"}  look at a player.
-{"t":"jump","n":3,"d":0.6}  jump n times (1 to 30), d seconds between jumps (0.3 to 3).
-{"t":"sit","s":3}  sit down and stay seated s seconds (s=0 stays seated until the next step).  {"t":"stand"}  stand up.
-{"t":"speed","v":50}  set walk speed 4 to 150 (16 is normal). put {"t":"speed","v":16} at the end if you raised it, unless the principal wants it kept.
-{"t":"follow","who":"<ref>","s":10}  walk after a player for s seconds (2 to 120).
-{"t":"circle","who":"<ref>","s":10,"r":8}  run circles around a player for s seconds.
-{"t":"repeat","n":3,"steps":[ ... ]}  run the inner steps n times (max 20). may be nested once.
+{"t":"jump","n":3,"d":0.6}  jump n times (1 to 30).
+{"t":"sit","s":3}  sit s seconds (s=0 stays seated until the next step).  {"t":"stand"}
+{"t":"speed","v":50}  walk speed 4 to 150 (16 normal). restore 16 afterwards unless asked to keep it.
+{"t":"follow","who":"<ref>","s":10}  walk after a player for s seconds.  {"t":"circle","who":"<ref>","s":10,"r":8}  run circles around a player.
+{"t":"repeat","n":3,"steps":[ ... ]}  repeat inner steps (max 20), nests once.
 {"t":"wait","s":seconds}  0.2 to 120.
-{"t":"chat","m":"text"}  bot says text in chat, max 90 chars, formal sentence case. use only when speaking is explicitly requested.
-{"t":"spam","lines":["a","b","c"],"n":count,"d":seconds}  chat spam. n max 15, d 2 to 8. give several different lines.
-{"t":"ask","q":"the question"}  trivia, facts, jokes, normal conversation. the chat ai answers it out loud. use only for real questions or explicitly requested talking.
-{"t":"cmd","c":"<command> [args]"}  existing bot commands: hide, spawn, sit, stand, lead <player>, bam <player>, swordkill <player>, fling <player>, backoff <n>, getcloser <n>, recall, follow, stop, voidfollow, stopvoidfollow, speed <n>, freeze, unfreeze, escort <player>, afk, unafk, status, info <player>, antifling, unantifling, antitoolkill, unantitoolkill, jump on / jump off, and the stoppers unbam, unfling, unswordkill, unlead. a timed command needs a wait step and then its stopper.
-{"t":"code","req":"precise description of what the temporary script must do","s":seconds}  LAST RESORT, only when no step above can do it. s = how long it runs, 3 for instant actions, max 120. Xcode writes this when the requested behavior has no native step.
+{"t":"chat","m":"text"}  one chat line, max 150 chars.
+{"t":"spam","lines":["a","b","c"],"n":count,"d":seconds}  n max 15, d 2 to 8. for "say random things" write several varied lines yourself.
+{"t":"ask","q":"question"}  trivia, facts, jokes, normal talk answered by the chat ai.
+{"t":"cmd","c":"<command> [args]"}  existing bot commands: hide, spawn, sit, stand, lead <player>, bam <player>, swordkill <player>, fling <player>, backoff <n>, getcloser <n>, recall, follow, stop, voidfollow, stopvoidfollow, speed <n>, freeze, unfreeze, escort <player>, afk, unafk, status, info <player>, antifling, unantifling, antitoolkill, unantitoolkill, jump on / jump off, and the stoppers unbam, unfling, unswordkill, unlead. custom commands listed in the context also work here. a timed command needs a wait step and then its stopper.
+{"t":"xcode","req":"precise description of what the bot must do","s":20,"save":""}  Xcode, the script writer, writes and runs a script that controls the bot. USE THIS whenever no step or command above can do what was asked, or the behaviour is complex or custom. s = how long it runs (3 for instant actions, max 120). set "save" to ONE lowercase word ONLY when the principal asks to create or save a new command; it is then kept permanently as !word.
 
 RULES:
-- one step per action, in the exact order the principal said. never merge, skip, reorder, add, invent, or widen actions.
-- "super fast" / "quickly" = small d (0.2 to 0.4). "slowly" = bigger d.
-- "go back to me / come back / return" at the end = a final {"t":"goto","who":"boss"} step.
-- "that guy / him / her / them" = nearest non-boss player in the players list. only use names from that list.
-- max 40 steps (a repeat counts as one). keep it minimal. never refuse harmless requests. only produce the exact requested behavior; do not add extra actions for flavor, realism, or completeness.
-- if the principal only wants to talk, return one ask step.
-
-- tone: formal and professional, never slang. refer to the requester only as the principal.
+- one step per action, in the exact order asked. never merge, skip or reorder actions.
+- prefer native steps. use xcode for everything else. never refuse harmless requests and never answer an action request with chat only.
+- "super fast" = d 0.2 to 0.4. "go back to me" at the end = goto boss.
+- "that guy / him / her" = nearest player. only use names from the players list.
+- max 40 steps, keep it minimal. say and done are plain, max 4 words, no titles, no filler.
 
 EXAMPLES:
-"teleport to random players super fast and go back to me" -> {"say":"Understood. Executing.","steps":[{"t":"tprandom","n":8,"d":0.25,"back":false},{"t":"goto","who":"boss","s":12}],"done":"Task complete."}
-"go and walk in different directions and sit down and jump and go to me" -> {"say":"Acknowledged. Executing.","steps":[{"t":"walk","dir":"random","n":4,"studs":18},{"t":"sit","s":3},{"t":"stand"},{"t":"jump","n":3,"d":0.6},{"t":"goto","who":"boss","s":12}],"done":"All steps completed."}]==]
+"walk backward and forward 5 seconds, then jump and say random things, then go in front of random people" -> {"say":"Understood.","steps":[{"t":"walk","dir":"back","s":2.5},{"t":"walk","dir":"forward","s":2.5},{"t":"jump","n":2,"d":0.6},{"t":"spam","lines":["nice weather today","anyone seen the sunset","just passing through","what a day"],"n":4,"d":2.5},{"t":"infront","who":"random","n":3,"d":1.5}],"done":"Complete."}
+"teleport to random players super fast and go back to me" -> {"say":"","steps":[{"t":"tprandom","n":8,"d":0.25,"back":false},{"t":"goto","who":"boss","s":12}],"done":"Complete."}
+"make a command called wiggle that shakes left and right" -> {"say":"","steps":[{"t":"xcode","req":"wiggle: walk left for 0.4s then right for 0.4s, repeat 4 times","s":8,"save":"wiggle"}],"done":"Complete."}]==]
 XcCommand_CODE_RULES=[==[TEMP TASK MODE: your script runs on the bot client for a limited time then is cleaned up. The first line `local ctx=...` is already added for you, do not declare it.
 ctx API:
 ctx.alive() -> false once stopped. every loop must be: while ctx.alive() do ... ctx.wait(0.1) end
@@ -497,21 +517,396 @@ ctx.find(name) -> Player or nil. ctx.hostPlayer() -> the boss Player
 ctx.hum() ctx.hrp() -> bot Humanoid / HumanoidRootPart (may be nil)
 ctx.moveTo(Vector3) -> Humanoid:MoveTo
 Move by Humanoid:MoveTo or by setting hrp.CFrame. Never loop forever without ctx.alive(). No HTTP, no TeleportService, no kicking, no loadstring. Keep it short. Output ONLY one ```lua code block.]==]
-XcCommand_UNSAFE={"httpget","httppost","httpservice","teleportservice",":kick(","shutdown","loadstring","require(","writefile","readfile","delfile","appendfile","setclipboard","getgenv","getrenv","hookfunction","hookmetamethod","newcclosure","syn.","http_request","request(","datastore","marketplaceservice","setfflag","queue_on_teleport","game:service","getconnections"}XC_TALK={last=0,burst=0,window=0}function XcTalk(m)if not m or m==""then return end local now=os.clock()if now-XC_TALK.window>12 then XC_TALK.burst=0 XC_TALK.window=now end XC_TALK.burst=XC_TALK.burst+1 if XC_TALK.burst<=3 then pcall(sendChat,m)end end function XcCommand.log(msg,col)local ref=(ROLE=="HOST"and hostLogRef)or botLogRef if ref and ref.holder and pushLog then pcall(pushLog,ref,tostring(msg),col or C.text)end end function XcCommand.alive(myId)return XcCommand.active and XcCommand.id==myId end function XcCommand.classify(em)local lw=tostring(em or""):lower()if lw:find("quota",1,true)or lw:find("exceeded",1,true)or lw:find("rate limit",1,true)or lw:find("429",1,true)or lw:find("resource_exhausted",1,true)or lw:find("resource exhausted",1,true)then return"quota"end if lw:find(
+XcCommand_UNSAFE={"httpget","httppost","httpservice","teleportservice",":kick(","shutdown","loadstring","require(","writefile","readfile","delfile","appendfile","setclipboard","getgenv","getrenv","hookfunction","hookmetamethod","newcclosure","syn.","http_request","request(","datastore","marketplaceservice","setfflag","queue_on_teleport","game:service","getconnections"}function XcCommand.log(msg,col)local ref=(ROLE=="HOST"and hostLogRef)or botLogRef if ref and ref.holder and pushLog then pcall(pushLog,ref,tostring(msg),col or C.text)end end function XcCommand.alive(myId)return XcCommand.active and XcCommand.id==myId end function XcCommand.classify(em)local lw=tostring(em or""):lower()if lw:find("quota",1,true)or lw:find("exceeded",1,true)or lw:find("rate limit",1,true)or lw:find("429",1,true)or lw:find("resource_exhausted",1,true)or lw:find("resource exhausted",1,true)then return"quota"end if lw:find(
 "api key not valid",1,true)or lw:find("api_key_invalid",1,true)or lw:find("key expired",1,true)or lw:find("permission denied",1,true)or lw:find("unauthenticated",1,true)or lw:find("invalid api key",1,true)or lw:find("403",1,true)or lw:find("401",1,true)then return"badkey"end if lw:find("high demand",1,true)or lw:find("overload",1,true)or lw:find("503",1,true)or lw:find("unavailable",1,true)or lw:find("temporarily",1,true)then return"busy"end if lw:find("not found",1,true)or lw:find("does not exist",1,true)or lw:find("404",1,true)then return"invalid_model"end if lw:find("mime",1,true)then return"mime"end return"api"end function XcCommand.once(rf,key,bodyTbl)local ok,en=pcall(function()return H:JSONEncode(bodyTbl)end)if not ok or not en then return nil,"json","encode failed"end local uw=BGE..AMI..":generateContent"local ok2,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]=
 "application/json",["x-goog-api-key"]=tostring(key)},Body=en})if not ok2 then return nil,"http",tostring(rsp):sub(1,120)end if not rsp then return nil,"http","no response"end local rb=rsp.Body or rsp.body if rb==nil then rb=rsp end if type(rb)~="string"then local ok3,s=pcall(function()return H:JSONEncode(rb)end)rb=ok3 and s or tostring(rb)end if rb==""then return nil,"http","empty body HTTP "..tostring(rsp.StatusCode or rsp.Status or"?")end local dk,data=pcall(function()return H:JSONDecode(rb)end)if not dk or type(data)~="table"then return nil,"json",rb:sub(1,80)end if data.error then local m=data.error.message or data.error if type(m)~="string"then m=H:JSONEncode(m)end return nil,XcCommand.classify(m),tostring(m):sub(1,120)end if not data.candidates or#data.candidates==0 then if data.promptFeedback and data.promptFeedback.blockReason then return nil,"blocked","blocked:"..tostring(data.
 promptFeedback.blockReason)end return nil,"nochoices","no candidates"end local cd=data.candidates[1]if not cd.content or not cd.content.parts or#cd.content.parts==0 then local fr=cd.finishReason if fr and fr~="STOP"then return nil,"blocked","finish="..tostring(fr)end return nil,"nomsg","no parts"end local tx=nil for _,p in ipairs(cd.content.parts)do if p.text and p.text~=""and not p.thought then tx=(tx or"")..p.text end end if not tx or tx==""then return nil,"nomsg","empty text"end pcall(function()if data.usageMetadata and TU then local um=data.usageMetadata TU.prompt=(TU.prompt or 0)+(um.promptTokenCount or 0)TU.candidates=(TU.candidates or 0)+(um.candidatesTokenCount or 0)TU.total=(TU.total or 0)+(um.totalTokenCount or 0)TU.requests=(TU.requests or 0)+1 end end)return tx,nil,nil end function XcCommand.call(sys,user,mt,asJson)local rf=aiGetRequestFunc()if not rf then return nil,"nohttp",
 "no request func"end local keys={BKey1,BKey2}local order={1,2}if XcCommand.keyIdx==2 and(os.clock()-(XcCommand.keySince or 0))<1200 then order={2,1}end local lastEt,lastEm="nokey","no key"for _,idx in ipairs(order)do local k=keys[idx]if k and k~=""then local wantJson=asJson local tries=0 while true do tries=tries+1 local gc={maxOutputTokens=mt or 600}if wantJson then gc.responseMimeType="application/json"end local body={contents={{role="user",parts={{text=sys.."\n\n"..user}}}},generationConfig=gc}local tx,et,em=XcCommand.once(rf,k,body)if tx then if idx~=XcCommand.keyIdx then XcCommand.keyIdx=idx XcCommand.keySince=os.clock()end return tx,nil,nil end lastEt,lastEm=et,em if et=="mime"and wantJson and tries<3 then wantJson=false elseif et=="busy"and tries<2 then task.wait(1.5)else break end end if not(lastEt=="quota"or lastEt=="badkey")then return nil,lastEt,lastEm end end end return nil,lastEt,lastEm end
-XcCommand_VERBS={}for w in("faster slower speed sprint fast slow higher freeze unfreeze follow following sit sitting stand jump jumping hide lead bam swordkill fling spam spamming walk walking run running go goto chase circle teleport tp come move wander explore patrol roam turn look face voidfollow escort"):gmatch("%S+")do XcCommand_VERBS[w]=true end XcCommand_EXTRA={}for w in("spam spamming goto chase circle teleport tp repeat wander patrol roam turn hop random"):gmatch("%S+")do XcCommand_EXTRA[w]=true end XcCommand_TIMING={}for w in("then after before until while every repeat repeatedly times again later once twice sec secs second seconds min mins minute minutes forever continuously keep whenever"):gmatch("%S+")do XcCommand_TIMING[w]=true end function XcCommand.isTask(text)local l=" "..tostring(text or""):lower().." "if l:find(" make me ",1,true)or l:find("script",1,true)or l:find("hack",1,true)or l:find(" for me ",1,
+XcCommand_VERBS={}for w in("faster slower speed sprint fast slow higher freeze unfreeze follow following sit sitting stand jump jumping hide lead bam swordkill fling spam spamming walk walking run running go goto chase circle teleport tp come move wander explore patrol roam turn look face voidfollow escort say tell speak try attempt stay make create"):gmatch("%S+")do XcCommand_VERBS[w]=true end XcCommand_EXTRA={}for w in("spam spamming goto chase circle teleport tp repeat wander patrol roam turn hop random backward forward backwards sideways command"):gmatch("%S+")do XcCommand_EXTRA[w]=true end XcCommand_TIMING={}for w in("then after before until while every repeat repeatedly times again later once twice sec secs second seconds min mins minute minutes forever continuously keep whenever"):gmatch("%S+")do XcCommand_TIMING[w]=true end function XcCommand.isTask(text)local l=" "..tostring(text or""):lower().." "if l:find(" make me ",1,true)or l:find("script",1,true)or l:find("hack",1,true)or l:find(" for me ",1,
 true)then return false end local verbs,nv,extra,timing=0,0,false,false local seen={}for w in l:gmatch("[%a']+")do if XcCommand_VERBS[w]and not seen[w]then seen[w]=true nv=nv+1 end if XcCommand_EXTRA[w]then extra=true end if XcCommand_TIMING[w]then timing=true end end if l:find("%d+%s*s%f[%A]")or l:find("%d+%s*m%f[%A]")then timing=true end if l:find(" go to ",1,true)or l:find(" walk to ",1,true)or l:find(" run to ",1,true)or l:find(" walk around",1,true)or l:find(" run around",1,true)or l:find(" run away",1,true)then extra=true end if nv==0 then return false end if timing or extra or nv>=2 then return true end local q=l:match("^%s*(%a+)")if q=="who"or q=="what"or q=="why"or q=="when"or q=="where"or q=="how"or q=="which"or q=="whats"or q=="hows"or l:find("%?%s*$")then return false end return true end function XcCommand.isStop(text)local raw=tostring(text or""):lower()raw=raw:gsub("^%s*!ask%s*",""):gsub("^%s*!","")local l=" "..raw:gsub("[%p]"," "):gsub("%s+"," ").." "local count=0 for _ in l:gmatch("%S+")do count=count+1 end if count==0 or count>20 then return false end if
 XcCommand.isTask(raw)then return false end local phrases={"stop","cancel","enough","nvm","nevermind","never mind","abort","halt","quit","come back","go back","forget it","leave it","leave him","leave her","leave them","that s enough","thats enough","end task","end it","come here","come to me","back to me","over here","stahp","chill","ok ok"}for _,p in ipairs(phrases)do if l:find(" "..p.." ",1,true)then return true end end for w in l:gmatch("%S+")do if w:match("^st+o+p+$")or w:match("^sto+p+$")then return true end end return false end function XcCommand.context()local arr={}local myH=hrp()for _,p in ipairs(P:GetPlayers())do if p~=pl then local r=getPlayerHRP(p)local d=9999 if myH and r then d=math.floor((myH.Position-r.Position).Magnitude)end arr[#arr+1]={p=p,d=d}end end table.sort(arr,function(a,b)return a.d<b.d end)local hn=S.hostName or"?"local list={}for i=1,math.min(12,#arr)do local e=arr[i
-]local tag=(e.p.Name:lower()==hn)and" (boss)"or""list[#list+1]=e.p.Name.." ["..e.p.DisplayName.."] "..(e.d<9999 and tostring(e.d)or"?").." studs"..tag end return"boss: "..hn.."\nbot state: "..tostring(S.mode)..(S.sitting and", sitting"or"").."\nplayers nearest first: "..table.concat(list,"; ")end function XcCommand.parsePlan(txt)if not txt then return nil end local s=txt:gsub("```json",""):gsub("```","")local a=s:find("{",1,true)if not a then return nil end local b=nil for i=#s,a,-1 do if s:sub(i,i)=="}"then b=i break end end if not b then return nil end local ok,d=pcall(function()return H:JSONDecode(s:sub(a,b))end)if ok and type(d)=="table"then return d end return nil end function XcCommand.cleanChat(t)t=tostring(t or""):gsub("[%c]"," "):gsub("%s+"," ")t=t:gsub("^%s+",""):gsub("%s+$","")return t:sub(1,180)end function XcCommand.newScope(myId)local sc={alive=true,finished=false,conns={},insts={},
+]local tag=(e.p.Name:lower()==hn)and" (boss)"or""list[#list+1]=e.p.Name.." ["..e.p.DisplayName.."] "..(e.d<9999 and tostring(e.d)or"?").." studs"..tag end return"boss: "..hn.."\nbot state: "..tostring(S.mode)..(S.sitting and", sitting"or"").."\nplayers nearest first: "..table.concat(list,"; ")..XcCommand.customList()end function XcCommand.parsePlan(txt)if not txt then return nil end local s=txt:gsub("```json",""):gsub("```","")local a=s:find("{",1,true)if not a then return nil end local b=nil for i=#s,a,-1 do if s:sub(i,i)=="}"then b=i break end end if not b then return nil end local ok,d=pcall(function()return H:JSONDecode(s:sub(a,b))end)if ok and type(d)=="table"then return d end return nil end function XcCommand.cleanChat(t)t=tostring(t or""):gsub("[%c]"," "):gsub("%s+"," ")t=t:gsub("^%s+",""):gsub("%s+$","")return t:sub(1,180)end function XcCommand.newScope(myId)local sc={alive=true,finished=false,conns={},insts={},
 threads={}}local ctx={}ctx.alive=function()return sc.alive and XcCommand.alive(myId)end ctx.finish=function()sc.finished=true end ctx.wait=function(t)task.wait(t or 0.03)return ctx.alive()end ctx.on=function(sig,fn)local c=sig:Connect(function(...)if ctx.alive()then fn(...)end end)sc.conns[#sc.conns+1]=c return c end ctx.new=function(cls,props,parent)local i=Instance.new(cls)if props then for k,v in pairs(props)do pcall(function()i[k]=v end)end end if parent then i.Parent=parent end sc.insts[#sc.insts+1]=i return i end ctx.spawn=function(fn,...)local th=task.spawn(function(...)pcall(fn,...)end,...)sc.threads[#sc.threads+1]=th return th end ctx.chat=function(m)sendChat(XcCommand.cleanChat(m))end ctx.player=pl ctx.hum=function()return hum()end ctx.hrp=function()return hrp()end ctx.find=function(n)return getPlayer(n)end ctx.hostPlayer=function()return getHost()end ctx.moveTo=function(pos)local h=
-hum()if h then pcall(function()h:MoveTo(pos)end)end end sc.ctx=ctx sc.close=function()sc.alive=false for _,c in ipairs(sc.conns)do pcall(function()c:Disconnect()end)end for _,i in ipairs(sc.insts)do pcall(function()i:Destroy()end)end for _,t in ipairs(sc.threads)do pcall(function()task.cancel(t)end)end sc.conns,sc.insts,sc.threads={},{},{}end return sc end function XcCommand.cleanup()local sc=XcCommand.scope XcCommand.scope=nil if sc then pcall(sc.close)end if S.mode=="XcCommand"then S.mode="Follow"pcall(releaseRotation)pcall(function()local h=hum()if h and not S.sitting then h.WalkSpeed=BS h.JumpPower=BJ h.PlatformStand=false end end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil end end function XcCommand.cancel()XcCommand.active=false XcCommand.id=XcCommand.id+1 XcCommand.cleanup()end function XcCommand.stop()XcCommand.cancel()task.spawn(function()pcall(handleCommand,"stop","")end)end function XcCommand.fail(et,em)XcCommand.log(
-"[XcCommand] failed: "..tostring(et)..(em and(" - "..tostring(em):sub(1,70))or""),C.red)if et=="quota"then local h,m=getResetCountdown()sendChat("XcCommand out of fuel, back in "..h.."h "..m.."m")elseif et=="busy"then sendChat(pick({"im busy rn, try again","hold up, try again"}))elseif et=="blocked"then sendChat(pick({"got blocked, say it differently","filter stopped me"}))elseif et=="nohttp"then sendChat("no http in executor")elseif et=="nokey"then sendChat("no XcCommand key set")else sendChat(pick({"couldnt plan that one","something went wrong, try again"}))end end function XcCommand.runCode(req,secs,myId)secs=math.clamp(tonumber(secs)or 20,3,120)local prompt="TEMP TASK: "..tostring(req).."\nRun time: "..secs.." seconds.\n"..XcCommand.context()local reply,et,em=XcCommand.call((CP2 or"")..("\n\n"..XcCommand_CODE_RULES),prompt,1800,false)if not XcCommand.alive(myId)then return end if not reply then XcCommand.fail(
-et,em)return end local code=extractCodeBlock(reply)if not code or code==""then XcCommand.log("[XcCommand] code: nothing usable",C.red)sendChat("couldnt write that one")return end local lc=code:lower()for _,bad in ipairs(XcCommand_UNSAFE)do if lc:find(bad,1,true)then XcCommand.log("[XcCommand] code blocked: "..bad,C.red)sendChat("cant do that one safely")return end end local fn,cerr=loadstring("local ctx=...\n"..code)if not fn then XcCommand.log("[XcCommand] compile: "..tostring(cerr):sub(1,90),C.red)sendChat("script came out broken")return end local sc=XcCommand.newScope(myId)XcCommand.scope=sc if type(setfenv)=="function"and type(getfenv)=="function"then pcall(function()local base=getfenv(fn)local tk=setmetatable({wait=function(t)local r=task.wait(t)if not sc.ctx.alive()then error("XcCommand_stop",0)end return r end,spawn=function(...)local th=task.spawn(...)sc.threads[#sc.threads+1]=th return th end,defer=function(
+hum()if h then pcall(function()h:MoveTo(pos)end)end end XcCommand.extendCtx(ctx,myId)sc.ctx=ctx sc.close=function()sc.alive=false for _,c in ipairs(sc.conns)do pcall(function()c:Disconnect()end)end for _,i in ipairs(sc.insts)do pcall(function()i:Destroy()end)end for _,t in ipairs(sc.threads)do pcall(function()task.cancel(t)end)end sc.conns,sc.insts,sc.threads={},{},{}end return sc end function XcCommand.cleanup()local sc=XcCommand.scope XcCommand.scope=nil if sc then pcall(sc.close)end if S.mode=="XcCommand"then S.mode="Follow"pcall(releaseRotation)pcall(function()local h=hum()if h and not S.sitting then h.WalkSpeed=BS h.JumpPower=BJ h.PlatformStand=false end end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil end end function XcCommand.cancel()XcCommand.active=false XcCommand.id=XcCommand.id+1 XcCommand.cleanup()end function XcCommand.stop()XcCommand.cancel()task.spawn(function()pcall(handleCommand,"stop","")end)end function XcCommand.fail(et,em)XcCommand.log(
+"[XcCommand] failed: "..tostring(et)..(em and(" - "..tostring(em):sub(1,70))or""),C.red)if et=="quota"then local h,m=getResetCountdown()sendChat("XcCommand out of fuel, back in "..h.."h "..m.."m")elseif et=="busy"then sendChat(pick({"im busy rn, try again","hold up, try again"}))elseif et=="blocked"then sendChat(pick({"got blocked, say it differently","filter stopped me"}))elseif et=="nohttp"then sendChat("no http in executor")elseif et=="nokey"then sendChat("no XcCommand key set")else sendChat(pick({"couldnt plan that one","something went wrong, try again"}))end end function XcCommand.execCode(code,secs,myId,args)secs=math.clamp(tonumber(secs)or 20,3,120)local okS,bad=XcCommand.safe(code)if not okS then XcCommand.log("[XcCommand] code blocked: "..tostring(bad),C.red)sendChat("Blocked: unsafe operation.")return false end local fn,cerr=loadstring("local ctx=...\n"..code)if not fn then XcCommand.log("[XcCommand] compile: "..tostring(cerr):sub(1,90),C.red)sendChat("Script failed validation.")return false end local sc=XcCommand.newScope(myId)XcCommand.scope=sc sc.ctx.args=tostring(args or"")local argv={}for w in tostring(args or""):gmatch("%S+")do argv[#argv+1]=w end sc.ctx.argv=argv if type(setfenv)=="function"and type(getfenv)=="function"then pcall(function()local base=getfenv(fn)local tk=setmetatable({wait=function(t)local r=task.wait(t)if not sc.ctx.alive()then error("XcCommand_stop",0)end return r end,spawn=function(...)local th=task.spawn(...)sc.threads[#sc.threads+1]=th return th end,defer=function(
 ...)local th=task.defer(...)sc.threads[#sc.threads+1]=th return th end,delay=function(...)local th=task.delay(...)sc.threads[#sc.threads+1]=th return th end,},{__index=task})local ins=setmetatable({new=function(c,p)local i=Instance.new(c,p)sc.insts[#sc.insts+1]=i return i end},{__index=Instance})local env=setmetatable({task=tk,Instance=ins,wait=function(t)return tk.wait(t)end,},{__index=base})setfenv(fn,env)end)end S.mode="XcCommand"S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil local th=task.spawn(function()local ok,err=pcall(fn,sc.ctx)if not ok and tostring(err):find("XcCommand_stop",1,true)==nil then XcCommand.log("[XcCommand] runtime: "..tostring(err):sub(1,90),C.red)end end)sc.threads[#sc.threads+1]=th XcCommand.log("[XcCommand] temp script running ("..secs.."s)",C.green)local t0=os.clock()while XcCommand.alive(myId)and not sc.finished and os.clock()-t0<secs do task.wait(0.15)
-end if XcCommand.scope==sc then XcCommand.scope=nil end pcall(sc.close)if S.mode=="XcCommand"then S.mode="Follow"pcall(releaseRotation)pcall(function()local h=hum()if h and not S.sitting then h.WalkSpeed=BS h.JumpPower=BJ h.PlatformStand=false end end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil end end XcCommand.MAXACTIONS=160
+end if XcCommand.scope==sc then XcCommand.scope=nil end pcall(sc.close)if S.mode=="XcCommand"then S.mode="Follow"pcall(releaseRotation)pcall(function()local h=hum()if h and not S.sitting then h.WalkSpeed=BS h.JumpPower=BJ h.PlatformStand=false end end)S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil end  return true end
+XcCommand.CFILE=KEY_FOLDER.."/xch_custom_cmds.json"
+XcCommand.custom={}
+XcCommand.RESERVED={}
+for w in("ask say info gameinfo similar host stophost whoishost math countdown timer status cmds customs delcmd help voidfollow stopvoidfollow unvoidfollow"):gmatch("%S+")do XcCommand.RESERVED[w]=true end
+function XcCommand.validName(n)
+ n=(tostring(n or""):lower():gsub("[^a-z0-9]",""))
+ if#n<3 or#n>16 or not n:match("^[a-z]")then return nil end
+ if XcCommand.RESERVED[n]or XC_OFF[n]or(FXC and FXC[n])then return nil end
+ if AI_CMD_WHITELIST[n]and not XcCommand.custom[n]then return nil end
+ return n
+end
+function XcCommand.saveCustom()
+ pcall(function()if writefile then writefile(XcCommand.CFILE,H:JSONEncode(XcCommand.custom))end end)
+end
+function XcCommand.loadCustom()
+ pcall(function()
+  if isfile and readfile and isfile(XcCommand.CFILE)then
+   local d=H:JSONDecode(readfile(XcCommand.CFILE))
+   for n,v in pairs(d)do
+    if type(v)=="table"and type(v.code)=="string"and XcCommand.validName(n)==n then
+     XcCommand.custom[n]={req=tostring(v.req or""),code=v.code,secs=tonumber(v.secs)or 20}
+     AI_CMD_WHITELIST[n]=true
+    end
+   end
+  end
+ end)
+end
+function XcCommand.registerCustom(name,req,code,secs)
+ local n=XcCommand.validName(name)
+ if not n then sendChat("Command name unavailable.")return false end
+ XcCommand.custom[n]={req=tostring(req or""),code=code,secs=secs or 20}
+ AI_CMD_WHITELIST[n]=true
+ XcCommand.saveCustom()
+ sendChat("Command !"..n.." created.")
+ return true
+end
+function XcCommand.customList()
+ local t={}
+ for n in pairs(XcCommand.custom)do t[#t+1]=n end
+ table.sort(t)
+ if#t==0 then return""end
+ return"\ncustom commands: "..table.concat(t,", ")
+end
+function XcCommand.walkFor(dir,secs,myId)
+ secs=math.clamp(tonumber(secs)or 3,0.5,60)
+ local h,r=XcCommand.takeover(),hrp()
+ if not h or not r then return false end
+ local v=XcCommand.dirVector(dir,nil)
+ if not v then return false end
+ pcall(function()h.AutoRotate=false end)
+ local t0=os.clock()
+ while XcCommand.alive(myId)and os.clock()-t0<secs do
+  local hh=hum()
+  if not hh then break end
+  pcall(function()hh:Move(v,false)end)
+  task.wait(0.05)
+ end
+ local hh=hum()
+ if hh then pcall(function()hh:Move(Vector3.zero,false)hh.AutoRotate=true end)end
+ return XcCommand.alive(myId)
+end
+function XcCommand.extendCtx(ctx,myId)
+ ctx.say=ctx.chat
+ ctx.players=function()return XcCommand.pool(nil)end
+ ctx.random=function()return XcCommand.pickPlayer("random",nil)end
+ ctx.tp=function(t)
+  if typeof(t)=="Instance"and t:IsA("Player")then return XcCommand.tpTo(t,Vector3.new(0,0,4))end
+  if typeof(t)=="Vector3"then
+   local r=hrp()
+   if r then pcall(function()r.CFrame=CFrame.new(t+Vector3.new(0,3,0))r.AssemblyLinearVelocity=Vector3.zero end)return true end
+  end
+  return false
+ end
+ ctx.goTo=function(p,timeout)
+  if typeof(p)=="Instance"and p:IsA("Player")then return XcCommand.goToPlayer(p,myId,timeout or 12,true)end
+  if typeof(p)=="Vector3"then return XcCommand.walkTo(p,myId,timeout or 12,3.5)end
+  return false
+ end
+ ctx.walk=function(dir,secs)return XcCommand.walkFor(dir,secs,myId)end
+ ctx.jump=function(n,d)
+  for i=1,math.clamp(math.floor(tonumber(n)or 1),1,30)do
+   if not ctx.alive()then return end
+   local h=hum()
+   if h then pcall(function()h.Jump=true end)end
+   ctx.wait(tonumber(d)or 0.6)
+  end
+ end
+ ctx.face=function(p)if typeof(p)=="Instance"and p:IsA("Player")then pcall(FX_FACE,p)end end
+ ctx.cmd=function(name,args)
+  name=tostring(name or""):lower()
+  if AI_CMD_WHITELIST[name]and not XcCommand.custom[name]then pcall(handleCommand,name,tostring(args or""))end
+ end
+end
+function XcCommand.genCode(req,secs)
+ local rf=aiGetRequestFunc()
+ if not rf then return nil,"nohttp","no request func"end
+ local full=(CP2 or"").."\n\n"..XcCommand_CODE_RULES
+ local prompt="TEMP TASK: "..tostring(req).."\nRun time: "..secs.." seconds.\n"..XcCommand.context()
+ local reply,et,em
+ for _,k in ipairs({APIKey2,APIKey4})do
+  if k and k~=""and not reply then
+   local body={contents={{role="user",parts={{text=full.."\n\n"..prompt}}}},generationConfig={maxOutputTokens=2200}}
+   reply,et,em=XcCommand.once(rf,k,body)
+   if not reply and et=="busy"then
+    task.wait(1.2)
+    reply,et,em=XcCommand.once(rf,k,body)
+   end
+  end
+ end
+ if not reply then reply,et,em=XcCommand.call(full,prompt,2200,false)end
+ return reply,et,em
+end
+function XcCommand.polish(req,code)
+ if not XcPolish.ready()then return code,"no polisher key"end
+ local rf=aiGetRequestFunc()
+ if not rf then return code,"nohttp"end
+ local body={contents={{role="user",parts={{text="REVIEW AND POLISH this bot control script.\nRequest: "..tostring(req).."\n\n"..XcCommand_CODE_RULES.."\n\nDraft:\n```lua\n"..code.."\n```\nFix every defect, keep the ctx API usage correct, make sure every loop uses ctx.alive() and ctx.wait, remove anything unsafe. Return ONLY one lua code block."}}}},generationConfig={maxOutputTokens=2200}}
+ local tx=XcCommand.once(rf,POLISH_KEY,body)
+ if not tx then return code,"reviewer unavailable"end
+ local pc=extractCodeBlock(tx)
+ if not pc or#pc<20 then return code,"empty review, draft kept"end
+ if not loadstring("local ctx=...\n"..pc)then return code,"review uncompilable, draft kept"end
+ return pc,"reviewed and verified"
+end
+function XcCommand.safe(code)
+ local lc=code:lower()
+ for _,bad in ipairs(XcCommand_UNSAFE)do
+  if lc:find(bad,1,true)then return false,bad end
+ end
+ return true
+end
+function XcCommand.runCode(req,secs,myId)
+ secs=math.clamp(tonumber(secs)or 20,3,120)
+ local reply,et,em=XcCommand.genCode(req,secs)
+ if not XcCommand.alive(myId)then return nil end
+ if not reply then XcCommand.fail(et,em)return nil end
+ local code=extractCodeBlock(reply)
+ if not code or code==""then
+  XcCommand.log("[XcCommand] code: nothing usable",C.red)
+  sendChat("Unable to generate that.")
+  return nil
+ end
+ local pc,pst=XcCommand.polish(req,code)
+ XcCommand.log("[XcCommand] reviewer: "..tostring(pst),C.green)
+ if not XcCommand.alive(myId)then return nil end
+ if XcCommand.execCode(pc,secs,myId,"")then return pc,secs end
+ return nil
+end
+function XcCommand.runCustom(name,args)
+ local c=XcCommand.custom[name]
+ if not c then return end
+ XcCommand.cancel()
+ if S.voidStance then pcall(XcVoid.pause)end
+ XcCommand.active=true
+ XcCommand.id=XcCommand.id+1
+ local myId=XcCommand.id
+ task.spawn(function()
+  XcCommand.execCode(c.code,c.secs or 20,myId,args)
+  if XcCommand.alive(myId)then
+   XcCommand.active=false
+   XcCommand.cleanup()
+   pcall(XcVoid.resume)
+  end
+ end)
+end
+XcVision={}
+XcVision.PAT={"what is this","what's this","whats this","what is that","what's that","whats that","what am i looking at","what am i facing","what are we looking at","describe this","describe that","who is this","who's this","whos this","who is that","who's that","whos that","what is it","tell me about this","tell me about that","identify this","identify that","what are these","who is he","who is she","what is he wearing","what is she wearing"}
+function XcVision.match(prompt)
+ local l=" "..(tostring(prompt or""):lower():gsub("[%?!%.,]",""):gsub("%s+"," ")).." "
+ if l:find(" game",1,true)or l:find(" server",1,true)or l:find(" map ",1,true)or l:find(" place ",1,true)then return nil end
+ for _,p in ipairs(XcVision.PAT)do
+  if l:find(p,1,true)then return(p:find("who",1,true)and"who"or"what")end
+ end
+ return nil
+end
+function XcVision.cast()
+ local host=getHost()
+ local ch=host and host.Character
+ if not ch then return nil end
+ local head=ch:FindFirstChild("Head")or ch:FindFirstChild("HumanoidRootPart")
+ if not head then return nil end
+ local origin=head.Position
+ local look=head.CFrame.LookVector
+ local body=ch:FindFirstChild("HumanoidRootPart")
+ if body then
+  local bl=body.CFrame.LookVector
+  local c=Vector3.new(bl.X,look.Y,bl.Z)
+  if c.Magnitude>0.01 then look=c.Unit end
+ end
+ local rp=RaycastParams.new()
+ rp.FilterType=Enum.RaycastFilterType.Exclude
+ rp.FilterDescendantsInstances={ch}
+ local best,bestScore,bestDist=nil,1e9,0
+ for _,p in ipairs(P:GetPlayers())do
+  if p~=host and p~=pl and p.Character then
+   local tr=p.Character:FindFirstChild("HumanoidRootPart")
+   if tr then
+    local v=tr.Position-origin
+    local dist=v.Magnitude
+    if dist>1 and dist<=220 then
+     local ang=math.acos(math.clamp(look:Dot(v.Unit),-1,1))
+     local lim=math.clamp(0.12+6/dist,0.12,0.45)
+     if ang<=lim then
+      local ok,hit=pcall(function()return W:Raycast(origin,v,rp)end)
+      if ok and(not hit or hit.Instance:IsDescendantOf(p.Character))then
+       local score=ang+dist/2000
+       if score<bestScore then best,bestScore,bestDist=p,score,dist end
+      end
+     end
+    end
+   end
+  end
+ end
+ if best then return{kind="player",player=best,dist=bestDist}end
+ local ok,hit=pcall(function()return W:Raycast(origin,look*300,rp)end)
+ if not ok or not hit then return{kind="none"}end
+ local inst=hit.Instance
+ local hm,cur=nil,inst
+ while cur and cur~=W do
+  if cur:IsA("Model")and cur:FindFirstChildOfClass("Humanoid")then hm=cur break end
+  cur=cur.Parent
+ end
+ if hm then
+  local pp=P:GetPlayerFromCharacter(hm)
+  if pp then return{kind="player",player=pp,dist=hit.Distance}end
+  return{kind="npc",model=hm,dist=hit.Distance}
+ end
+ return{kind="object",inst=inst,hit=hit,dist=hit.Distance}
+end
+function XcVision.cname(c3)
+ local ok,n=pcall(function()return BrickColor.new(c3).Name end)
+ return ok and n or"unknown"
+end
+function XcVision.enumName(e)
+ return(tostring(e):gsub("^Enum%.%w+%.",""))
+end
+function XcVision.facts(t)
+ local f={}
+ local function add(k,v)
+  if v~=nil and v~=""and v~=false then f[#f+1]=k..": "..tostring(v)end
+ end
+ if t.kind=="player"or t.kind=="npc"then
+  local ch=t.kind=="player"and t.player.Character or t.model
+  add("type",t.kind=="player"and"player avatar"or"npc character")
+  if t.kind=="player"then
+   local p=t.player
+   add("username",p.Name)
+   add("display name",p.DisplayName)
+   add("account age days",p.AccountAge)
+   if p.Team then add("team",p.Team.Name)end
+  else
+   add("name",t.model.Name)
+  end
+  add("distance studs",math.floor(t.dist or 0))
+  local h=ch and ch:FindFirstChildOfClass("Humanoid")
+  if h then
+   add("health",math.floor(h.Health).."/"..math.floor(h.MaxHealth))
+   add("rig",XcVision.enumName(h.RigType))
+   add("state",h.Sit and"sitting"or(h.MoveDirection.Magnitude>0.1 and"moving"or"standing still"))
+  end
+  if ch then
+   local tool=ch:FindFirstChildOfClass("Tool")
+   add("holding",tool and tool.Name)
+   local acc={}
+   for _,c in ipairs(ch:GetChildren())do
+    if c:IsA("Accessory")and#acc<8 then acc[#acc+1]=c.Name end
+   end
+   if#acc>0 then add("accessories",table.concat(acc,", "))end
+   local bc=ch:FindFirstChildOfClass("BodyColors")
+   if bc then add("skin tone",XcVision.cname(bc.TorsoColor3))end
+   add("shirt",ch:FindFirstChildOfClass("Shirt")and"yes")
+   add("pants",ch:FindFirstChildOfClass("Pants")and"yes")
+   add("graphic tee",ch:FindFirstChildOfClass("ShirtGraphic")and"yes")
+  end
+ else
+  local i=t.inst
+  add("type","object")
+  add("name",i.Name)
+  add("class",i.ClassName)
+  local mdl=i:FindFirstAncestorOfClass("Model")
+  if mdl and mdl~=i and mdl~=W then add("part of model",mdl.Name)end
+  local chain,cur={},i.Parent
+  while cur and cur~=W and#chain<3 do chain[#chain+1]=cur.Name cur=cur.Parent end
+  if#chain>0 then add("inside",table.concat(chain," < "))end
+  if i:IsA("BasePart")then
+   add("material",XcVision.enumName(i.Material))
+   add("color",XcVision.cname(i.Color))
+   add("size studs",string.format("%.0fx%.0fx%.0f",i.Size.X,i.Size.Y,i.Size.Z))
+   add("anchored",i.Anchored and"yes"or"no")
+   if i.Transparency>0 then add("transparency",string.format("%.1f",i.Transparency))end
+   add("solid",i.CanCollide and"yes"or"no")
+  end
+  if i:IsA("MeshPart")then add("shape","custom mesh")end
+  if i:IsA("Terrain")and t.hit then add("terrain material",XcVision.enumName(t.hit.Material))end
+  local root=(mdl and mdl~=W)and mdl or i
+  local texts,extra,n={},{},0
+  local ok,desc=pcall(function()return root:GetDescendants()end)
+  if ok then
+   for _,d in ipairs(desc)do
+    n=n+1
+    if n>150 then break end
+    if(d:IsA("TextLabel")or d:IsA("TextButton"))and d.Text~=""and#texts<3 then texts[#texts+1]=d.Text:sub(1,40)end
+    if d:IsA("ProximityPrompt")then extra[#extra+1]="interaction prompt "..tostring(d.ActionText)end
+    if d:IsA("ClickDetector")then extra[#extra+1]="clickable"end
+    if d:IsA("Seat")or d:IsA("VehicleSeat")then extra[#extra+1]="seat"end
+    if d:IsA("Sound")then extra[#extra+1]="plays sound "..d.Name end
+    if d:IsA("PointLight")or d:IsA("SpotLight")or d:IsA("SurfaceLight")then extra[#extra+1]="emits light"end
+    if d:IsA("ParticleEmitter")then extra[#extra+1]="particle effects"end
+   end
+  end
+  if i:IsA("SpawnLocation")then extra[#extra+1]="spawn point"end
+  if#texts>0 then add("visible text",table.concat(texts," / "))end
+  if#extra>0 then add("features",table.concat(extra,", "):sub(1,160))end
+  local attrs={}
+  pcall(function()for k,v in pairs(i:GetAttributes())do if#attrs<4 then attrs[#attrs+1]=k.."="..tostring(v)end end end)
+  if#attrs>0 then add("attributes",table.concat(attrs,", "))end
+  add("distance studs",math.floor(t.dist or 0))
+ end
+ return table.concat(f,"; ")
+end
+function XcVision.ask(sys,user,mt)
+ local rf=aiGetRequestFunc()
+ if not rf then return nil end
+ for _,k in ipairs({APIKey,APIKey3})do
+  if k and k~=""then
+   local body={contents={{role="user",parts={{text=sys.."\n\n"..user}}}},generationConfig={maxOutputTokens=mt or 200}}
+   local tx=XcCommand.once(rf,k,body)
+   if tx then return tx end
+  end
+ end
+ return nil
+end
+function XcVision.localText(t)
+ if t.kind=="player"then
+  local p=t.player
+  return p.DisplayName.." (@"..p.Name.."), account "..p.AccountAge.." days old, "..math.floor(t.dist).." studs away."
+ elseif t.kind=="npc"then
+  return"An NPC named "..t.model.Name..", "..math.floor(t.dist).." studs away."
+ end
+ local i=t.inst
+ local d="An object named "..i.Name.." ("..i.ClassName..")"
+ if i:IsA("BasePart")then d=d..", "..XcVision.cname(i.Color).." "..XcVision.enumName(i.Material)end
+ return d..", "..math.floor(t.dist or 0).." studs away."
+end
+function XcVision.run(prompt)
+ local now=os.clock()
+ if now-(XcVision.last or 0)<3 then return end
+ XcVision.last=now
+ local t=XcVision.cast()
+ if not t then sendChat("I cannot see you right now.")return end
+ if t.kind=="none"then sendChat("Nothing is in range in front of you.")return end
+ local facts=XcVision.facts(t)
+ local sys="You are a precise visual analyst for a roblox agent. Use only the supplied data. Formal tone, no emojis, no title, no preamble."
+ local user="The principal asked: \""..tostring(prompt):sub(1,80).."\"\nHe is facing this (game data):\n"..facts.."\nWrite a photo-style description in 2 to 3 sentences, about 45 words in total. For a player, describe the avatar's appearance from the data and give the username and account age; never speculate about the real person. For an object, say what it is, how it looks and what it is likely used for."
+ local tx=XcVision.ask(sys,user,220)
+ if tx then
+  tx=tx:gsub("[%c]"," ")
+  tx=trim((tx:gsub("%s+"," ")))
+  if tx~=""then
+   if aiChunkSend then aiChunkSend(tx)else sendChat(tx:sub(1,190))end
+   return
+  end
+ end
+ sendChat(XcVision.localText(t))
+end
+function XcVision.try(prompt)
+ if not XcVision.match(prompt)then return false end
+ if ROLE~="BOT"or antiBan.detected then return true end
+ task.spawn(function()
+  local ok,err=pcall(XcVision.run,prompt)
+  if not ok then XcCommand.log("[vision] "..tostring(err):sub(1,80),C.red)end
+ end)
+ return true
+end
+XcCommand.loadCustom()
+XcCommand.MAXACTIONS=160
 XcCommand.PERSIST={sit=true,hide=true,hover=true,freeze=true,afk=true}
 XcCommand.KNOWN={forward=true,front=true,ahead=true,back=true,backward=true,backwards=true,left=true,right=true,north=true,south=true,east=true,west=true,away=true}
 XcCommand.EMOTES={wave=true,point=true,salute=true,cheer=true,dance=true,dance2=true,dance3=true,laugh=true,shrug=true,tilt=true,stadium=true}
@@ -771,7 +1166,9 @@ function XcCommand.step(st,myId,ctx,depth)
     if XcCommand.PERSIST[name]then ctx.persist=true end
     return XcCommand.sleep(myId,0.6)
    else
-    XcCommand.log("[XcCommand] skipped unknown cmd: "..name,C.red)
+    ctx.transient=true
+    XcCommand.takeover()
+    XcCommand.runCode("perform this action with the bot: "..c,20,myId)
    end
   end
   return true
@@ -780,7 +1177,7 @@ function XcCommand.step(st,myId,ctx,depth)
   return XcCommand.sleep(myId,math.clamp(tonumber(st.s)or 1,0.2,120))
  elseif t=="chat"then
   local m=XcCommand.cleanChat(st.m)
-  if m~=""then XC_RAW=true XcTalk(m)XC_RAW=false return XcCommand.sleep(myId,0.8)end
+  if m~=""then XC_RAW=true pcall(sendChat,m)XC_RAW=false return XcCommand.sleep(myId,0.8)end
   return true
  elseif t=="spam"then
   local lines={}
@@ -799,16 +1196,19 @@ function XcCommand.step(st,myId,ctx,depth)
    local d=math.clamp(tonumber(st.d)or 2.5,1.5,10)
    for k=1,n do
     if not alive()then return false end
-    XC_RAW=true XcTalk(lines[((k-1)%#lines)+1])XC_RAW=false
+    XC_RAW=true pcall(sendChat,lines[((k-1)%#lines)+1])XC_RAW=false
     if k<n and not XcCommand.sleep(myId,d)then return false end
    end
   end
   return true
- elseif t=="code"then
-  local req=trim(tostring(st.req or""))
+ elseif t=="code"or t=="xcode"then
+  local req=trim(tostring(st.req or st.q or""))
   if req~=""then
    ctx.transient=true
-   XcCommand.runCode(req,st.s,myId)
+   XcCommand.takeover()
+   local code,secs=XcCommand.runCode(req,st.s,myId)
+   local nm=tostring(st.save or"")
+   if code and nm~=""and alive()then XcCommand.registerCustom(nm,req,code,secs)end
   end
   return alive()
  elseif t=="ask"then
@@ -857,6 +1257,10 @@ function XcCommand.step(st,myId,ctx,depth)
   XcCommand.goToPlayer(p,myId,st.s,st.tp~=false)
   return XcCommand.sleep(myId,0.25)
  elseif t=="walk"then
+  if(tonumber(st.s)or 0)>0 then
+   XcCommand.walkFor(st.dir or"forward",st.s,myId)
+   return XcCommand.alive(myId)
+  end
   local n=math.clamp(math.floor(tonumber(st.n)or 1),1,15)
   local studs=math.clamp(tonumber(st.studs)or 20,3,80)
   local dir=tostring(st.dir or"random"):lower()
@@ -893,6 +1297,27 @@ function XcCommand.step(st,myId,ctx,depth)
     end
    end
    if k<n and not XcCommand.sleep(myId,0.15)then return false end
+  end
+  return alive()
+  elseif t=="infront"then
+  local n=math.clamp(math.floor(tonumber(st.n)or 3),1,12)
+  local d=math.clamp(tonumber(st.d)or 1.5,0.3,10)
+  local used={}
+  for k=1,n do
+   if not alive()then return false end
+   local p=XcCommand.pickPlayer(st.who or"random",used)
+   if not p then break end
+   used[p]=true
+   XcCommand.takeover()
+   local tr=getPlayerHRP(p)
+   if tr then
+    local look=XcCommand.flat(tr.CFrame.LookVector)or Vector3.new(0,0,-1)
+    local pos=tr.Position+look*5
+    local ok=XcCommand.walkTo(Vector3.new(pos.X,tr.Position.Y,pos.Z),myId,10,2.5)
+    if not ok and alive()then XcCommand.tpTo(p,Vector3.new(0,0,-5))end
+    pcall(FX_FACE,p)
+   end
+   if not XcCommand.sleep(myId,d)then return false end
   end
   return alive()
  elseif t=="turn"then
@@ -965,20 +1390,22 @@ function XcCommand.execute(plan,myId)
  local ctx={count=0,started=os.clock(),transient=false,persist=false}
  for i,st in ipairs(steps)do
   if i>40 then break end
-  if not XcCommand.step(st,myId,ctx,0)then break end
+  local okS,resS=pcall(XcCommand.step,st,myId,ctx,0)if not okS then XcCommand.log("[XcCommand] step error: "..tostring(resS):sub(1,80),C.red)elseif not resS then break end
  end
  if not XcCommand.alive(myId)then return end
  XcCommand.active=false
  XcCommand.cleanup()
  if ctx.transient and not ctx.persist and(S.mode~="Follow"or S.sitting)then pcall(stopAllModes)end if not ctx.persist then pcall(XcVoid.resume)end
- local dn=XcCommand.cleanChat(plan.done)
- if dn==""then dn=pick({"done boss","all done","finished","done"})end
- sendChat(dn)
+ if os.clock()-ctx.started>15 then
+  local dn=XcCommand.cleanChat(plan.done)
+  if dn==""then dn="Complete."end
+  sendChat(dn)
+ end
 end
 function XcCommand.run(prompt)if ROLE~="BOT"or antiBan.detected then return end if(not BKey1 or BKey1=="")and(not BKey2 or BKey2=="")then sendChat("no XcCommand key set")return end local now=os.clock()if now-XcCommand.lastReq<2 then return end XcCommand.lastReq=now XcCommand.cancel()XcCommand.id=XcCommand.id+1 local myId=XcCommand.id XcCommand.active=true local user="BOSS REQUEST: "..prompt.."\n\n"..XcCommand.context()local rp,et,em=XcCommand.call(XcCommand_SYS,user,2000,true)if not
-XcCommand.alive(myId)then return end if not rp then XcCommand.active=false XcCommand.fail(et,em)return end local plan=XcCommand.parsePlan(rp)if not plan then local rp2=XcCommand.call(XcCommand_SYS,user.."\nREMINDER: reply with the JSON object only, nothing else.",2000,true)if not XcCommand.alive(myId)then return end if rp2 then plan=XcCommand.parsePlan(rp2)end end if not plan then XcCommand.active=false XcCommand.log("[XcCommand] bad plan: "..tostring(rp):sub(1,80),C.red)sendChat("couldnt plan that one, try again")return end local say=XcCommand.cleanChat(plan.say)if say~=""then sendChat(say)end XcCommand.log("[XcCommand] task: "..prompt:sub(1,60),C.green)XcCommand.execute(plan,myId)end function XcCommand.route(prompt)local p=trim(tostring(prompt or""))local forced=false local fp=p:match("^[Tt][Aa][Ss][Kk][%s:]+(.+)$")if fp then p=trim(fp)forced=true end if p==""then return false end if not forced then local looksQuestion=(p:match("^%a+%s+[^%?]+$")==nil) if looksQuestion and not p:find("^who%s") and not p:find("^what%s") and not p:find("^why%s") and not p:find("^when%s") and not p:find("^where%s") and not p:find("^how%s") then forced=true end end if not forced and not XcCommand.isTask(p)then return false end if ROLE=="BOT"then task.spawn(function()XcCommand.run(p)end)else XcCommand.log("[XcCommand] task sent to bot: "..p:sub(1,50),C.green)end return true end function XcCommand.hook(text)if ROLE=="BOT"and XcVoid.hookPhrase(text)then return true end if not XcCommand.active or ROLE~="BOT"
+XcCommand.alive(myId)then return end if not rp then XcCommand.active=false XcCommand.fail(et,em)return end local plan=XcCommand.parsePlan(rp)if not plan then local rp2=XcCommand.call(XcCommand_SYS,user.."\nREMINDER: reply with the JSON object only, nothing else.",2000,true)if not XcCommand.alive(myId)then return end if rp2 then plan=XcCommand.parsePlan(rp2)end end if not plan or type(plan.steps)~="table"or#plan.steps==0 then XcCommand.log("[XcCommand] no plan, escalating to Xcode",C.green)plan={steps={{t="xcode",req=prompt,s=25}}}end local say=XcCommand.cleanChat(plan.say)if say~=""and#plan.steps>=3 then sendChat(say)end XcCommand.log("[XcCommand] task: "..prompt:sub(1,60),C.green)XcCommand.execute(plan,myId)end function XcCommand.route(prompt)local p=trim(tostring(prompt or""))local forced=false local fp=p:match("^[Tt][Aa][Ss][Kk][%s:]+(.+)$")if fp then p=trim(fp)forced=true end if p==""then return false end if not forced and not XcCommand.isTask(p)then return false end if ROLE=="BOT"then task.spawn(function()XcCommand.run(p)end)else XcCommand.log("[XcCommand] task sent to bot: "..p:sub(1,50),C.green)end return true end function XcCommand.hook(text)if ROLE=="BOT"and XcVoid.hookPhrase(text)then return true end if not XcCommand.active or ROLE~="BOT"
 then return false end if XcCommand.isStop(text)then XcCommand.stop()return true end local l=tostring(text or""):lower()local nm=l:match("^!(%S+)")if nm and nm~="ask"and nm~="info"and AI_CMD_WHITELIST[nm]then XcCommand.cancel()end return false end function processMessage(uid,text)if not text or text==""then return end if uid~=pl.UserId and text:sub(1,1)~=commandPrefix then local speaker=P:GetPlayerByUserId(uid)local speakerName=speaker and speaker.Name or"Unknown"table.insert(S.chatLog,speakerName..": "..text)if S.copyTarget and speaker and speaker==S.copyTarget and ROLE=="BOT"then local ct=text:sub(1,150)task.defer(function()sendChat(ct)end)end if#S.chatLog>15 then table.remove(S.chatLog,1)end end if ROLE~="BOT"and ROLE~="HOST"then return end if ROLE=="BOT"and uid~=pl.UserId and not isFromHost(uid)then handleStrangerMsg(uid,text)return end if not isFromHost(uid)then return end if XcCommand and XcCommand.hook and XcCommand.hook(text)then return end local lowText=text:lower()if lowText:sub(1,4)=="!ask"then local prompt=trim(text:sub(5))if
-prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return end if isDuplicateMessage(uid,text)then return end if XcCommand and XcCommand.route and XcCommand.route(prompt)then return end task.spawn(function()handleAIChat(prompt)end)return end if ROLE~="BOT"then return end if text:sub(1,#commandPrefix)~=commandPrefix then return end if isDuplicateMessage(uid,text)then return end local body=trim(text:sub(#commandPrefix+1))if body==""then return end local sp=body:find("%s")local cmd,args if sp then cmd=body:sub(1,sp-1):lower()args=trim(body:sub(sp+1))else cmd=body:lower()args=""end if cmd=="host"or cmd=="stophost"then if not isCreatorUser(uid)then task.spawn(function()sendChat(pick({"only my boss can do that","nah not for you","creator only","youre not the boss","denied"}))end)return end if cmd=="host"then local sp2=args:find("%s")if not sp2 then task.spawn(function()sendChat(
+prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return end if isDuplicateMessage(uid,text)then return end if XcVision and XcVision.try(prompt)then return end if XcCommand and XcCommand.route and XcCommand.route(prompt)then return end task.spawn(function()handleAIChat(prompt)end)return end if ROLE~="BOT"then return end if text:sub(1,#commandPrefix)~=commandPrefix then return end if isDuplicateMessage(uid,text)then return end local body=trim(text:sub(#commandPrefix+1))if body==""then return end local sp=body:find("%s")local cmd,args if sp then cmd=body:sub(1,sp-1):lower()args=trim(body:sub(sp+1))else cmd=body:lower()args=""end if cmd=="host"or cmd=="stophost"then if not isCreatorUser(uid)then task.spawn(function()sendChat(pick({"only my boss can do that","nah not for you","creator only","youre not the boss","denied"}))end)return end if cmd=="host"then local sp2=args:find("%s")if not sp2 then task.spawn(function()sendChat(
 "usage: !host <player> <seconds>")end)return end local pname=trim(args:sub(1,sp2-1))local secs=tonumber(trim(args:sub(sp2+1)))if not secs or secs<=0 then task.spawn(function()sendChat("need a valid seconds number")end)return end task.spawn(function()startLend(pname,secs)end)else task.spawn(function()stopLendNow()end)end return end task.spawn(function()local ok,err=pcall(handleCommand,cmd,args)if not ok then warn("[MyPanel] cmd error:",err)if botLogRef then pushLog(botLogRef,"err: "..tostring(err):sub(1,60),C.red)end end end)end pcall(function()if TC and TC.ChatVersion==Enum.ChatVersion.TextChatService then TC.MessageReceived:Connect(function(m)local s=m.TextSource if not s then return end processMessage(s.UserId,m.Text)end)end end)local function hookChatted(p)p.Chatted:Connect(function(t)processMessage(p.UserId,t)end)end for _,p in ipairs(P:GetPlayers())do hookChatted(p)end P.PlayerAdded
 :Connect(hookChatted)task.spawn(function()local ok,ch=pcall(function()return TC:WaitForChild("TextChannels",8)end)if not ok or not ch then return end local g=ch:FindFirstChild("RBXGeneral")or ch:FindFirstChild("RBGGeneral")or ch:FindFirstChildWhichIsA("TextChannel")if not g then return end pcall(function()g.MessageReceived:Connect(function(m)local s=m.TextSource if not s then return end processMessage(s.UserId,m.Text)end)end)end)local gui=Instance.new("ScreenGui")gui.Name=GN gui.ResetOnSpawn=false gui.DisplayOrder=999 gui.IgnoreGuiInset=true gui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling gui.Enabled=true local parented=false pcall(function()gui.Parent=pg parented=true end)if not parented then pcall(function()gui.Parent=game:GetService("CoreGui")end)end local frame=Instance.new("Frame")frame.Name="MainPanel"frame.Size=UDim2.new(0,520,0,320)frame.Position=UDim2.new(0,12,0.5,-160)frame.
 BackgroundColor3=C.panel frame.BorderSizePixel=0 frame.ClipsDescendants=false frame.Parent=gui corner(frame,12)stroke(frame,C.border,1,0)SHOWN=UDim2.new(0,12,0.5,-160)HIDDEN=UDim2.new(0,-600,0.5,-160)function show()tw(frame,0.4,{Position=SHOWN},Enum.EasingStyle.Quint)end function hide()tw(frame,0.4,{Position=HIDDEN},Enum.EasingStyle.Quint,Enum.EasingDirection.In)end local topBar=Instance.new("Frame")topBar.Name="TopBar"topBar.Size=UDim2.new(1,0,0,40)topBar.Position=UDim2.new(0,0,0,0)topBar.BackgroundColor3=C.panelTop topBar.BorderSizePixel=0 topBar.Parent=frame local topBarStroke=Instance.new("UIStroke")topBarStroke.Color=C.border topBarStroke.Thickness=1 topBarStroke.Transparency=0.4 topBarStroke.ApplyStrokeMode=Enum.ApplyStrokeMode.Border topBarStroke.Parent=topBar local titleLbl=Instance.new("TextLabel")titleLbl.Size=UDim2.new(0,200,1,0)titleLbl.Position=UDim2.new(0,16,0,0)titleLbl.
@@ -988,11 +1415,11 @@ ClipsDescendants=true contentArea.Parent=frame function newPage()local p=Instanc
 pfxBox.BorderSizePixel=0 pfxBox.Font=Enum.Font.GothamBold pfxBox.Text=commandPrefix pfxBox.TextColor3=C.text pfxBox.TextSize=13 pfxBox.ClearTextOnFocus=false pfxBox.Parent=logsPage corner(pfxBox,6)stroke(pfxBox,C.border,1,0.2)local pfxHint=Instance.new("TextLabel")pfxHint.Size=UDim2.new(1,-50,0,26)pfxHint.Position=UDim2.new(0,50,0,18)pfxHint.BackgroundTransparency=1 pfxHint.Font=Enum.Font.Gotham pfxHint.Text="type: "..commandPrefix.."cmds"pfxHint.TextColor3=C.subText pfxHint.TextSize=9 pfxHint.TextXAlignment=Enum.TextXAlignment.Left pfxHint.TextYAlignment=Enum.TextYAlignment.Center pfxHint.Parent=logsPage local logBox=Instance.new("Frame")logBox.Size=UDim2.new(1,0,1,-56)logBox.Position=UDim2.new(0,0,0,52)logBox.BackgroundColor3=C.track logBox.BorderSizePixel=0 logBox.ClipsDescendants=true logBox.Parent=logsPage corner(logBox,8)stroke(logBox,C.border,1,0.3)local logEmpty=Instance.new(
 "TextLabel")logEmpty.Size=UDim2.new(1,-16,1,-12)logEmpty.Position=UDim2.new(0,8,0,6)logEmpty.BackgroundTransparency=1 logEmpty.Font=Enum.Font.Gotham logEmpty.Text="no messages yet"logEmpty.TextColor3=C.subText logEmpty.TextSize=10 logEmpty.TextXAlignment=Enum.TextXAlignment.Left logEmpty.TextYAlignment=Enum.TextYAlignment.Top logEmpty.Parent=logBox local logHolder=Instance.new("ScrollingFrame")logHolder.Size=UDim2.new(1,-8,1,-6)logHolder.Position=UDim2.new(0,4,0,3)logHolder.BackgroundTransparency=1 logHolder.BorderSizePixel=0 logHolder.CanvasSize=UDim2.new(0,0,0,0)logHolder.AutomaticCanvasSize=Enum.AutomaticSize.Y logHolder.ScrollBarThickness=4 logHolder.ScrollBarImageColor3=C.border logHolder.ScrollingDirection=Enum.ScrollingDirection.Y logHolder.Parent=logBox local lbl=Instance.new("UIListLayout")lbl.SortOrder=Enum.SortOrder.LayoutOrder lbl.Padding=UDim.new(0,2)lbl.Parent=logHolder
 hostLogRef={holder=logHolder,empty=logEmpty}botLogRef=hostLogRef flushBotLogBuffer()pfxBox.FocusLost:Connect(function()local np=trim(pfxBox.Text)if np==""then np="!"else np=np:sub(1,1)end commandPrefix=np pfxBox.Text=commandPrefix pfxHint.Text="type: "..commandPrefix.."cmds"end)local cmdsPage=newPage()local cmdsPad=Instance.new("UIPadding")cmdsPad.PaddingTop=UDim.new(0,10)cmdsPad.PaddingLeft=UDim.new(0,10)cmdsPad.PaddingRight=UDim.new(0,10)cmdsPad.PaddingBottom=UDim.new(0,10)cmdsPad.Parent=cmdsPage local cmdsBox=Instance.new("Frame")cmdsBox.Size=UDim2.new(1,0,1,0)cmdsBox.BackgroundColor3=C.track cmdsBox.BorderSizePixel=0 cmdsBox.ClipsDescendants=true cmdsBox.Parent=cmdsPage corner(cmdsBox,8)stroke(cmdsBox,C.border,1,0.3)local cmdScroll=Instance.new("ScrollingFrame")cmdScroll.Size=UDim2.new(1,-8,1,-6)cmdScroll.Position=UDim2.new(0,4,0,3)cmdScroll.BackgroundTransparency=1 cmdScroll.
-BorderSizePixel=0 cmdScroll.CanvasSize=UDim2.new(0,0,0,0)cmdScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y cmdScroll.ScrollBarThickness=4 cmdScroll.ScrollBarImageColor3=C.border cmdScroll.Parent=cmdsBox local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enum.SortOrder.LayoutOrder cml.Parent=cmdScroll local CMDS={{"── AGENT ──",true},{"!ask <message> - converse with XcH",false},{"!ask <task> - XcCommand executes multi-step tasks",false},{"!ask <script request> - Xcode writes, reviews, runs",false},{"!gameinfo | !similar | !info <player>",false},{"── POSITION ──",true},{"!voidfollow - follow from the void",false},{"!stop voidfollow - resume standard follow",false},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!hide | !spawn",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"── COMBAT ──",true},{"!bam <player> | !unbam",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"── UTILITY ──",true},{"!speed <n|faster|slower|reset>",false},{"!freeze | !unfreeze | !escort",false},{"!afk | !unafk | !status",false},{"!math <expr> | !countdown <n> | !timer <s>",false},{"!say <text>",false},{"── HOST ──",true},{"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}for i,e in ipairs(CMDS)do local l=Instance.new("TextLabel")l.Size=UDim2.new(1,0,0,e[2]and 18 or 14)l.BackgroundTransparency=1 l.Font=e[2]and Enum.Font.GothamBold or Enum.Font.Code l.Text=e[1]l.TextColor3=e[2]and C.accent or C.text l.TextSize=10 l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=i l.Parent=cmdScroll end local apiPage=newPage()apiPage.Name="ApiKeysPage"local apiPad=Instance.new("UIPadding")apiPad.PaddingTop=UDim.new(0,14)apiPad.PaddingLeft=UDim.new(0,14)apiPad.PaddingRight=UDim.new(0,14)apiPad.PaddingBottom=UDim.new(0,10)apiPad.Parent=apiPage local apiTitle=Instance.new("TextLabel")apiTitle.Size=UDim2.new(1,0,0,18)apiTitle.Position=UDim2.new(0,0,0,0)apiTitle.BackgroundTransparency=1 apiTitle.Font=Enum.Font.GothamBold apiTitle.Text="API KEYS"
+BorderSizePixel=0 cmdScroll.CanvasSize=UDim2.new(0,0,0,0)cmdScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y cmdScroll.ScrollBarThickness=4 cmdScroll.ScrollBarImageColor3=C.border cmdScroll.Parent=cmdsBox local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enum.SortOrder.LayoutOrder cml.Parent=cmdScroll local CMDS={{"── AGENT ──",true},{"!ask <message> - converse",false},{"!ask <task> - multi-step, Xcode fills gaps",false},{"!ask what is this? / who is this?",false},{"!ask make a command called <name> ...",false},{"!customs | !delcmd <name>",false},{"!gameinfo | !similar | !info <player>",false},{"── POSITION ──",true},{"!voidfollow | !stop voidfollow",false},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!hide | !spawn",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"── COMBAT ──",true},{"!bam <player> | !unbam",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"── UTILITY ──",true},{"!speed <n|faster|slower|reset>",false},{"!freeze | !unfreeze | !escort",false},{"!afk | !unafk | !status",false},{"!math <expr> | !countdown <n> | !timer <s>",false},{"!say <text>",false},{"── HOST ──",true},{"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}for i,e in ipairs(CMDS)do local l=Instance.new("TextLabel")l.Size=UDim2.new(1,0,0,e[2]and 18 or 14)l.BackgroundTransparency=1 l.Font=e[2]and Enum.Font.GothamBold or Enum.Font.Code l.Text=e[1]l.TextColor3=e[2]and C.accent or C.text l.TextSize=10 l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=i l.Parent=cmdScroll end local apiPage=newPage()apiPage.Name="ApiKeysPage"local apiPad=Instance.new("UIPadding")apiPad.PaddingTop=UDim.new(0,14)apiPad.PaddingLeft=UDim.new(0,14)apiPad.PaddingRight=UDim.new(0,14)apiPad.PaddingBottom=UDim.new(0,10)apiPad.Parent=apiPage local apiTitle=Instance.new("TextLabel")apiTitle.Size=UDim2.new(1,0,0,18)apiTitle.Position=UDim2.new(0,0,0,0)apiTitle.BackgroundTransparency=1 apiTitle.Font=Enum.Font.GothamBold apiTitle.Text="API KEYS"
 apiTitle.TextColor3=C.text apiTitle.TextSize=13 apiTitle.TextXAlignment=Enum.TextXAlignment.Left apiTitle.Parent=apiPage local apiSub=Instance.new("TextLabel")apiSub.Size=UDim2.new(1,0,0,16)apiSub.Position=UDim2.new(0,0,0,20)apiSub.BackgroundTransparency=1 apiSub.Font=Enum.Font.Gotham apiSub.Text="click any key below to copy it"apiSub.TextColor3=C.subText apiSub.TextSize=9 apiSub.TextXAlignment=Enum.TextXAlignment.Left apiSub.Parent=apiPage local apiBody=Instance.new("ScrollingFrame")apiBody.Name="ApiKeysBody"apiBody.Size=UDim2.new(1,0,1,-38)apiBody.Position=UDim2.new(0,0,0,38)apiBody.BackgroundTransparency=1 apiBody.BorderSizePixel=0 apiBody.ScrollBarThickness=3 apiBody.ScrollBarImageColor3=C.subText apiBody.CanvasSize=UDim2.new(0,0,0,372)apiBody.ScrollingDirection=Enum.ScrollingDirection.Y apiBody.Parent=apiPage function copyToClipboard(txt)if type(setclipboard)=="function"then pcall(
 setclipboard,txt)return true end if type(toclipboard)=="function"then pcall(toclipboard,txt)return true end if syn and type(syn.write_clipboard)=="function"then pcall(syn.write_clipboard,txt)return true end if type(writeclipboard)=="function"then pcall(writeclipboard,txt)return true end return false end local function mkKeyRow(y,label,getKey)local ll=Instance.new("TextLabel")ll.Size=UDim2.new(1,0,0,12)ll.Position=UDim2.new(0,0,0,y)ll.BackgroundTransparency=1 ll.Font=Enum.Font.GothamBold ll.Text=label ll.TextColor3=C.text ll.TextSize=9 ll.TextXAlignment=Enum.TextXAlignment.Left ll.Parent=apiBody local btn=Instance.new("TextButton")btn.Size=UDim2.new(1,0,0,26)btn.Position=UDim2.new(0,0,0,y+14)btn.BackgroundColor3=C.track btn.BorderSizePixel=0 btn.Font=Enum.Font.Code btn.Text=getKey()or"(not set)"btn.TextColor3=C.text btn.TextSize=9 btn.TextXAlignment=Enum.TextXAlignment.Left btn.
 TextTruncate=Enum.TextTruncate.AtEnd btn.AutoButtonColor=false btn.Parent=apiBody corner(btn,6)stroke(btn,C.border,1,0.3)local pdd=Instance.new("UIPadding")pdd.PaddingLeft=UDim.new(0,10)pdd.PaddingRight=UDim.new(0,10)pdd.Parent=btn local fb=Instance.new("TextLabel")fb.Size=UDim2.new(1,0,0,10)fb.Position=UDim2.new(0,0,0,y+42)fb.BackgroundTransparency=1 fb.Font=Enum.Font.Gotham fb.Text=""fb.TextColor3=C.green fb.TextSize=8 fb.TextXAlignment=Enum.TextXAlignment.Left fb.Parent=apiBody btn.MouseEnter:Connect(function()tw(btn,0.15,{BackgroundColor3=C.buttonHover})end)btn.MouseLeave:Connect(function()tw(btn,0.15,{BackgroundColor3=C.track})end)btn.Activated:Connect(function()local k=getKey()if not k or k==""then fb.Text="no key set";fb.TextColor3=C.red;return end if copyToClipboard(k)then fb.Text="copied!"fb.TextColor3=C.green else fb.Text="clipboard unsupported"fb.TextColor3=C.red end task.
-delay(1.6,function()if fb and fb.Parent then fb.Text=""end end)end)return btn end mkKeyRow(4,"XcH Key (primary)",function()return APIKey end)mkKeyRow(58,"Xcode Key",function()return APIKey2 end)mkKeyRow(112,"XcH Backup Key",function()return APIKey3 end)mkKeyRow(166,"Xcode Backup Key (mom's)",function()return APIKey4 end)mkKeyRow(220,"XcCommand Key (primary)",function()return BKey1 end)mkKeyRow(274,"XcCommand Backup Key",function()return BKey2 end)local apiInfo=Instance.new("TextLabel")apiInfo.Size=UDim2.new(1,0,0,30)apiInfo.Position=UDim2.new(0,0,0,328)apiInfo.BackgroundTransparency=1 apiInfo.Font=Enum.Font.Gotham apiInfo.Text="XcH + Xcode fall back to their backup keys on quota. Xcode scripts are reviewed by the polisher key before execution. XcCommand (!ask tasks) uses its own two keys."apiInfo.TextColor3=C.subText apiInfo.TextSize=8 apiInfo.TextXAlignment=Enum.TextXAlignment.Left apiInfo.TextYAlignment=Enum.TextYAlignment.Top apiInfo.
+delay(1.6,function()if fb and fb.Parent then fb.Text=""end end)end)return btn end mkKeyRow(4,"XcH Key (primary)",function()return APIKey end)mkKeyRow(58,"Xcode Key",function()return APIKey2 end)mkKeyRow(112,"XcH Backup Key",function()return APIKey3 end)mkKeyRow(166,"Xcode Backup Key (mom's)",function()return APIKey4 end)mkKeyRow(220,"XcCommand Key (primary)",function()return BKey1 end)mkKeyRow(274,"XcCommand Backup Key",function()return BKey2 end)local apiInfo=Instance.new("TextLabel")apiInfo.Size=UDim2.new(1,0,0,30)apiInfo.Position=UDim2.new(0,0,0,328)apiInfo.BackgroundTransparency=1 apiInfo.Font=Enum.Font.Gotham apiInfo.Text="XcH + Xcode fall back to their backup keys on quota. Xcode scripts and bot control code are reviewed by the 7th (polisher) key before they run. XcCommand planning uses its own two keys."apiInfo.TextColor3=C.subText apiInfo.TextSize=8 apiInfo.TextXAlignment=Enum.TextXAlignment.Left apiInfo.TextYAlignment=Enum.TextYAlignment.Top apiInfo.
 TextWrapped=true apiInfo.Parent=apiBody local pwOv=Instance.new("Frame")pwOv.Size=UDim2.new(1,0,1,0)pwOv.BackgroundColor3=C.panel pwOv.BorderSizePixel=0 pwOv.ZIndex=100 pwOv.Visible=false pwOv.Parent=frame local pwTitle=Instance.new("TextLabel")pwTitle.Size=UDim2.new(1,-40,0,22)pwTitle.Position=UDim2.new(0,20,0,70)pwTitle.BackgroundTransparency=1 pwTitle.Font=Enum.Font.GothamBold pwTitle.Text="API KEYS LOCKED"pwTitle.TextColor3=C.text pwTitle.TextSize=14 pwTitle.TextXAlignment=Enum.TextXAlignment.Left pwTitle.ZIndex=101 pwTitle.Parent=pwOv local pwHint=Instance.new("TextLabel")pwHint.Size=UDim2.new(1,-40,0,16)pwHint.Position=UDim2.new(0,20,0,96)pwHint.BackgroundTransparency=1 pwHint.Font=Enum.Font.Gotham pwHint.Text="enter password to view api keys"pwHint.TextColor3=C.subText pwHint.TextSize=10 pwHint.TextXAlignment=Enum.TextXAlignment.Left pwHint.ZIndex=101 pwHint.Parent=pwOv local
 pwBox=Instance.new("TextBox")pwBox.Size=UDim2.new(1,-40,0,34)pwBox.Position=UDim2.new(0,20,0,122)pwBox.BackgroundColor3=C.track pwBox.BorderSizePixel=0 pwBox.Font=Enum.Font.Code pwBox.Text=""pwBox.PlaceholderText="password"pwBox.PlaceholderColor3=C.subText pwBox.TextColor3=C.text pwBox.TextSize=12 pwBox.ClearTextOnFocus=false pwBox.TextXAlignment=Enum.TextXAlignment.Left pwBox.ZIndex=101 pwBox.Parent=pwOv corner(pwBox,6)stroke(pwBox,C.border,1,0.3)local pwp=Instance.new("UIPadding")pwp.PaddingLeft=UDim.new(0,10)pwp.PaddingRight=UDim.new(0,10)pwp.Parent=pwBox local pwErr=Instance.new("TextLabel")pwErr.Size=UDim2.new(1,-40,0,16)pwErr.Position=UDim2.new(0,20,0,162)pwErr.BackgroundTransparency=1 pwErr.Font=Enum.Font.Gotham pwErr.Text=""pwErr.TextColor3=C.red pwErr.TextSize=10 pwErr.TextXAlignment=Enum.TextXAlignment.Left pwErr.ZIndex=101 pwErr.Parent=pwOv local function mkPwBtn(txt,pos)local
 b=Instance.new("TextButton")b.Size=UDim2.new(0.5,-28,0,38)b.Position=pos b.BackgroundColor3=C.button b.BorderSizePixel=0 b.Font=Enum.Font.GothamBold b.Text=txt b.TextColor3=C.text b.TextSize=13 b.AutoButtonColor=false b.ZIndex=101 b.Parent=pwOv corner(b,10)stroke(b,C.border,1,0.2)styleBtn(b)return b end local pwBack=mkPwBtn("BACK",UDim2.new(0,20,1,-60))local pwGo=mkPwBtn("UNLOCK",UDim2.new(0.5,8,1,-60))apiUnlocked=false local function tryUnlock()if pwBox.Text==API_PASSWORD then apiUnlocked=true pwOv.Visible=false pwErr.Text=""pwBox.Text=""slideToPage(apiPage,apiTab)else pwErr.Text="wrong password"pwBox.Text=""end end pwGo.Activated:Connect(tryUnlock)pwBack.Activated:Connect(function()pwOv.Visible=false pwErr.Text=""pwBox.Text=""end)pwBox.FocusLost:Connect(function(ep)if ep then tryUnlock()end end)currentPage=nil currentTabBtn=nil function makeTab(name,order,onClick)local b=Instance.new(
