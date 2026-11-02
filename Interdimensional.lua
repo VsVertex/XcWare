@@ -1536,7 +1536,7 @@ function XcFast.run(prompt)
  if bo then return cmd("backoff",bo) end
  if s=="get closer" or s=="come closer" then return cmd("getcloser","") end
  -- player targeted commands
- local verb,rest=s:match("^(%a+) (%S+)$")
+ local verb,rest=s:match("^(%a+) (.+)$")
  if verb and rest and XcFast.TGT[verb] then return cmd(XcFast.TGT[verb],rest) end
  -- movement to players
  local who=s:match("^go to (%S+)$") or s:match("^walk to (%S+)$") or s:match("^run to (%S+)$") or s:match("^come to (%S+)$")
