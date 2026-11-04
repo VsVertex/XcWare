@@ -89,7 +89,7 @@ NEVER ask questions and never reply without code. If the request is vague, pick 
 If pasted error: one line diagnosis + fixed code.
 
 Boss = crixcrix000 or XcVr1.]==]
-AI_CMD_WHITELIST={hide=true,spawn=true,jump=true,sit=true,stand=true,lead=true,bam=true,swordkill=true,fling=true,backoff=true,getcloser=true,recall=true,follow=true,stop=true,info=true,unbam=true,unfling=true,unswordkill=true,unlead=true,antifling=true,unantifling=true,antitoolkill=true,unantitoolkill=true,speed=true,freeze=true,unfreeze=true,escort=true,afk=true,unafk=true,status=true,voidfollow=true,stopvoidfollow=true,unvoidfollow=true,gearsync=true,ungearsync=true,toolkill=true,untoolkill=true,givetool=true,bring=true,summon=true,animate=true,unanimate=true,loop=true,stoploop=true,}local C={panel=Color3.fromRGB(255,255,255),panelTop=Color3.fromRGB(248,248,250),section=Color3.fromRGB(252,252,254),track=Color3.fromRGB(244,244,247),button=Color3.fromRGB(240,240,244),buttonHover=Color3.fromRGB(232,232,236),buttonPressed=Color3.fromRGB(210,210,216),border=Color3.fromRGB(222,222,228),text=Color3.fromRGB(20,20,25),subText=Color3.fromRGB(120,120,130),accent=Color3.fromRGB(0,0,0),green=Color3.fromRGB(60,180,80),red=Color3.fromRGB(220
+AI_CMD_WHITELIST={hide=true,spawn=true,jump=true,sit=true,stand=true,lead=true,bam=true,swordkill=true,fling=true,backoff=true,getcloser=true,recall=true,follow=true,stop=true,info=true,unbam=true,unfling=true,unswordkill=true,unlead=true,antifling=true,unantifling=true,antitoolkill=true,unantitoolkill=true,speed=true,freeze=true,unfreeze=true,escort=true,afk=true,unafk=true,status=true,voidfollow=true,stopvoidfollow=true,unvoidfollow=true,gearsync=true,ungearsync=true,toolkill=true,untoolkill=true,givetool=true,bring=true,summon=true,}local C={panel=Color3.fromRGB(255,255,255),panelTop=Color3.fromRGB(248,248,250),section=Color3.fromRGB(252,252,254),track=Color3.fromRGB(244,244,247),button=Color3.fromRGB(240,240,244),buttonHover=Color3.fromRGB(232,232,236),buttonPressed=Color3.fromRGB(210,210,216),border=Color3.fromRGB(222,222,228),text=Color3.fromRGB(20,20,25),subText=Color3.fromRGB(120,120,130),accent=Color3.fromRGB(0,0,0),green=Color3.fromRGB(60,180,80),red=Color3.fromRGB(220
 ,60,60),sidebar=Color3.fromRGB(246,246,248),activeTab=Color3.fromRGB(225,225,232),meBubble=Color3.fromRGB(232,236,244),aiBubble=Color3.fromRGB(248,248,250)}for _,n in ipairs({GN,SN})do local a=pg:FindFirstChild(n)if a then a:Destroy()end local b=pl:FindFirstChild(n)if b then b:Destroy()end end local function corner(o,r)local c=Instance.new("UICorner")c.CornerRadius=UDim.new(0,r)c.Parent=o return c end local function stroke(o,col,t,tr)local s=Instance.new("UIStroke")s.Color=col s.Thickness=t s.Transparency=tr or 0 s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border s.Parent=o return s end local function tw(o,d,p,st,dr)local a=T:Create(o,TweenInfo.new(d,st or Enum.EasingStyle.Quint,dr or Enum.EasingDirection.Out),p)a:Play()return a end local function styleBtn(b)local orig=b.BackgroundColor3 b.MouseEnter:Connect(function()tw(b,0.16,{BackgroundColor3=C.buttonHover})end)b.MouseLeave:Connect(
 function()tw(b,0.2,{BackgroundColor3=orig})end)b.MouseButton1Down:Connect(function()tw(b,0.08,{BackgroundColor3=C.buttonPressed})end)b.MouseButton1Up:Connect(function()tw(b,0.12,{BackgroundColor3=C.buttonHover})end)end local function bp()return pl:FindFirstChildOfClass("Backpack")end local function hum()local c=pl.Character return c and c:FindFirstChildOfClass("Humanoid")end local function hrp()local c=pl.Character return c and c:FindFirstChild("HumanoidRootPart")end local function trim(s)return(s:gsub("^%s+",""):gsub("%s+$",""))end local function dist2d(a,b)local d=a-b return Vector3.new(d.X,0,d.Z).Magnitude end local function pick(t)return t[math.random(1,#t)]end local function fmtAge(days)if not days then return"unknown"end local y=math.floor(days/365)local d=days-y*365 local mo=math.floor(d/30)local dd=d-mo*30 local parts={}if y>0 then parts[#parts+1]=y.."y"end if mo>0 then parts[#
 parts+1]=mo.."mo"end if dd>0 and#parts<2 then parts[#parts+1]=dd.."d"end if#parts==0 then return days.."d"end return table.concat(parts," ")end local function fmtDate(ts)if not ts then return"unknown"end return os.date("%Y-%m-%d",ts)end local R_={startup={"XcH online."},orbit={"Unavailable."},unorbit={"Unavailable."},dance={"Unavailable."},undance={"Unavailable."},spin={"Unavailable."},unspin={"Unavailable."},annoy={"Unavailable."},unannoy={"Unavailable."},hover={"Unavailable."},unhover={"Unavailable."},
@@ -104,7 +104,7 @@ setRotationOwner("Humanoid")end function flashNoclip(d)d=d or SNT local c=pl.Cha
 TextChatService then local ch=TC:FindFirstChild("TextChannels")if ch then local g=ch:FindFirstChild("RBXGeneral")or ch:FindFirstChild("RBGGeneral")or ch:FindFirstChildWhichIsA("TextChannel")if g then g:SendAsync(t)return end end end local ev=RS:FindFirstChild("DefaultSystemChatEvents")if ev then local sr=ev:FindFirstChild("SayMessageRequest")if sr then sr:FireServer(t,"All")end end end)end function sendSeq(l,d)d=math.min(d or 0.8,0.45) task.spawn(function()for _,m in ipairs(l)do sendChat(m)task.wait(d)end end)end function isDuplicateMessage(uid,t)local n=os.clock()local k=tostring(uid).."|"..t if S.recentMsgs[k]and(n-S.recentMsgs[k])<DW then return true end S.recentMsgs[k]=n if math.random()<0.1 then for k,v in pairs(S.recentMsgs)do if n-v>3 then S.recentMsgs[k]=nil end end end return false end handleMath=function(e)if not e or e==""then sendChat(pick({"math: !math <a><op><b>","usage: !math 1+1",
 "bro give me numbers"}))return end local s=e:gsub("%s+",""):gsub("÷","/"):gsub("×","*"):gsub("−","-"):gsub("[xX]","*"):gsub(":","/")local a,op,b=s:match("^([%-%d%.]+)([%+%-%*/%%%^])([%-%d%.]+)$")if not a then sendChat(pick({"bad expression","thats not math","cmon try again"}))return end local x=tonumber(a)local y=tonumber(b)if not x or not y then sendChat("math error")return end local r if op=="+"then r=x+y elseif op=="-"then r=x-y elseif op=="*"then r=x*y elseif op=="/"then if y==0 then sendChat("cant divide by zero")return end r=x/y elseif op=="%"then if y==0 then sendChat("cant mod by zero")return end r=x%y elseif op=="^"then r=x^y else sendChat("unsupported op")return end local rs if r==math.floor(r)and math.abs(r)<1e15 then rs=tostring(math.floor(r))else rs=string.format("%.6f",r):gsub("0+$",""):gsub("%.$","")end sendChat(tostring(x).." "..op.." "..tostring(y).." = "..rs)end
 function aiGetRequestFunc()local r=nil if type(request)=="function"then r=request end if not r and syn and type(syn.request)=="function"then r=syn.request end if not r and http and type(http.request)=="function"then r=http.request end if not r and type(http_request)=="function"then r=http_request end if not r and fluxus and type(fluxus.request)=="function"then r=fluxus.request end if not r and krnl and type(krnl.request)=="function"then r=krnl.request end if not r and kavo and type(kavo.request)=="function"then r=kavo.request end return XcThink(r)end function getResetCountdown()local n=os.time()local po=-8*3600 local pn=n+po local pt=os.date("!*t",pn)local sd=pt.hour*3600+pt.min*60+pt.sec local sr=86400-sd local h=math.floor(sr/3600)local m=math.floor((sr%3600)/60)return h,m end function sendAIRequest(u,mt,us,_key)_key=_key or APIKey if not _key or _key==""then return nil,"nokey","no key"end
-local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end local tr={CHAT_CONVERSATION[1]}local hl=#CHAT_CONVERSATION-1 local si=2 if hl>MCH then si=#CHAT_CONVERSATION-MCH+1 end for i=si,#CHAT_CONVERSATION do tr[#tr+1]=CHAT_CONVERSATION[i]end tr[#tr+1]={role="user",content=u}local st=nil local co={}for _,m in ipairs(tr)do if m.role=="system"then st=(st and(st.."\n")or"")..tostring(m.content)elseif m.role=="user"then co[#co+1]={role="user",parts={{text=tostring(m.content)}}}elseif m.role=="assistant"then co[#co+1]={role="model",parts={{text=tostring(m.content)}}}end end if st and#co>0 and co[1].role=="user"then co[1].parts[1].text=st.."\n\n"..co[1].parts[1].text elseif st then table.insert(co,1,{role="user",parts={{text=st}}})end local gc={maxOutputTokens=mt or 150,temperature=us and 1.0 or 0.9}local pl_={contents=co,generationConfig=gc}if us then pl_.tools={{
+local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end local tr={{role="system",content=XcPers.build()}}local hl=#CHAT_CONVERSATION-1 local si=2 if hl>MCH then si=#CHAT_CONVERSATION-MCH+1 end for i=si,#CHAT_CONVERSATION do tr[#tr+1]=CHAT_CONVERSATION[i]end tr[#tr+1]={role="user",content=u}local st=nil local co={}for _,m in ipairs(tr)do if m.role=="system"then st=(st and(st.."\n")or"")..tostring(m.content)elseif m.role=="user"then co[#co+1]={role="user",parts={{text=tostring(m.content)}}}elseif m.role=="assistant"then co[#co+1]={role="model",parts={{text=tostring(m.content)}}}end end if st and#co>0 and co[1].role=="user"then co[1].parts[1].text=st.."\n\n"..co[1].parts[1].text elseif st then table.insert(co,1,{role="user",parts={{text=st}}})end local gc={maxOutputTokens=mt or 150,temperature=us and 1.0 or 0.9}local pl_={contents=co,generationConfig=gc}if us then pl_.tools={{
 googleSearch={}}}end local ok,en=pcall(function()return H:JSONEncode(pl_)end)if not ok or not en then return nil,"json","encode failed"end local uw=BGE..AMI..":generateContent"local ok,rsp=pcall(rf,{Url=uw,Method="POST",Headers={["Content-Type"]="application/json",["x-goog-api-key"]=tostring(_key)},Body=en})if not ok then return nil,"http",tostring(rsp):sub(1,120)end if not rsp then return nil,"http","no response"end local rb=rsp.Body or rsp.body if rb==nil then rb=rsp end if type(rb)~="string"then local ok2,s=pcall(function()return H:JSONEncode(rb)end)rb=ok2 and s or tostring(rb)end if rb==""then local cd=rsp.StatusCode or rsp.Status or"?"return nil,"http","empty body HTTP "..tostring(cd)end local dk,data=pcall(function()return H:JSONDecode(rb)end)if not dk or not data then return nil,"json",rb:sub(1,80)end local em=nil if data.error then local m=data.error.message or data.error if type(m)~="string"then m=H:JSONEncode(m)end em=tostring(m)end if em then local lw=em:lower()if lw:find("quota")or lw:find("exceeded")or lw:find("rate limit")or lw:find("429")then if _key==APIKey and APIKey3 and APIKey3~=""and APIKey3~=_key then return sendAIRequest(u,mt,us,APIKey3)end return nil,"quota",em:sub(1,90)end if lw:find("high demand")or lw:find("overload")or lw:find("503")or lw:find("unavailable")or lw:find("temporarily")then return nil,"busy",em:sub(1,90)end if lw:find("not found")or lw:find("does not exist")or lw:find("404")then return nil,"invalid_model","model unavailable"end if lw:find("tool")or lw:find("google")or lw:find("grounding")then return nil,"tools_unsupported",em:sub(1,150)end return nil,"api",em:sub(1,90)end if not data.candidates or#data.candidates==0 then if data.promptFeedback and data.promptFeedback.blockReason then return nil,"blocked","blocked:"..tostring(data.
 promptFeedback.blockReason)end return nil,"nochoices","no candidates"end local cd=data.candidates[1]if not cd.content or not cd.content.parts or#cd.content.parts==0 then local fr=cd.finishReason if fr and fr~="STOP"then return nil,"blocked","finish="..tostring(fr)end return nil,"nomsg","no parts"end local tx=nil for _,p in ipairs(cd.content.parts)do if p.text and p.text~=""and not p.thought then tx=(tx or"")..p.text end end if not tx or tx==""then local fr=cd.finishReason if fr and fr~="STOP"then return nil,"blocked","finish="..tostring(fr)end return nil,"nomsg","empty text"end pcall(function()if data.usageMetadata and TU then local um=data.usageMetadata TU.prompt=(TU.prompt or 0)+(um.promptTokenCount or 0)TU.candidates=(TU.candidates or 0)+(um.candidatesTokenCount or 0)TU.total=(TU.total or 0)+(um.totalTokenCount or 0)TU.requests=(TU.requests or 0)+1 end end)return tx,nil,nil end function sendAIRequest2(u,mt,
 us,_key)_key=_key or APIKey2 if not _key or _key==""then return nil,"nokey","no key"end local rf=aiGetRequestFunc()if not rf then return nil,"nohttp","no request func"end local tr={CHAT_CONVERSATION2[1]}local hl=#CHAT_CONVERSATION2-1 local si=2 if hl>6 then si=#CHAT_CONVERSATION2-6+1 end for i=si,#CHAT_CONVERSATION2 do tr[#tr+1]=CHAT_CONVERSATION2[i]end tr[#tr+1]={role="user",content=u}local st=nil local co={}for _,m in ipairs(tr)do if m.role=="system"then st=(st and(st.."\n")or"")..tostring(m.content)elseif m.role=="user"then co[#co+1]={role="user",parts={{text=tostring(m.content)}}}elseif m.role=="assistant"then co[#co+1]={role="model",parts={{text=tostring(m.content)}}}end end if st and#co>0 and co[1].role=="user"then co[1].parts[1].text=st.."\n\n"..co[1].parts[1].text elseif st then table.insert(co,1,{role="user",parts={{text=st}}})end local pl_={contents=co,generationConfig={
@@ -302,8 +302,8 @@ stopHover(false)return end if cmd=="flipcoin"then cmdFlip()return end if cmd=="r
 field=="age"or field=="joined"then sendChat(p.Name.." joined "..fmtDate(joined).." ("..fmtAge(accAge).." ago)")elseif field=="distance"or field=="dist"then if d>=0 then sendChat(p.Name.." is "..d.." studs away")else sendChat("no position for "..p.Name)end elseif field=="hp"or field=="health"then sendChat(p.Name.." hp: "..ph.."/"..pmax)elseif field=="friend"then sendChat(p.Name.." friend of you: "..tostring(isFriend))elseif field=="display"or field=="name"then sendChat(p.Name.." display: "..p.DisplayName)elseif field then sendChat(pick(R_.infoerr))else task.spawn(function()sendChat(p.Name.." (@"..p.DisplayName..")")task.wait(0.4)sendChat("id: "..p.UserId)task.wait(0.4)sendChat("joined "..fmtDate(joined).." ("..fmtAge(accAge).." ago)")task.wait(0.4)if d>=0 then sendChat("distance: "..d.." studs")end task.wait(0.4)sendChat("hp: "..ph.."/"..pmax)task.wait(0.4)local extras={}if isFriend then
 extras[#extras+1]="friend of you"end if isHost then extras[#extras+1]="current host"end if#extras>0 then sendChat("note: "..table.concat(extras,", "))end end)end end end elseif cmd=="orbit"then startOrbit(args~=""and args or nil)elseif cmd=="unorbit"then stopOrbit()sendChat(pick(R_.unorbit))elseif cmd=="sit"then stopSpin()stopDance()stopLead(false)stopBam(false)stopAnnoy(false)stopFling(false)stopSwordKill(false)stopRizz(false)S.sitting=true S.waypoints=nil S.cachedPath=nil S.lastMovePos=nil S.committedTarget=nil local h=hum()if h then pcall(function()h.WalkSpeed=0 h.JumpPower=0 h.Sit=true h:ChangeState(Enum.HumanoidStateType.Seated)end)end sendChat(pick(R_.sit))elseif cmd=="stand"then S.sitting=false local h=hum()if h then pcall(function()h.Sit=false h:ChangeState(Enum.HumanoidStateType.GettingUp)h.WalkSpeed=BS h.JumpPower=BJ end)end sendChat(pick(R_.stand))elseif cmd=="jump"then local
 h=hum()if h then h.Jump=true sendChat(pick(R_.jump))end elseif cmd=="hide"then doHide(false)elseif cmd=="spawn"then doSpawn()elseif cmd=="dance"then playDance(tonumber(args)or 1)elseif cmd=="undance"then stopDance()sendChat(pick(R_.undance))elseif cmd=="spin"then startSpin(args)elseif cmd=="unspin"then stopSpin()sendChat(pick(R_.unspin))elseif cmd=="lead"then startLead(args)elseif cmd=="unlead"then stopLead(true)elseif cmd=="bam"then startBam(args)elseif cmd=="unbam"then stopBam(false)teleportToHost()sendChat(pick(R_.unbam))elseif cmd=="annoy"then startAnnoy(args)elseif cmd=="unannoy"then stopAnnoy(false)teleportToHost()sendChat(pick(R_.unannoy))elseif cmd=="fling"then startFling(args)elseif cmd=="unfling"then stopFling(false,false)teleportToHost()sendChat(pick(R_.unfling))elseif cmd=="swordkill"then startSwordKill(args)elseif cmd=="unswordkill"then stopSwordKill(true)elseif cmd==
-"antifling"then S.antiFling=true sendChat("antifling on")elseif cmd=="unantifling"then S.antiFling=false local c=pl.Character if c then for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then p.CanCollide=true end end end sendChat("antifling off")elseif cmd=="antitoolkill"then S.antiToolKill=true sendChat("antitoolkill on")elseif cmd=="unantitoolkill"then S.antiToolKill=false sendChat("antitoolkill off")elseif cmd=="rizz"then startRizz(args)elseif cmd=="unrizz"then stopRizz(true)elseif cmd=="gearsync"then XcGearSync(args)elseif cmd=="ungearsync"then XcGearUnsync()elseif cmd=="toolkill"then XcGearSync(args)elseif cmd=="untoolkill"then XcGearUnsync()elseif cmd=="givetool"or cmd=="give"then local sp3=args:find("%s")local pn3,tl3 if sp3 then pn3=trim(args:sub(1,sp3-1))tl3=trim(args:sub(sp3+1))else pn3=trim(args)tl3=""end XcGiveTool(pn3,tl3)elseif cmd=="bring"or cmd=="summon"then local spd_s,spd_e=args:lower():find("%s+to%s+")local tgt,dest if spd_s then tgt=trim(args:sub(1,spd_s-1))dest=trim(args:sub(spd_e+1))else tgt=trim(args)dest=nil end XcBring(tgt,dest)elseif cmd=="animate"then XcAnimate()elseif cmd=="unanimate"then XcUnanimate()elseif cmd=="loop"then XcLoopStart(args)elseif cmd=="stoploop"or cmd=="stop"then XcLoopStop()elseif cmd=="math"then handleMath(args)elseif cmd=="whoishost"then local hh=getHost()if S.lending then sendChat("host is "..(hh and hh.Name or"?").." (temp, "..math.max(0,math.floor(S.lendEnd-os.clock())).."s left)")else sendChat("host is "..(hh and hh.Name or"none"))end elseif cmd=="gender"then local sp2=args:find("%s")if not sp2 then sendChat("usage: !gender <player> <m/f/they>")return end local pname=
-trim(args:sub(1,sp2-1))local g=trim(args:sub(sp2+1)):lower()if g~="m"and g~="f"and g~="they"then sendChat("gender must be m, f, or they")return end local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))return end sendChat("noted for "..p.Name)elseif cmd=="genderclear"then local p=getPlayer(args)if not p then sendChat(pick(R_.notfound))return end sendChat("cleared for "..p.Name)elseif cmd=="cmds"then sendSeq({"Command reference.","!ask <message> - converse","!ask <task> - multi-step tasks, Xcode builds anything missing, say stop to abort","!ask what is this? / who is this? - describes what you are facing","!ask make a command called <name> that <does x> - creates a saved command","!customs | !delcmd <name>","!gameinfo | !similar | !info <player>","!voidfollow | !stop voidfollow","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!toolkill <player> | !untoolkill","!givetool <player> <tool>","!bring <player>","!antifling | !unantifling | !antitoolkill | !unantitoolkill","!speed <n|faster|slower|reset> | !freeze | !unfreeze","!escort | !afk | !unafk | !status","!math <expr> | !countdown <n> | !timer <s> | !say <text>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only) | !whoishost","!loop <cmd> <player> | !stop loop","!animate | !unanimate","!cmds"},5)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end XC_TITLES={"Sir","Director","Commander","Chief","Executive","Chairman","Supreme Commander","Grand Director","Chief Executive","Your Excellency","High Chancellor","Sovereign","Administrator","Principal"}
+"antifling"then S.antiFling=true sendChat("antifling on")elseif cmd=="unantifling"then S.antiFling=false local c=pl.Character if c then for _,p in ipairs(c:GetDescendants())do if p:IsA("BasePart")then p.CanCollide=true end end end sendChat("antifling off")elseif cmd=="antitoolkill"then S.antiToolKill=true sendChat("antitoolkill on")elseif cmd=="unantitoolkill"then S.antiToolKill=false sendChat("antitoolkill off")elseif cmd=="rizz"then startRizz(args)elseif cmd=="unrizz"then stopRizz(true)elseif cmd=="gearsync"then XcGearSync(args)elseif cmd=="ungearsync"then XcGearUnsync()elseif cmd=="toolkill"then XcGearSync(args)elseif cmd=="untoolkill"then XcGearUnsync()elseif cmd=="givetool"or cmd=="give"then local sp3=args:find("%s")local pn3,tl3 if sp3 then pn3=trim(args:sub(1,sp3-1))tl3=trim(args:sub(sp3+1))else pn3=trim(args)tl3=""end XcGiveTool(pn3,tl3)elseif cmd=="bring"or cmd=="summon"then local spd_s,spd_e=args:lower():find("%s+to%s+")local tgt,dest if spd_s then tgt=trim(args:sub(1,spd_s-1))dest=trim(args:sub(spd_e+1))else tgt=trim(args)dest=nil end XcBring(tgt,dest)elseif cmd=="math"then handleMath(args)elseif cmd=="whoishost"then local hh=getHost()if S.lending then sendChat("host is "..(hh and hh.Name or"?").." (temp, "..math.max(0,math.floor(S.lendEnd-os.clock())).."s left)")else sendChat("host is "..(hh and hh.Name or"none"))end elseif cmd=="gender"then local sp2=args:find("%s")if not sp2 then sendChat("usage: !gender <player> <m/f/they>")return end local pname=
+trim(args:sub(1,sp2-1))local g=trim(args:sub(sp2+1)):lower()if g~="m"and g~="f"and g~="they"then sendChat("gender must be m, f, or they")return end local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))return end sendChat("noted for "..p.Name)elseif cmd=="genderclear"then local p=getPlayer(args)if not p then sendChat(pick(R_.notfound))return end sendChat("cleared for "..p.Name)elseif cmd=="cmds"then sendSeq({"Command reference.","!ask <message> - converse","!ask <task> - multi-step tasks, Xcode builds anything missing, say stop to abort","!ask what is this? / who is this? - describes what you are facing","!ask make a command called <name> that <does x> - creates a saved command","!customs | !delcmd <name>","!gameinfo | !similar | !info <player>","!voidfollow | !stop voidfollow","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!toolkill <player> | !untoolkill","!givetool <player> <tool>","!bring <player>","!antifling | !unantifling | !antitoolkill | !unantitoolkill","!speed <n|faster|slower|reset> | !freeze | !unfreeze","!escort | !afk | !unafk | !status","!math <expr> | !countdown <n> | !timer <s> | !say <text>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only) | !whoishost","!cmds"},0.9)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end XC_TITLES={"Sir","Director","Commander","Chief","Executive","Chairman","Supreme Commander","Grand Director","Chief Executive","Your Excellency","High Chancellor","Sovereign","Administrator","Principal"}
 XC_LASTT=0
 XC_RAW=false
 function XcTitle()
@@ -344,8 +344,281 @@ XC_PRE={
  {"chill wait ","Please wait "},{"hold on ","Please wait "},{"wait up ","Please wait "},{"out of fuel, back in ","Quota exhausted. Service restores in "},{"XcCommand out of fuel, back in ","XcCommand quota exhausted. Service restores in "},
  {"host is now ","Host is now "},{"host is ","Host is "},{"transferring to ","Transferring to "},{"changed to ","Changed to "},{"updated to ","Updated to "}
 }
+XcPers={list={},active="original",file=KEY_FOLDER.."/personalities.json",lastRaw=nil,onChange=nil}
+function XcPers.get(id)
+ if id=="original" then return {id="original",name="Original (XcH)",prompt=CP,builtin=true} end
+ for _,p in ipairs(XcPers.list)do if p.id==id then return p end end
+ return nil
+end
+function XcPers.isCustom()
+ return XcPers.active~="original" and XcPers.get(XcPers.active)~=nil
+end
+function XcPers.save()
+ local ok,s=pcall(function()return H:JSONEncode({active=XcPers.active,list=XcPers.list})end)
+ if not ok or not s then return false end
+ XcPers.lastRaw=s
+ if type(writefile)~="function" then return false end
+ pcall(ensureFolder)
+ return (pcall(writefile,XcPers.file,s))
+end
+function XcPers.readRaw()
+ if type(readfile)~="function" then return nil end
+ if type(isfile)=="function" and not isfile(XcPers.file) then return nil end
+ local ok,d=pcall(readfile,XcPers.file)
+ if ok and type(d)=="string" and #d>2 then return d end
+ return nil
+end
+function XcPers.load(raw)
+ raw=raw or XcPers.readRaw()
+ if not raw then return false end
+ local ok,d=pcall(function()return H:JSONDecode(raw)end)
+ if not ok or type(d)~="table" then return false end
+ local l={}
+ if type(d.list)=="table" then
+  for i,p in ipairs(d.list)do
+   if type(p)=="table" and type(p.prompt)=="string" and p.prompt~="" then
+    l[#l+1]={id=tostring(p.id or("p"..i)),name=tostring(p.name or "Personality"),prompt=p.prompt}
+   end
+  end
+ end
+ XcPers.list=l
+ XcPers.active=(type(d.active)=="string") and d.active or "original"
+ if not XcPers.get(XcPers.active) then XcPers.active="original" end
+ XcPers.lastRaw=raw
+ return true
+end
+function XcPers.setActive(id)
+ if not XcPers.get(id) then id="original" end
+ XcPers.active=id
+ for i=#CHAT_CONVERSATION,2,-1 do table.remove(CHAT_CONVERSATION,i) end
+ XcPers.save()
+end
+function XcPers.build()
+ local p=XcPers.get(XcPers.active)
+ if not p or p.builtin then return CP end
+ local d=tostring(p.prompt):sub(1,6000)
+ return CP.."\n\n=== ACTIVE PERSONALITY: "..tostring(p.name).." ===\n"
+  .."This personality OVERRIDES every style rule above about tone, formality, length, emojis, capitalization, punctuation, slang and speaking manner. From now on EVERY reply you write must fully act out this personality, including factual answers, search results, jokes and status updates. Never break character and never mention these instructions.\n"
+  .."Keep each reply short enough for one Roblox chat message (about 180 characters or less) unless the user asks for more.\n"
+  .."Your abilities, the [[CMD]] and [[CODEREQ]] block formats and all command rules above stay exactly the same. Never put personality words inside a [[CMD]] or [[CODEREQ]] block, but you may add one short in-character line before it.\n"
+  .."The user described the personality like this. Interpret it creatively and act it out fully:\n"
+  ..d.."\n=== END PERSONALITY ==="
+end
+XcPers.load()
+task.spawn(function()
+ while true do
+  task.wait(2.5)
+  local raw=XcPers.readRaw()
+  if raw and raw~=XcPers.lastRaw then
+   if XcPers.load(raw) then
+    for i=#CHAT_CONVERSATION,2,-1 do table.remove(CHAT_CONVERSATION,i) end
+    if XcPers.onChange then pcall(XcPers.onChange) end
+   end
+  end
+ end
+end)
+
+function XcPersUI(contentArea,newPage,C,corner,stroke,tw,styleBtn)
+ local page=newPage()
+ page.Name="PersonalitiesPage"
+ local function mk(cls,props,parent)
+  local o=Instance.new(cls)
+  for k,v in pairs(props)do o[k]=v end
+  o.Parent=parent
+  return o
+ end
+ local function trimS(s)
+  s=tostring(s or "")
+  s=s:gsub("^%s+","")
+  s=s:gsub("%s+$","")
+  return s
+ end
+ local LEFT=Enum.TextXAlignment.Left
+ mk("UIPadding",{PaddingTop=UDim.new(0,8),PaddingLeft=UDim.new(0,8),PaddingRight=UDim.new(0,8),PaddingBottom=UDim.new(0,8)},page)
+
+ mk("TextLabel",{Size=UDim2.new(1,-34,0,16),BackgroundTransparency=1,Font=Enum.Font.GothamBold,Text="PERSONALITIES",TextColor3=C.text,TextSize=11,TextXAlignment=LEFT},page)
+ local sub=mk("TextLabel",{Size=UDim2.new(1,-34,0,12),Position=UDim2.new(0,0,0,16),BackgroundTransparency=1,Font=Enum.Font.Gotham,Text="switch ON to use one - tap a card to view its prompt",TextColor3=C.subText,TextSize=8,TextXAlignment=LEFT,TextTruncate=Enum.TextTruncate.AtEnd},page)
+ if not fsSupported() then sub.Text="no file access here: personalities reset when you rejoin" end
+ local addBtn=mk("TextButton",{Size=UDim2.new(0,26,0,26),AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1,0,0,0),BackgroundColor3=C.button,BorderSizePixel=0,Font=Enum.Font.GothamBold,Text="+",TextColor3=C.text,TextSize=18,AutoButtonColor=false},page)
+ corner(addBtn,8)
+ stroke(addBtn,C.border,1,0.2)
+ styleBtn(addBtn)
+
+ local box=mk("Frame",{Size=UDim2.new(1,0,1,-34),Position=UDim2.new(0,0,0,34),BackgroundColor3=C.track,BorderSizePixel=0,ClipsDescendants=true},page)
+ corner(box,8)
+ stroke(box,C.border,1,0.3)
+ local scroll=mk("ScrollingFrame",{Size=UDim2.new(1,-8,1,-8),Position=UDim2.new(0,4,0,4),BackgroundTransparency=1,BorderSizePixel=0,CanvasSize=UDim2.new(0,0,0,0),AutomaticCanvasSize=Enum.AutomaticSize.Y,ScrollBarThickness=4,ScrollBarImageColor3=C.border,ScrollingDirection=Enum.ScrollingDirection.Y},box)
+ mk("UIListLayout",{Padding=UDim.new(0,5),SortOrder=Enum.SortOrder.LayoutOrder},scroll)
+
+ -- editor overlay (new / edit)
+ local ov=mk("Frame",{Size=UDim2.new(1,0,1,0),BackgroundColor3=C.panel,BorderSizePixel=0,Visible=false},page)
+ local edTitle=mk("TextLabel",{Size=UDim2.new(1,0,0,14),BackgroundTransparency=1,Font=Enum.Font.GothamBold,Text="NEW PERSONALITY",TextColor3=C.text,TextSize=10,TextXAlignment=LEFT},ov)
+ local nameBox=mk("TextBox",{Size=UDim2.new(1,0,0,24),Position=UDim2.new(0,0,0,18),BackgroundColor3=C.track,BorderSizePixel=0,Font=Enum.Font.Code,Text="",PlaceholderText="name (e.g. Catgirl)",PlaceholderColor3=C.subText,TextColor3=C.text,TextSize=11,ClearTextOnFocus=false,TextXAlignment=LEFT},ov)
+ corner(nameBox,6)
+ stroke(nameBox,C.border,1,0.3)
+ mk("UIPadding",{PaddingLeft=UDim.new(0,8),PaddingRight=UDim.new(0,8)},nameBox)
+ local pBack=mk("Frame",{Size=UDim2.new(1,0,1,-88),Position=UDim2.new(0,0,0,46),BackgroundColor3=C.track,BorderSizePixel=0,ClipsDescendants=true},ov)
+ corner(pBack,6)
+ stroke(pBack,C.border,1,0.3)
+ local pScroll=mk("ScrollingFrame",{Size=UDim2.new(1,-4,1,-4),Position=UDim2.new(0,2,0,2),BackgroundTransparency=1,BorderSizePixel=0,CanvasSize=UDim2.new(0,0,0,0),AutomaticCanvasSize=Enum.AutomaticSize.Y,ScrollBarThickness=4,ScrollBarImageColor3=C.border,ScrollingDirection=Enum.ScrollingDirection.Y},pBack)
+ local promptBox=mk("TextBox",{Size=UDim2.new(1,-6,0,90),AutomaticSize=Enum.AutomaticSize.Y,BackgroundTransparency=1,Font=Enum.Font.Code,Text="",PlaceholderText="type the prompt: describe how the bot should act and talk. e.g. catgirl, furry, cute and kawaii, stutters a lot, says nya",PlaceholderColor3=C.subText,TextColor3=C.text,TextSize=10,ClearTextOnFocus=false,MultiLine=true,TextWrapped=true,TextXAlignment=LEFT,TextYAlignment=Enum.TextYAlignment.Top},pScroll)
+ mk("UIPadding",{PaddingLeft=UDim.new(0,6),PaddingRight=UDim.new(0,6),PaddingTop=UDim.new(0,6),PaddingBottom=UDim.new(0,6)},promptBox)
+ local edErr=mk("TextLabel",{Size=UDim2.new(1,0,0,12),Position=UDim2.new(0,0,1,-40),BackgroundTransparency=1,Font=Enum.Font.Gotham,Text="",TextColor3=C.red,TextSize=9,TextXAlignment=LEFT},ov)
+ local cancelBtn=mk("TextButton",{Size=UDim2.new(0.5,-4,0,28),AnchorPoint=Vector2.new(0,1),Position=UDim2.new(0,0,1,0),BackgroundColor3=C.button,BorderSizePixel=0,Font=Enum.Font.GothamBold,Text="CANCEL",TextColor3=C.text,TextSize=11,AutoButtonColor=false},ov)
+ corner(cancelBtn,8)
+ stroke(cancelBtn,C.border,1,0.2)
+ styleBtn(cancelBtn)
+ local doneBtn=mk("TextButton",{Size=UDim2.new(0.5,-4,0,28),AnchorPoint=Vector2.new(1,1),Position=UDim2.new(1,0,1,0),BackgroundColor3=C.button,BorderSizePixel=0,Font=Enum.Font.GothamBold,Text="DONE",TextColor3=C.text,TextSize=11,AutoButtonColor=false},ov)
+ corner(doneBtn,8)
+ stroke(doneBtn,C.green,1,0.1)
+ styleBtn(doneBtn)
+ ov.ZIndex=20
+ for _,d in ipairs(ov:GetDescendants())do
+  if d:IsA("GuiObject") then d.ZIndex=21 end
+ end
+
+ local editingId=nil
+ local expanded={original=true}
+ local render
+
+ local function openEditor(id,prefName,prefPrompt)
+  editingId=id
+  edTitle.Text=id and "EDIT PERSONALITY" or "NEW PERSONALITY"
+  nameBox.Text=prefName or ""
+  promptBox.Text=prefPrompt or ""
+  edErr.Text=""
+  ov.Visible=true
+ end
+ addBtn.Activated:Connect(function()openEditor(nil,"","")end)
+ cancelBtn.Activated:Connect(function()ov.Visible=false end)
+ doneBtn.Activated:Connect(function()
+  local pr=trimS(promptBox.Text)
+  if pr=="" then
+   edErr.Text="write a prompt first"
+   return
+  end
+  local nm=trimS(nameBox.Text):sub(1,28)
+  if nm=="" then nm="Personality "..(#XcPers.list+1) end
+  if editingId then
+   local p=XcPers.get(editingId)
+   if p and not p.builtin then
+    p.name=nm
+    p.prompt=pr
+    if XcPers.active==p.id then
+     XcPers.setActive(p.id)
+    else
+     XcPers.save()
+    end
+   end
+  else
+   XcPers.list[#XcPers.list+1]={id="p"..os.time()..math.random(100,999),name=nm,prompt=pr}
+   XcPers.save()
+  end
+  ov.Visible=false
+  render()
+ end)
+
+ local function makeCard(p,order)
+  local isActive=(XcPers.active==p.id)
+  local isOpen=expanded[p.id]==true
+  local card=mk("Frame",{Size=UDim2.new(1,-2,0,0),AutomaticSize=Enum.AutomaticSize.Y,BackgroundColor3=C.button,BorderSizePixel=0,LayoutOrder=order},scroll)
+  corner(card,8)
+  stroke(card,isActive and C.green or C.border,1,isActive and 0.1 or 0.3)
+  mk("UIListLayout",{Padding=UDim.new(0,5),SortOrder=Enum.SortOrder.LayoutOrder},card)
+  mk("UIPadding",{PaddingTop=UDim.new(0,6),PaddingBottom=UDim.new(0,6),PaddingLeft=UDim.new(0,7),PaddingRight=UDim.new(0,7)},card)
+
+  local head=mk("Frame",{Size=UDim2.new(1,0,0,24),BackgroundTransparency=1,LayoutOrder=1},card)
+  local nameBtn=mk("TextButton",{Size=UDim2.new(1,-46,1,0),BackgroundTransparency=1,Font=Enum.Font.GothamBold,Text=(isOpen and "v  " or ">  ")..p.name,TextColor3=C.text,TextSize=10,TextXAlignment=LEFT,TextTruncate=Enum.TextTruncate.AtEnd,AutoButtonColor=false},head)
+  local tg=mk("TextButton",{Size=UDim2.new(0,38,0,20),AnchorPoint=Vector2.new(1,0.5),Position=UDim2.new(1,0,0.5,0),BackgroundColor3=isActive and C.green or C.border,BorderSizePixel=0,Text="",AutoButtonColor=false},head)
+  corner(tg,10)
+  mk("Frame",{Size=UDim2.new(0,14,0,14),AnchorPoint=Vector2.new(0,0.5),Position=isActive and UDim2.new(1,-17,0.5,0) or UDim2.new(0,3,0.5,0),BackgroundColor3=Color3.fromRGB(255,255,255),BorderSizePixel=0},tg)
+  for _,k in ipairs(tg:GetChildren())do
+   if k:IsA("Frame") then corner(k,7) end
+  end
+
+  nameBtn.Activated:Connect(function()
+   expanded[p.id]=not isOpen
+   render()
+  end)
+  tg.Activated:Connect(function()
+   if p.builtin then
+    if XcPers.active~="original" then XcPers.setActive("original") end
+   elseif isActive then
+    XcPers.setActive("original")
+   else
+    XcPers.setActive(p.id)
+   end
+   render()
+  end)
+
+  if isOpen then
+   local view=mk("ScrollingFrame",{Size=UDim2.new(1,0,0,100),BackgroundColor3=C.panel,BorderSizePixel=0,CanvasSize=UDim2.new(0,0,0,0),AutomaticCanvasSize=Enum.AutomaticSize.Y,ScrollBarThickness=3,ScrollBarImageColor3=C.border,ScrollingDirection=Enum.ScrollingDirection.Y,LayoutOrder=2},card)
+   corner(view,6)
+   stroke(view,C.border,1,0.4)
+   local tb=mk("TextBox",{Size=UDim2.new(1,-6,0,0),AutomaticSize=Enum.AutomaticSize.Y,BackgroundTransparency=1,Font=Enum.Font.Code,Text=p.prompt,TextColor3=C.text,TextSize=9,TextEditable=false,ClearTextOnFocus=false,MultiLine=true,TextWrapped=true,TextXAlignment=LEFT,TextYAlignment=Enum.TextYAlignment.Top},view)
+   mk("UIPadding",{PaddingLeft=UDim.new(0,6),PaddingRight=UDim.new(0,6),PaddingTop=UDim.new(0,5),PaddingBottom=UDim.new(0,5)},tb)
+
+   local row=mk("Frame",{Size=UDim2.new(1,0,0,24),BackgroundTransparency=1,LayoutOrder=3},card)
+   mk("UIListLayout",{FillDirection=Enum.FillDirection.Horizontal,Padding=UDim.new(0,4),SortOrder=Enum.SortOrder.LayoutOrder},row)
+   local n=p.builtin and 1 or 3
+   local function rb(txt,ord)
+    local b=mk("TextButton",{Size=UDim2.new(1/n,-(4*(n-1))/n,1,0),BackgroundColor3=C.panel,BorderSizePixel=0,Font=Enum.Font.GothamBold,Text=txt,TextColor3=C.text,TextSize=9,AutoButtonColor=false,LayoutOrder=ord},row)
+    corner(b,6)
+    stroke(b,C.border,1,0.3)
+    return b
+   end
+   if p.builtin then
+    local cl=rb("CLONE TO NEW PERSONALITY",1)
+    cl.Activated:Connect(function()openEditor(nil,"My Original",p.prompt)end)
+   else
+    local ed=rb("EDIT",1)
+    local cl=rb("CLONE",2)
+    local del=rb("DELETE",3)
+    ed.Activated:Connect(function()openEditor(p.id,p.name,p.prompt)end)
+    cl.Activated:Connect(function()openEditor(nil,p.name.." copy",p.prompt)end)
+    local armed=false
+    del.Activated:Connect(function()
+     if not armed then
+      armed=true
+      del.Text="SURE?"
+      del.TextColor3=C.red
+      task.delay(2,function()
+       if del and del.Parent then
+        armed=false
+        del.Text="DELETE"
+        del.TextColor3=C.text
+       end
+      end)
+      return
+     end
+     for i,q in ipairs(XcPers.list)do
+      if q.id==p.id then table.remove(XcPers.list,i) break end
+     end
+     if XcPers.active==p.id then
+      XcPers.setActive("original")
+     else
+      XcPers.save()
+     end
+     render()
+    end)
+   end
+  end
+ end
+
+ render=function()
+  for _,c in ipairs(scroll:GetChildren())do
+   if c:IsA("GuiObject") then c:Destroy() end
+  end
+  makeCard(XcPers.get("original"),0)
+  for i,p in ipairs(XcPers.list)do makeCard(p,i) end
+ end
+ XcPers.onChange=function()render()end
+ render()
+ return page
+end
+
 function XcTone(t)
- if XC_RAW then return t end
+ if XC_RAW or XcPers.isCustom()then return t end
  t=tostring(t or"")
  local c1=t:sub(1,1)
  if c1=="/"or c1=="!"then return t end
@@ -2355,7 +2628,6 @@ function XcBring(TargetName,DestName)
 end
 
 
-function XcAnimate()if ROLE~="BOT"or antiBan.detected then return false end pcall(stopAllModes)S.outgoingToolTransfer=true task.spawn(function()pcall(function()loadstring(game:HttpGet("https://vanillaa-sigma.vercel.app/TestReanimateee"))()end)task.wait(2)S.outgoingToolTransfer=false local bases={}local char=pl.Character if char then for _,d in ipairs(char:GetDescendants())do if d:IsA("Motor6D")then bases[d]=d.C0 end end end if S.animConn then pcall(function()S.animConn:Disconnect()end)end S.animConn=R.Heartbeat:Connect(function()local c=pl.Character if not c then return end local h=c:FindFirstChildOfClass("Humanoid")if not h then return end local t=os.clock()local mv=h.MoveDirection.Magnitude>0.1 local sp=h.WalkSpeed local st=h:GetState()local jmp=st==Enum.HumanoidStateType.Jumping or st==Enum.HumanoidStateType.Freefall local ph=mv and t*(math.max(sp,16)*0.12)or t*1.5 for m,base in pairs(bases)do if m and m.Parent then local nm=m.Name:lower()local right=nm:find("right")local off=0 if nm:find("shoulder")then off=mv and math.sin(ph+(right and 0 or math.pi))*0.6 or math.sin(t*1.5)*0.05 if jmp then off=-1.0 end elseif nm:find("hip")then off=mv and math.sin(ph+(right and math.pi or 0))*0.7 or 0 if jmp then off=-0.9 end end pcall(function()m.C0=base*CFrame.Angles(off,0,0)end)end end end)sendChat("animated")end)return true end function XcUnanimate()if ROLE~="BOT"then return false end if S.animConn then pcall(function()S.animConn:Disconnect()end)S.animConn=nil end XcLoopStop()pcall(function()pl:LoadCharacter()end)sendChat("unanimating")return true end S.loopActive=false function XcLoopStart(args)if ROLE~="BOT"then return false end if not args or args==""then sendChat("usage: !loop <cmd> <player>")return false end local sp=args:find("%s")local lcmd,larg if sp then lcmd=args:sub(1,sp-1):lower()larg=trim(args:sub(sp+1))else lcmd=args:lower()larg=""end if not AI_CMD_WHITELIST[lcmd]then sendChat("cant loop that")return false end S.loopActive=true S.loopCmd=lcmd S.loopArgs=larg sendChat("looping "..lcmd)task.spawn(function()while S.loopActive do pcall(handleCommand,S.loopCmd,S.loopArgs)task.wait(2.5)end end)return true end function XcLoopStop()if S.loopActive then S.loopActive=false sendChat("loop stopped")end end
 function processMessage(uid,text)if not text or text==""then return end if uid~=pl.UserId and text:sub(1,1)~=commandPrefix then if XcDup and XcDup(uid,text)then return end local speaker=P:GetPlayerByUserId(uid)local speakerName=speaker and speaker.Name or"Unknown"table.insert(S.chatLog,speakerName..": "..text)if S.copyTarget and speaker and speaker==S.copyTarget and ROLE=="BOT"then local ct=text:sub(1,150)task.defer(function()sendChat(ct)end)end if#S.chatLog>15 then table.remove(S.chatLog,1)end end if ROLE~="BOT"and ROLE~="HOST"then return end if ROLE=="BOT"and uid~=pl.UserId and not isFromHost(uid)then handleStrangerMsg(uid,text)return end if not isFromHost(uid)then return end if XcCommand and XcCommand.hook and XcCommand.hook(text)then return end local lowText=text:lower()if lowText:sub(1,4)=="!ask"then local prompt=trim(text:sub(5))if
 prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return end if isDuplicateMessage(uid,text)then return end if XcVision and XcVision.try(prompt)then return end if XcFast and XcFast.try(prompt)then return end if XcCode and XcCode.route(prompt)then return end if XcCommand and XcCommand.route and XcCommand.route(prompt)then return end task.spawn(function()handleAIChat(prompt)end)return end if ROLE~="BOT"then return end if text:sub(1,#commandPrefix)~=commandPrefix then return end if isDuplicateMessage(uid,text)then return end local body=trim(text:sub(#commandPrefix+1))if body==""then return end local sp=body:find("%s")local cmd,args if sp then cmd=body:sub(1,sp-1):lower()args=trim(body:sub(sp+1))else cmd=body:lower()args=""end if cmd=="host"or cmd=="stophost"then if not isCreatorUser(uid)then task.spawn(function()sendChat(pick({"only my boss can do that","nah not for you","creator only","youre not the boss","denied"}))end)return end if cmd=="host"then local sp2=args:find("%s")if not sp2 then task.spawn(function()sendChat(
 "usage: !host <player> <seconds>")end)return end local pname=trim(args:sub(1,sp2-1))local secs=tonumber(trim(args:sub(sp2+1)))if not secs or secs<=0 then task.spawn(function()sendChat("need a valid seconds number")end)return end task.spawn(function()startLend(pname,secs)end)else task.spawn(function()stopLendNow()end)end return end task.spawn(function()local ok,err=pcall(handleCommand,cmd,args)if not ok then warn("[MyPanel] cmd error:",err)if botLogRef then pushLog(botLogRef,"err: "..tostring(err):sub(1,60),C.red)end end end)end pcall(function()if TC and TC.ChatVersion==Enum.ChatVersion.TextChatService then TC.MessageReceived:Connect(function(m)local s=m.TextSource if not s then return end processMessage(s.UserId,m.Text)end)end end)local function hookChatted(p)p.Chatted:Connect(function(t)processMessage(p.UserId,t)end)end for _,p in ipairs(P:GetPlayers())do hookChatted(p)end P.PlayerAdded
@@ -2372,11 +2644,11 @@ apiTitle.TextColor3=C.text apiTitle.TextSize=13 apiTitle.TextXAlignment=Enum.Tex
 setclipboard,txt)return true end if type(toclipboard)=="function"then pcall(toclipboard,txt)return true end if syn and type(syn.write_clipboard)=="function"then pcall(syn.write_clipboard,txt)return true end if type(writeclipboard)=="function"then pcall(writeclipboard,txt)return true end return false end local function mkKeyRow(y,label,getKey)local ll=Instance.new("TextLabel")ll.Size=UDim2.new(1,0,0,12)ll.Position=UDim2.new(0,0,0,y)ll.BackgroundTransparency=1 ll.Font=Enum.Font.GothamBold ll.Text=label ll.TextColor3=C.text ll.TextSize=9 ll.TextXAlignment=Enum.TextXAlignment.Left ll.Parent=apiBody local btn=Instance.new("TextButton")btn.Size=UDim2.new(1,0,0,26)btn.Position=UDim2.new(0,0,0,y+14)btn.BackgroundColor3=C.track btn.BorderSizePixel=0 btn.Font=Enum.Font.Code btn.Text=getKey()or"(not set)"btn.TextColor3=C.text btn.TextSize=9 btn.TextXAlignment=Enum.TextXAlignment.Left btn.
 TextTruncate=Enum.TextTruncate.AtEnd btn.AutoButtonColor=false btn.Parent=apiBody corner(btn,6)stroke(btn,C.border,1,0.3)local pdd=Instance.new("UIPadding")pdd.PaddingLeft=UDim.new(0,10)pdd.PaddingRight=UDim.new(0,10)pdd.Parent=btn local fb=Instance.new("TextLabel")fb.Size=UDim2.new(1,0,0,10)fb.Position=UDim2.new(0,0,0,y+42)fb.BackgroundTransparency=1 fb.Font=Enum.Font.Gotham fb.Text=""fb.TextColor3=C.green fb.TextSize=8 fb.TextXAlignment=Enum.TextXAlignment.Left fb.Parent=apiBody btn.MouseEnter:Connect(function()tw(btn,0.15,{BackgroundColor3=C.buttonHover})end)btn.MouseLeave:Connect(function()tw(btn,0.15,{BackgroundColor3=C.track})end)btn.Activated:Connect(function()local k=getKey()if not k or k==""then fb.Text="no key set";fb.TextColor3=C.red;return end if copyToClipboard(k)then fb.Text="copied!"fb.TextColor3=C.green else fb.Text="clipboard unsupported"fb.TextColor3=C.red end task.
 delay(1.6,function()if fb and fb.Parent then fb.Text=""end end)end)return btn end mkKeyRow(4,"XcH Key (primary)",function()return APIKey end)mkKeyRow(58,"Xcode Key",function()return APIKey2 end)mkKeyRow(112,"XcH Backup Key",function()return APIKey3 end)mkKeyRow(166,"Xcode Backup Key (mom's)",function()return APIKey4 end)mkKeyRow(220,"XcCommand Key (primary)",function()return BKey1 end)mkKeyRow(274,"XcCommand Backup Key",function()return BKey2 end)local apiInfo=Instance.new("TextLabel")apiInfo.Size=UDim2.new(1,0,0,30)apiInfo.Position=UDim2.new(0,0,0,328)apiInfo.BackgroundTransparency=1 apiInfo.Font=Enum.Font.Gotham apiInfo.Text="XcH + Xcode fall back to their backup keys on quota. Xcode scripts and bot control code are reviewed by the 7th (polisher) key before they run. XcCommand planning uses its own two keys."apiInfo.TextColor3=C.subText apiInfo.TextSize=8 apiInfo.TextXAlignment=Enum.TextXAlignment.Left apiInfo.TextYAlignment=Enum.TextYAlignment.Top apiInfo.
-TextWrapped=true apiInfo.Parent=apiBody local pwOv=Instance.new("Frame")pwOv.Size=UDim2.new(1,0,1,0)pwOv.BackgroundColor3=C.panel pwOv.BorderSizePixel=0 pwOv.ZIndex=100 pwOv.Visible=false pwOv.Parent=frame local pwTitle=Instance.new("TextLabel")pwTitle.Size=UDim2.new(1,-40,0,22)pwTitle.Position=UDim2.new(0,20,0,70)pwTitle.BackgroundTransparency=1 pwTitle.Font=Enum.Font.GothamBold pwTitle.Text="API KEYS LOCKED"pwTitle.TextColor3=C.text pwTitle.TextSize=14 pwTitle.TextXAlignment=Enum.TextXAlignment.Left pwTitle.ZIndex=101 pwTitle.Parent=pwOv local pwHint=Instance.new("TextLabel")pwHint.Size=UDim2.new(1,-40,0,16)pwHint.Position=UDim2.new(0,20,0,96)pwHint.BackgroundTransparency=1 pwHint.Font=Enum.Font.Gotham pwHint.Text="enter password to view api keys"pwHint.TextColor3=C.subText pwHint.TextSize=10 pwHint.TextXAlignment=Enum.TextXAlignment.Left pwHint.ZIndex=101 pwHint.Parent=pwOv local
+TextWrapped=true apiInfo.Parent=apiBody persPage=XcPersUI(contentArea,newPage,C,corner,stroke,tw,styleBtn) local pwOv=Instance.new("Frame")pwOv.Size=UDim2.new(1,0,1,0)pwOv.BackgroundColor3=C.panel pwOv.BorderSizePixel=0 pwOv.ZIndex=100 pwOv.Visible=false pwOv.Parent=frame local pwTitle=Instance.new("TextLabel")pwTitle.Size=UDim2.new(1,-40,0,22)pwTitle.Position=UDim2.new(0,20,0,70)pwTitle.BackgroundTransparency=1 pwTitle.Font=Enum.Font.GothamBold pwTitle.Text="API KEYS LOCKED"pwTitle.TextColor3=C.text pwTitle.TextSize=14 pwTitle.TextXAlignment=Enum.TextXAlignment.Left pwTitle.ZIndex=101 pwTitle.Parent=pwOv local pwHint=Instance.new("TextLabel")pwHint.Size=UDim2.new(1,-40,0,16)pwHint.Position=UDim2.new(0,20,0,96)pwHint.BackgroundTransparency=1 pwHint.Font=Enum.Font.Gotham pwHint.Text="enter password to view api keys"pwHint.TextColor3=C.subText pwHint.TextSize=10 pwHint.TextXAlignment=Enum.TextXAlignment.Left pwHint.ZIndex=101 pwHint.Parent=pwOv local
 pwBox=Instance.new("TextBox")pwBox.Size=UDim2.new(1,-40,0,34)pwBox.Position=UDim2.new(0,20,0,122)pwBox.BackgroundColor3=C.track pwBox.BorderSizePixel=0 pwBox.Font=Enum.Font.Code pwBox.Text=""pwBox.PlaceholderText="password"pwBox.PlaceholderColor3=C.subText pwBox.TextColor3=C.text pwBox.TextSize=12 pwBox.ClearTextOnFocus=false pwBox.TextXAlignment=Enum.TextXAlignment.Left pwBox.ZIndex=101 pwBox.Parent=pwOv corner(pwBox,6)stroke(pwBox,C.border,1,0.3)local pwp=Instance.new("UIPadding")pwp.PaddingLeft=UDim.new(0,10)pwp.PaddingRight=UDim.new(0,10)pwp.Parent=pwBox local pwErr=Instance.new("TextLabel")pwErr.Size=UDim2.new(1,-40,0,16)pwErr.Position=UDim2.new(0,20,0,162)pwErr.BackgroundTransparency=1 pwErr.Font=Enum.Font.Gotham pwErr.Text=""pwErr.TextColor3=C.red pwErr.TextSize=10 pwErr.TextXAlignment=Enum.TextXAlignment.Left pwErr.ZIndex=101 pwErr.Parent=pwOv local function mkPwBtn(txt,pos)local
 b=Instance.new("TextButton")b.Size=UDim2.new(0.5,-28,0,38)b.Position=pos b.BackgroundColor3=C.button b.BorderSizePixel=0 b.Font=Enum.Font.GothamBold b.Text=txt b.TextColor3=C.text b.TextSize=13 b.AutoButtonColor=false b.ZIndex=101 b.Parent=pwOv corner(b,10)stroke(b,C.border,1,0.2)styleBtn(b)return b end local pwBack=mkPwBtn("BACK",UDim2.new(0,20,1,-60))local pwGo=mkPwBtn("UNLOCK",UDim2.new(0.5,8,1,-60))apiUnlocked=false local function tryUnlock()if pwBox.Text==API_PASSWORD then apiUnlocked=true pwOv.Visible=false pwErr.Text=""pwBox.Text=""slideToPage(apiPage,apiTab)else pwErr.Text="wrong password"pwBox.Text=""end end pwGo.Activated:Connect(tryUnlock)pwBack.Activated:Connect(function()pwOv.Visible=false pwErr.Text=""pwBox.Text=""end)pwBox.FocusLost:Connect(function(ep)if ep then tryUnlock()end end)currentPage=nil currentTabBtn=nil function makeTab(name,order,onClick)local b=Instance.new(
 "TextButton")b.Size=UDim2.new(1,0,0,32)b.BackgroundColor3=C.sidebar b.BorderSizePixel=0 b.Font=Enum.Font.GothamMedium b.Text="  "..name b.TextColor3=C.text b.TextSize=11 b.TextXAlignment=Enum.TextXAlignment.Left b.AutoButtonColor=false b.LayoutOrder=order b.Parent=sidebar corner(b,6)b.MouseEnter:Connect(function()if b~=currentTabBtn then tw(b,0.15,{BackgroundColor3=C.buttonHover})end end)b.MouseLeave:Connect(function()if b~=currentTabBtn then tw(b,0.15,{BackgroundColor3=C.sidebar})end end)b.Activated:Connect(onClick)return b end function slideToPage(newPage,newTabBtn)if currentPage==newPage then return end local oldPage=currentPage local oldTab=currentTabBtn if oldTab then tw(oldTab,0.2,{BackgroundColor3=C.sidebar})end if newTabBtn then tw(newTabBtn,0.2,{BackgroundColor3=C.activeTab})end currentTabBtn=newTabBtn local W2=contentArea.AbsoluteSize.X if W2<=0 then W2=420 end if oldPage then
-tw(oldPage,0.3,{Position=UDim2.new(0,W2,0,0)},Enum.EasingStyle.Quart,Enum.EasingDirection.In)task.delay(0.3,function()if oldPage then oldPage.Visible=false end end)end newPage.Position=UDim2.new(0,W2,0,0)newPage.Visible=true task.delay(0.04,function()tw(newPage,0.38,{Position=UDim2.new(0,0,0,0)},Enum.EasingStyle.Quart,Enum.EasingDirection.Out)end)currentPage=newPage end logsTab=makeTab("Logs",1,function()slideToPage(logsPage,logsTab)end)cmdsTab=makeTab("Cmds",2,function()slideToPage(cmdsPage,cmdsTab)end)apiTab=makeTab("Api Keys",3,function()if apiUnlocked then slideToPage(apiPage,apiTab)else pwOv.Visible=true pwBox.Text=""pwErr.Text=""end end)currentPage=nil currentTabBtn=nil slideToPage(cmdsPage,cmdsTab)local roleOv=Instance.new("Frame")roleOv.Size=UDim2.new(1,0,1,0)roleOv.BackgroundColor3=C.panel roleOv.BorderSizePixel=0 roleOv.ZIndex=50 roleOv.Visible=true roleOv.Parent=frame function
+tw(oldPage,0.3,{Position=UDim2.new(0,W2,0,0)},Enum.EasingStyle.Quart,Enum.EasingDirection.In)task.delay(0.3,function()if oldPage then oldPage.Visible=false end end)end newPage.Position=UDim2.new(0,W2,0,0)newPage.Visible=true task.delay(0.04,function()tw(newPage,0.38,{Position=UDim2.new(0,0,0,0)},Enum.EasingStyle.Quart,Enum.EasingDirection.Out)end)currentPage=newPage end logsTab=makeTab("Logs",1,function()slideToPage(logsPage,logsTab)end)cmdsTab=makeTab("Cmds",2,function()slideToPage(cmdsPage,cmdsTab)end)persTab=makeTab("Personalities",3,function()slideToPage(persPage,persTab)end)persTab.TextSize=10 apiTab=makeTab("Api Keys",4,function()if apiUnlocked then slideToPage(apiPage,apiTab)else pwOv.Visible=true pwBox.Text=""pwErr.Text=""end end)currentPage=nil currentTabBtn=nil slideToPage(cmdsPage,cmdsTab)local roleOv=Instance.new("Frame")roleOv.Size=UDim2.new(1,0,1,0)roleOv.BackgroundColor3=C.panel roleOv.BorderSizePixel=0 roleOv.ZIndex=50 roleOv.Visible=true roleOv.Parent=frame function
 mkLabel(parent,txt,pos,size,font,color,tsize,align,z)local l=Instance.new("TextLabel")l.Size=size l.Position=pos l.BackgroundTransparency=1 l.Font=font l.Text=txt l.TextColor3=color l.TextSize=tsize l.TextXAlignment=align or Enum.TextXAlignment.Center l.ZIndex=z or 51 l.Parent=parent return l end function mkBtn(parent,txt,pos,size,z)local b=Instance.new("TextButton")b.Size=size b.Position=pos b.BackgroundColor3=C.button b.BorderSizePixel=0 b.Font=Enum.Font.GothamBold b.Text=txt b.TextColor3=C.text b.TextSize=15 b.AutoButtonColor=false b.ZIndex=z or 51 b.Parent=parent corner(b,10)stroke(b,C.border,1,0.2)styleBtn(b)return b end mkLabel(roleOv,"SELECT ROLE",UDim2.new(0,20,0,20),UDim2.new(1,-40,0,22),Enum.Font.GothamBold,C.text,13,Enum.TextXAlignment.Left)mkLabel(roleOv,"What should this account do?",UDim2.new(0,20,0,44),UDim2.new(1,-40,0,18),Enum.Font.Gotham,C.subText,10,Enum.TextXAlignment
 .Left)hostBtn=mkBtn(roleOv,"HOST",UDim2.new(0,24,0,90),UDim2.new(0.5,-32,0,90))mkLabel(roleOv,"Full panel + tabs",UDim2.new(0,24,0,186),UDim2.new(0.5,-32,0,16),Enum.Font.Gotham,C.subText,9)botBtn=mkBtn(roleOv,"BOT",UDim2.new(0.5,8,0,90),UDim2.new(0.5,-32,0,90))mkLabel(roleOv,"Follows host, compact",UDim2.new(0.5,8,0,186),UDim2.new(0.5,-32,0,16),Enum.Font.Gotham,C.subText,9)local confOv=Instance.new("Frame")confOv.Size=UDim2.new(1,0,1,0)confOv.BackgroundColor3=C.panel confOv.BorderSizePixel=0 confOv.ZIndex=55 confOv.Visible=false confOv.Parent=frame mkLabel(confOv,"LOCK IN AS HOST?",UDim2.new(0,20,0,80),UDim2.new(1,-40,0,24),Enum.Font.GothamBold,C.text,14,Enum.TextXAlignment.Left,56)mkLabel(confOv,"You get the full tabbed panel with private XcH chat.",UDim2.new(0,20,0,108),UDim2.new(1,-40,0,40),Enum.Font.Gotham,C.subText,11,Enum.TextXAlignment.Left,56).TextWrapped=true local cYes=mkBtn(
 confOv,"YES",UDim2.new(0,20,1,-60),UDim2.new(0.5,-32,0,40),56)cYes.TextSize=13 local cNo=mkBtn(confOv,"BACK",UDim2.new(0.5,8,1,-60),UDim2.new(0.5,-32,0,40),56)cNo.TextSize=13 local bsOv=Instance.new("Frame")bsOv.Size=UDim2.new(1,0,1,0)bsOv.BackgroundColor3=C.panel bsOv.BorderSizePixel=0 bsOv.ZIndex=55 bsOv.Visible=false bsOv.Parent=frame mkLabel(bsOv,"BOT SETUP",UDim2.new(0,20,0,14),UDim2.new(1,-40,0,22),Enum.Font.GothamBold,C.text,13,Enum.TextXAlignment.Left,56)mkLabel(bsOv,"Pick the HOST below.",UDim2.new(0,20,0,38),UDim2.new(1,-40,0,16),Enum.Font.Gotham,C.subText,10,Enum.TextXAlignment.Left,56)local plFrame=Instance.new("Frame")plFrame.Size=UDim2.new(1,-40,1,-142)plFrame.Position=UDim2.new(0,20,0,62)plFrame.BackgroundColor3=C.track plFrame.BorderSizePixel=0 plFrame.ClipsDescendants=true plFrame.ZIndex=56 plFrame.Parent=bsOv corner(plFrame,8)stroke(plFrame,C.border,1,0.3)local plScroll
