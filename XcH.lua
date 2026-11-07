@@ -324,8 +324,8 @@ h=hum()if h then h.Jump=true sendChat(pick(R_.jump))end elseif cmd=="hide"then d
  XcLoopStart(lcmd,largs)
 elseif cmd=="unloop" then
  XcLoopStop()
-elseif cmd=="gearsync"then XcGearSync(args)elseif cmd=="ungearsync"then XcGearUnsync()elseif cmd=="toolkill"then XcGearSync(args)elseif cmd=="untoolkill"then XcGearUnsync()elseif cmd=="givetool"or cmd=="give"then local sp3=args:find("%s")local pn3,tl3 if sp3 then pn3=trim(args:sub(1,sp3-1))tl3=trim(args:sub(sp3+1))else pn3=trim(args)tl3=""end XcGiveTool(pn3,tl3)elseif cmd=="bring"or cmd=="summon"then local spd_s,spd_e=args:lower():find("%s+to%s+")local tgt,dest if spd_s then tgt=trim(args:sub(1,spd_s-1))dest=trim(args:sub(spd_e+1))else tgt=trim(args)dest=nil end XcBring(tgt,dest)elseif cmd=="math"then handleMath(args)elseif cmd=="whoishost"then local hh=getHost()if S.lending then sendChat("host is "..(hh and hh.Name or"?").." (temp, "..math.max(0,math.floor(S.lendEnd-os.clock())).."s left)")else sendChat("host is "..(hh and hh.Name or"none"))end elseif cmd=="gender"then local sp2=args:find("%s")if not sp2 then sendChat("usage: !gender <player> <m/f/they>")return end local pname=
-trim(args:sub(1,sp2-1))local g=trim(args:sub(sp2+1)):lower()if g~="m"and g~="f"and g~="they"then sendChat("gender must be m, f, or they")return end local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))return end sendChat("noted for "..p.Name)elseif cmd=="genderclear"then local p=getPlayer(args)if not p then sendChat(pick(R_.notfound))return end sendChat("cleared for "..p.Name)elseif cmd=="cmds"then sendSeq({"Command reference.","!ask <message> - converse","!ask <task> - multi-step tasks, Xcode builds anything missing, say stop to abort","!ask what is this? / who is this? - describes what you are facing","!ask make a command called <name> that <does x> - creates a saved command","!customs | !delcmd <name>","!gameinfo | !similar | !info <player>","!voidfollow | !stop voidfollow","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!toolkill <player> | !untoolkill","!givetool <player> <tool>","!bring <player>","!antifling | !unantifling | !antitoolkill | !unantitoolkill","!speed <n|faster|slower|reset> | !freeze | !unfreeze","!escort | !afk | !unafk | !status","!math <expr> | !countdown <n> | !timer <s> | !say <text>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only) | !whoishost","!cmds"},0.9)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end XC_TITLES={"Sir","Director","Commander","Chief","Executive","Chairman","Supreme Commander","Grand Director","Chief Executive","Your Excellency","High Chancellor","Sovereign","Administrator","Principal"}
+elseif cmd=="gearsync"then XcGearSync(args)elseif cmd=="ungearsync"then XcGearUnsync()elseif cmd=="toolkill"then XcGearSync(args)elseif cmd=="untoolkill"then XcGearUnsync()elseif cmd=="givetool"or cmd=="give"then local sp3=args:find("%s")local pn3,tl3 if sp3 then pn3=trim(args:sub(1,sp3-1))tl3=trim(args:sub(sp3+1))else pn3=trim(args)tl3=GEAR_TOOL end XcGiveTool(pn3,tl3)elseif cmd=="bring"or cmd=="summon"then local spd_s,spd_e=args:lower():find("%s+to%s+")local tgt,dest if spd_s then tgt=trim(args:sub(1,spd_s-1))dest=trim(args:sub(spd_e+1))else tgt=trim(args)dest=nil end XcBring(tgt,dest)elseif cmd=="math"then handleMath(args)elseif cmd=="whoishost"then local hh=getHost()if S.lending then sendChat("host is "..(hh and hh.Name or"?").." (temp, "..math.max(0,math.floor(S.lendEnd-os.clock())).."s left)")else sendChat("host is "..(hh and hh.Name or"none"))end elseif cmd=="gender"then local sp2=args:find("%s")if not sp2 then sendChat("usage: !gender <player> <m/f/they>")return end local pname=
+trim(args:sub(1,sp2-1))local g=trim(args:sub(sp2+1)):lower()if g~="m"and g~="f"and g~="they"then sendChat("gender must be m, f, or they")return end local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))return end sendChat("noted for "..p.Name)elseif cmd=="genderclear"then local p=getPlayer(args)if not p then sendChat(pick(R_.notfound))return end sendChat("cleared for "..p.Name)elseif cmd=="cmds"then sendSeq({"Command reference.","!ask <message> - converse","!ask <task> - multi-step tasks, Xcode builds anything missing, say stop to abort","!ask what is this? / who is this? - describes what you are facing","!ask make a command called <name> that <does x> - creates a saved command","!customs | !delcmd <name>","!gameinfo | !similar | !info <player>","!voidfollow | !stop voidfollow","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!toolkill <player> | !untoolkill","!loop <cmd> <player> | !unloop","!givetool <player> <tool>","!bring <player>","!antifling | !unantifling | !antitoolkill | !unantitoolkill","!speed <n|faster|slower|reset> | !freeze | !unfreeze","!escort | !afk | !unafk | !status","!math <expr> | !countdown <n> | !timer <s> | !say <text>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only) | !whoishost","!cmds"},0.9)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end XC_TITLES={"Sir","Director","Commander","Chief","Executive","Chairman","Supreme Commander","Grand Director","Chief Executive","Your Excellency","High Chancellor","Sovereign","Administrator","Principal"}
 XC_LASTT=0
 XC_RAW=false
 function XcTitle()
@@ -2244,10 +2244,16 @@ function XcLoopStart(cmd,args)
     elseif cmd=="givetool" or cmd=="give" then
      -- give loop: strip item from target first so re-give always works
      local sp3=args and args:find("%s")
+     local pn,tn
      if sp3 then
-      local pn=trim(args:sub(1,sp3-1))
-      local tn=trim(args:sub(sp3+1))
-      -- remove matching tool from target so transfer doesn't block
+      pn=trim(args:sub(1,sp3-1))
+      tn=trim(args:sub(sp3+1))
+     else
+      pn=trim(args or "")
+      tn=GEAR_TOOL -- single-word arg: player name only, default to gear tool
+     end
+     if pn~="" then
+      -- remove matching tool from target so re-give always works
       local tgt2=resolveTarget(pn)
       if tgt2 and tgt2~="NORANDOM" and tgt2.Character then
        for _,item in ipairs(tgt2.Character:GetChildren()) do
@@ -2382,8 +2388,11 @@ function XcDoTransfer(tool,toolPart,tChar,aimPart,maxTries)
   if not tp or not tp.Parent then return end
   pcall(function()toolPart:PivotTo(tp.CFrame)end)
   task.wait(ping)
+  -- double-tap: fire touchend first to reset any debounce, then touchstart
+  pcall(firetouchinterest,tp,toolPart,0)
+  task.wait(0.02)
   pcall(firetouchinterest,tp,toolPart,1)
-  task.wait(0.04)
+  task.wait(0.03)
   pcall(firetouchinterest,tp,toolPart,0)
  end
  for attempt=1,tries do
@@ -2403,6 +2412,10 @@ function XcDoTransfer(tool,toolPart,tChar,aimPart,maxTries)
    task.wait(0.12)
   end
  end
+ -- last resort: direct reparent (bypasses fti, works on some executors/games)
+ pcall(function()tool.Parent=tChar end)
+ task.wait(0.1)
+ if tool.Parent==tChar then return true end
  return false,"transfer timeout"
 end
 
@@ -2469,7 +2482,9 @@ function XcGearSync(TargetName)
    task.wait(0.05)
    -- tall player support: aim at head/torso for scaled avatars
    local aimPart=XcGetAimPart(TargetCharacter) or targethrp
-   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,7)
+   pcall(function()if setsimulationradius then setsimulationradius(math.huge) end end)
+   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,10)
+   pcall(function()if setsimulationradius then setsimulationradius(1000) end end)
    if not ok then error(err) end
    R.Heartbeat:Wait()
    local SyncPos=CFrame.new(0,-9e15,0)*CFrame.Angles(0,0,math.rad(180))
@@ -2523,7 +2538,7 @@ end
 function XcGiveTool(TargetName,ToolName)
  if ROLE~="BOT" or antiBan.detected then return false end
  if not TargetName or TargetName=="" then sendChat("usage: !givetool <player> <tool>") return false end
- if not ToolName or ToolName=="" then sendChat("which tool? !givetool <player> <tool>") return false end
+ if not ToolName or ToolName=="" then ToolName=GEAR_TOOL end
  local t=resolveTarget(TargetName)
  if t=="NORANDOM" then sendChat(pick(R_.norandom)) return false end
  if not t then sendChat(pick(R_.notfound)) return false end
@@ -2567,7 +2582,7 @@ function XcGiveTool(TargetName,ToolName)
    task.wait(0.05)
    pcall(function()W.CurrentCamera.CameraSubject=TargetCharacter:FindFirstChild("Head") or targethrp end)
    local aimPart=XcGetAimPart(TargetCharacter) or targethrp
-   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,7)
+   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,10)
    if not ok then error(err) end
    R.Heartbeat:Wait()
   end)
@@ -2665,14 +2680,23 @@ function XcBring(TargetName,DestName)
    pcall(function()W.CurrentCamera.CameraSubject=TargetCharacter:FindFirstChild("Head") or targethrp end)
    -- grab target with tool
    local aimPart=XcGetAimPart(TargetCharacter) or targethrp
-   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,7)
+   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,10)
    if not ok then error(err) end
-   -- teleport the tool (carrying target) to destination, three rapid pulses
-   task.wait(0.08)
-   for _=1,3 do
+   -- teleport the tool to destination: 6 rapid pulses
+   task.wait(0.05)
+   for _=1,6 do
     pcall(function()XcToolnt:PivotTo(bringPos)end)
-    task.wait(0.08)
+    task.wait(0.045)
    end
+   -- attempt direct targethrp teleport (wins when touch briefly grants network ownership)
+   pcall(function()targethrp:PivotTo(bringPos)end)
+   task.wait(0.04)
+   -- velocity launch toward destination as final push
+   pcall(function()
+    local dir=bringPos.Position-targethrp.Position
+    local d=dir.Magnitude
+    if d>1 then targethrp.AssemblyLinearVelocity=dir.Unit*math.clamp(d*9,40,200) end
+   end)
    R.Heartbeat:Wait()
   end)
   if execSuccess then
@@ -2702,6 +2726,11 @@ prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return en
    local largs=trim(rest:sub(sp5+1))
    local loopable={toolkill=true,gearsync=true,bring=true,summon=true,givetool=true,give=true,swordkill=true,fling=true,bam=true,annoy=true,rizz=true,lead=true}
    if loopable[lcmd] then XcLoopStart(lcmd,largs) return end
+   sendChat("cant loop that command") return
+  else
+   local lcmd=trim(rest):lower()
+   local loopable={toolkill=true,gearsync=true,bring=true,summon=true,givetool=true,give=true,swordkill=true,fling=true,bam=true,annoy=true,rizz=true,lead=true}
+   if loopable[lcmd] then sendChat("usage: loop "..lcmd.." <player>") return end
   end
  end
  do
@@ -2732,7 +2761,7 @@ ClipsDescendants=true contentArea.Parent=frame function newPage()local p=Instanc
 pfxBox.BorderSizePixel=0 pfxBox.Font=Enum.Font.GothamBold pfxBox.Text=commandPrefix pfxBox.TextColor3=C.text pfxBox.TextSize=13 pfxBox.ClearTextOnFocus=false pfxBox.Parent=logsPage corner(pfxBox,6)stroke(pfxBox,C.border,1,0.2)local pfxHint=Instance.new("TextLabel")pfxHint.Size=UDim2.new(1,-50,0,26)pfxHint.Position=UDim2.new(0,50,0,18)pfxHint.BackgroundTransparency=1 pfxHint.Font=Enum.Font.Gotham pfxHint.Text="type: "..commandPrefix.."cmds"pfxHint.TextColor3=C.subText pfxHint.TextSize=9 pfxHint.TextXAlignment=Enum.TextXAlignment.Left pfxHint.TextYAlignment=Enum.TextYAlignment.Center pfxHint.Parent=logsPage local logBox=Instance.new("Frame")logBox.Size=UDim2.new(1,0,1,-56)logBox.Position=UDim2.new(0,0,0,52)logBox.BackgroundColor3=C.track logBox.BorderSizePixel=0 logBox.ClipsDescendants=true logBox.Parent=logsPage corner(logBox,8)stroke(logBox,C.border,1,0.3)local logEmpty=Instance.new(
 "TextLabel")logEmpty.Size=UDim2.new(1,-16,1,-12)logEmpty.Position=UDim2.new(0,8,0,6)logEmpty.BackgroundTransparency=1 logEmpty.Font=Enum.Font.Gotham logEmpty.Text="no messages yet"logEmpty.TextColor3=C.subText logEmpty.TextSize=10 logEmpty.TextXAlignment=Enum.TextXAlignment.Left logEmpty.TextYAlignment=Enum.TextYAlignment.Top logEmpty.Parent=logBox local logHolder=Instance.new("ScrollingFrame")logHolder.Size=UDim2.new(1,-8,1,-6)logHolder.Position=UDim2.new(0,4,0,3)logHolder.BackgroundTransparency=1 logHolder.BorderSizePixel=0 logHolder.CanvasSize=UDim2.new(0,0,0,0)logHolder.AutomaticCanvasSize=Enum.AutomaticSize.Y logHolder.ScrollBarThickness=4 logHolder.ScrollBarImageColor3=C.border logHolder.ScrollingDirection=Enum.ScrollingDirection.Y logHolder.Parent=logBox local lbl=Instance.new("UIListLayout")lbl.SortOrder=Enum.SortOrder.LayoutOrder lbl.Padding=UDim.new(0,2)lbl.Parent=logHolder
 hostLogRef={holder=logHolder,empty=logEmpty}botLogRef=hostLogRef flushBotLogBuffer()pfxBox.FocusLost:Connect(function()local np=trim(pfxBox.Text)if np==""then np="!"else np=np:sub(1,1)end commandPrefix=np pfxBox.Text=commandPrefix pfxHint.Text="type: "..commandPrefix.."cmds"end)local cmdsPage=newPage()local cmdsPad=Instance.new("UIPadding")cmdsPad.PaddingTop=UDim.new(0,10)cmdsPad.PaddingLeft=UDim.new(0,10)cmdsPad.PaddingRight=UDim.new(0,10)cmdsPad.PaddingBottom=UDim.new(0,10)cmdsPad.Parent=cmdsPage local cmdsBox=Instance.new("Frame")cmdsBox.Size=UDim2.new(1,0,1,0)cmdsBox.BackgroundColor3=C.track cmdsBox.BorderSizePixel=0 cmdsBox.ClipsDescendants=true cmdsBox.Parent=cmdsPage corner(cmdsBox,8)stroke(cmdsBox,C.border,1,0.3)local cmdScroll=Instance.new("ScrollingFrame")cmdScroll.Size=UDim2.new(1,-8,1,-6)cmdScroll.Position=UDim2.new(0,4,0,3)cmdScroll.BackgroundTransparency=1 cmdScroll.
-BorderSizePixel=0 cmdScroll.CanvasSize=UDim2.new(0,0,0,0)cmdScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y cmdScroll.ScrollBarThickness=4 cmdScroll.ScrollBarImageColor3=C.border cmdScroll.Parent=cmdsBox local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enum.SortOrder.LayoutOrder cml.Parent=cmdScroll local CMDS={{"── AGENT ──",true},{"!ask <message> - converse",false},{"!ask <task> - multi-step, Xcode fills gaps",false},{"!ask what is this? / who is this?",false},{"!ask make a command called <name> ...",false},{"!customs | !delcmd <name>",false},{"!gameinfo | !similar | !info <player>",false},{"── POSITION ──",true},{"!voidfollow | !stop voidfollow",false},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!hide | !spawn",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"── COMBAT ──",true},{"!bam <player> | !unbam",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!toolkill <player> | !untoolkill",false},{"!givetool <player> <tool>",false},{"!bring <player>",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"── UTILITY ──",true},{"!speed <n|faster|slower|reset>",false},{"!freeze | !unfreeze | !escort",false},{"!afk | !unafk | !status",false},{"!math <expr> | !countdown <n> | !timer <s>",false},{"!say <text>",false},{"── HOST ──",true},{"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}for i,e in ipairs(CMDS)do local l=Instance.new("TextLabel")l.Size=UDim2.new(1,0,0,e[2]and 18 or 14)l.BackgroundTransparency=1 l.Font=e[2]and Enum.Font.GothamBold or Enum.Font.Code l.Text=e[1]l.TextColor3=e[2]and C.accent or C.text l.TextSize=10 l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=i l.Parent=cmdScroll end local apiPage=newPage()apiPage.Name="ApiKeysPage"local apiPad=Instance.new("UIPadding")apiPad.PaddingTop=UDim.new(0,14)apiPad.PaddingLeft=UDim.new(0,14)apiPad.PaddingRight=UDim.new(0,14)apiPad.PaddingBottom=UDim.new(0,10)apiPad.Parent=apiPage local apiTitle=Instance.new("TextLabel")apiTitle.Size=UDim2.new(1,0,0,18)apiTitle.Position=UDim2.new(0,0,0,0)apiTitle.BackgroundTransparency=1 apiTitle.Font=Enum.Font.GothamBold apiTitle.Text="API KEYS"
+BorderSizePixel=0 cmdScroll.CanvasSize=UDim2.new(0,0,0,0)cmdScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y cmdScroll.ScrollBarThickness=4 cmdScroll.ScrollBarImageColor3=C.border cmdScroll.Parent=cmdsBox local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enum.SortOrder.LayoutOrder cml.Parent=cmdScroll local CMDS={{"── AGENT ──",true},{"!ask <message> - converse",false},{"!ask <task> - multi-step, Xcode fills gaps",false},{"!ask what is this? / who is this?",false},{"!ask make a command called <name> ...",false},{"!customs | !delcmd <name>",false},{"!gameinfo | !similar | !info <player>",false},{"── POSITION ──",true},{"!voidfollow | !stop voidfollow",false},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!hide | !spawn",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"── COMBAT ──",true},{"!bam <player> | !unbam",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!toolkill <player> | !untoolkill",false},{"!loop <cmd> <player> | !unloop",false},{"!givetool <player> <tool>",false},{"!bring <player>",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"── UTILITY ──",true},{"!speed <n|faster|slower|reset>",false},{"!freeze | !unfreeze | !escort",false},{"!afk | !unafk | !status",false},{"!math <expr> | !countdown <n> | !timer <s>",false},{"!say <text>",false},{"── HOST ──",true},{"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}for i,e in ipairs(CMDS)do local l=Instance.new("TextLabel")l.Size=UDim2.new(1,0,0,e[2]and 18 or 14)l.BackgroundTransparency=1 l.Font=e[2]and Enum.Font.GothamBold or Enum.Font.Code l.Text=e[1]l.TextColor3=e[2]and C.accent or C.text l.TextSize=10 l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=i l.Parent=cmdScroll end local apiPage=newPage()apiPage.Name="ApiKeysPage"local apiPad=Instance.new("UIPadding")apiPad.PaddingTop=UDim.new(0,14)apiPad.PaddingLeft=UDim.new(0,14)apiPad.PaddingRight=UDim.new(0,14)apiPad.PaddingBottom=UDim.new(0,10)apiPad.Parent=apiPage local apiTitle=Instance.new("TextLabel")apiTitle.Size=UDim2.new(1,0,0,18)apiTitle.Position=UDim2.new(0,0,0,0)apiTitle.BackgroundTransparency=1 apiTitle.Font=Enum.Font.GothamBold apiTitle.Text="API KEYS"
 apiTitle.TextColor3=C.text apiTitle.TextSize=13 apiTitle.TextXAlignment=Enum.TextXAlignment.Left apiTitle.Parent=apiPage local apiSub=Instance.new("TextLabel")apiSub.Size=UDim2.new(1,0,0,16)apiSub.Position=UDim2.new(0,0,0,20)apiSub.BackgroundTransparency=1 apiSub.Font=Enum.Font.Gotham apiSub.Text="click any key below to copy it"apiSub.TextColor3=C.subText apiSub.TextSize=9 apiSub.TextXAlignment=Enum.TextXAlignment.Left apiSub.Parent=apiPage local apiBody=Instance.new("ScrollingFrame")apiBody.Name="ApiKeysBody"apiBody.Size=UDim2.new(1,0,1,-38)apiBody.Position=UDim2.new(0,0,0,38)apiBody.BackgroundTransparency=1 apiBody.BorderSizePixel=0 apiBody.ScrollBarThickness=3 apiBody.ScrollBarImageColor3=C.subText apiBody.CanvasSize=UDim2.new(0,0,0,372)apiBody.ScrollingDirection=Enum.ScrollingDirection.Y apiBody.Parent=apiPage function copyToClipboard(txt)if type(setclipboard)=="function"then pcall(
 setclipboard,txt)return true end if type(toclipboard)=="function"then pcall(toclipboard,txt)return true end if syn and type(syn.write_clipboard)=="function"then pcall(syn.write_clipboard,txt)return true end if type(writeclipboard)=="function"then pcall(writeclipboard,txt)return true end return false end local function mkKeyRow(y,label,getKey)local ll=Instance.new("TextLabel")ll.Size=UDim2.new(1,0,0,12)ll.Position=UDim2.new(0,0,0,y)ll.BackgroundTransparency=1 ll.Font=Enum.Font.GothamBold ll.Text=label ll.TextColor3=C.text ll.TextSize=9 ll.TextXAlignment=Enum.TextXAlignment.Left ll.Parent=apiBody local btn=Instance.new("TextButton")btn.Size=UDim2.new(1,0,0,26)btn.Position=UDim2.new(0,0,0,y+14)btn.BackgroundColor3=C.track btn.BorderSizePixel=0 btn.Font=Enum.Font.Code btn.Text=getKey()or"(not set)"btn.TextColor3=C.text btn.TextSize=9 btn.TextXAlignment=Enum.TextXAlignment.Left btn.
 TextTruncate=Enum.TextTruncate.AtEnd btn.AutoButtonColor=false btn.Parent=apiBody corner(btn,6)stroke(btn,C.border,1,0.3)local pdd=Instance.new("UIPadding")pdd.PaddingLeft=UDim.new(0,10)pdd.PaddingRight=UDim.new(0,10)pdd.Parent=btn local fb=Instance.new("TextLabel")fb.Size=UDim2.new(1,0,0,10)fb.Position=UDim2.new(0,0,0,y+42)fb.BackgroundTransparency=1 fb.Font=Enum.Font.Gotham fb.Text=""fb.TextColor3=C.green fb.TextSize=8 fb.TextXAlignment=Enum.TextXAlignment.Left fb.Parent=apiBody btn.MouseEnter:Connect(function()tw(btn,0.15,{BackgroundColor3=C.buttonHover})end)btn.MouseLeave:Connect(function()tw(btn,0.15,{BackgroundColor3=C.track})end)btn.Activated:Connect(function()local k=getKey()if not k or k==""then fb.Text="no key set";fb.TextColor3=C.red;return end if copyToClipboard(k)then fb.Text="copied!"fb.TextColor3=C.green else fb.Text="clipboard unsupported"fb.TextColor3=C.red end task.
