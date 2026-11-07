@@ -2159,71 +2159,180 @@ end
 -- ===================== end v5 speed layer =====================
 S.gearSyncOnce=nil S.gearSyncConn=nil
 
-XC_LOOP={active=false,cmd=nil,args=nil,thread=nil,target=nil}
+XC_LOOP={active=false,cmd=nil,args=nil,thread=nil,target=nil,failCount=0}
 function XcLoopStop(silent)
  if XC_LOOP.thread then pcall(task.cancel,XC_LOOP.thread)XC_LOOP.thread=nil end
- XC_LOOP.active=false XC_LOOP.cmd=nil XC_LOOP.args=nil XC_LOOP.target=nil
+ XC_LOOP.active=false XC_LOOP.cmd=nil XC_LOOP.args=nil XC_LOOP.target=nil XC_LOOP.failCount=0
  if not silent then sendChat(pick({"loop stopped","loop off","done looping","stopped"})) end
+end
+-- wait for a player to respawn after death, up to maxWait seconds
+function XcLoopWaitRespawn(t,maxWait)
+ if not t then return false end
+ maxWait=maxWait or 20
+ local respawned=false
+ local conn
+ local ok=pcall(function()
+  conn=t.CharacterAdded:Connect(function() respawned=true end)
+ end)
+ local t0=os.clock()
+ while not respawned and os.clock()-t0<maxWait and XC_LOOP.active do
+  task.wait(0.2)
+  -- also check if character came back via polling (some games use fast-respawn)
+  if t.Character then
+   local h2=t.Character:FindFirstChildOfClass("Humanoid")
+   if h2 and h2.Health>0 then respawned=true end
+  end
+ end
+ if conn then pcall(function()conn:Disconnect()end) end
+ return respawned and XC_LOOP.active
 end
 function XcLoopStart(cmd,args)
  if ROLE~="BOT" then return end
  if XC_LOOP.active then XcLoopStop(true) end
- XC_LOOP.active=true XC_LOOP.cmd=cmd XC_LOOP.args=args
+ XC_LOOP.active=true XC_LOOP.cmd=cmd XC_LOOP.args=args XC_LOOP.failCount=0
  local label=cmd.." "..(args or"")
  sendChat(pick({"looping "..label,"loop on: "..label,"repeating "..label}))
  XC_LOOP.thread=task.spawn(function()
-  local delayMap={toolkill=2.5,gearsync=2.5,bring=2.0,givetool=2.0,give=2.0,swordkill=3.0,fling=3.0,bam=2.5,annoy=1.5,rizz=5.0,lead=2.0}
-  local dly=delayMap[cmd] or 2.0
   while XC_LOOP.active and ROLE=="BOT" do
-   task.wait(dly)
-   if not XC_LOOP.active then break end
    if antiBan.detected then break end
    local ok,err=pcall(function()
     if cmd=="toolkill" or cmd=="gearsync" then
-     XcGearSync(args)
+     -- smart toolkill loop: detect if target is dead → wait respawn → retry
+     local tgt=resolveTarget(args)
+     if tgt and tgt~="NORANDOM" then
+      local tChar=tgt.Character
+      local tHum=tChar and tChar:FindFirstChildOfClass("Humanoid")
+      if tHum and tHum.Health<=0 then
+       -- already dead, wait for respawn
+       local alive=XcLoopWaitRespawn(tgt,20)
+       if not alive then return end
+       task.wait(0.6) -- let character fully load
+      end
+      -- target alive, execute toolkill
+      local success=XcGearSync(args)
+      if not success then
+       XC_LOOP.failCount=XC_LOOP.failCount+1
+       if XC_LOOP.failCount>=3 then
+        XC_LOOP.failCount=0
+        task.wait(1.5) -- back off on repeated failures
+       else
+        task.wait(0.8)
+       end
+      else
+       XC_LOOP.failCount=0
+       -- wait for target to die before looping again
+       local watchT=os.clock()
+       while XC_LOOP.active and os.clock()-watchT<12 do
+        local c2=tgt.Character
+        local h2=c2 and c2:FindFirstChildOfClass("Humanoid")
+        if not h2 or h2.Health<=0 then break end
+        task.wait(0.3)
+       end
+       if XC_LOOP.active then
+        local alive=XcLoopWaitRespawn(tgt,20)
+        if alive then task.wait(0.6) end
+       end
+      end
+     else
+      -- target not found or no random, wait and retry
+      task.wait(2.0)
+     end
     elseif cmd=="bring" or cmd=="summon" then
+     -- bring loop: bring, brief pause, bring again (target will walk away)
      XcBring(args)
+     task.wait(2.5)
     elseif cmd=="givetool" or cmd=="give" then
+     -- give loop: strip item from target first so re-give always works
      local sp3=args and args:find("%s")
-     if sp3 then XcGiveTool(trim(args:sub(1,sp3-1)),trim(args:sub(sp3+1))) end
+     if sp3 then
+      local pn=trim(args:sub(1,sp3-1))
+      local tn=trim(args:sub(sp3+1))
+      -- remove matching tool from target so transfer doesn't block
+      local tgt2=resolveTarget(pn)
+      if tgt2 and tgt2~="NORANDOM" and tgt2.Character then
+       for _,item in ipairs(tgt2.Character:GetChildren()) do
+        if item:IsA("Tool") and item.Name:lower():find(tn:lower(),1,true) then
+         pcall(function()
+          local bpTgt=tgt2:FindFirstChildOfClass("Backpack") or tgt2:WaitForChild("Backpack",2)
+          if bpTgt then item.Parent=bpTgt else item:Destroy() end
+         end)
+         task.wait(0.15)
+         break
+        end
+       end
+      end
+      XcGiveTool(pn,tn)
+      task.wait(2.5)
+     else
+      task.wait(2.0)
+     end
     elseif cmd=="swordkill" then
      startSwordKill(args)
+     task.wait(3.0)
     elseif cmd=="fling" then
      startFling(args)
+     task.wait(3.0)
     elseif cmd=="bam" then
      startBam(args)
+     task.wait(2.5)
     elseif cmd=="annoy" then
      startAnnoy(args)
+     task.wait(1.5)
     elseif cmd=="rizz" then
      startRizz(args)
+     task.wait(5.0)
     elseif cmd=="lead" then
      startLead(args)
+     task.wait(2.0)
+    else
+     task.wait(2.0)
     end
    end)
-   if not ok then task.wait(1) end
+   if not ok then
+    XC_LOOP.failCount=(XC_LOOP.failCount or 0)+1
+    task.wait(math.min(XC_LOOP.failCount*0.5,3))
+   end
   end
  end)
 end
 function XcLoopTick(target)
- -- called by transfer engine on success — auto-stop loop for one-shot commands
- if not XC_LOOP.active then return end
- if XC_LOOP.cmd=="toolkill" or XC_LOOP.cmd=="gearsync" or XC_LOOP.cmd=="bring" or XC_LOOP.cmd=="givetool" or XC_LOOP.cmd=="give" then
-  task.delay(1.5,function() if XC_LOOP.active then XcLoopStop(true) sendChat(pick({"loop done","target handled","finished"})) end end)
- end
+ -- for bring/give: don't auto-stop — these are persistent loops
+ -- this hook is kept for compatibility but no longer stops the loop
 end
 
 
 function XcGetAimPart(tChar)
- -- tall players: HRP is at their feet, tool handle needs to reach their torso/head
+ -- tall/scaled players: pick the body part closest to vertical centre of mass
  if not tChar then return nil end
  local head=tChar:FindFirstChild("Head")
  local hrp2=tChar:FindFirstChild("HumanoidRootPart")
- local torso=tChar:FindFirstChild("UpperTorso")or tChar:FindFirstChild("Torso")
+ local upperTorso=tChar:FindFirstChild("UpperTorso")
+ local torso=tChar:FindFirstChild("Torso")
+ local lowerTorso=tChar:FindFirstChild("LowerTorso")
+ -- for very tall avatars aim at the centre mass (UpperTorso or head)
  if head and hrp2 then
   local hScale=(head.Position-hrp2.Position).Magnitude
-  if hScale>7 then return head end -- tall avatar, aim at head
+  if hScale>10 then return head end
+  if hScale>5 then return upperTorso or torso or head end
  end
- return torso or hrp2 or head
+ return upperTorso or torso or hrp2 or head
+end
+-- returns ALL touchable parts of a character, sorted by size (biggest first = best hit surface)
+function XcGetAllAimParts(tChar)
+ if not tChar then return {} end
+ local parts={}
+ for _,p in ipairs(tChar:GetDescendants()) do
+  if p:IsA("BasePart") and p.Name~="HumanoidRootPart" then
+   parts[#parts+1]={part=p,vol=p.Size.X*p.Size.Y*p.Size.Z}
+  end
+ end
+ -- also include HRP as last-resort
+ local hrp2=tChar:FindFirstChild("HumanoidRootPart")
+ if hrp2 then parts[#parts+1]={part=hrp2,vol=0} end
+ table.sort(parts,function(a,b) return a.vol>b.vol end)
+ local out={}
+ for _,e in ipairs(parts) do out[#out+1]=e.part end
+ return out
 end
 function XcWaitChar(t)
  -- wait for character to fully load with all parts
@@ -2245,50 +2354,53 @@ function XcWaitChar(t)
  return c,hrp2,h
 end
 function XcDoTransfer(tool,toolPart,tChar,aimPart,maxTries)
- -- the real engine: teleport tool to target, touch, verify, retry
+ -- improved engine: hits every body part, re-equips if dropped, works on tall avatars
  if not tool or not toolPart or not tChar or not aimPart then return false,"bad args" end
- local ping=pl:GetNetworkPing()
- local tries=maxTries or 3
- for attempt=1,tries do
-  -- make sure tool is equipped and visible
-  local Character=pl.Character
-  if not Character then return false,"no char" end
-  if tool.Parent~=Character then
-   pcall(function()Character.Humanoid:EquipTool(tool)end)
-   task.wait(0.1)
-  end
-  if tool.Parent~=Character then return false,"cant equip" end
-  -- teleport tool handle directly into target's body
-  local okPivot=pcall(function()toolPart:PivotTo(aimPart.CFrame)end)
-  if not okPivot then return false,"pivot fail" end
-  task.wait(ping+0.05)
-  -- fire touch both ways
-  pcall(firetouchinterest,aimPart,toolPart,1)
+ local ping=math.clamp(pl:GetNetworkPing(),0.03,0.25)
+ local tries=maxTries or 6
+ -- get all touchable surfaces sorted by size (biggest = most reliable hit)
+ local allParts=XcGetAllAimParts(tChar)
+ if #allParts==0 then allParts={aimPart} end
+ -- ensure aimPart is first in the list
+ local sortedParts={aimPart}
+ for _,p in ipairs(allParts) do
+  if p~=aimPart then sortedParts[#sortedParts+1]=p end
+ end
+ local function reEquip()
+  local char=pl.Character
+  if not char then return false end
+  if tool.Parent==char then return true end
+  local hh=char:FindFirstChildOfClass("Humanoid")
+  if hh then pcall(function()hh:EquipTool(tool)end) task.wait(0.08) end
+  if tool.Parent==char then return true end
+  -- last resort: reparent directly
+  pcall(function()tool.Parent=char end)
   task.wait(0.05)
-  pcall(firetouchinterest,aimPart,toolPart,0)
-  task.wait(ping+0.05)
-  -- also try touching with target's HRP as fallback
-  local thrp=tChar:FindFirstChild("HumanoidRootPart")
-  if thrp and thrp~=aimPart then
-   pcall(function()toolPart:PivotTo(thrp.CFrame)end)
+  return tool.Parent==char
+ end
+ local function touchPart(tp)
+  if not tp or not tp.Parent then return end
+  pcall(function()toolPart:PivotTo(tp.CFrame)end)
+  task.wait(ping)
+  pcall(firetouchinterest,tp,toolPart,1)
+  task.wait(0.04)
+  pcall(firetouchinterest,tp,toolPart,0)
+ end
+ for attempt=1,tries do
+  if not reEquip() then return false,"cant equip" end
+  -- attempt every body part this round
+  local partsThisRound=math.min(attempt+1,#sortedParts)
+  for i=1,partsThisRound do
+   touchPart(sortedParts[i])
    task.wait(0.03)
-   pcall(firetouchinterest,thrp,toolPart,1)
-   task.wait(0.05)
-   pcall(firetouchinterest,thrp,toolPart,0)
-  end
-  -- verify transfer
-  task.wait(0.1)
-  if tool.Parent==tChar then return true end
-  -- retry: re-pivot and touch again
-  if attempt<tries then
-   task.wait(0.2)
-   pcall(function()toolPart:PivotTo(aimPart.CFrame)end)
-   task.wait(0.05)
-   pcall(firetouchinterest,aimPart,toolPart,1)
-   task.wait(0.05)
-   pcall(firetouchinterest,aimPart,toolPart,0)
-   task.wait(0.15)
    if tool.Parent==tChar then return true end
+  end
+  task.wait(ping+0.05)
+  if tool.Parent==tChar then return true end
+  -- re-equip before next attempt in case tool got displaced
+  if attempt<tries then
+   if not reEquip() then return false,"cant equip" end
+   task.wait(0.12)
   end
  end
  return false,"transfer timeout"
@@ -2346,9 +2458,18 @@ function XcGearSync(TargetName)
    pcall(function()W.FallenPartsDestroyHeight=-9e9 end)
    pcall(function()W.FallenPartsDestroyHeight=0/0 end)
    pcall(function()W.CurrentCamera.CameraSubject=TargetCharacter:FindFirstChild("Head") or targethrp end)
+   -- teleport bot close to target before transfer (improves reliability)
+   pcall(function()
+    local myHRP=Character:FindFirstChild("HumanoidRootPart")
+    if myHRP and targethrp then
+     myHRP.CFrame=targethrp.CFrame*CFrame.new(0,0,2.5)
+     myHRP.AssemblyLinearVelocity=Vector3.zero
+    end
+   end)
+   task.wait(0.05)
    -- tall player support: aim at head/torso for scaled avatars
    local aimPart=XcGetAimPart(TargetCharacter) or targethrp
-   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,4)
+   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,7)
    if not ok then error(err) end
    R.Heartbeat:Wait()
    local SyncPos=CFrame.new(0,-9e15,0)*CFrame.Angles(0,0,math.rad(180))
@@ -2436,9 +2557,17 @@ function XcGiveTool(TargetName,ToolName)
    pcall(function()Character.Humanoid:EquipTool(XcTool)end)
    task.wait(0.1)
    local hrpPart=Character:FindFirstChild("HumanoidRootPart") if not hrpPart then error("no hrp") end
+   -- teleport close to target for reliable touch
+   pcall(function()
+    if hrpPart and targethrp then
+     hrpPart.CFrame=targethrp.CFrame*CFrame.new(0,0,2.5)
+     hrpPart.AssemblyLinearVelocity=Vector3.zero
+    end
+   end)
+   task.wait(0.05)
    pcall(function()W.CurrentCamera.CameraSubject=TargetCharacter:FindFirstChild("Head") or targethrp end)
    local aimPart=XcGetAimPart(TargetCharacter) or targethrp
-   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,4)
+   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,7)
    if not ok then error(err) end
    R.Heartbeat:Wait()
   end)
@@ -2505,6 +2634,14 @@ function XcBring(TargetName,DestName)
    pcall(function()Char.Humanoid:EquipTool(XcTool)end)
    task.wait(0.1)
    local hrpPart=Char:FindFirstChild("HumanoidRootPart") if not hrpPart then error("no hrp") end
+   -- teleport bot RIGHT next to target for reliable touch
+   pcall(function()
+    if hrpPart and targethrp then
+     hrpPart.CFrame=targethrp.CFrame*CFrame.new(0,0,2.0)
+     hrpPart.AssemblyLinearVelocity=Vector3.zero
+    end
+   end)
+   task.wait(0.06)
    -- resolve destination
    local hostHRP=getHostHRP()
    local destHRP=nil
@@ -2515,16 +2652,27 @@ function XcBring(TargetName,DestName)
     if not destHRP then sendChat("destination has no body") S.mode="Follow" S.outgoingToolTransfer=false return false end
    end
    if not destHRP then destHRP=hostHRP end
-   local bringPos=destHRP and (destHRP.CFrame*CFrame.new(0,0,-5)) or hrpPart.CFrame
+   -- bring position: land 2 studs in front of host, at host's Y level
+   local bringPos
+   if destHRP then
+    local lv=destHRP.CFrame.LookVector
+    local flat=Vector3.new(lv.X,0,lv.Z)
+    if flat.Magnitude<0.01 then flat=Vector3.new(0,0,-1) else flat=flat.Unit end
+    bringPos=CFrame.new(destHRP.Position+flat*3+Vector3.new(0,0.5,0))
+   else
+    bringPos=hrpPart.CFrame
+   end
    pcall(function()W.CurrentCamera.CameraSubject=TargetCharacter:FindFirstChild("Head") or targethrp end)
-   -- teleport tool to bring position, then touch target to grab them
-   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,targethrp,4)
+   -- grab target with tool
+   local aimPart=XcGetAimPart(TargetCharacter) or targethrp
+   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,7)
    if not ok then error(err) end
-   -- after tool is on target, teleport the tool (with target attached) to bring position
-   task.wait(0.1)
-   pcall(function()XcToolnt:PivotTo(bringPos)end)
-   task.wait(0.2)
-   pcall(function()XcToolnt:PivotTo(bringPos)end)
+   -- teleport the tool (carrying target) to destination, three rapid pulses
+   task.wait(0.08)
+   for _=1,3 do
+    pcall(function()XcToolnt:PivotTo(bringPos)end)
+    task.wait(0.08)
+   end
    R.Heartbeat:Wait()
   end)
   if execSuccess then
@@ -2556,9 +2704,22 @@ prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return en
    if loopable[lcmd] then XcLoopStart(lcmd,largs) return end
   end
  end
- if lp=="stop" or lp=="unloop" or lp=="stop loop" or lp=="cancel" or lp=="enough" then
-  XcLoopStop()
-  return
+ do
+  local isStop=lp=="stop" or lp=="unloop" or lp=="stop loop" or lp=="cancel" or lp=="enough" or lp=="stop it" or lp=="end loop" or lp=="cancel loop" or lp=="halt" or lp=="no stop" or lp=="ok stop"
+  if not isStop then
+   for _,sw in ipairs({"stop loop","end the loop","cancel loop","stop the loop","stop looping","stop repeating","stop doing that","stop toolkill","stop bring","stop give","stop givetool","stop bringing","stop killing","stop giving"}) do
+    if lp:find(sw,1,true) then isStop=true break end
+   end
+  end
+  if isStop then
+   if XC_LOOP and XC_LOOP.active then XcLoopStop(true) end
+   if XcCommand and XcCommand.active then XcCommand.cancel() end
+   stopAllModes()
+   task.wait(0.05)
+   teleportToHost()
+   sendChat(pick(R_.stop))
+   return
+  end
  end
 end
 if XcVision and XcVision.try(prompt)then return end if XcFast and XcFast.try(prompt)then return end if XcCode and XcCode.route(prompt)then return end if XcCommand and XcCommand.route and XcCommand.route(prompt)then return end task.spawn(function()handleAIChat(prompt)end)return end if ROLE~="BOT"then return end if text:sub(1,#commandPrefix)~=commandPrefix then return end if isDuplicateMessage(uid,text)then return end local body=trim(text:sub(#commandPrefix+1))if body==""then return end local sp=body:find("%s")local cmd,args if sp then cmd=body:sub(1,sp-1):lower()args=trim(body:sub(sp+1))else cmd=body:lower()args=""end if cmd=="host"or cmd=="stophost"then if not isCreatorUser(uid)then task.spawn(function()sendChat(pick({"only my boss can do that","nah not for you","creator only","youre not the boss","denied"}))end)return end if cmd=="host"then local sp2=args:find("%s")if not sp2 then task.spawn(function()sendChat(
