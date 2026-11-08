@@ -322,10 +322,10 @@ h=hum()if h then h.Jump=true sendChat(pick(R_.jump))end elseif cmd=="hide"then d
  local loopable={toolkill=true,gearsync=true,bring=true,summon=true,givetool=true,give=true,swordkill=true,fling=true,bam=true,annoy=true,rizz=true,lead=true}
  if not loopable[lcmd] then sendChat("cant loop that command") return end
  XcLoopStart(lcmd,largs)
-elseif cmd=="unloop" then
+elseif cmd=="unloop" or cmd=="stoplop" or cmd=="stoploop" then
  XcLoopStop()
 elseif cmd=="gearsync"then XcGearSync(args)elseif cmd=="ungearsync"then XcGearUnsync()elseif cmd=="toolkill"then XcGearSync(args)elseif cmd=="untoolkill"then XcGearUnsync()elseif cmd=="givetool"or cmd=="give"then local sp3=args:find("%s")local pn3,tl3 if sp3 then pn3=trim(args:sub(1,sp3-1))tl3=trim(args:sub(sp3+1))else pn3=trim(args)tl3=GEAR_TOOL end XcGiveTool(pn3,tl3)elseif cmd=="bring"or cmd=="summon"then local spd_s,spd_e=args:lower():find("%s+to%s+")local tgt,dest if spd_s then tgt=trim(args:sub(1,spd_s-1))dest=trim(args:sub(spd_e+1))else tgt=trim(args)dest=nil end XcBring(tgt,dest)elseif cmd=="math"then handleMath(args)elseif cmd=="whoishost"then local hh=getHost()if S.lending then sendChat("host is "..(hh and hh.Name or"?").." (temp, "..math.max(0,math.floor(S.lendEnd-os.clock())).."s left)")else sendChat("host is "..(hh and hh.Name or"none"))end elseif cmd=="gender"then local sp2=args:find("%s")if not sp2 then sendChat("usage: !gender <player> <m/f/they>")return end local pname=
-trim(args:sub(1,sp2-1))local g=trim(args:sub(sp2+1)):lower()if g~="m"and g~="f"and g~="they"then sendChat("gender must be m, f, or they")return end local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))return end sendChat("noted for "..p.Name)elseif cmd=="genderclear"then local p=getPlayer(args)if not p then sendChat(pick(R_.notfound))return end sendChat("cleared for "..p.Name)elseif cmd=="cmds"then sendSeq({"Command reference.","!ask <message> - converse","!ask <task> - multi-step tasks, Xcode builds anything missing, say stop to abort","!ask what is this? / who is this? - describes what you are facing","!ask make a command called <name> that <does x> - creates a saved command","!customs | !delcmd <name>","!gameinfo | !similar | !info <player>","!voidfollow | !stop voidfollow","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!toolkill <player> | !untoolkill","!loop <cmd> <player> | !unloop","!givetool <player> <tool>","!bring <player>","!antifling | !unantifling | !antitoolkill | !unantitoolkill","!speed <n|faster|slower|reset> | !freeze | !unfreeze","!escort | !afk | !unafk | !status","!math <expr> | !countdown <n> | !timer <s> | !say <text>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only) | !whoishost","!cmds"},0.9)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end XC_TITLES={"Sir","Director","Commander","Chief","Executive","Chairman","Supreme Commander","Grand Director","Chief Executive","Your Excellency","High Chancellor","Sovereign","Administrator","Principal"}
+trim(args:sub(1,sp2-1))local g=trim(args:sub(sp2+1)):lower()if g~="m"and g~="f"and g~="they"then sendChat("gender must be m, f, or they")return end local p=getPlayer(pname)if not p then sendChat(pick(R_.notfound))return end sendChat("noted for "..p.Name)elseif cmd=="genderclear"then local p=getPlayer(args)if not p then sendChat(pick(R_.notfound))return end sendChat("cleared for "..p.Name)elseif cmd=="cmds"then sendSeq({"Command reference.","!ask <message> - converse","!ask <task> - multi-step tasks, Xcode builds anything missing, say stop to abort","!ask what is this? / who is this? - describes what you are facing","!ask make a command called <name> that <does x> - creates a saved command","!customs | !delcmd <name>","!gameinfo | !similar | !info <player>","!voidfollow | !stop voidfollow","!stop | !recall | !follow","!backoff <n> | !getcloser <n>","!lead <player> | !unlead","!sit | !stand | !jump","!hide | !spawn","!bam <player> | !unbam","!fling <player> | !unfling","!swordkill <player> | !unswordkill","!toolkill <player> | !untoolkill","!loop <cmd> <player> | !unloop | !stoplop","!givetool <player> <tool>","!bring <player>","!antifling | !unantifling | !antitoolkill | !unantitoolkill","!speed <n|faster|slower|reset> | !freeze | !unfreeze","!escort | !afk | !unafk | !status","!math <expr> | !countdown <n> | !timer <s> | !say <text>","!host <player> <seconds, max 500> (creator only)","!stophost (creator only) | !whoishost","!cmds"},0.9)else sendChat(pick({"unknown cmd bro","dont know that one","try !cmds"}))end end XC_TITLES={"Sir","Director","Commander","Chief","Executive","Chairman","Supreme Commander","Grand Director","Chief Executive","Your Excellency","High Chancellor","Sovereign","Administrator","Principal"}
 XC_LASTT=0
 XC_RAW=false
 function XcTitle()
@@ -2230,7 +2230,11 @@ function XcLoopStart(cmd,args)
        end
        if XC_LOOP.active then
         local alive=XcLoopWaitRespawn(tgt,20)
-        if alive then task.wait(0.6) end
+        if alive then
+         -- clear stale prediction history so first attempt on respawn isn't off
+         pcall(function() XcV2.predict.reset(XcV2.predict.key(tgt.Character or tgt)) end)
+         task.wait(0.6)
+        end
        end
       end
      else
@@ -2308,14 +2312,11 @@ end
 
 
 function XcGetAimPart(tChar)
- -- tall/scaled players: pick the body part closest to vertical centre of mass
  if not tChar then return nil end
  local head=tChar:FindFirstChild("Head")
  local hrp2=tChar:FindFirstChild("HumanoidRootPart")
  local upperTorso=tChar:FindFirstChild("UpperTorso")
  local torso=tChar:FindFirstChild("Torso")
- local lowerTorso=tChar:FindFirstChild("LowerTorso")
- -- for very tall avatars aim at the centre mass (UpperTorso or head)
  if head and hrp2 then
   local hScale=(head.Position-hrp2.Position).Magnitude
   if hScale>10 then return head end
@@ -2323,16 +2324,15 @@ function XcGetAimPart(tChar)
  end
  return upperTorso or torso or hrp2 or head
 end
--- returns ALL touchable parts of a character, sorted by size (biggest first = best hit surface)
 function XcGetAllAimParts(tChar)
  if not tChar then return {} end
  local parts={}
  for _,p in ipairs(tChar:GetDescendants()) do
-  if p:IsA("BasePart") and p.Name~="HumanoidRootPart" then
+  if p:IsA("BasePart") and p.Name~="HumanoidRootPart"
+   and p.CanCollide~=false and p.Transparency<0.95 then
    parts[#parts+1]={part=p,vol=p.Size.X*p.Size.Y*p.Size.Z}
   end
  end
- -- also include HRP as last-resort
  local hrp2=tChar:FindFirstChild("HumanoidRootPart")
  if hrp2 then parts[#parts+1]={part=hrp2,vol=0} end
  table.sort(parts,function(a,b) return a.vol>b.vol end)
@@ -2341,7 +2341,6 @@ function XcGetAllAimParts(tChar)
  return out
 end
 function XcWaitChar(t)
- -- wait for character to fully load with all parts
  if not t then return nil end
  local c=t.Character
  if not c then
@@ -2357,68 +2356,315 @@ function XcWaitChar(t)
   h=c:FindFirstChildOfClass("Humanoid")
  end
  if not hrp2 or not h then return nil end
+ -- ensure humanoid and hrp are fully loaded
+ pcall(function() c:WaitForChild("Humanoid",2) end)
+ task.wait(0.08)
  return c,hrp2,h
 end
-function XcDoTransfer(tool,toolPart,tChar,aimPart,maxTries)
- -- improved engine: hits every body part, re-equips if dropped, works on tall avatars
- if not tool or not toolPart or not tChar or not aimPart then return false,"bad args" end
- local ping=math.clamp(pl:GetNetworkPing(),0.03,0.25)
- local tries=maxTries or 6
- -- get all touchable surfaces sorted by size (biggest = most reliable hit)
- local allParts=XcGetAllAimParts(tChar)
- if #allParts==0 then allParts={aimPart} end
- -- ensure aimPart is first in the list
- local sortedParts={aimPart}
- for _,p in ipairs(allParts) do
-  if p~=aimPart then sortedParts[#sortedParts+1]=p end
- end
- local function reEquip()
-  local char=pl.Character
-  if not char then return false end
-  if tool.Parent==char then return true end
-  local hh=char:FindFirstChildOfClass("Humanoid")
-  if hh then pcall(function()hh:EquipTool(tool)end) task.wait(0.08) end
-  if tool.Parent==char then return true end
-  -- last resort: reparent directly
-  pcall(function()tool.Parent=char end)
-  task.wait(0.05)
-  return tool.Parent==char
- end
- local function touchPart(tp)
-  if not tp or not tp.Parent then return end
-  pcall(function()toolPart:PivotTo(tp.CFrame)end)
-  task.wait(ping)
-  -- double-tap: fire touchend first to reset any debounce, then touchstart
-  pcall(firetouchinterest,tp,toolPart,0)
-  task.wait(0.02)
-  pcall(firetouchinterest,tp,toolPart,1)
-  task.wait(0.03)
-  pcall(firetouchinterest,tp,toolPart,0)
- end
- for attempt=1,tries do
-  if not reEquip() then return false,"cant equip" end
-  -- attempt every body part this round
-  local partsThisRound=math.min(attempt+1,#sortedParts)
-  for i=1,partsThisRound do
-   touchPart(sortedParts[i])
-   task.wait(0.03)
-   if tool.Parent==tChar then return true end
-  end
-  task.wait(ping+0.05)
-  if tool.Parent==tChar then return true end
-  -- re-equip before next attempt in case tool got displaced
-  if attempt<tries then
-   if not reEquip() then return false,"cant equip" end
-   task.wait(0.12)
-  end
- end
- -- last resort: direct reparent (bypasses fti, works on some executors/games)
- pcall(function()tool.Parent=tChar end)
- task.wait(0.1)
- if tool.Parent==tChar then return true end
- return false,"transfer timeout"
+
+-- ══════════════════════════════════════════════════════════
+-- XcV2 — 7-layer transfer engine + hitbox verifier + predictive aim
+-- (deepseek strength guide, fully integrated)
+-- ══════════════════════════════════════════════════════════
+XcV2={}
+
+-- Layer 1 — verified parent check (4 conditions)
+function XcV2.verified(tool,tChar)
+ if not tool or not tChar then return false end
+ if tool.Parent~=tChar then return false end
+ if tChar:FindFirstChild(tool.Name)~=tool then return false end
+ local handle=tool:FindFirstChild("Handle") or tool:FindFirstChildWhichIsA("BasePart")
+ if not handle or not handle:IsDescendantOf(tChar) then return false end
+ local hum=tChar:FindFirstChildOfClass("Humanoid")
+ if hum and hum.Health<=0 then return false end
+ return true
 end
 
+-- Layer 5 — sim-radius window (opens physics reach to math.huge)
+function XcV2.sim(on)
+ if type(setsimulationradius)=="function" then
+  pcall(setsimulationradius,on and math.huge or 1000)
+  pcall(setsimulationradius,on and math.huge or 1000,true)
+ end
+end
+
+-- Layer 2 — two-sided velocity slam
+function XcV2.slam(tp,toolPart)
+ pcall(function()
+  local mc=pl.Character
+  local mh=mc and mc:FindFirstChild("HumanoidRootPart")
+  if mh then
+   local v=tp.Position-mh.Position
+   if v.Magnitude>0.1 then mh.AssemblyLinearVelocity=v.Unit*130 end
+  end
+  local v2=toolPart.Position-tp.Position
+  if v2.Magnitude>0.1 then tp.AssemblyLinearVelocity=v2.Unit*45 end
+ end)
+end
+
+-- fti touch: 0→1→0→1 to clear debounce then fire
+function XcV2.touch(tp,toolPart,ping)
+ if not tp or not tp.Parent then return end
+ ping=ping or math.clamp(pl:GetNetworkPing(),0.03,0.25)
+ pcall(function() toolPart:PivotTo(tp.CFrame) end)
+ task.wait(ping*0.5)
+ pcall(firetouchinterest,tp,toolPart,0) task.wait(0.012)
+ pcall(firetouchinterest,tp,toolPart,1) task.wait(0.012)
+ pcall(firetouchinterest,tp,toolPart,0) task.wait(0.012)
+ pcall(firetouchinterest,tp,toolPart,1)
+end
+
+-- verified equip: hh:EquipTool → direct reparent fallback
+function XcV2.equip(tool,char)
+ if not tool or not char then return false end
+ if tool.Parent==char then return true end
+ local hh=char:FindFirstChildOfClass("Humanoid")
+ if hh then pcall(function() hh:EquipTool(tool) end) task.wait(0.08) end
+ if tool.Parent==char then return true end
+ pcall(function() tool.Parent=char end) task.wait(0.05)
+ return tool.Parent==char
+end
+
+-- retry backoff (caps at 2.5s)
+function XcV2.backoff(fails)
+ if fails<=1 then return 0.1 end
+ if fails==2 then return 0.3 end
+ if fails==3 then return 0.6 end
+ if fails==4 then return 1.2 end
+ return 2.5
+end
+
+-- Layer 7 — anti-strip re-application watch loop
+function XcV2.watchReapply(tool,tChar,window)
+ local t0=os.clock()
+ while os.clock()-t0<(window or 3.0) do
+  task.wait(0.15)
+  local hum2=tChar:FindFirstChildOfClass("Humanoid")
+  if hum2 and hum2.Health<=0 then break end
+  if not XcV2.verified(tool,tChar) then
+   pcall(function()
+    tool.Parent=tChar
+    local hh=tChar:FindFirstChildOfClass("Humanoid")
+    if hh then hh:EquipTool(tool) end
+   end) task.wait(0.05)
+  end
+ end
+end
+
+-- ── hitbox verifier ──
+XcV2.hitbox={}
+local XCV2_RAY=RaycastParams.new()
+XCV2_RAY.FilterType=Enum.RaycastFilterType.Exclude
+XCV2_RAY.IgnoreWater=true
+
+-- full verify: raycast + box probe
+function XcV2.hitbox.verify(tChar,tHrp,myChar,myHrp)
+ if not tChar or not tHrp then return false,"no target" end
+ if not myChar or not myHrp then return false,"no self" end
+ local hum=tChar:FindFirstChildOfClass("Humanoid")
+ if not hum then return false,"no humanoid" end
+ if hum.Health<=0 then return false,"target dead" end
+ local flat=tHrp.Position-myHrp.Position
+ flat=Vector3.new(flat.X,0,flat.Z)
+ if flat.Magnitude>950 then return false,"out of sim radius" end
+ if math.abs(tHrp.Position.Y-myHrp.Position.Y)>350 then return false,"Y delta" end
+ if tHrp.Position.Y<-100 then return false,"target in void" end
+ local cands={}
+ local head=tChar:FindFirstChild("Head")
+ local upper=tChar:FindFirstChild("UpperTorso")
+ local torso=tChar:FindFirstChild("Torso")
+ if head then cands[#cands+1]=head end
+ if upper then cands[#cands+1]=upper end
+ if torso then cands[#cands+1]=torso end
+ cands[#cands+1]=tHrp
+ XCV2_RAY.FilterDescendantsInstances={myChar}
+ local origin=myHrp.Position+Vector3.new(0,1.5,0)
+ for _,cand in ipairs(cands) do
+  if cand and cand.Parent and cand.Transparency<0.95 then
+   local dir=cand.Position-origin
+   local hit=W:Raycast(origin,dir,XCV2_RAY)
+   if not hit then return true,"clear",cand end
+   local hm=hit.Instance and hit.Instance:FindFirstAncestorOfClass("Model")
+   if hm==tChar then return true,"own body",cand end
+   if hm and P:GetPlayerFromCharacter(hm)==P:GetPlayerFromCharacter(tChar) then
+    return true,"accessory",cand
+   end
+  end
+ end
+ -- box probe: covers targets behind thin geometry / glass
+ local ok2,touching=pcall(function()
+  local mid=(tHrp.Position+myHrp.Position)/2
+  local ov=OverlapParams.new()
+  local pp=W:GetPartBoundsInBox(CFrame.new(mid),Vector3.new(4,6,4),ov)
+  for _,p in ipairs(pp) do
+   if p:IsDescendantOf(tChar) then return true end
+  end
+  return false
+ end)
+ if ok2 and touching then return true,"occluded",cands[1] end
+ return false,"no line of sight",nil
+end
+
+-- quick check (distance + alive only, no raycast — for watch loops)
+function XcV2.hitbox.quick(tChar,tHrp,myHrp)
+ if not tChar or not tHrp or not myHrp then return false end
+ local hum=tChar:FindFirstChildOfClass("Humanoid")
+ if not hum or hum.Health<=0 then return false end
+ local flat=tHrp.Position-myHrp.Position
+ flat=Vector3.new(flat.X,0,flat.Z)
+ if flat.Magnitude>950 then return false end
+ if tHrp.Position.Y<-100 then return false end
+ return true
+end
+
+-- ── predictive aim ──
+XcV2.predict={}
+local XCV2_VH={} -- velocity history
+local XCV2_AH={} -- acceleration history
+local XCV2_HIST=4
+
+function XcV2.predict.key(tChar)
+ local p=P:GetPlayerFromCharacter(tChar)
+ if p then return tostring(p.UserId) end
+ return tostring(tChar)
+end
+
+function XcV2.predict.reset(key)
+ XCV2_VH[key]=nil XCV2_AH[key]=nil
+end
+
+local function xcv2SV(key,cur,now)
+ local h=XCV2_VH[key] if not h then h={} XCV2_VH[key]=h end
+ if cur.Magnitude<400 then
+  h[#h+1]={v=cur,t=now}
+  while #h>XCV2_HIST do table.remove(h,1) end
+ end
+ local n=#h if n==0 then return cur end
+ local sum,ws=Vector3.zero,0
+ for i=1,n do sum=sum+h[i].v*i ws=ws+i end
+ return sum/ws
+end
+
+local function xcv2AC(key,sv,now)
+ local prev=XCV2_AH[key]
+ if not prev then XCV2_AH[key]={v=sv,t=now} return Vector3.zero end
+ local dt=now-prev.t
+ if dt<0.01 or dt>0.5 then XCV2_AH[key]={v=sv,t=now} return Vector3.zero end
+ local a=(sv-prev.v)/dt XCV2_AH[key]={v=sv,t=now}
+ if a.Magnitude>200 then a=a.Unit*200 end
+ return a
+end
+
+function XcV2.predict.pos(tChar,part,key)
+ if not part or not part.Parent then return nil end
+ local now=os.clock()
+ local ping=math.clamp(pl:GetNetworkPing(),0.03,0.25)
+ local window=(ping*2)+(1/60)
+ local rawV=part.AssemblyLinearVelocity
+ local sv=xcv2SV(key,rawV,now)
+ local accel=xcv2AC(key,sv,now)
+ local dis=0
+ if rawV.Magnitude>2 and sv.Magnitude>2 then
+  dis=1-math.clamp(rawV.Unit:Dot(sv.Unit),-1,1)
+ end
+ if dis>0.7 then window=window*0.35
+ elseif dis>0.35 then window=window*0.65 end
+ local pred=part.Position+sv*window+accel*(0.5*window*window)
+ local yd=pred.Y-part.Position.Y
+ if yd>20 then pred=Vector3.new(pred.X,part.Position.Y+20,pred.Z)
+ elseif yd<-30 then pred=Vector3.new(pred.X,part.Position.Y-30,pred.Z) end
+ return pred,window,dis
+end
+
+-- 3-frame velocity warmup before first transfer
+function XcV2.predict.warmup(tChar,part,key)
+ for _=1,3 do
+  XcV2.predict.pos(tChar,part,key)
+  task.wait(1/30)
+ end
+end
+
+-- ══════════════════════════════════════════════════════════
+-- XcDoTransfer — 7-layer engine (all deepseek layers, all merged)
+-- ══════════════════════════════════════════════════════════
+function XcDoTransfer(tool,toolPart,tChar,aimPart,maxTries)
+ if not tool or not toolPart or not tChar or not aimPart then return false,"bad args" end
+ local ping=math.clamp(pl:GetNetworkPing(),0.03,0.25)
+ local tries=maxTries or 10
+ -- build full-body sweep (biggest surface first, head-promoted on tall avatars)
+ local rawParts=XcGetAllAimParts(tChar)
+ if #rawParts==0 then rawParts={aimPart} end
+ local sortedParts={aimPart}
+ for _,p in ipairs(rawParts) do if p~=aimPart then sortedParts[#sortedParts+1]=p end end
+ -- prediction warmup
+ local pKey=XcV2.predict.key(tChar)
+ XcV2.predict.warmup(tChar,aimPart,pKey)
+ -- Layer 5: open sim radius
+ XcV2.sim(true)
+ local fails=0
+ for attempt=1,tries do
+  local myChar=pl.Character
+  local myHrp=myChar and myChar:FindFirstChild("HumanoidRootPart")
+  -- geometric gate: quick check before spending the attempt
+  if myHrp and not XcV2.hitbox.quick(tChar,aimPart,myHrp) then
+   fails=fails+1 task.wait(XcV2.backoff(fails)) continue
+  end
+  -- Layer 4 equip
+  if not XcV2.equip(tool,myChar) then XcV2.sim(false) return false,"cant equip" end
+  -- Layer 4 growing sweep: attempt N touches min(N+2,#parts) parts
+  local partsN=(attempt<=3) and math.min(attempt+2,#sortedParts) or #sortedParts
+  local landed=false
+  for i=1,partsN do
+   local tp=sortedParts[i]
+   if not tp or not tp.Parent then continue end
+   -- predictive aim: aim handle at where target WILL be
+   local pred=XcV2.predict.pos(tChar,aimPart,pKey)
+   if pred then
+    pcall(function() toolPart:PivotTo(CFrame.new(pred)) end)
+   else
+    pcall(function() toolPart:PivotTo(tp.CFrame) end)
+   end
+   task.wait(ping*0.5)
+   -- re-aim if target drifted >1.5 studs since we pivoted
+   local pred2=XcV2.predict.pos(tChar,aimPart,pKey)
+   if pred and pred2 and (pred2-pred).Magnitude>1.5 then
+    pcall(function() toolPart:PivotTo(CFrame.new(pred2)) end)
+   end
+   -- fti: 0→1→0→1 (clear debounce, then fire)
+   pcall(firetouchinterest,tp,toolPart,0) task.wait(0.012)
+   pcall(firetouchinterest,tp,toolPart,1) task.wait(0.012)
+   pcall(firetouchinterest,tp,toolPart,0) task.wait(0.012)
+   pcall(firetouchinterest,tp,toolPart,1)
+   -- Layer 2: two-sided velocity slam
+   XcV2.slam(tp,toolPart)
+   task.wait(0.025)
+   -- Layer 1: verified parent check
+   if XcV2.verified(tool,tChar) then
+    R.Heartbeat:Wait() R.Heartbeat:Wait() -- Layer 6: two-frame replication hold
+    if XcV2.verified(tool,tChar) then
+     XcV2.watchReapply(tool,tChar,3.0) -- Layer 7: anti-strip
+     XcV2.sim(false) XcV2.predict.reset(pKey)
+     return true
+    end
+   end
+  end
+  -- between-round direct reparent fallback
+  pcall(function() tool.Parent=tChar end)
+  task.wait(0.06)
+  if XcV2.verified(tool,tChar) then
+   R.Heartbeat:Wait() R.Heartbeat:Wait()
+   if XcV2.verified(tool,tChar) then
+    XcV2.watchReapply(tool,tChar,3.0)
+    XcV2.sim(false) XcV2.predict.reset(pKey)
+    return true
+   end
+  end
+  fails=fails+1
+  task.wait(math.max(ping+0.04,XcV2.backoff(fails)*0.4))
+ end
+ XcV2.sim(false)
+ return false,"transfer timeout"
+end
 function XcGearSync(TargetName)
  if ROLE~="BOT" or antiBan.detected then return false,"not bot" end
  if not TargetName or TargetName=="" then sendChat("usage: !toolkill <player>") return false,"no target" end
@@ -2468,27 +2714,44 @@ function XcGearSync(TargetName)
    task.wait(0.1)
    local hrpPart=Character:FindFirstChild("HumanoidRootPart") if not hrpPart then error("no hrp") end
    local originpos=targethrp:GetPivot()
-   pcall(function()W.FallenPartsDestroyHeight=-9e9 end)
-   pcall(function()W.FallenPartsDestroyHeight=0/0 end)
+   -- use -9e15 (not NaN — NaN resets some games to spawn immediately)
+   pcall(function()W.FallenPartsDestroyHeight=-9e15 end)
    pcall(function()W.CurrentCamera.CameraSubject=TargetCharacter:FindFirstChild("Head") or targethrp end)
-   -- teleport bot close to target before transfer (improves reliability)
+   -- teleport bot close to target
    pcall(function()
-    local myHRP=Character:FindFirstChild("HumanoidRootPart")
-    if myHRP and targethrp then
-     myHRP.CFrame=targethrp.CFrame*CFrame.new(0,0,2.5)
-     myHRP.AssemblyLinearVelocity=Vector3.zero
+    if hrpPart and targethrp then
+     hrpPart.CFrame=targethrp.CFrame*CFrame.new(0,0,2.5)
+     hrpPart.AssemblyLinearVelocity=Vector3.zero
     end
    end)
    task.wait(0.05)
-   -- tall player support: aim at head/torso for scaled avatars
+   -- hitbox verify before attempting
+   local myChar2=pl.Character
+   local myHrp2=myChar2 and myChar2:FindFirstChild("HumanoidRootPart")
+   if myHrp2 then
+    local okGeo,reason=XcV2.hitbox.verify(TargetCharacter,targethrp,myChar2,myHrp2)
+    if not okGeo then error("cant reach target: "..tostring(reason)) end
+   end
    local aimPart=XcGetAimPart(TargetCharacter) or targethrp
-   pcall(function()if setsimulationradius then setsimulationradius(math.huge) end end)
-   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,10)
-   pcall(function()if setsimulationradius then setsimulationradius(1000) end end)
+   -- XcDoTransfer handles sim-radius + all 7 layers internally
+   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,12)
    if not ok then error(err) end
-   R.Heartbeat:Wait()
+   -- two heartbeat hold before SyncPos teleport (let replication settle)
+   R.Heartbeat:Wait() R.Heartbeat:Wait()
+   -- verify tool is still on target after hold
+   if not XcV2.verified(XcTool,TargetCharacter) then
+    -- stripped in replication window — one re-apply attempt
+    pcall(function()
+     XcTool.Parent=TargetCharacter
+     local th=TargetCharacter:FindFirstChildOfClass("Humanoid")
+     if th then th:EquipTool(XcTool) end
+    end)
+    task.wait(0.08)
+   end
+   -- SyncPos teleport: double-tap with heartbeat between
    local SyncPos=CFrame.new(0,-9e15,0)*CFrame.Angles(0,0,math.rad(180))
    pcall(function()hrpPart:PivotTo(SyncPos)end)
+   R.Heartbeat:Wait()
    pcall(function()hrpPart:PivotTo(SyncPos)end)
    task.wait(1.3)
    pcall(function()W.FallenPartsDestroyHeight=-500 end)
@@ -2546,7 +2809,7 @@ function XcGiveTool(TargetName,ToolName)
  if getHost() and t==getHost() then sendChat("cant target host") return false end
  if type(firetouchinterest)~="function" then sendChat("executor missing firetouchinterest") return false end
  local TargetPlayer=t
- local TargetCharacter,targethrp=XcWaitChar(t)
+ local TargetCharacter,targethrp,targetHum=XcWaitChar(t)
  if not TargetCharacter or not targethrp then sendChat("target has no body") return false end
  local XcTool=findToolFuzzy(ToolName)
  if not XcTool then sendChat("dont have that tool") return false end
@@ -2572,7 +2835,6 @@ function XcGiveTool(TargetName,ToolName)
    pcall(function()Character.Humanoid:EquipTool(XcTool)end)
    task.wait(0.1)
    local hrpPart=Character:FindFirstChild("HumanoidRootPart") if not hrpPart then error("no hrp") end
-   -- teleport close to target for reliable touch
    pcall(function()
     if hrpPart and targethrp then
      hrpPart.CFrame=targethrp.CFrame*CFrame.new(0,0,2.5)
@@ -2582,9 +2844,30 @@ function XcGiveTool(TargetName,ToolName)
    task.wait(0.05)
    pcall(function()W.CurrentCamera.CameraSubject=TargetCharacter:FindFirstChild("Head") or targethrp end)
    local aimPart=XcGetAimPart(TargetCharacter) or targethrp
+   -- full 7-layer transfer
    local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,10)
    if not ok then error(err) end
-   R.Heartbeat:Wait()
+   -- 8-pulse verified pivot loop with health guard
+   local tHum=TargetCharacter:FindFirstChildOfClass("Humanoid")
+   for i=1,8 do
+    if tHum and tHum.Health<=0 then break end
+    pcall(function() XcToolnt:PivotTo(CFrame.new(targethrp.Position)) end)
+    task.wait(0.03)
+    if XcV2.verified(XcTool,TargetCharacter) then
+     task.wait(0.02)
+     pcall(function() XcToolnt:PivotTo(CFrame.new(targethrp.Position)) end)
+     break
+    end
+   end
+   R.Heartbeat:Wait() R.Heartbeat:Wait()
+   -- verify post-transfer
+   if not XcV2.verified(XcTool,TargetCharacter) then
+    pcall(function()
+     XcTool.Parent=TargetCharacter
+     if tHum then tHum:EquipTool(XcTool) end
+    end)
+    task.wait(0.08)
+   end
   end)
   if execSuccess then
    sendChat(pick({"gave it","done","handed over","here you go"}))
@@ -2649,7 +2932,6 @@ function XcBring(TargetName,DestName)
    pcall(function()Char.Humanoid:EquipTool(XcTool)end)
    task.wait(0.1)
    local hrpPart=Char:FindFirstChild("HumanoidRootPart") if not hrpPart then error("no hrp") end
-   -- teleport bot RIGHT next to target for reliable touch
    pcall(function()
     if hrpPart and targethrp then
      hrpPart.CFrame=targethrp.CFrame*CFrame.new(0,0,2.0)
@@ -2657,6 +2939,13 @@ function XcBring(TargetName,DestName)
     end
    end)
    task.wait(0.06)
+   -- hitbox verify before attempting
+   local myCharV=pl.Character
+   local myHrpV=myCharV and myCharV:FindFirstChild("HumanoidRootPart")
+   if myHrpV then
+    local okGeo,reason=XcV2.hitbox.verify(TargetCharacter,targethrp,myCharV,myHrpV)
+    if not okGeo then error("cant reach target: "..tostring(reason)) end
+   end
    -- resolve destination
    local hostHRP=getHostHRP()
    local destHRP=nil
@@ -2667,7 +2956,6 @@ function XcBring(TargetName,DestName)
     if not destHRP then sendChat("destination has no body") S.mode="Follow" S.outgoingToolTransfer=false return false end
    end
    if not destHRP then destHRP=hostHRP end
-   -- bring position: land 2 studs in front of host, at host's Y level
    local bringPos
    if destHRP then
     local lv=destHRP.CFrame.LookVector
@@ -2678,25 +2966,43 @@ function XcBring(TargetName,DestName)
     bringPos=hrpPart.CFrame
    end
    pcall(function()W.CurrentCamera.CameraSubject=TargetCharacter:FindFirstChild("Head") or targethrp end)
-   -- grab target with tool
    local aimPart=XcGetAimPart(TargetCharacter) or targethrp
+   -- grab: full 7-layer transfer
    local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,10)
    if not ok then error(err) end
-   -- teleport the tool to destination: 6 rapid pulses
-   task.wait(0.05)
-   for _=1,6 do
-    pcall(function()XcToolnt:PivotTo(bringPos)end)
-    task.wait(0.045)
+   -- verifier-driven pulse loop: 10 pulses, check flatDist after each
+   local function flatDist(a,b)
+    local d=a.Position-b.Position
+    return Vector3.new(d.X,0,d.Z).Magnitude
    end
-   -- attempt direct targethrp teleport (wins when touch briefly grants network ownership)
-   pcall(function()targethrp:PivotTo(bringPos)end)
    task.wait(0.04)
-   -- velocity launch toward destination as final push
-   pcall(function()
-    local dir=bringPos.Position-targethrp.Position
-    local d=dir.Magnitude
-    if d>1 then targethrp.AssemblyLinearVelocity=dir.Unit*math.clamp(d*9,40,200) end
-   end)
+   for pulse=1,10 do
+    pcall(function()
+     -- velocity slam + pivot
+     local flat2=bringPos.Position-targethrp.Position
+     flat2=Vector3.new(flat2.X,0,flat2.Z)
+     if flat2.Magnitude>0.5 then
+      targethrp.AssemblyLinearVelocity=flat2.Unit*220
+     end
+     XcToolnt:PivotTo(bringPos)
+     targethrp:PivotTo(bringPos) -- direct HRP set (wins when ownership held)
+    end)
+    task.wait(0.03)
+    if flatDist(targethrp,bringPos)<6 then break end
+   end
+   -- final hard-lock pivot
+   pcall(function() targethrp:PivotTo(bringPos) end)
+   task.wait(0.9) -- replication window
+   if flatDist(targethrp,bringPos)>18 then
+    -- target bounced back; second sweep
+    for _=1,5 do
+     pcall(function()
+      targethrp.AssemblyLinearVelocity=(bringPos.Position-targethrp.Position).Unit*220
+      XcToolnt:PivotTo(bringPos)
+     end)
+     task.wait(0.04)
+    end
+   end
    R.Heartbeat:Wait()
   end)
   if execSuccess then
@@ -2713,7 +3019,6 @@ function XcBring(TargetName,DestName)
  end)
  return true
 end
-
 
 function processMessage(uid,text)if not text or text==""then return end if uid~=pl.UserId and text:sub(1,1)~=commandPrefix then if XcDup and XcDup(uid,text)then return end local speaker=P:GetPlayerByUserId(uid)local speakerName=speaker and speaker.Name or"Unknown"table.insert(S.chatLog,speakerName..": "..text)if S.copyTarget and speaker and speaker==S.copyTarget and ROLE=="BOT"then local ct=text:sub(1,150)task.defer(function()sendChat(ct)end)end if#S.chatLog>15 then table.remove(S.chatLog,1)end end if ROLE~="BOT"and ROLE~="HOST"then return end if ROLE=="BOT"and uid~=pl.UserId and not isFromHost(uid)then handleStrangerMsg(uid,text)return end if not isFromHost(uid)then return end if XcCommand and XcCommand.hook and XcCommand.hook(text)then return end local lowText=text:lower()if lowText:sub(1,4)=="!ask"then local prompt=trim(text:sub(5))if
 prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return end if isDuplicateMessage(uid,text)then return end do
@@ -2734,9 +3039,9 @@ prompt==""then if ROLE=="BOT"then sendChat("usage: !ask <message>")end return en
   end
  end
  do
-  local isStop=lp=="stop" or lp=="unloop" or lp=="stop loop" or lp=="cancel" or lp=="enough" or lp=="stop it" or lp=="end loop" or lp=="cancel loop" or lp=="halt" or lp=="no stop" or lp=="ok stop"
+  local isStop=lp=="stop" or lp=="unloop" or lp=="stop loop" or lp=="cancel" or lp=="enough" or lp=="stop it" or lp=="end loop" or lp=="cancel loop" or lp=="halt" or lp=="no stop" or lp=="ok stop" or lp=="stoplop" or lp=="stop the loop" or lp=="end it" or lp=="ok stop it" or lp=="stop everything"
   if not isStop then
-   for _,sw in ipairs({"stop loop","end the loop","cancel loop","stop the loop","stop looping","stop repeating","stop doing that","stop toolkill","stop bring","stop give","stop givetool","stop bringing","stop killing","stop giving"}) do
+   for _,sw in ipairs({"stop loop","end the loop","cancel loop","stop the loop","stop looping","stop repeating","stop doing that","stop toolkill","stop bring","stop give","stop givetool","stop bringing","stop killing","stop giving","stop the bring","stop the kill","end the bring","end the kill","stop it all"}) do
     if lp:find(sw,1,true) then isStop=true break end
    end
   end
@@ -2761,7 +3066,7 @@ ClipsDescendants=true contentArea.Parent=frame function newPage()local p=Instanc
 pfxBox.BorderSizePixel=0 pfxBox.Font=Enum.Font.GothamBold pfxBox.Text=commandPrefix pfxBox.TextColor3=C.text pfxBox.TextSize=13 pfxBox.ClearTextOnFocus=false pfxBox.Parent=logsPage corner(pfxBox,6)stroke(pfxBox,C.border,1,0.2)local pfxHint=Instance.new("TextLabel")pfxHint.Size=UDim2.new(1,-50,0,26)pfxHint.Position=UDim2.new(0,50,0,18)pfxHint.BackgroundTransparency=1 pfxHint.Font=Enum.Font.Gotham pfxHint.Text="type: "..commandPrefix.."cmds"pfxHint.TextColor3=C.subText pfxHint.TextSize=9 pfxHint.TextXAlignment=Enum.TextXAlignment.Left pfxHint.TextYAlignment=Enum.TextYAlignment.Center pfxHint.Parent=logsPage local logBox=Instance.new("Frame")logBox.Size=UDim2.new(1,0,1,-56)logBox.Position=UDim2.new(0,0,0,52)logBox.BackgroundColor3=C.track logBox.BorderSizePixel=0 logBox.ClipsDescendants=true logBox.Parent=logsPage corner(logBox,8)stroke(logBox,C.border,1,0.3)local logEmpty=Instance.new(
 "TextLabel")logEmpty.Size=UDim2.new(1,-16,1,-12)logEmpty.Position=UDim2.new(0,8,0,6)logEmpty.BackgroundTransparency=1 logEmpty.Font=Enum.Font.Gotham logEmpty.Text="no messages yet"logEmpty.TextColor3=C.subText logEmpty.TextSize=10 logEmpty.TextXAlignment=Enum.TextXAlignment.Left logEmpty.TextYAlignment=Enum.TextYAlignment.Top logEmpty.Parent=logBox local logHolder=Instance.new("ScrollingFrame")logHolder.Size=UDim2.new(1,-8,1,-6)logHolder.Position=UDim2.new(0,4,0,3)logHolder.BackgroundTransparency=1 logHolder.BorderSizePixel=0 logHolder.CanvasSize=UDim2.new(0,0,0,0)logHolder.AutomaticCanvasSize=Enum.AutomaticSize.Y logHolder.ScrollBarThickness=4 logHolder.ScrollBarImageColor3=C.border logHolder.ScrollingDirection=Enum.ScrollingDirection.Y logHolder.Parent=logBox local lbl=Instance.new("UIListLayout")lbl.SortOrder=Enum.SortOrder.LayoutOrder lbl.Padding=UDim.new(0,2)lbl.Parent=logHolder
 hostLogRef={holder=logHolder,empty=logEmpty}botLogRef=hostLogRef flushBotLogBuffer()pfxBox.FocusLost:Connect(function()local np=trim(pfxBox.Text)if np==""then np="!"else np=np:sub(1,1)end commandPrefix=np pfxBox.Text=commandPrefix pfxHint.Text="type: "..commandPrefix.."cmds"end)local cmdsPage=newPage()local cmdsPad=Instance.new("UIPadding")cmdsPad.PaddingTop=UDim.new(0,10)cmdsPad.PaddingLeft=UDim.new(0,10)cmdsPad.PaddingRight=UDim.new(0,10)cmdsPad.PaddingBottom=UDim.new(0,10)cmdsPad.Parent=cmdsPage local cmdsBox=Instance.new("Frame")cmdsBox.Size=UDim2.new(1,0,1,0)cmdsBox.BackgroundColor3=C.track cmdsBox.BorderSizePixel=0 cmdsBox.ClipsDescendants=true cmdsBox.Parent=cmdsPage corner(cmdsBox,8)stroke(cmdsBox,C.border,1,0.3)local cmdScroll=Instance.new("ScrollingFrame")cmdScroll.Size=UDim2.new(1,-8,1,-6)cmdScroll.Position=UDim2.new(0,4,0,3)cmdScroll.BackgroundTransparency=1 cmdScroll.
-BorderSizePixel=0 cmdScroll.CanvasSize=UDim2.new(0,0,0,0)cmdScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y cmdScroll.ScrollBarThickness=4 cmdScroll.ScrollBarImageColor3=C.border cmdScroll.Parent=cmdsBox local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enum.SortOrder.LayoutOrder cml.Parent=cmdScroll local CMDS={{"── AGENT ──",true},{"!ask <message> - converse",false},{"!ask <task> - multi-step, Xcode fills gaps",false},{"!ask what is this? / who is this?",false},{"!ask make a command called <name> ...",false},{"!customs | !delcmd <name>",false},{"!gameinfo | !similar | !info <player>",false},{"── POSITION ──",true},{"!voidfollow | !stop voidfollow",false},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!hide | !spawn",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"── COMBAT ──",true},{"!bam <player> | !unbam",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!toolkill <player> | !untoolkill",false},{"!loop <cmd> <player> | !unloop",false},{"!givetool <player> <tool>",false},{"!bring <player>",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"── UTILITY ──",true},{"!speed <n|faster|slower|reset>",false},{"!freeze | !unfreeze | !escort",false},{"!afk | !unafk | !status",false},{"!math <expr> | !countdown <n> | !timer <s>",false},{"!say <text>",false},{"── HOST ──",true},{"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}for i,e in ipairs(CMDS)do local l=Instance.new("TextLabel")l.Size=UDim2.new(1,0,0,e[2]and 18 or 14)l.BackgroundTransparency=1 l.Font=e[2]and Enum.Font.GothamBold or Enum.Font.Code l.Text=e[1]l.TextColor3=e[2]and C.accent or C.text l.TextSize=10 l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=i l.Parent=cmdScroll end local apiPage=newPage()apiPage.Name="ApiKeysPage"local apiPad=Instance.new("UIPadding")apiPad.PaddingTop=UDim.new(0,14)apiPad.PaddingLeft=UDim.new(0,14)apiPad.PaddingRight=UDim.new(0,14)apiPad.PaddingBottom=UDim.new(0,10)apiPad.Parent=apiPage local apiTitle=Instance.new("TextLabel")apiTitle.Size=UDim2.new(1,0,0,18)apiTitle.Position=UDim2.new(0,0,0,0)apiTitle.BackgroundTransparency=1 apiTitle.Font=Enum.Font.GothamBold apiTitle.Text="API KEYS"
+BorderSizePixel=0 cmdScroll.CanvasSize=UDim2.new(0,0,0,0)cmdScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y cmdScroll.ScrollBarThickness=4 cmdScroll.ScrollBarImageColor3=C.border cmdScroll.Parent=cmdsBox local cml=Instance.new("UIListLayout")cml.Padding=UDim.new(0,4)cml.SortOrder=Enum.SortOrder.LayoutOrder cml.Parent=cmdScroll local CMDS={{"── AGENT ──",true},{"!ask <message> - converse",false},{"!ask <task> - multi-step, Xcode fills gaps",false},{"!ask what is this? / who is this?",false},{"!ask make a command called <name> ...",false},{"!customs | !delcmd <name>",false},{"!gameinfo | !similar | !info <player>",false},{"── POSITION ──",true},{"!voidfollow | !stop voidfollow",false},{"!stop | !recall | !follow",false},{"!backoff <n> | !getcloser <n>",false},{"!hide | !spawn",false},{"!lead <player> | !unlead",false},{"!sit | !stand | !jump",false},{"── COMBAT ──",true},{"!bam <player> | !unbam",false},{"!fling <player> | !unfling",false},{"!swordkill <player> | !unswordkill",false},{"!toolkill <player> | !untoolkill",false},{"!loop <cmd> <player> | !unloop | !stoplop",false},{"!givetool <player> <tool>",false},{"!bring <player>",false},{"!antifling | !unantifling",false},{"!antitoolkill | !unantitoolkill",false},{"── UTILITY ──",true},{"!speed <n|faster|slower|reset>",false},{"!freeze | !unfreeze | !escort",false},{"!afk | !unafk | !status",false},{"!math <expr> | !countdown <n> | !timer <s>",false},{"!say <text>",false},{"── HOST ──",true},{"!host <player> <sec, max 500> (creator only)",false},{"!stophost (creator only)",false},{"!whoishost",false},{"!cmds",false}}for i,e in ipairs(CMDS)do local l=Instance.new("TextLabel")l.Size=UDim2.new(1,0,0,e[2]and 18 or 14)l.BackgroundTransparency=1 l.Font=e[2]and Enum.Font.GothamBold or Enum.Font.Code l.Text=e[1]l.TextColor3=e[2]and C.accent or C.text l.TextSize=10 l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=i l.Parent=cmdScroll end local apiPage=newPage()apiPage.Name="ApiKeysPage"local apiPad=Instance.new("UIPadding")apiPad.PaddingTop=UDim.new(0,14)apiPad.PaddingLeft=UDim.new(0,14)apiPad.PaddingRight=UDim.new(0,14)apiPad.PaddingBottom=UDim.new(0,10)apiPad.Parent=apiPage local apiTitle=Instance.new("TextLabel")apiTitle.Size=UDim2.new(1,0,0,18)apiTitle.Position=UDim2.new(0,0,0,0)apiTitle.BackgroundTransparency=1 apiTitle.Font=Enum.Font.GothamBold apiTitle.Text="API KEYS"
 apiTitle.TextColor3=C.text apiTitle.TextSize=13 apiTitle.TextXAlignment=Enum.TextXAlignment.Left apiTitle.Parent=apiPage local apiSub=Instance.new("TextLabel")apiSub.Size=UDim2.new(1,0,0,16)apiSub.Position=UDim2.new(0,0,0,20)apiSub.BackgroundTransparency=1 apiSub.Font=Enum.Font.Gotham apiSub.Text="click any key below to copy it"apiSub.TextColor3=C.subText apiSub.TextSize=9 apiSub.TextXAlignment=Enum.TextXAlignment.Left apiSub.Parent=apiPage local apiBody=Instance.new("ScrollingFrame")apiBody.Name="ApiKeysBody"apiBody.Size=UDim2.new(1,0,1,-38)apiBody.Position=UDim2.new(0,0,0,38)apiBody.BackgroundTransparency=1 apiBody.BorderSizePixel=0 apiBody.ScrollBarThickness=3 apiBody.ScrollBarImageColor3=C.subText apiBody.CanvasSize=UDim2.new(0,0,0,372)apiBody.ScrollingDirection=Enum.ScrollingDirection.Y apiBody.Parent=apiPage function copyToClipboard(txt)if type(setclipboard)=="function"then pcall(
 setclipboard,txt)return true end if type(toclipboard)=="function"then pcall(toclipboard,txt)return true end if syn and type(syn.write_clipboard)=="function"then pcall(syn.write_clipboard,txt)return true end if type(writeclipboard)=="function"then pcall(writeclipboard,txt)return true end return false end local function mkKeyRow(y,label,getKey)local ll=Instance.new("TextLabel")ll.Size=UDim2.new(1,0,0,12)ll.Position=UDim2.new(0,0,0,y)ll.BackgroundTransparency=1 ll.Font=Enum.Font.GothamBold ll.Text=label ll.TextColor3=C.text ll.TextSize=9 ll.TextXAlignment=Enum.TextXAlignment.Left ll.Parent=apiBody local btn=Instance.new("TextButton")btn.Size=UDim2.new(1,0,0,26)btn.Position=UDim2.new(0,0,0,y+14)btn.BackgroundColor3=C.track btn.BorderSizePixel=0 btn.Font=Enum.Font.Code btn.Text=getKey()or"(not set)"btn.TextColor3=C.text btn.TextSize=9 btn.TextXAlignment=Enum.TextXAlignment.Left btn.
 TextTruncate=Enum.TextTruncate.AtEnd btn.AutoButtonColor=false btn.Parent=apiBody corner(btn,6)stroke(btn,C.border,1,0.3)local pdd=Instance.new("UIPadding")pdd.PaddingLeft=UDim.new(0,10)pdd.PaddingRight=UDim.new(0,10)pdd.Parent=btn local fb=Instance.new("TextLabel")fb.Size=UDim2.new(1,0,0,10)fb.Position=UDim2.new(0,0,0,y+42)fb.BackgroundTransparency=1 fb.Font=Enum.Font.Gotham fb.Text=""fb.TextColor3=C.green fb.TextSize=8 fb.TextXAlignment=Enum.TextXAlignment.Left fb.Parent=apiBody btn.MouseEnter:Connect(function()tw(btn,0.15,{BackgroundColor3=C.buttonHover})end)btn.MouseLeave:Connect(function()tw(btn,0.15,{BackgroundColor3=C.track})end)btn.Activated:Connect(function()local k=getKey()if not k or k==""then fb.Text="no key set";fb.TextColor3=C.red;return end if copyToClipboard(k)then fb.Text="copied!"fb.TextColor3=C.green else fb.Text="clipboard unsupported"fb.TextColor3=C.red end task.
