@@ -1951,7 +1951,7 @@ function handleCodePipeline(req,isPublic)
   XcCode.busy=false
   end) -- Bug25: outer pcall end
  end)
-nd
+end
 
 XC_DUP={}
 function XcDup(uid,text)
