@@ -3011,30 +3011,48 @@ function XcBring(TargetName,DestName)
     return Vector3.new(d.X,0,d.Z).Magnitude
    end
    task.wait(0.04)
-   -- anchor target during pivot loop — prevents drag, no velocity needed
-   pcall(function() targethrp.Anchored=true end)
+   -- velocity push + pivot: velocity is what actually moves them
+   -- pivot alone gets rejected by game physics on most games
    for pulse=1,6 do
     pcall(function()
+     local flat2=bringPos.Position-targethrp.Position
+     flat2=Vector3.new(flat2.X,0,flat2.Z)
+     if flat2.Magnitude>0.5 then
+      targethrp.AssemblyLinearVelocity=flat2.Unit*160
+     end
      XcToolnt:PivotTo(bringPos)
      targethrp:PivotTo(bringPos)
     end)
     task.wait(0.04)
     if flatDist(targethrp,bringPos)<6 then break end
    end
-   -- final hard-lock pivot
+   -- zero velocity THEN anchor at destination — kills drag AND bounce
+   pcall(function()
+    targethrp.AssemblyLinearVelocity=Vector3.zero
+    targethrp.AssemblyAngularVelocity=Vector3.zero
+   end)
    pcall(function() targethrp:PivotTo(bringPos) end)
+   pcall(function() targethrp.Anchored=true end)
    task.wait(0.9) -- replication window
    pcall(function() targethrp.Anchored=false end)
    if flatDist(targethrp,bringPos)>18 then
-    -- target bounced back; second sweep (anchor again, no velocity)
-    pcall(function() targethrp.Anchored=true end)
+    -- target bounced back; second velocity sweep + re-anchor
     for _=1,4 do
      pcall(function()
+      local flat3=bringPos.Position-targethrp.Position
+      flat3=Vector3.new(flat3.X,0,flat3.Z)
+      if flat3.Magnitude>0.5 then targethrp.AssemblyLinearVelocity=flat3.Unit*160 end
       XcToolnt:PivotTo(bringPos)
       targethrp:PivotTo(bringPos)
      end)
      task.wait(0.04)
     end
+    pcall(function()
+     targethrp.AssemblyLinearVelocity=Vector3.zero
+     targethrp.AssemblyAngularVelocity=Vector3.zero
+    end)
+    pcall(function() targethrp.Anchored=true end)
+    task.wait(0.5)
     pcall(function() targethrp.Anchored=false end)
    end
    R.Heartbeat:Wait()
