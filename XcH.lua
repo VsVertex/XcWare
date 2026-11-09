@@ -2596,11 +2596,17 @@ end
 -- ══════════════════════════════════════════════════════════
 -- XcDoTransfer — 7-layer engine (all deepseek layers, all merged)
 -- ══════════════════════════════════════════════════════════
-function XcDoTransfer(tool,toolPart,tChar,aimPart,maxTries)
+-- XcDoTransfer v3 — vanilla repeat-until fused with XcH multi-layer engine
+-- key upgrade: after each fti cycle, runs vanilla's repeat/RenderStepped:Wait/pivot loop
+-- until tool.Parent == tChar OR per-attempt timeout expires.
+-- this is why vanilla's toolkill works even on laggy servers:
+-- it never stops pivoting until the server confirms the parent change.
+function XcDoTransfer(tool,toolPart,tChar,aimPart,maxTries,totalTimeout)
  if not tool or not toolPart or not tChar or not aimPart then return false,"bad args" end
  local ping=math.clamp(pl:GetNetworkPing(),0.03,0.25)
- local tries=maxTries or 10
- -- build full-body sweep (biggest surface first, head-promoted on tall avatars)
+ local tries=maxTries or 12
+ local deadline=os.clock()+(totalTimeout or 18) -- absolute timeout: never hang forever
+ -- full-body part list, biggest surface first
  local rawParts=XcGetAllAimParts(tChar)
  if #rawParts==0 then rawParts={aimPart} end
  local sortedParts={aimPart}
@@ -2608,59 +2614,71 @@ function XcDoTransfer(tool,toolPart,tChar,aimPart,maxTries)
  -- prediction warmup
  local pKey=XcV2.predict.key(tChar)
  XcV2.predict.warmup(tChar,aimPart,pKey)
- -- Layer 5: open sim radius
  XcV2.sim(true)
  local fails=0
+ -- helper: vanilla-style repeat/until loop — keep pivoting every RenderStepped until parent flips
+ local function vanillaPivotLoop(tp,timeout)
+  local t0=os.clock()
+  while os.clock()-t0 < timeout and os.clock() < deadline do
+   if XcV2.verified(tool,tChar) then return true end
+   pcall(function()
+    local livePos=tp.Position
+    toolPart:PivotTo(CFrame.new(livePos))
+   end)
+   R.RenderStepped:Wait()
+  end
+  return XcV2.verified(tool,tChar)
+ end
  for attempt=1,tries do
+  if os.clock()>=deadline then break end
   local myChar=pl.Character
   local myHrp=myChar and myChar:FindFirstChild("HumanoidRootPart")
-  -- geometric gate: quick check before spending the attempt
   if myHrp and not XcV2.hitbox.quick(tChar,aimPart,myHrp) then
    fails=fails+1 task.wait(XcV2.backoff(fails)) continue
   end
-  -- Layer 4 equip
   if not XcV2.equip(tool,myChar) then XcV2.sim(false) return false,"cant equip" end
-  -- Layer 4 growing sweep: attempt N touches min(N+2,#parts) parts
+  -- growing sweep: more parts each attempt
   local partsN=(attempt<=3) and math.min(attempt+2,#sortedParts) or #sortedParts
-  local landed=false
   for i=1,partsN do
+   if os.clock()>=deadline then break end
    local tp=sortedParts[i]
    if not tp or not tp.Parent then continue end
-   -- predictive aim: aim handle at where target WILL be
+   -- predictive aim
    local pred=XcV2.predict.pos(tChar,aimPart,pKey)
-   if pred then
-    pcall(function() toolPart:PivotTo(CFrame.new(pred)) end)
-   else
-    pcall(function() toolPart:PivotTo(tp.CFrame) end)
-   end
-   task.wait(ping*0.5)
-   -- re-aim if target drifted >1.5 studs since we pivoted
+   if pred then pcall(function() toolPart:PivotTo(CFrame.new(pred)) end)
+   else pcall(function() toolPart:PivotTo(tp.CFrame) end) end
+   task.wait(ping)
+   -- re-aim if target drifted
    local pred2=XcV2.predict.pos(tChar,aimPart,pKey)
    if pred and pred2 and (pred2-pred).Magnitude>1.5 then
     pcall(function() toolPart:PivotTo(CFrame.new(pred2)) end)
    end
-   -- fti: 0→1→0→1 (clear debounce, then fire)
-   pcall(firetouchinterest,tp,toolPart,0) task.wait(0.012)
-   pcall(firetouchinterest,tp,toolPart,1) task.wait(0.012)
-   pcall(firetouchinterest,tp,toolPart,0) task.wait(0.012)
+   -- fti sequence (vanilla order: pivot → ping wait → fti(1) → ping wait → fti(0))
+   pcall(function() toolPart:PivotTo(tp.CFrame) end)
+   task.wait(ping)
    pcall(firetouchinterest,tp,toolPart,1)
-   -- Layer 2: two-sided velocity slam
+   task.wait(ping)
+   pcall(firetouchinterest,tp,toolPart,0)
+   -- velocity slam on top of fti
    XcV2.slam(tp,toolPart)
-   task.wait(0.025)
-   -- Layer 1: verified parent check
-   if XcV2.verified(tool,tChar) then
-    R.Heartbeat:Wait() R.Heartbeat:Wait() -- Layer 6: two-frame replication hold
+   -- ── VANILLA LOOP: keep pivoting every RenderStepped until parent flips ──
+   -- per-attempt window grows with attempt number so later rounds hold longer
+   local vanillaWindow=math.min(0.4+attempt*0.25, 3.0)
+   if vanillaPivotLoop(tp,vanillaWindow) then
+    -- confirmed transfer — two-frame replication hold
+    R.Heartbeat:Wait() R.Heartbeat:Wait()
     if XcV2.verified(tool,tChar) then
-     XcV2.watchReapply(tool,tChar,3.0) -- Layer 7: anti-strip
+     XcV2.watchReapply(tool,tChar,3.0)
      XcV2.sim(false) XcV2.predict.reset(pKey)
      return true
     end
    end
   end
-  -- between-round direct reparent fallback
+  -- between-round direct reparent fallback + vanilla loop
   pcall(function() tool.Parent=tChar end)
   task.wait(0.06)
-  if XcV2.verified(tool,tChar) then
+  -- run vanilla loop on HRP directly after reparent
+  if vanillaPivotLoop(aimPart,1.0) then
    R.Heartbeat:Wait() R.Heartbeat:Wait()
    if XcV2.verified(tool,tChar) then
     XcV2.watchReapply(tool,tChar,3.0)
@@ -2740,57 +2758,88 @@ function XcGearSync(TargetName)
     if not okGeo then error("cant reach target: "..tostring(reason)) end
    end
    local aimPart=XcGetAimPart(TargetCharacter) or targethrp
-   -- XcDoTransfer handles sim-radius + all 7 layers internally
-   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,12)
+   -- ── PHASE 1: transfer (vanilla repeat-until fused, 18s budget) ──
+   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,14,18)
    if not ok then error(err) end
-   -- two heartbeat hold before SyncPos teleport (let replication settle)
-   R.Heartbeat:Wait() R.Heartbeat:Wait()
-   -- verify tool is still on target after hold
+   -- ── PHASE 2: extended verify window ──
+   -- if the tool transferred but hasn't replicated yet, keep checking up to 2 extra seconds
    if not XcV2.verified(XcTool,TargetCharacter) then
-    -- stripped in replication window — one re-apply attempt
-    pcall(function()
-     XcTool.Parent=TargetCharacter
-     local th=TargetCharacter:FindFirstChildOfClass("Humanoid")
-     if th then th:EquipTool(XcTool) end
-    end)
-    task.wait(0.08)
+    local vT0=os.clock()
+    while os.clock()-vT0<2.0 do
+     R.Heartbeat:Wait()
+     if XcV2.verified(XcTool,TargetCharacter) then break end
+     -- keep pivoting handle to target so the server keeps seeing the touch
+     pcall(function() XcToolnt:PivotTo(targethrp:GetPivot()) end)
+    end
+    -- last-resort force parent
+    if not XcV2.verified(XcTool,TargetCharacter) then
+     pcall(function()
+      XcTool.Parent=TargetCharacter
+      local th=TargetCharacter:FindFirstChildOfClass("Humanoid")
+      if th then th:EquipTool(XcTool) end
+     end)
+     task.wait(0.12)
+    end
    end
-   -- fire the tool on the target: equip → activate → touch sweep
+   if not XcV2.verified(XcTool,TargetCharacter) then error("tool not on target after verify window") end
+   -- ── PHASE 3: vanilla kill sequence (equip → activate → fti sweep) ──
    local tHum2=TargetCharacter:FindFirstChildOfClass("Humanoid")
    if tHum2 and tHum2.Health>0 then
+    -- equip fires the Equipped event (games listen here for damage handler)
     pcall(function() tHum2:EquipTool(XcTool) end) task.wait(0.05)
-    pcall(function() XcTool:Activate() end) task.wait(0.03)
+    -- wake damage pipeline with no-op TakeDamage, then activate
+    pcall(function() tHum2:TakeDamage(0) end)
+    pcall(function() XcTool:Activate() end) task.wait(0.08)
+    -- fti sweep: vanilla order on each body part
     local aimParts2=XcGetAllAimParts(TargetCharacter)
     for _,ap in ipairs(aimParts2) do
-     pcall(firetouchinterest,ap,XcToolnt,0) task.wait(0.01)
-     pcall(firetouchinterest,ap,XcToolnt,1) task.wait(0.01)
+     pcall(function() XcToolnt:PivotTo(ap.CFrame) end)
+     pcall(firetouchinterest,ap,XcToolnt,1)
+     task.wait(pl:GetNetworkPing())
      pcall(firetouchinterest,ap,XcToolnt,0)
      if tHum2.Health<=0 then break end
     end
+    -- second activate pulse (vanilla does fti then stays pivoting until parent changes — 
+    -- the activate on the second pass is what lands the hit on most games)
+    if tHum2.Health>0 then
+     task.wait(0.05)
+     pcall(function() XcTool:Activate() end)
+    end
    end
-   -- health poll: wait up to 1.5s for kill to register before syncing
+   -- ── PHASE 4: health poll — wait for kill to register (up to tool cooldown) ──
    local startHp2=tHum2 and tHum2.Health or 0
+   local cooldown=0.15
+   pcall(function()
+    if XcTool:GetAttribute("Cooldown") then cooldown=XcTool:GetAttribute("Cooldown") end
+    if XcTool:FindFirstChild("Cooldown") and XcTool.Cooldown.Value then cooldown=XcTool.Cooldown.Value end
+   end)
+   local pollWindow=math.max(1.5, cooldown*3)
    local hpT0=os.clock()
-   while tHum2 and tHum2.Health>0 and tHum2.Health>=startHp2 and os.clock()-hpT0<1.5 do
+   while tHum2 and tHum2.Health>0 and tHum2.Health>=startHp2 and os.clock()-hpT0<pollWindow do
     task.wait(0.1)
    end
-   -- zero both velocities to prevent target following bot to SyncPos
+   -- ── PHASE 5: drag-free sync (vanilla exact kill position, anti-drag guards) ──
+   -- zero both velocities (stops target following bot to kill plane)
    pcall(function() hrpPart.AssemblyLinearVelocity=Vector3.zero hrpPart.AssemblyAngularVelocity=Vector3.zero end)
    pcall(function() targethrp.AssemblyLinearVelocity=Vector3.zero targethrp.AssemblyAngularVelocity=Vector3.zero end)
-   -- anchor target so physics can't drag it after the bot teleports
+   -- anchor target during bot teleport so physics can't drag them
    pcall(function() targethrp.Anchored=true end)
-   flashNoclip(0.5) -- noclip bot so it doesn't drag target on the teleport tick
-   task.wait(0.3)   -- physics settle before kill plane fires
-   -- set kill plane AFTER transfer (not before — prevents premature bot death)
+   R.Heartbeat:Wait() R.Heartbeat:Wait() R.Heartbeat:Wait() -- 3 frames for anchor to replicate
+   flashNoclip(0.5) -- noclip bot so bot parts don't pull target on teleport tick
+   task.wait(0.25)
+   -- set kill plane AFTER transfer, not before (prevents premature bot death)
    pcall(function()W.FallenPartsDestroyHeight=-9e15 end)
-   -- SyncPos teleport: double-tap with heartbeat between
+   -- vanilla's kill pos: -400 on first tap, then -9e15 double tap
+   local KillPos=CFrame.new(0,-400,0)*CFrame.Angles(0,0,math.rad(180))
    local SyncPos=CFrame.new(0,-9e15,0)*CFrame.Angles(0,0,math.rad(180))
+   pcall(function()hrpPart:PivotTo(KillPos)end)
+   R.Heartbeat:Wait()
    pcall(function()hrpPart:PivotTo(SyncPos)end)
    R.Heartbeat:Wait()
    pcall(function()hrpPart:PivotTo(SyncPos)end)
    task.wait(1.3)
    pcall(function()W.FallenPartsDestroyHeight=-500 end)
-   -- unanchor target so they don't stay frozen in place
+   -- unanchor target — always, even on error (cleanup safety)
    pcall(function() targethrp.Anchored=false end)
    pcall(function()local sr=RS:FindFirstChild("01_server") if sr then sr:FireServer("cmd","-gr") end end)
    S.gearSyncConn=pl.CharacterAdded:Connect(function()
@@ -2881,28 +2930,30 @@ function XcGiveTool(TargetName,ToolName)
    task.wait(0.05)
    pcall(function()W.CurrentCamera.CameraSubject=TargetCharacter:FindFirstChild("Head") or targethrp end)
    local aimPart=XcGetAimPart(TargetCharacter) or targethrp
-   -- full 7-layer transfer
-   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,10)
+   -- vanilla repeat-until transfer, 15s budget
+   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,12,15)
    if not ok then error(err) end
-   -- 3-pulse verified pivot loop with anchor (was 8 pulses — drag fix)
+   -- extended verify window: keep pivoting handle until confirmed
    local tHum=TargetCharacter:FindFirstChildOfClass("Humanoid")
-   pcall(function() targethrp.Anchored=true end)
-   for i=1,3 do
-    if tHum and tHum.Health<=0 then break end
-    pcall(function() XcToolnt:PivotTo(CFrame.new(targethrp.Position)) end)
-    task.wait(0.04)
-    if XcV2.verified(XcTool,TargetCharacter) then break end
-   end
-   pcall(function() targethrp.Anchored=false end)
-   R.Heartbeat:Wait() R.Heartbeat:Wait()
-   -- verify post-transfer
    if not XcV2.verified(XcTool,TargetCharacter) then
-    pcall(function()
-     XcTool.Parent=TargetCharacter
-     if tHum then tHum:EquipTool(XcTool) end
-    end)
-    task.wait(0.08)
+    pcall(function() targethrp.Anchored=true end)
+    local vT0=os.clock()
+    while os.clock()-vT0<2.0 do
+     R.Heartbeat:Wait()
+     if XcV2.verified(XcTool,TargetCharacter) then break end
+     pcall(function() XcToolnt:PivotTo(CFrame.new(targethrp.Position)) end)
+    end
+    pcall(function() targethrp.Anchored=false end)
+    -- last-resort reparent
+    if not XcV2.verified(XcTool,TargetCharacter) then
+     pcall(function()
+      XcTool.Parent=TargetCharacter
+      if tHum then tHum:EquipTool(XcTool) end
+     end)
+     task.wait(0.1)
+    end
    end
+   R.Heartbeat:Wait() R.Heartbeat:Wait()
   end)
   if execSuccess then
    sendChat(pick({"gave it","done","handed over","here you go"}))
@@ -3002,56 +3053,60 @@ function XcBring(TargetName,DestName)
    end
    pcall(function()W.CurrentCamera.CameraSubject=TargetCharacter:FindFirstChild("Head") or targethrp end)
    local aimPart=XcGetAimPart(TargetCharacter) or targethrp
-   -- grab: full 7-layer transfer
-   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,10)
+   -- ── GRAB PHASE: vanilla repeat-until transfer, 15s budget ──
+   local ok,err=XcDoTransfer(XcTool,XcToolnt,TargetCharacter,aimPart,12,15)
    if not ok then error(err) end
-   -- verifier-driven pulse loop: 10 pulses, check flatDist after each
-   local function flatDist(a,b)
-    local d=a.Position-b.Position
-    return Vector3.new(d.X,0,d.Z).Magnitude
+   -- extended verify window (same as toolkill)
+   if not XcV2.verified(XcTool,TargetCharacter) then
+    local vT0=os.clock()
+    while os.clock()-vT0<2.0 do
+     R.Heartbeat:Wait()
+     if XcV2.verified(XcTool,TargetCharacter) then break end
+     pcall(function() XcToolnt:PivotTo(targethrp:GetPivot()) end)
+    end
    end
-   task.wait(0.04)
-   -- velocity push + pivot: velocity is what actually moves them
-   -- pivot alone gets rejected by game physics on most games
-   for pulse=1,6 do
+   if not XcV2.verified(XcTool,TargetCharacter) then error("couldnt grab target") end
+   -- ── TELEPORT PHASE: vanilla-style — pivot handle + HRP simultaneously to dest ──
+   -- anchor target first so their physics doesn't fight the teleport
+   pcall(function() targethrp.Anchored=true end)
+   R.Heartbeat:Wait() R.Heartbeat:Wait() R.Heartbeat:Wait()
+   local function flatDist(a,b)
+    local d=a.Position-b.Position return Vector3.new(d.X,0,d.Z).Magnitude
+   end
+   -- zero velocity before teleport so they land cleanly
+   pcall(function()
+    targethrp.AssemblyLinearVelocity=Vector3.zero
+    targethrp.AssemblyAngularVelocity=Vector3.zero
+   end)
+   -- triple pivot: tool handle → destination, then HRP → destination
+   -- triple because Roblox physics takes ~3 frames to commit a CFrame change
+   for _=1,3 do
     pcall(function()
-     local flat2=bringPos.Position-targethrp.Position
-     flat2=Vector3.new(flat2.X,0,flat2.Z)
-     if flat2.Magnitude>0.5 then
-      targethrp.AssemblyLinearVelocity=flat2.Unit*160
+     XcToolnt:PivotTo(bringPos)
+     targethrp:PivotTo(bringPos)
+    end)
+    R.Heartbeat:Wait()
+   end
+   -- hold at destination with anchor during replication window
+   task.wait(0.8)
+   pcall(function() targethrp.Anchored=false end)
+   -- bounce check: if they slipped back, velocity sweep + re-anchor
+   if flatDist(targethrp,bringPos)>14 then
+    pcall(function()
+     local flat3=bringPos.Position-targethrp.Position
+     flat3=Vector3.new(flat3.X,0,flat3.Z)
+     if flat3.Magnitude>0.5 then
+      targethrp.AssemblyLinearVelocity=flat3.Unit*180
      end
      XcToolnt:PivotTo(bringPos)
      targethrp:PivotTo(bringPos)
     end)
     task.wait(0.04)
-    if flatDist(targethrp,bringPos)<6 then break end
-   end
-   -- zero velocity THEN anchor at destination — kills drag AND bounce
-   pcall(function()
-    targethrp.AssemblyLinearVelocity=Vector3.zero
-    targethrp.AssemblyAngularVelocity=Vector3.zero
-   end)
-   pcall(function() targethrp:PivotTo(bringPos) end)
-   pcall(function() targethrp.Anchored=true end)
-   task.wait(0.9) -- replication window
-   pcall(function() targethrp.Anchored=false end)
-   if flatDist(targethrp,bringPos)>18 then
-    -- target bounced back; second velocity sweep + re-anchor
-    for _=1,4 do
-     pcall(function()
-      local flat3=bringPos.Position-targethrp.Position
-      flat3=Vector3.new(flat3.X,0,flat3.Z)
-      if flat3.Magnitude>0.5 then targethrp.AssemblyLinearVelocity=flat3.Unit*160 end
-      XcToolnt:PivotTo(bringPos)
-      targethrp:PivotTo(bringPos)
-     end)
-     task.wait(0.04)
-    end
     pcall(function()
      targethrp.AssemblyLinearVelocity=Vector3.zero
      targethrp.AssemblyAngularVelocity=Vector3.zero
+     targethrp.Anchored=true
     end)
-    pcall(function() targethrp.Anchored=true end)
     task.wait(0.5)
     pcall(function() targethrp.Anchored=false end)
    end
